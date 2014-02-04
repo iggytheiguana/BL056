@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_solid">
+
+
+    <EditText
+        android:id="@+id/password"
+        style="@style/EditText.Password.Signin"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:hint="Enter password"
+        android:nextFocusDown="@+id/signin"/>
+
+    <ImageButton
+        android:id="@+id/signin"
+        android:text="Signin"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:background="@drawable/selector_button_signin"
+        android:focusable="true"/>
+
+    <ImageButton
+        android:id="@+id/qr_code"
+        android:layout_below="@+id/password"
+        android:layout_above="@+id/signin"
+        android:layout_margin="70dp"
+        android:contentDescription=""
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_dialog_dialer"
+        android:background="@null"/>
+
+</RelativeLayout>

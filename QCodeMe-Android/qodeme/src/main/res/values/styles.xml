@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <style name="AppBaseTheme" parent="@style/Theme.AppCompat" >
+    </style>
+
+
+
+
+    <style name="AppBaseTheme.NoTitle">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="EditText" parent="@android:style/Widget.EditText">
+
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:background">@drawable/selector_textfield</item>
+    </style>
+
+    <style name="EditText.Password">
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="EditText.Password.Signin">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">50dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+
+    <style name="TextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
+    <style name="TextView.Chat"></style>
+
+    <style name="TextView.Chat.Name">
+        <item name="android:textColor">@color/text_chat_name</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextView.Chat.Date" parent="TextView.Message.Date">
+        <item name="android:textColor">@color/text_message_text</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextView.Chat.Location" parent="TextView.Message.Date">
+        <item name="android:textColor">@color/text_message_text</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+
+    <style name="TextView.Message">
+        <item name="android:textSize">14sp</item>
+
+    </style>
+
+    <style name="TextView.Message.Text">
+        <item name="android:textColor">@color/text_message_text</item>
+
+    </style>
+
+    <style name="TextView.Message.Date">
+        <item name="android:textColor">@color/text_message_reed</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+    <!---->
+    <!--<style name="TextView.Message.Date.White">-->
+    <!--<item name="android:textColor">@color/text_message_sent</item>-->
+    <!--</style>-->
+
+    <style name="LayoutIntroduction">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LayoutButtonPanel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="ButtonIntro">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+
+</resources>

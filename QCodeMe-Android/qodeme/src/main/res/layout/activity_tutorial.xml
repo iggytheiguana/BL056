@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/background_solid">
+
+    <RelativeLayout
+        android:id="@+id/layout_navigation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ab_solid_actionbar">
+
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/introduction_indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="10dp"
+            app:fillColor="#55B745"
+            app:pageColor="#0B1C2C"
+            app:radius="8dp"
+            app:snap="true"
+            app:strokeColor="#0B1C2C"
+            app:strokeWidth="5dp" />
+
+        <ImageButton
+            android:id="@+id/introduction_button_close"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selectable_background_actionbar"
+            android:src="@drawable/ic_action_close"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+            
+
+        <!--<LinearLayout
+            android:id="@+id/introduction_button_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" >
+
+            <LinearLayout
+                style="@style/LayoutButtonPanel"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:clickable="false"
+                android:duplicateParentState="true" >
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:clickable="false"
+                    android:duplicateParentState="true" />
+            </LinearLayout>
+        </LinearLayout>-->
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/introduction_pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <ImageButton
+            android:id="@+id/introduction_button_back"
+            style="@style/ButtonIntro"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_action_left" />
+
+        <ImageButton
+            android:id="@+id/introduction_button_forward"
+            style="@style/ButtonIntro"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_action_right" />
+
+        <ImageButton
+            android:id="@+id/introduction_button_finish"
+            style="@style/ButtonIntro"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_action_accept"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</LinearLayout>

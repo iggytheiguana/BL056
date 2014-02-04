@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_category_name">
+
+        <CheckBoxPreference
+            android:key="pref_checkbox_name"
+            android:title="@string/pref_checkbox_name_title"
+            android:defaultValue="false"/>
+
+        <EditTextPreference
+            android:key="pref_edit_name"
+            android:title="@string/pref_edit_name_title"
+            android:dependency="pref_checkbox_name"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/pref_category_message">
+
+        <CheckBoxPreference
+            android:key="pref_checkbox_message"
+            android:title="@string/pref_checkbox_message_title"
+            android:defaultValue="false"/>
+
+        <EditTextPreference
+            android:key="pref_edit_message"
+            android:title="@string/pref_edit_message_title"
+            android:dependency="pref_checkbox_message"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/pref_category_additional">
+
+        <CheckBoxPreference
+            android:key="pref_checkbox_save_location_date"
+            android:title="@string/pref_edit_save_location_date_title"
+            android:summary="@string/pref_edit_save_location_date_summary"/>
+
+        <CheckBoxPreference
+            android:key="pref_checkbox_auto_accept"
+            android:title="@string/pref_checkbox_save_auto_accept_title"
+            android:summary="@string/pref_checkbox_save_auto_accept_summary"
+            />
+
+    </PreferenceCategory>
+
+
+
+</PreferenceScreen>
