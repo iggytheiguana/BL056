@@ -1,0 +1,7 @@
+
+db_name 	qrchat
+user		qrchat
+password	aspqwe
+
+
+
