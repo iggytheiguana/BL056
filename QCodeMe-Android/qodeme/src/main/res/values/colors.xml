@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Backgrounds -->
+    <color name="transparent">#00000000</color>
+    <color name="transparent_black">#CC000000</color>
+    <color name="transparent_black_low">#AA000000</color>
+    <color name="transparent_black_light">#45000000</color>
+    <color name="conversation_card_background">#1D1D1D</color>
+    <color name="background_solid">#e0e5e5</color>
+    <color name="login_qrcode">#8a8f8f</color>
+
+
+    <!--TextView colors-->
+    <color name="text_chat_name">#ffc1c1c2</color>
+    <color name="text_chat_date">#ff888788</color>
+    <color name="text_chat_location">#ff888788</color>
+    <color name="text_message_text">#ffc1c1c2</color>
+    <color name="text_message_date">#ff666666</color>
+    <color name="text_message_not_send">#630505</color>
+    <color name="text_message_sent">#949494</color>
+    <color name="text_message_reed">#ffc1c1c2</color>
+    <color name="red_dark">#ffcc0000</color>
+
+    <color name="divider_color">#333</color>
+    <color name="date_divider_color">#999</color>
+
+</resources>

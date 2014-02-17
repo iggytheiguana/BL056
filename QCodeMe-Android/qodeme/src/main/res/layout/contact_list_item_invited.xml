@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<biz.softtechnics.qodeme.ui.contacts.ContactListItemInvited xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_background_actionbar"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dip"
+            android:layout_weight=".2"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:padding="10dip"
+                android:id="@+id/accept"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_contact_accept"
+                android:duplicateParentState="true"/>
+
+            <TextView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:text="@string/accept"
+                android:textColor="#666"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight=".6"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/TextView.Chat.Name"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Text"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/contact_info"
+                style="@style/TextView.Chat.Date"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:text="TextLocation" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dip"
+            android:layout_weight=".2"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:padding="10dip"
+                android:id="@+id/regect"
+                android:layout_height="50dip"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_contact_reject"
+                android:duplicateParentState="true"
+                />
+
+            <TextView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:text="@string/reject"
+                android:textColor="#666"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/invite_message"
+        style="@style/TextView.Chat.Date"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="add me" />
+
+    <View
+        android:layout_height="1dip"
+        android:layout_width="match_parent"
+        android:background="@color/divider_color" />
+
+</biz.softtechnics.qodeme.ui.contacts.ContactListItemInvited>

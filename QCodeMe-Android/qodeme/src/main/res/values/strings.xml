@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">QODEME</string>
+    <string name="activity_login_title">Login</string>
+    <string name="activity_registration_title">Registration</string>
+    <string name="activity_tutorial_title">Tutorial</string>
+    <string name="activity_settings_title">Settings</string>
+
+
+    <!--Drower-->
+    <string name="drawer_open">Contacts</string>
+    <string name="drawer_close">QODEME</string>
+
+    <!--Contact item-->
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="reject_user">Reject user</string>
+    <string name="block_user">Block user</string>
+    <string name="are_you_sure">Are you sure?</string>
+
+    <!--Test to be deleted-->
+    <string name="action_item_1">Item 1</string>
+    <string name="action_item_2">Item 2</string>
+    <string name="action_item_3">Item 3</string>
+
+
+    <!--Action bar items-->
+    <string name="action_settings">Settings</string>
+    <string name="action_share_qr">Share QR Code</string>
+    <string name="action_help">Help</string>
+    <string name="action_logout">Logout</string>
+
+
+    <!--Service errors-->
+    <string name="rest_parse_status">REST_PARSE_STATUS</string>
+    <string name="rest_parse_result">REST_PARSE_RESULT</string>
+    <string name="rest_not_documented_error">Not documented error</string>
+    <string name="rest_invalid_token">Invalid token</string>
+    <string name="rest_unknown_error">Unknown error</string>
+    <string name="rest_account_create">Can\'t create account</string>
+    <string name="rest_incorrect_credentials">Wrong QR code or password</string>
+    <string name="rest_chat_set_info_field_validation">REST_CHAT_SET_INFO_FIELD_VALIDATION</string>
+    <string name="rest_chat_set_info_chat_not_found">REST_CHAT_SET_INFO_CHAT_NOT_FOUND</string>
+    <string name="rest_chat_add_member_field_validation">REST_CHAT_ADD_MEMBER_FIELD_VALIDATION</string>
+    <string name="rest_chat_add_member_already_member">REST_CHAT_ADD_MEMBER_ALREADY_MEMBER</string>
+    <string name="rest_chat_add_member_permissions_denied">REST_CHAT_ADD_MEMBER_PERMISSIONS_DENIED</string>
+    <string name="rest_chat_add_member_chat_not_found">REST_CHAT_ADD_MEMBER_CHAT_NOT_FOUND</string>
+    <string name="rest_chat_message_not_a_member">REST_CHAT_MESSAGE_NOT_A_MEMBER</string>
+    <string name="rest_chat_message_chat_not_found">REST_CHAT_MESSAGE_CHAT_NOT_FOUND</string>
+    <string name="rest_chat_load_chat_not_a_member">REST_CHAT_LOAD_CHAT_NOT_A_MEMBER</string>
+    <string name="rest_chat_load_chat_not_found">REST_CHAT_LOAD_CHAT_NOT_FOUND</string>
+    <string name="rest_contact_set_info_user_not_found">REST_CONTACT_SET_INFO_USER_NOT_FOUND</string>
+    <string name="rest_contact_set_info_no_permission">REST_CONTACT_SET_INFO_NO_PERMISSION</string>
+    <string name="rest_contact_remove_contact_not_found">REST_CONTACT_REMOVE_CONTACT_NOT_FOUND</string>
+    <string name="rest_chat_drop_member_permissions_denied">REST_CHAT_DROP_MEMBER_PERMISSIONS_DENIED</string>
+    <string name="rest_chat_drop_member_not_a_member">REST_CHAT_DROP_MEMBER_NOT_A_MEMBER</string>
+    <string name="rest_chat_drop_member_chat_not_found">REST_CHAT_DROP_MEMBER_CHAT_NOT_FOUND</string>
+    <string name="action_search">Search</string>
+    <string name="message">Type message</string>
+
+    <!--Preferences-->
+
+    <string name="pref_category_name">Public name</string>
+    <string name="pref_edit_name_title">Public name</string>
+    <string name="pref_edit_name_summary"></string>
+    <string name="pref_checkbox_name_title">Send public name</string>
+    <string name="pref_checkbox_name_summary"></string>
+    <string name="pref_category_message">Invitation message</string>
+    <string name="pref_edit_message_title">Invitation message</string>
+    <string name="pref_edit_message_summary"></string>
+    <string name="pref_checkbox_message_title">Send invitation message</string>
+    <string name="pref_checkbox_message_summary"></string>
+    <string name="pref_category_additional">Additional</string>
+    <string name="pref_checkbox_save_auto_accept_title">Auto accept</string>
+    <string name="pref_checkbox_save_auto_accept_summary">Automatically accept contacts</string>
+    <string name="pref_edit_save_location_date_title">Show time, location</string>
+    <string name="pref_edit_save_location_date_summary">Show time, location of contacts in conversation cards</string>
+
+
+    <!--Alerts-->
+    <string name="alert_empty_password">Empty passwod</string>
+    <string name="alert_empty_qr_code">Empty QR Code</string>
+    <string name="alert_no_internet">Check Internet connection</string>
+    <string name="alert_password_not_match">Password fields are not match.</string>
+    <string name="alert_no_access_to_external_storage">Check that SD card installed and it has free space!</string>
+
+</resources>

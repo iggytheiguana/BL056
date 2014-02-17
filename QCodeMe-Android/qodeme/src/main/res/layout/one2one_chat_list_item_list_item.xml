@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<biz.softtechnics.qodeme.ui.one2one.ChatListSubItem xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip">
+
+        <TextView
+            android:id="@+id/date_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="jul 10th 2014"
+            android:layout_alignParentRight="true"
+            android:paddingRight="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="10sp"
+            android:textColor="@color/date_divider_color" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/opponent_separator"
+        android:layout_height="2dip"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_below="@id/header_container" />
+
+    <TextView
+        android:id="@+id/date"
+        style="@style/TextView.Message.Date"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:layout_width="32dp"
+        android:text="date"
+        android:layout_below="@id/opponent_separator" />
+
+    <TextView
+        android:id="@+id/message"
+        android:text="Item"
+        style="@style/TextView.Message.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/date"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_alignBaseline="@id/date" />
+
+</biz.softtechnics.qodeme.ui.one2one.ChatListSubItem>

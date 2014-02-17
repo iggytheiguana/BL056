@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_solid">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="6dp"
+        android:background="@color/conversation_card_background">
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp">
+
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/TextView.Chat.Name"
+                android:text="Item"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/name"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/TextView.Chat.Date"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Date of adding"
+                    />
+
+                <TextView
+                    android:id="@+id/location"
+                    style="@style/TextView.Chat.Location"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Location"
+                    android:layout_centerVertical="true" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
+            android:id="@+id/listview"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_above="@+id/layout_message"
+            android:layout_below="@+id/header"
+            android:divider="@null"
+            android:cacheColorHint="@android:color/transparent"
+            android:listSelector="@android:color/transparent" />
+
+
+        <RelativeLayout
+            android:id="@+id/layout_message"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/button_message"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:padding="4dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_menu_send" />
+
+
+            <EditText
+                android:id="@+id/edit_message"
+                style="@style/EditText"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:maxHeight="50dp"
+                android:hint="@string/message"
+                android:inputType="textMultiLine"
+                android:layout_toLeftOf="@id/button_message" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
