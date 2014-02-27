@@ -65,21 +65,6 @@ class Helper {
 
     }
 
-    public static function sent_registration_push( $type, $user_id) //fix content
-    {
-        $apiKey = Yii::app()->params['googleApiKey'];
-        // Set POST variables
-        $url = 'https://android.googleapis.com/gcm/send';
-        $registrationIDs[]=User::getToken($user_id);
-        $fields = array(
-            'registration_ids'  => $registrationIDs,
-            'data' => array(
-                "type" =>$type ,
-            ),
-        );
-        Helper::curlUnit($url,$apiKey,$fields);
-    }
-
     public static function curlUnit($url,$apiKey,$fields){
         $headers = array(
             'Authorization: key=' . $apiKey,

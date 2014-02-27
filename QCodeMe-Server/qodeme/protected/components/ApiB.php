@@ -6,7 +6,7 @@ Class ApiB extends ApiBase {
         static::_check_auth();
         $user = User::model()->findByPk(static::$_user_id);
         $user->auth_token = null;
-        $user->UUID = null;
+       // $user->UUID = null;
         $user->save();
         static::_send_resp();
     }

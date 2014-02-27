@@ -25,8 +25,6 @@
 
 </table>
 
-<p> active users: <?php echo $activeUsers ?></p>
-
-
+<p>  active users: <?php echo $activeUsers ?></p>
 
 
