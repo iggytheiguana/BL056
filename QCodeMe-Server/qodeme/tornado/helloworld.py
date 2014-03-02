@@ -22,7 +22,8 @@ class Application(tornado.web.Application):
  	settings = dict(
             debug=True,
         )
-		tornado.web.Application.__init__(self.handlers,**settings)
+	
+	tornado.web.Application.__init__(self,handlers,**settings)
 
 	# Have one global connection to the blog DB across all handlers
 	self.db = torndb.Connection(
