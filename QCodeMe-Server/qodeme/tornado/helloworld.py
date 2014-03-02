@@ -65,7 +65,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         		clientDictionary["handler"] = self
         		chatClientDictionary[chatId].append(clientDictionary)
         		logger.debug(str.format("Subscribed token {0} to events for chat {1}",authToken,chatId))
-        	else
+        	else:
         		#auth token does exist as part of the client dictionary for this chat
         		logger.debug(str.format("Token {0} is already subscribed to events for chat {1}",authToken,chatId))
 
