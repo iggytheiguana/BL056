@@ -74,7 +74,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         	chatId = jdata["chatId"]
         	authToken = jdata["authToken"]
         	
-        	logger.debug(str.format("Received user started typing event for token {0} in chat {2}", authToken, chatId))
+        	logger.debug(str.format("Received user started typing event for token {0} in chat {1}", authToken, chatId))
 
         	clientsForChat = chatClientDictionary[chatId]
 
@@ -107,7 +107,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     		
     		message = json.dumps(eventDictionary)
     		logger.debug(str.format("Sending {0} to user {1}...", message, client["authToken"]))
-    			
+
 
 
 
