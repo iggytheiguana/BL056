@@ -7,11 +7,17 @@ import torndb
 import tornado.options
 
 from tornado.options import define, options
+import json
+
 
 define("mysql_host", default="127.0.0.1:3306", help="")
 define("mysql_database", default="qrchat", help="")
 define("mysql_user", default="root", help="")
 define("mysql_password", default="aspqwe", help="")
+
+chatClientDictionary = dict()
+
+
 
 class Application(tornado.web.Application):
 	def __init__(self):
@@ -39,6 +45,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
     	logger.debug("message received %s" % message)
         print 'message received %s' % message
+
+        #now we need to decode the json
+        jdata = json.loads(message)
+
+        event = jdata["event"]
+        logger.debug("message contained event %s" % event)
  
     def on_close(self):
       logger.debug("connection closed")
