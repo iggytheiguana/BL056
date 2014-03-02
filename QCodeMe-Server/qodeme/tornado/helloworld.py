@@ -17,7 +17,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
       logger.debug("connection closed")
       print 'connection closed'
-
+logger.info("Setting up logger...")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
