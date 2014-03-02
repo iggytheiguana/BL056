@@ -13,7 +13,7 @@ define("mysql_database", default="qrchat", help="")
 define("mysql_user", default="root", help="")
 define("mysql_password", default="aspqwe", help="")
 
-class Application(tornado.web.Application)
+class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
 			(r"/", WSHandler),
