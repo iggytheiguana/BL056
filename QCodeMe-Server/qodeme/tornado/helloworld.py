@@ -5,7 +5,7 @@ import tornado.httpserver
 import logging
 import torndb
 import tornado.options
-
+from collections import defaultdict
 from tornado.options import define, options
 import json
 
@@ -15,7 +15,7 @@ define("mysql_database", default="qrchat", help="")
 define("mysql_user", default="root", help="")
 define("mysql_password", default="aspqwe", help="")
 
-chatClientDictionary = dict()
+chatClientDictionary = defaultdict(list)
 
 
 
@@ -51,6 +51,30 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         event = jdata["event"]
         logger.debug("message contained event %s" % event)
+
+        if event == 0:
+        	#register for listening to a certain chatid
+        	chatId = jdata["chatId"]
+        	authToken = jdata["authToken"]
+
+        	doesTokenExistInClientDictionary = any(x for x in chatClientDictionary[chatId] if x["authToken"] == authToken)
+        	if not doesTokenExistInClientDictionary:
+        		#auth token doesnt exist as part of the client dictionary for this chat
+        		clientDictionary = dict()
+        		clientDictionary["authToken"] = authToken
+        		clientDictionary["handler"] = self
+        		chatClientDictionary[chatId].append(clientDictionary)
+        		logger.debug(str.format("Subscribed token {0} to events for chat {1}",authToken,chatId))
+        	else
+        		#auth token does exist as part of the client dictionary for this chat
+        		logger.debug(str.format("Token {0} is already subscribed to events for chat {1}",authToken,chatId))
+
+
+
+        	
+
+        elif event == 1:
+
  
     def on_close(self):
       logger.debug("connection closed")
