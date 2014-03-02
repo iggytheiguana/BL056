@@ -13,6 +13,22 @@ define("mysql_database", default="qrchat", help="")
 define("mysql_user", default="root", help="")
 define("mysql_password", default="aspqwe", help="")
 
+class Application(tornado.web.Application)
+	def __init__(self):
+		handlers = [
+			(r"/", WSHandler),
+		]
+
+ 	settings = dict(
+            debug=True,
+        )
+		tornado.web.Application.__init__(self.handlers,**settings)
+
+	# Have one global connection to the blog DB across all handlers
+	self.db = torndb.Connection(
+            host=options.mysql_host, database=options.mysql_database,
+            user=options.mysql_user, password=options.mysql_password)
+
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         print 'new connection'
@@ -32,19 +48,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-application = tornado.web.Application([
-    (r"/", WSHandler),
-])
-
-# Have one global connection to the blog DB across all handlers
-self.db = torndb.Connection(
-            host=options.mysql_host, database=options.mysql_database,
-            user=options.mysql_user, password=options.mysql_password)
-
 
 logger.info("Tornado server starting...")
 if __name__ == "__main__":
 
-    http_server = tornado.httpserver.HTTPServer(application)
+    http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
