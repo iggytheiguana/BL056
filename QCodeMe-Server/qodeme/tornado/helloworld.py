@@ -71,10 +71,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 
-        	
-
-        elif event == 1:
-
  
     def on_close(self):
       logger.debug("connection closed")
