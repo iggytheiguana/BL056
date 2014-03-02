@@ -57,7 +57,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         	chatId = jdata["chatId"]
         	authToken = jdata["authToken"]
 
-        	doesTokenExistInClientDictionary = any(x for x in chatClientDictionary[chatId] if x["authToken"] == authToken)
+        	doesTokenExistInClientDictionary = any(x for x in chatClientDictionary[chatId] if x["handler"] == self)
         	if not doesTokenExistInClientDictionary:
         		#auth token doesnt exist as part of the client dictionary for this chat
         		clientDictionary = dict()
