@@ -84,7 +84,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     	for key, clientList in chatClientDictionary.iteritems():
     		for client in clientList:
     			if (client["handler"] == self):
-    				logger.debug(str.Format("Removing client from notifications for chatID {0}",key))
+    				logger.debug(str.format("Removing client from notifications for chatID {0}",key))
     				clientList.remove(client)
     				break
 
