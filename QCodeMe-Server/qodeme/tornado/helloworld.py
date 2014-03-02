@@ -19,6 +19,8 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.DEBUG)
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
