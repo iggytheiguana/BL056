@@ -81,7 +81,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     	#this method will remove the current handler from chats that they may be subscribed to
 
     	#we are iterating through every list of clients in the dictionary
-    	for key, clientList in chatClientDictionary.iteritems:
+    	for key, clientList in chatClientDictionary.iteritems():
     		for client in clientList:
     			if (client["handler"] == self):
     				logger.debug(str.Format("Removing client from notifications for chatID {0}",key))
