@@ -14,13 +14,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
       print 'connection closed'
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 application = tornado.web.Application([
     (r"/", WSHandler),
 ])
 
 if __name__ == "__main__":
-	logger = logging.getLogger(__name__)
-	logger.setLevel(logging.DEBUG)
+
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
