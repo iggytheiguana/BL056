@@ -69,8 +69,17 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         		#auth token does exist as part of the client dictionary for this chat
         		logger.debug(str.format("Token {0} is already subscribed to events for chat {1}",authToken,chatId))
 
+        elif event == 1:
+        	#push user has started typing message
+        	chatId = jdata["chatId"]
+        	authToken = jdata["authToken"]
+        	
+        	logger.debug(str.format("Received user started typing event for token {0} in chat {2}", authToken, chatId))
 
+        	clientsForChat = chatClientDictionary[chatId]
 
+        	logger.debug(str.format("Found {0} clients susbscribed to chat {1}", len(clientsForChat), chatId))
+        	self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
  
     def on_close(self):
       logger.debug("connection closed")
@@ -87,6 +96,20 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     				logger.debug(str.format("Removing client from notifications for chatID {0}",key))
     				clientList.remove(client)
     				break
+
+
+    def sendUserStartedTypingEvent(self, authToken, chatId, clientsForChat):
+    	#this method will iterate through the clientsForChat list and push event that user (authToken) has started typing in chatId	
+
+    	for client in clientsForChat:
+    		handler = client["handler"]
+    		eventDictionary = {"event":1, "chatId":chatId}
+    		
+    		message = json.dumps(eventDictionary)
+    		logger.debug(str.format("Sending {0} to user {1}...", message, client["authToken"]))
+    			
+
+
 
 
 logger = logging.getLogger(__name__)
