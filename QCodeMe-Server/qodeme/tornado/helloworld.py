@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import tornado.httpserver
+import logging
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
