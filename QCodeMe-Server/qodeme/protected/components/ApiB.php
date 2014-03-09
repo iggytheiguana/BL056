@@ -318,6 +318,7 @@ Class ApiB extends ApiBase {
 
     public static function contact_add() {
         static::_check_auth();
+        date_default_timezone_set('UTC');
         $user_id = static::$_user_id;
         $user_inf = User::model()->findByPK($user_id);
         $user_code = $user_inf->qrcode;
