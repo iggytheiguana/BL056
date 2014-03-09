@@ -183,6 +183,7 @@ Class ApiB extends ApiBase {
 
     public static function chat_message() {
         static::_check_auth();
+        date_default_timezone_set('UTC');
         $user_id = static::$_user_id;
         $chat_id = Yii::app()->getRequest()->getPost('chat_id');
         $message = Yii::app()->getRequest()->getPost('message');
