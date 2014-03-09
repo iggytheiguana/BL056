@@ -491,6 +491,7 @@ Class ApiB extends ApiBase {
     }
 
     public static function contact_accept(){
+        date_default_timezone_set('UTC');
         static::_check_auth();
         $user_id = static::$_user_id;
         $partner_qrcode = Yii::app()->getRequest()->getPost('partner_qrcode');
