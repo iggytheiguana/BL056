@@ -115,6 +115,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 
+
 logger = logging.getLogger(__name__)
 logger.info("Setting up logger...")
 logger.setLevel(logging.DEBUG)
