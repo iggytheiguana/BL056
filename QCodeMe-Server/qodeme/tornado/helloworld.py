@@ -80,6 +80,17 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
             logger.debug(str.format("Found {0} clients susbscribed to chat {1}", len(clientsForChat), chatId))
             self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
+
+        elif event == 2:
+            #push user has stopped typing message
+            chatId = jdata["chatId"]
+            authToken = jdata["authToken"]
+
+            logger.debug(str.format("Received user stopped typing event for token {0} in chat {1}", authToken, chatId))
+            clientsForChat = chatClientDictionary[chatId]
+
+            logger.debug(str.format("Found {0} clients susbscribed to chat {1}", len(clientsForChat), chatId))
+            self.sendUserStoppedTypingEvent(authToken, chatId, clientsForChat)
  
     def on_close(self):
       logger.debug("connection closed")
@@ -96,6 +107,19 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     logger.debug(str.format("Removing client from notifications for chatID {0}",key))
                     clientList.remove(client)
                     break
+
+    def sendUserStoppedTypingEvent(self, authToken, chatId, clientsForChat):
+        #this method will iterate through the clientsForChat and push event that user (authToken) has stopped typing in the chat
+        for client in clientsForChat:
+            clientAuthToken = client["authToken"]
+
+            if (clientAuthToken != authToken):
+              handler = client["handler"]
+              eventDictionary = {"event":2, "chatId":chatId}
+            
+              message = json.dumps(eventDictionary)
+              logger.debug(str.format("Sending {0} to user {1}...", message, clientAuthToken))
+              handler.write_message(message)
 
 
     def sendUserStartedTypingEvent(self, authToken, chatId, clientsForChat):
