@@ -20,19 +20,19 @@ chatClientDictionary = defaultdict(list)
 
 
 class Application(tornado.web.Application):
-	def __init__(self):
-		handlers = [
-			(r"/", WSHandler),
-		]
+    def __init__(self):
+        handlers = [
+            (r"/", WSHandler),
+        ]
 
- 		settings = dict(
+        settings = dict(
             debug=True,
         )
-	
-		tornado.web.Application.__init__(self,handlers,**settings)
+    
+        tornado.web.Application.__init__(self,handlers,**settings)
 
-		# Have one global connection to the blog DB across all handlers
-		self.db = torndb.Connection(
+        # Have one global connection to the blog DB across all handlers
+        self.db = torndb.Connection(
             host=options.mysql_host, database=options.mysql_database,
             user=options.mysql_user, password=options.mysql_password)
 
@@ -43,7 +43,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.write_message("Hello World")
       
     def on_message(self, message):
-    	logger.debug("message received %s" % message)
+        logger.debug("message received %s" % message)
         print 'message received %s' % message
 
         #now we need to decode the json
@@ -53,33 +53,33 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         logger.debug("message contained event %s" % event)
 
         if event == 0:
-        	#register for listening to a certain chatid
-        	chatId = jdata["chatId"]
-        	authToken = jdata["authToken"]
+            #register for listening to a certain chatid
+            chatId = jdata["chatId"]
+            authToken = jdata["authToken"]
 
-        	doesTokenExistInClientDictionary = any(x for x in chatClientDictionary[chatId] if x["handler"] == self)
-        	if not doesTokenExistInClientDictionary:
-        		#auth token doesnt exist as part of the client dictionary for this chat
-        		clientDictionary = dict()
-        		clientDictionary["authToken"] = authToken
-        		clientDictionary["handler"] = self
-        		chatClientDictionary[chatId].append(clientDictionary)
-        		logger.debug(str.format("Subscribed token {0} to events for chat {1}",authToken,chatId))
-        	else:
-        		#auth token does exist as part of the client dictionary for this chat
-        		logger.debug(str.format("Token {0} is already subscribed to events for chat {1}",authToken,chatId))
+            doesTokenExistInClientDictionary = any(x for x in chatClientDictionary[chatId] if x["handler"] == self)
+            if not doesTokenExistInClientDictionary:
+                #auth token doesnt exist as part of the client dictionary for this chat
+                clientDictionary = dict()
+                clientDictionary["authToken"] = authToken
+                clientDictionary["handler"] = self
+                chatClientDictionary[chatId].append(clientDictionary)
+                logger.debug(str.format("Subscribed token {0} to events for chat {1}",authToken,chatId))
+            else:
+                #auth token does exist as part of the client dictionary for this chat
+                logger.debug(str.format("Token {0} is already subscribed to events for chat {1}",authToken,chatId))
 
         elif event == 1:
-        	#push user has started typing message
-        	chatId = jdata["chatId"]
-        	authToken = jdata["authToken"]
-        	
-        	logger.debug(str.format("Received user started typing event for token {0} in chat {1}", authToken, chatId))
+            #push user has started typing message
+            chatId = jdata["chatId"]
+            authToken = jdata["authToken"]
+            
+            logger.debug(str.format("Received user started typing event for token {0} in chat {1}", authToken, chatId))
 
-        	clientsForChat = chatClientDictionary[chatId]
+            clientsForChat = chatClientDictionary[chatId]
 
-        	logger.debug(str.format("Found {0} clients susbscribed to chat {1}", len(clientsForChat), chatId))
-        	self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
+            logger.debug(str.format("Found {0} clients susbscribed to chat {1}", len(clientsForChat), chatId))
+            self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
  
     def on_close(self):
       logger.debug("connection closed")
@@ -87,29 +87,29 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
     def unsubscribeFromAllChatEvents(self):
-    	#this method will remove the current handler from chats that they may be subscribed to
+        #this method will remove the current handler from chats that they may be subscribed to
 
-    	#we are iterating through every list of clients in the dictionary
-    	for key, clientList in chatClientDictionary.iteritems():
-    		for client in clientList:
-    			if (client["handler"] == self):
-    				logger.debug(str.format("Removing client from notifications for chatID {0}",key))
-    				clientList.remove(client)
-    				break
+        #we are iterating through every list of clients in the dictionary
+        for key, clientList in chatClientDictionary.iteritems():
+            for client in clientList:
+                if (client["handler"] == self):
+                    logger.debug(str.format("Removing client from notifications for chatID {0}",key))
+                    clientList.remove(client)
+                    break
 
 
     def sendUserStartedTypingEvent(self, authToken, chatId, clientsForChat):
-    	#this method will iterate through the clientsForChat list and push event that user (authToken) has started typing in chatId	
+        #this method will iterate through the clientsForChat list and push event that user (authToken) has started typing in chatId 
 
-    	for client in clientsForChat:
+        for client in clientsForChat:
             clientAuthToken = client["authToken"]
 
             if (clientAuthToken != authToken):
-    		  handler = client["handler"]
-    		  eventDictionary = {"event":1, "chatId":chatId}
-    		
-    		  message = json.dumps(eventDictionary)
-    		  logger.debug(str.format("Sending {0} to user {1}...", message, clientAuthToken))
+              handler = client["handler"]
+              eventDictionary = {"event":1, "chatId":chatId}
+            
+              message = json.dumps(eventDictionary)
+              logger.debug(str.format("Sending {0} to user {1}...", message, clientAuthToken))
               handler.sendMessage(message)
 
 
