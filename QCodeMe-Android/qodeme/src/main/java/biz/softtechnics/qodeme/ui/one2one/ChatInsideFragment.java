@@ -20,14 +20,23 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.ImageView;
+import android.util.Log;
 import com.google.common.collect.Lists;
+
+import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.Canvas;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import biz.softtechnics.qodeme.ApplicationConstants;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
@@ -37,6 +46,10 @@ import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
+
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
 
 /**
  * Created by Alex on 10/7/13.
@@ -51,6 +64,8 @@ public class ChatInsideFragment extends Fragment {
     private static final String DATE = "date";
     private static final String FIRST_UPDATE = "first_update";
 
+    private final WebSocketConnection mConnection = new WebSocketConnection();
+    private static final String TAG = "ChatInsideFragment";
 
     private One2OneChatInsideFragmentCallback callback;
     private boolean isViewCreated;
@@ -62,7 +77,10 @@ public class ChatInsideFragment extends Fragment {
     private TextView mName;
     private TextView mDate;
     private TextView mLocation;
+
+
     private boolean mFirstUpdate = true;
+    private ImageView imgUserTyping;
 
     public static ChatInsideFragment newInstance(Contact c, boolean firstUpdate) {
         ChatInsideFragment f = new ChatInsideFragment();
@@ -86,6 +104,8 @@ public class ChatInsideFragment extends Fragment {
         Typeface getFont(Fonts font);
     }
 
+
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -98,11 +118,27 @@ public class ChatInsideFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_one2one_chat, null);
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        stop();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        start();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
+
+
         initListView();
         isViewCreated = true;
 
@@ -137,35 +173,251 @@ public class ChatInsideFragment extends Fragment {
             }
         });*/
 
+        mMessageField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b)
+                {
+                    //edit view doesn't have focus anymore
+                    Log.d("CHATINSIDE", "user stopped typing");
+                    sendUserStoppedTypingMessage();
+                }
+            }
+        });
+
         mMessageField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d("CHATINSIDE", "beforeTextChanged called");
 
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("CHATINSIDE", "onTextChanged called");
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                Log.d("CHATINSIDE", "afterTextChanged called");
                 if (s.length() > 0) {
                     mSendButton.setVisibility(View.VISIBLE);
+                    sendUserTypingMessage();
                 } else {
                     mSendButton.setVisibility(View.GONE);
+                    sendUserStoppedTypingMessage();
                 }
             }
         });
 
-    } 
+    }
+
+    private void sendRegisterForChatEvents()
+    {
+        //this method sends a message over the websocket registering for notifications that
+        //are related to the current chat id
+        String activityName = "sendRegisterForChatEvents:";
+
+        if (mConnection.isConnected())
+        {
+            //we need the chat id
+            long chatId = getChatId();
+            //the auth token
+            String restToken = QodemePreferences.getInstance().getRestToken();
+
+            int event = GetEventForChatEvents();
+            Log.d(TAG, activityName + "Sending register for chat event message...");
+            sendWebSocketMessageWith(chatId, restToken, event)  ;
+
+        }
+    }
+
+    //This method is called to handle the data received as part of a web socket message
+    private void receiveWebSocketMessageWith(String message)
+    {
+        String activityName = "receiveWebSocketMessageWith:";
+
+        try
+        {
+            JSONObject messageJson = new JSONObject(message);
+            long chatId = messageJson.getLong("chatId");
+            int event = messageJson.getInt("event");
+
+            Log.d(TAG, activityName+"Received event: " + event + " in chat: "+chatId);
+            if (event == GetEventForUserStartedTypingMessage())
+            {
+                receiveOtherUserStartedTypingEvent(chatId);
+            }
+            else if (event == GetEventForUserStoppedTypingMessage())
+            {
+                receiveOtherUserStoppedTypingEvent(chatId);
+            }
+
+
+        }
+        catch (JSONException je)
+        {
+            Log.e(TAG,activityName+je.toString());
+        }
+    }
+
+    private void receiveOtherUserStoppedTypingEvent(long chatId)
+    {
+        if (chatId == getChatId())
+        {
+            this.imgUserTyping.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void receiveOtherUserStartedTypingEvent(long chatId)
+    {
+        if (chatId == getChatId())
+        {
+            //we make visible the image view to show the other user is typing
+            this.imgUserTyping.setVisibility(View.VISIBLE);
+        }
+    }
+    private void sendWebSocketMessageWith(long chatId, String authToken, int event)
+    {
+        String activityName = "sendWebSocketMessageWith:";
+
+        if (mConnection.isConnected())
+        {
+
+            try
+            {
+                JSONObject json = new JSONObject();
+                json.put("chatId",chatId);
+                json.put("authToken",authToken);
+                json.put("event",event);
+
+                //now we send the message
+                mConnection.sendTextMessage(json.toString());
+
+                Log.d(TAG,activityName+"Successfully sent payload " + json.toString());
+            }
+            catch (JSONException e)
+            {
+                Log.e(TAG,activityName+"Received JSONException: "+ e.toString());
+            }
+            catch (Exception e)
+            {
+                Log.e(TAG, activityName+"Received Exception: "+e.toString());
+
+            }
+        }
+    }
+
+    private void sendUserStoppedTypingMessage()
+    {
+        String activityName = "sendUserStoppedTypingMessage:";
+        if (mConnection.isConnected())
+        {
+            //we have a open web socket connection
+            long chatId = getChatId();
+            String restToken = QodemePreferences.getInstance().getRestToken();
+            int event = GetEventForUserStoppedTypingMessage();
+            Log.d(TAG, activityName + "Sending user stopped typing message...");
+            sendWebSocketMessageWith(chatId,restToken,event);
+        }
+    }
+    private void sendUserTypingMessage()
+    {
+        String activityName = "sendUserTypingMessage:";
+        //this will send over the web socket a message that the user has begun typing
+        if (mConnection.isConnected())
+        {
+            //we need the chat id
+            long chatId = getChatId();
+            //the auth token
+            String restToken = QodemePreferences.getInstance().getRestToken();
+
+            int event = GetEventForUserStartedTypingMessage();
+            Log.d(TAG, activityName + "Sending user typing message...");
+            sendWebSocketMessageWith(chatId,restToken,event);
+
+
+        }
+    }
+
+    private int GetEventForChatEvents()
+    {
+        return 0;
+    }
+    private int GetEventForUserStartedTypingMessage()
+    {
+        return 1;
+    }
+
+    private int GetEventForUserStoppedTypingMessage()
+    {
+        return 2;
+    }
+
+    private void start()
+    {
+        final String wsuri = ApplicationConstants.WEB_SOCKET_BASE_URL;
+
+        try {
+            if (!mConnection.isConnected())
+            {
+                mConnection.connect(wsuri, new WebSocketHandler() {
+
+                    @Override
+                    public void onOpen() {
+                        Log.d(TAG, "Status: Connected to " + wsuri);
+                        sendRegisterForChatEvents();
+
+                    }
+
+                    @Override
+                    public void onTextMessage(String payload) {
+                        Log.d(TAG, "Got echo: " + payload);
+                        receiveWebSocketMessageWith(payload);
+                    }
+
+                    @Override
+                    public void onClose(int code, String reason) {
+                        Log.d(TAG, "Connection lost.");
+                    }
+                });
+            }
+        } catch (WebSocketException e) {
+
+            Log.d(TAG, e.toString());
+        }
+    }
+
+    private void stop()
+    {
+        try
+        {
+            if (mConnection.isConnected())
+            {
+                //let's disconnect the socket
+                mConnection.disconnect();
+                Log.d(TAG,"Disconnected web socket");
+            }
+
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG,e.toString());
+
+        }
+    }
     
     private void sendMessage(){
+
+
         String message = mMessageField.getText().toString();
         if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim())) {
             Toast.makeText(getActivity(), "Empty message can't be sent", Toast.LENGTH_SHORT).show();
             return;
         }
+        //we need to send websocket message that the user has stopped typing
+        sendUserStoppedTypingMessage();
         mMessageField.setText("");
 //        Helper.hideKeyboard(getActivity(), mMessageField);
         callback.sendMessage(getChatId(), message);
@@ -185,6 +437,18 @@ public class ChatInsideFragment extends Fragment {
         final String senderQr = getSenderQr();
         final int oponentColor = getChatColor() == 0 ? Color.GRAY : getChatColor();
         final int myColor = getActivity().getResources().getColor(R.color.text_chat_name);
+
+        imgUserTyping = (ImageView)getView().findViewById(R.id.img_typing);
+
+        Bitmap bmp = Bitmap.createBitmap(40, 40,  Bitmap.Config.ARGB_8888);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(oponentColor);
+
+        Canvas c = new Canvas(bmp);
+        c.drawCircle(20,20,20, paint);
+        imgUserTyping.setImageBitmap(bmp);
+        imgUserTyping.setVisibility(View.INVISIBLE);
 
         mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
         mDate = (TextView) getView().findViewById(R.id.date);
@@ -318,6 +582,7 @@ public class ChatInsideFragment extends Fragment {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Helper.hideKeyboard(getActivity(), mMessageField);
+            sendUserStoppedTypingMessage();
             getActivity().onBackPressed();
             return true;
         }

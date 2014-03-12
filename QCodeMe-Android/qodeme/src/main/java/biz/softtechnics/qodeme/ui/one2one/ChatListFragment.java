@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-
+import android.util.Log;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -23,6 +25,9 @@ import biz.softtechnics.qodeme.ui.common.ExListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Fonts;
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
 
 /**
  * Created by Alex on 10/7/13.
@@ -37,6 +42,8 @@ public class ChatListFragment extends Fragment {
     private ImageButton mMessageButton;
     private EditText mMessageEdit;
 
+    private static final String TAG = "ChatListFragment";
+    private final WebSocketConnection mConnection = new WebSocketConnection();
 
     public interface One2OneChatListFragmentCallback {
         List<Contact> getContactList();
@@ -59,6 +66,25 @@ public class ChatListFragment extends Fragment {
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        //we need to start up the websocket connection again
+        start();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        //we need to close the websocket connection
+        stop();
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.fragment_one2one_chat_list, null);
@@ -76,9 +102,83 @@ public class ChatListFragment extends Fragment {
         mMessageLayout = getView().findViewById(R.id.layout_message);
         mMessageButton = (ImageButton) getView().findViewById(R.id.button_message);
         mMessageEdit = (EditText) getView().findViewById(R.id.edit_message);
+
+
+
+
         initListView();
         isViewCreated = true;
         updateUi();
+
+
+        //we add a listener to the image button so we can track when a person stops/starts typing
+        mMessageEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                Log.d(TAG,"beforeTextChanged");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                Log.d(TAG,"onTextChanged");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Log.d(TAG,"afterTextChanged");
+            }
+        });
+    }
+
+    private void start()
+    {
+        final String wsuri = "ws://54.204.45.228/python";
+
+        try {
+            if (!mConnection.isConnected())
+            {
+            mConnection.connect(wsuri, new WebSocketHandler() {
+
+                @Override
+                public void onOpen() {
+                    Log.d(TAG, "Status: Connected to " + wsuri);
+                  //  mConnection.sendTextMessage("Hello, world!");
+                }
+
+                @Override
+                public void onTextMessage(String payload) {
+                    Log.d(TAG, "Got echo: " + payload);
+                }
+
+                @Override
+                public void onClose(int code, String reason) {
+                    Log.d(TAG, "Connection lost.");
+                }
+            });
+            }
+        } catch (WebSocketException e) {
+
+            Log.d(TAG, e.toString());
+        }
+    }
+
+    private void stop()
+    {
+        try
+        {
+            if (mConnection.isConnected())
+            {
+                //let's disconnect the socket
+                mConnection.disconnect();
+                Log.d(TAG,"Disconnected web socket");
+            }
+
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG,e.toString());
+
+        }
     }
 
     private void initListView() {

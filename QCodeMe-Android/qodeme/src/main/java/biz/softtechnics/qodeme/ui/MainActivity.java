@@ -92,6 +92,8 @@ import biz.softtechnics.qodeme.utils.Helper;
 import biz.softtechnics.qodeme.utils.LatLonCity;
 import biz.softtechnics.qodeme.utils.NullHelper;
 
+
+
 public class MainActivity extends BaseActivity implements
         ChatListFragment.One2OneChatListFragmentCallback,
         ChatInsideFragment.One2OneChatInsideFragmentCallback,
@@ -134,6 +136,7 @@ public class MainActivity extends BaseActivity implements
     //private Location mCurrentLocation;
     private String mSearchFilter;
     private boolean mKeyboardActive;
+
 
 
     /**
@@ -233,6 +236,8 @@ public class MainActivity extends BaseActivity implements
         }
 
     }
+
+
 
     private void initActionBar() {
         mActionBar = getSupportActionBar();

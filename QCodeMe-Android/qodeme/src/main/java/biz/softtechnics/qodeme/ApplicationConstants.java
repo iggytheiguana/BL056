@@ -22,7 +22,8 @@ public abstract class ApplicationConstants {
     //public static final String BASE_URL = "http://qrchat.softtechnics.biz/api";
     /*Production backend*/
     public static final String BASE_URL = "http://54.208.112.252/api";
-
+    //public static final String BASE_URL = "http://54.204.45.228/api";
+    public static final String WEB_SOCKET_BASE_URL = "ws://54.204.45.228/python";
     /* GCM */
     public static final String GCM_SENDER_ID = "826323905162";
 

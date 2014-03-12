@@ -49,4 +49,5 @@ dependencies {
     compile 'com.larswerkman:HoloColorPicker:1.1'
     compile 'com.bugsense.trace:bugsense:3.6'
     compile files('libs/libGoogleAnalyticsServices_3.0.1.jar')
+    compile files('libs/autobahn-0.5.0.jar')
 }
