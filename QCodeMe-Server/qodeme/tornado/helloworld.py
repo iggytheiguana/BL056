@@ -110,7 +110,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             
               message = json.dumps(eventDictionary)
               logger.debug(str.format("Sending {0} to user {1}...", message, clientAuthToken))
-              handler.sendMessage(message)
+              handler.write_message(message)
 
 
 
