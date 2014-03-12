@@ -102,11 +102,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     	#this method will iterate through the clientsForChat list and push event that user (authToken) has started typing in chatId	
 
     	for client in clientsForChat:
-    		handler = client["handler"]
-    		eventDictionary = {"event":1, "chatId":chatId}
+            clientAuthToken = client["authToken"]
+
+            if (clientAuthToken != authToken):
+    		  handler = client["handler"]
+    		  eventDictionary = {"event":1, "chatId":chatId}
     		
-    		message = json.dumps(eventDictionary)
-    		logger.debug(str.format("Sending {0} to user {1}...", message, client["authToken"]))
+    		  message = json.dumps(eventDictionary)
+    		  logger.debug(str.format("Sending {0} to user {1}...", message, clientAuthToken))
 
 
 
