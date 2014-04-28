@@ -49,4 +49,16 @@ public class RestKeyMap {
     public static final String CONTACT_OBJECT = "contactObj";
 
     public static final String HEIGHT = "height";
+    
+    //new parameters
+    public static final String DESCRIPTION = "description";
+    public static final String LATITUDE = "longitude";
+    public static final String LONGITUDE = "latitude";
+    public static final String IS_LOCKED = "is_locked";
+    
+    public static final String PHOTURL = "photourl";
+    public static final String HAS_PHOTO = "has_photo";
+    public static final String REPLY_TO_ID = "replyto_id";
+    public static final String IS_FLAGGED = "is_flagged";
+    public static final String SENDER_NAME = "sendername";
 }

@@ -1,174 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <biz.softtechnics.qodeme.ui.one2one.ChatListItem xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="360dp">
+    android:layout_height="360dp" >
 
     <RelativeLayout
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:background="@color/conversation_card_background">
+        android:background="@drawable/bg_box" >
+
+        <!-- android:background="@color/conversation_card_background" -->
 
         <ImageView
             android:id="@+id/drag_image"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:src="@drawable/chat_panel_resizer_pressed"
-            android:scaleType="fitCenter"
-            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:paddingLeft="4dp"
-            android:paddingTop="4dp"/>
+            android:paddingTop="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/chat_panel_resizer_pressed" />
 
-        <View
-            android:id="@+id/corner_top"
-            android:background="@color/red_dark"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_alignParentTop="true"/>
-        <View
-            android:id="@+id/corner_bottom"
-            android:background="@color/red_dark"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/drag_image"/>
-        <View
-            android:id="@+id/corner_left"
-            android:background="@color/red_dark"
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"/>
-        <View
-            android:id="@+id/corner_right"
-            android:background="@color/red_dark"
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_above="@+id/drag_image"/>
+        <!-- <View -->
+        <!-- android:id="@+id/corner_top" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="2dp" -->
+        <!-- android:layout_alignParentTop="true" -->
+        <!-- android:background="@android:color/darker_gray" /> -->
 
+
+        <!-- <View -->
+        <!-- android:id="@+id/corner_bottom" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="2dp" -->
+        <!-- android:layout_alignParentBottom="true" -->
+        <!-- android:layout_toLeftOf="@+id/drag_image" -->
+        <!-- android:background="@android:color/darker_gray" /> -->
+
+
+        <!-- <View -->
+        <!-- android:id="@+id/corner_left" -->
+        <!-- android:layout_width="2dp" -->
+        <!-- android:layout_height="match_parent" -->
+        <!-- android:layout_alignParentLeft="true" -->
+        <!-- android:background="@android:color/darker_gray" /> -->
+
+
+        <!-- <View -->
+        <!-- android:id="@+id/corner_right" -->
+        <!-- android:layout_width="2dp" -->
+        <!-- android:layout_height="match_parent" -->
+        <!-- android:layout_above="@+id/drag_image" -->
+        <!-- android:layout_alignParentRight="true" -->
+        <!-- android:background="@android:color/darker_gray" /> -->
 
         <RelativeLayout
             android:id="@+id/header"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="4dp">
-
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp" >
 
             <TextView
                 android:id="@+id/name"
                 style="@style/TextView.Chat.Name"
-                android:text="Item"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:textStyle="bold"
-                android:layout_alignParentRight="true" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btn_favourite"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="Item"
+                android:textStyle="bold" />
+
+            
+            <ImageButton android:id="@+id/btn_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:padding="10dp"
+                android:src="@drawable/ic_camera" />
+            <ImageButton
+                android:id="@+id/btn_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/btn_camera"
+                android:background="@null"
+                android:padding="10dp"
+                android:src="@drawable/ic_chat_favorite" />
 
             <LinearLayout
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/name"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/date"
                     style="@style/TextView.Chat.Date"
-                    android:layout_alignParentLeft="true"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Date of adding"
-                   />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Date of adding" />
 
                 <TextView
                     android:id="@+id/location"
                     style="@style/TextView.Chat.Location"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="Location"
-                    android:layout_centerVertical="true" />
-
-                </LinearLayout>
-
-
-
+                    android:text="Location" />
+            </LinearLayout>
         </RelativeLayout>
 
-        <!--<LinearLayout
+        <!--
+            <LinearLayout
             android:id="@+id/area"
             android:layout_height="100dp"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:background="@android:color/white"
-            android:orientation="horizontal"/>-->
+            android:orientation="horizontal"/>
+        -->
 
         <LinearLayout
             android:id="@+id/drag"
-            android:layout_height="18dp"
             android:layout_width="match_parent"
+            android:layout_height="18dp"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:gravity="right">
+            android:gravity="right"
+            android:orientation="horizontal" >
         </LinearLayout>
-
-
-
 
         <RelativeLayout
             android:id="@+id/layout_message"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
             android:layout_above="@+id/drag"
+            android:layout_alignParentBottom="true"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:visibility="visible">
+            android:visibility="visible" >
 
             <ImageButton
                 android:id="@+id/button_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@null"
                 android:padding="4dp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:visibility="gone"
-                android:src="@drawable/ic_menu_send" />
-
+                android:src="@drawable/ic_menu_send"
+                android:visibility="gone" />
 
             <biz.softtechnics.qodeme.ui.common.CustomEdit
                 android:id="@+id/edit_message"
                 style="@style/EditText"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:maxHeight="50dp"
+                android:layout_toLeftOf="@id/button_message"
                 android:hint="@string/message"
                 android:inputType="textMultiLine"
-                android:visibility="gone"
-                android:layout_toLeftOf="@id/button_message" />
-
+                android:maxHeight="50dp"
+                android:visibility="gone" />
         </RelativeLayout>
+
+        <View
+            android:id="@+id/top_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="-5dp"
+            android:layout_marginRight="-5dp"
+            android:layout_below="@+id/header"
+            android:background="@color/line_color" />
 
         <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
             android:id="@+id/subList"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_below="@+id/header"
+            android:layout_height="wrap_content"
             android:layout_above="@+id/layout_message"
+            android:layout_below="@+id/top_line"
             android:divider="@null"
             android:fadingEdge="none"
-            android:visibility="visible"/>
-
-
+            android:visibility="visible" />
     </RelativeLayout>
 
 </biz.softtechnics.qodeme.ui.one2one.ChatListItem>

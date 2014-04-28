@@ -293,7 +293,13 @@ public class SyncHelper {
                     long chatId = cursor.getLong(QodemeContract.Messages.Query.MESSAGE_CHAT_ID);
                     String message = cursor.getString(QodemeContract.Messages.Query.MESSAGE_TEXT);
                     long created = (long)(Converter.getCrurentTimeFromTimestamp(cursor.getString(QodemeContract.Messages.Query.MESSAGE_CREATED)) / 1E3);
-                    ChatMessageResponse response = rest.chatMessage(chatId, message, created);
+                    String photoUrl= cursor.getString(QodemeContract.Messages.Query.MESSAGE_PHOTO_URL);
+                    int hashPhoto= cursor.getInt(QodemeContract.Messages.Query.MESSAGE_HAS_PHOTO);
+                    long replyTo_id= cursor.getInt(QodemeContract.Messages.Query.MESSAGE_REPLY_TO_ID);
+                    String latitude= cursor.getString(QodemeContract.Messages.Query.MESSAGE_LATITUDE);
+                    String longitude= cursor.getString(QodemeContract.Messages.Query.MESSAGE_LONGITUDE);
+                    String senderName= cursor.getString(QodemeContract.Messages.Query.MESSAGE_SENDERNAME);
+                    ChatMessageResponse response = rest.chatMessage(chatId, message, created, photoUrl, hashPhoto, replyTo_id, latitude, longitude, senderName);
                     new ChatMessageHandler(context, id).parseAndApply(response);
                 } catch (RestError e) {
                     BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);

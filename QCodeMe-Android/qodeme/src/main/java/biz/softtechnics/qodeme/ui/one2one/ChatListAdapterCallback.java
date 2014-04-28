@@ -19,7 +19,7 @@ public interface ChatListAdapterCallback extends ExAdapterCallback {
     int getChatHeight(long chatId);
     void setChatHeight(long chatId, int height);
     void setDragModeEnabled(boolean value);
-    void sendMessage(Contact c, String message);
+    void sendMessage(Contact c, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
     List<Message> getMessages(Contact c);
     Typeface getFont(Fonts font);
     void refreshUi();

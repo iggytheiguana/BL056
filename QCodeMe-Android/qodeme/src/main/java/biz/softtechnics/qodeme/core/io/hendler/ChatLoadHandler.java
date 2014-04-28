@@ -42,6 +42,13 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
         builder.withValue(Messages.MESSAGE_QRCODE, m.qrcode);
         builder.withValue(Messages.MESSAGE_CREATED, m.created);
         builder.withValue(Messages.MESSAGE_STATE, m.state);
+        builder.withValue(Messages.MESSAGE_PHOTO_URL, m.photoUrl);
+        builder.withValue(Messages.MESSAGE_HASH_PHOTO, m.hasPhoto);
+        builder.withValue(Messages.MESSAGE_REPLY_TO_ID, m.replyTo_id);
+        builder.withValue(Messages.MESSAGE_LATITUDE, m.latitude);
+        builder.withValue(Messages.MESSAGE_LONGITUDE, m.longitude);
+        builder.withValue(Messages.MESSAGE_SENDERNAME, m.senderName);
+        
         builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
         batch.add(builder.build());
     }

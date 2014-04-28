@@ -25,4 +25,5 @@
     <color name="divider_color">#333</color>
     <color name="date_divider_color">#999</color>
 
+    <color name="line_color">#cccccc</color>
 </resources>

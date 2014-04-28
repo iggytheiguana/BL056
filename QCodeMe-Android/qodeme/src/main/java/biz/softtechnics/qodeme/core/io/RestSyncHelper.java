@@ -100,11 +100,17 @@ public class RestSyncHelper {
         return new AccountContactsResponse().parse(jsonResult);
     }
 
-    public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp) throws InterruptedException, ExecutionException, JSONException, RestError {
+    public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp,String photoUrl, int hashPhoto, long replyTo_Id, String latitude, String longitude, String senderName) throws InterruptedException, ExecutionException, JSONException, RestError {
         RequestParams params = new RequestParams();
         params.put(RestKeyMap.MESSAGE, message);
         params.put(RestKeyMap.CHAT_ID, String.valueOf(chatId));
         params.put(RestKeyMap.DATETIME, String.valueOf(unixTimeStamp));
+        params.put(RestKeyMap.PHOTURL, photoUrl);
+        params.put(RestKeyMap.HAS_PHOTO, String.valueOf(hashPhoto));
+        params.put(RestKeyMap.REPLY_TO_ID, String.valueOf(replyTo_Id));
+        params.put(RestKeyMap.LATITUDE, latitude);
+        params.put(RestKeyMap.LONGITUDE, longitude);
+        params.put(RestKeyMap.SENDER_NAME, senderName);
         JSONObject jsonObject =  newSyncJsonObjectRequest(RequestType.CHAT_MESSAGE, params);
         return new ChatMessageResponse().parse(jsonObject);
     }
@@ -150,6 +156,7 @@ public class RestSyncHelper {
                                         boolean withPublicName,
                                         boolean withAutoAccept,
                                         String location,
+                                        double latitude, double longitude,
                                         boolean withSaveDateTime) throws InterruptedException, ExecutionException, JSONException, RestError {
         RequestParams params = new RequestParams();
         params.put(RestKeyMap.MESSAGE, message);
@@ -158,6 +165,8 @@ public class RestSyncHelper {
         params.put(RestKeyMap.WITH_PUBNAME, Converter.booleanToIntString(withPublicName));
         params.put(RestKeyMap.AUTO_ACCEPT, Converter.booleanToIntString(withAutoAccept));
         params.put(RestKeyMap.LOCATION, location);
+		params.put(RestKeyMap.LATITUDE, String.valueOf(latitude));
+		params.put(RestKeyMap.LONGITUDE, String.valueOf(longitude));
         params.put(RestKeyMap.SET_TIMELOC, Converter.booleanToIntString(withSaveDateTime));
         JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_USER_SETTINGS, params);
         return new VoidResponse().parse(jsonObject);
@@ -172,7 +181,9 @@ public class RestSyncHelper {
         boolean withAutoAccept = pref.isAutoAcceptChecked();
         String location = "location";
         boolean withSaveDateTime = pref.isSaveLocationDateChecked();
-        return setUserSettings(message, withMessage, publicName, withPublicName, withAutoAccept, location, withSaveDateTime);
+        double latitude = 0;
+        double longitude = 0;
+        return setUserSettings(message, withMessage, publicName, withPublicName, withAutoAccept, location,latitude,longitude, withSaveDateTime);
     }
 
     public VoidResponse chatSetInfo(long chatId, String title, Integer color, Integer height) throws InterruptedException, ExecutionException, JSONException, RestError {

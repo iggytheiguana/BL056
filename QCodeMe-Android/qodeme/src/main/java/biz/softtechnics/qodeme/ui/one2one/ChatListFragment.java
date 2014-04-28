@@ -50,7 +50,7 @@ public class ChatListFragment extends Fragment {
 
         List<Message> getChatMessages(long chatId);
 
-        void sendMessage(long chatId, String message);
+        void sendMessage(long chatId, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
 
         int getHeight(long chatId);
 
@@ -210,9 +210,9 @@ public class ChatListFragment extends Fragment {
                 mListView.setDragMode(value);
             }
 
-            public void sendMessage(Contact c, String message) {
-                callback.sendMessage(c.chatId, message);
-            }
+//            public void sendMessage(Contact c, String message) {
+//                callback.sendMessage(c.chatId, message);
+//            }
 
             public List<Message> getMessages(Contact c) {
                 return callback.getChatMessages(c.chatId);
@@ -238,6 +238,13 @@ public class ChatListFragment extends Fragment {
             public void messageRead(long chatId) {
                 callback.messageRead(chatId);
             }
+
+			@Override
+			public void sendMessage(Contact c, String message, String photoUrl, int hashPhoto,
+					long replyTo_Id, double latitude, double longitude, String senderName) {
+				callback.sendMessage(c.chatId, message,photoUrl, hashPhoto, replyTo_Id, latitude, longitude, senderName);
+				
+			}
         });
         mListView.setAdapter(mListAdapter);
         mListView.setOnTouchListener(new View.OnTouchListener() {

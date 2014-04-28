@@ -85,4 +85,5 @@
     <string name="alert_password_not_match">Password fields are not match.</string>
     <string name="alert_no_access_to_external_storage">Check that SD card installed and it has free space!</string>
 
+    <string name="created">Created:</string>
 </resources>

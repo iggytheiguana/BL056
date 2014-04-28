@@ -40,6 +40,9 @@ public class Converter {
     public static Long getCrurentTimeFromTimestamp(String timestamp){
         if (TextUtils.isEmpty(timestamp))
             return null;
+        if(!timestamp.contains(".")){
+        	timestamp+=".0";
+        }
         TimeZone tz = TimeZone.getDefault();
         return Timestamp.valueOf(timestamp).getTime() + tz.getRawOffset();
     }

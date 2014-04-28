@@ -3,6 +3,7 @@ package biz.softtechnics.qodeme.ui.common;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
 
 import java.util.List;
 
@@ -13,10 +14,12 @@ public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C 
 
 
     private final C callback;
+    private final One2OneChatListInsideFragmentCallback callback2;
 
-    public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback) {
+    public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback, One2OneChatListInsideFragmentCallback callback2) {
         super(context, layoutResId, list);
         this.callback = callback;
+        this.callback2 = callback2;
     }
 
     @SuppressWarnings("unchecked")
@@ -29,7 +32,7 @@ public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C 
         view = (T) convertView;
         E e = (E) getItem(position);
         E previous = position > 0 ? (E) getItem(position - 1) : null;
-        view.fill(e, callback, position, previous);
+        view.fill(e, callback, position, previous, callback2);
         viewMap.put(position, view);
 
         return convertView;
