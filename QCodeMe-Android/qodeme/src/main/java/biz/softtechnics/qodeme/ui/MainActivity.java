@@ -1,5 +1,20 @@
 package biz.softtechnics.qodeme.ui;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import android.accounts.Account;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -16,16 +31,21 @@ import android.content.SyncStatusObserver;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.TransactionTooLargeException;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -36,6 +56,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,31 +69,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.android.volley.VolleyError;
-import com.flurry.sdk.ch;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Longs;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.codehaus.jackson.map.util.Comparators;
-
 import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.accounts.GenericAccountService;
@@ -87,7 +83,6 @@ import biz.softtechnics.qodeme.core.io.utils.RestError;
 import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
 import biz.softtechnics.qodeme.core.io.utils.RestListener;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
-import biz.softtechnics.qodeme.core.provider.QodemeContract.Messages;
 import biz.softtechnics.qodeme.core.sync.SyncHelper;
 import biz.softtechnics.qodeme.ui.common.FullChatListAdapter;
 import biz.softtechnics.qodeme.ui.common.MenuListAdapter;
@@ -97,7 +92,6 @@ import biz.softtechnics.qodeme.ui.contacts.ContactListItemEntity;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItemInvited;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListFragment;
-import biz.softtechnics.qodeme.ui.one2one.FullViewChatFragment;
 import biz.softtechnics.qodeme.ui.preferences.SettingsActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeCaptureActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeShowActivity;
@@ -110,6 +104,17 @@ import biz.softtechnics.qodeme.utils.Helper;
 import biz.softtechnics.qodeme.utils.LatLonCity;
 import biz.softtechnics.qodeme.utils.NullHelper;
 
+import com.android.volley.VolleyError;
+import com.flurry.sdk.ch;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Longs;
+
 public class MainActivity extends BaseActivity implements
 		ChatListFragment.One2OneChatListFragmentCallback,
 		ChatInsideFragment.One2OneChatInsideFragmentCallback,
@@ -118,6 +123,8 @@ public class MainActivity extends BaseActivity implements
 
 	private static final int REQUEST_ACTIVITY_SCAN_QR_CODE = 2;
 	private static final int REQUEST_ACTIVITY_CONTACT_DETAILS = 3;
+	private static final int REQUEST_ACTIVITY_PHOTO_GALLERY = 4;
+	private static final int REQUEST_ACTIVITY_CAMERA = 5;
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
 	private static final int DEFAULT_HEIGHT_DP = 200;
@@ -131,6 +138,7 @@ public class MainActivity extends BaseActivity implements
 	private MenuItem mSearchMenuItem;
 	private boolean mIsSearchActive;
 	private String mSearchText;
+	private long currentChatId = -1;
 
 	// Fonts cache
 	private Map<Fonts, Typeface> fontMap = new HashMap();
@@ -290,7 +298,7 @@ public class MainActivity extends BaseActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
-//		zoomImageFromThumb(expandedImageView, 0);
+		// zoomImageFromThumb(expandedImageView, 0);
 	}
 
 	private void initActionBar() {
@@ -331,6 +339,7 @@ public class MainActivity extends BaseActivity implements
 				});
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -371,7 +380,142 @@ public class MainActivity extends BaseActivity implements
 						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
 				SyncHelper.requestManualSync();
 				break;
+			case REQUEST_ACTIVITY_PHOTO_GALLERY:
+				if (!(data == null)) {
+					System.gc();
+					Uri mImageCaptureUri = data.getData();
+					File file = new File(getPath(mImageCaptureUri));
+					// selectedImagePath = getPath(targetUri);
+					// File newFile = new File(selectedImagePath);
+					try {
+						System.out.println(file.exists());
+						// InputStream is = new FileInputStream(file);
+
+						// byte[] data1 = new byte[is.available()];
+						// is.read(data1);
+						/*
+						 * mProfileImageBase64 = Base64.encodeToString(data1,
+						 * 0);
+						 */
+						// Log.i("s---", "" + photoData);
+						try {
+							Bitmap resizedBitmap = decodeFile(file);
+							// Bitmap resizedBitmap = Media.getBitmap(
+							// getContentResolver(), targetUri);
+							// resizedBitmap = Bitmap.createScaledBitmap(
+							// resizedBitmap,
+							// mImgProfile[selectedImagePosition].getWidth(),
+							// mImgProfile[selectedImagePosition].getWidth(),
+							// true);
+
+							Matrix matrix = new Matrix();
+							matrix.postRotate(getImageOrientation(file.getAbsolutePath().toString()
+									.trim()));
+							Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0,
+									resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix,
+									true);
+
+							ByteArrayOutputStream stream = new ByteArrayOutputStream();
+							rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+							byte[] byteArray = stream.toByteArray();
+
+
+							String mProfileImageBase64 = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+
+							ChatInsideFragment chatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
+							if(!getActionBar().isShowing() && chatInsideFragment != null){
+								chatInsideFragment.sendImageMessage(mProfileImageBase64);
+							}else{
+								if(currentChatId != -1)
+								sendMessage(currentChatId, "", mProfileImageBase64, 1, -1, 0, 0, "");
+							}
+							// mImgProfile[selectedImagePosition]
+							// .setImageBitmap(rotatedBitmap);
+							// //
+							// arrayListImageUrl.add(selectedImagePosition,file.getAbsolutePath());
+							// arrayImageUrl[selectedImagePosition] = file
+							// .getAbsolutePath().toString().trim();
+
+						} catch (OutOfMemoryError e) {
+							e.printStackTrace();
+						}
+
+						// is.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+			case REQUEST_ACTIVITY_CAMERA:
+				break;
+			}else{
+				setCurrentChatId(-1);
 			}
+	}
+	public void takePhotoFromGallery() {
+		Intent intent = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(intent, REQUEST_ACTIVITY_PHOTO_GALLERY);
+	}
+	public int getImageOrientation(String imagePath) {
+		int rotate = 0;
+		try {
+
+			File imageFile = new File(imagePath);
+			ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+			int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+			// Log.d(TAG,"orientation : "+orientation);
+			switch (orientation) {
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				rotate = 270;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				rotate = 180;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				rotate = 90;
+				break;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return rotate;
+	}
+
+	private String getPath(Uri uri) {
+		System.gc();
+		String[] proj = { MediaStore.Images.Media.DATA };
+		CursorLoader loader = new CursorLoader(this, uri, proj, null, null, null);
+		Cursor cursor = loader.loadInBackground();
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
+	private Bitmap decodeFile(File f) {
+		try {
+			// Decode image size
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+			// The new size we want to scale to
+			final int REQUIRED_SIZE = 70;
+
+			// Find the correct scale value. It should be the power of 2.
+			int scale = 1;
+			while (o.outWidth / scale / 2 >= REQUIRED_SIZE
+					&& o.outHeight / scale / 2 >= REQUIRED_SIZE)
+				scale *= 2;
+
+			// Decode with inSampleSize
+			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			o2.inSampleSize = scale;
+			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+		} catch (FileNotFoundException e) {
+		}
+		return null;
 	}
 
 	@Override
@@ -592,49 +736,54 @@ public class MainActivity extends BaseActivity implements
 			@Override
 			public void onItemClick(AdapterView parent, View view, int position, long id) {
 				super.onItemClick(parent, view, position, id);
-				final Contact ce;
-				if (view instanceof ContactListItem) {
-					ce = ((ContactListItem) view).getContact();
-				} else {
-					ce = ((ContactListItemInvited) view).getContact();
-				}
+				try {
+					final Contact ce;
+					if (view instanceof ContactListItem) {
+						ce = ((ContactListItem) view).getContact();
+					} else {
+						ce = ((ContactListItemInvited) view).getContact();
+					}
 
-				if (ce.state == QodemeContract.Contacts.State.APPRUVED
-						|| ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
-					Intent i = new Intent(getContext(), ContactDetailsActivity.class);
-					i.putExtra(QodemeContract.Contacts._ID, ce._id);
-					i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
-					i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
-					i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
-					startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
-					mDrawerLayout.closeDrawer(mContactListView);
-				} else if (ce.state == QodemeContract.Contacts.State.BLOCKED_BY) {
-					final CharSequence[] items = { "Unblock" };
+					if (ce.state == QodemeContract.Contacts.State.APPRUVED
+							|| ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
+						Intent i = new Intent(getContext(), ContactDetailsActivity.class);
+						i.putExtra(QodemeContract.Contacts._ID, ce._id);
+						i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
+						i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
+						i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
+						startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
+						mDrawerLayout.closeDrawer(mContactListView);
+					} else if (ce.state == QodemeContract.Contacts.State.BLOCKED_BY) {
+						final CharSequence[] items = { "Unblock" };
 
-					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-					builder.setTitle("Pick a color");
-					builder.setItems(items, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int item) {
-							switch (item) {
-							case 0: { // Unblock
-								long id = ce._id;
-								int updated = ce.updated;
-								getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
-										QodemeContract.Contacts.acceptContactValues(updated),
-										DbUtils.getWhereClauseForId(),
-										DbUtils.getWhereArgsForId(id));
-								SyncHelper.requestManualSync();
+						AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+						builder.setTitle("Pick a color");
+						builder.setItems(items, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int item) {
+								switch (item) {
+								case 0: { // Unblock
+									long id = ce._id;
+									int updated = ce.updated;
+									getContentResolver().update(
+											QodemeContract.Contacts.CONTENT_URI,
+											QodemeContract.Contacts.acceptContactValues(updated),
+											DbUtils.getWhereClauseForId(),
+											DbUtils.getWhereArgsForId(id));
+									SyncHelper.requestManualSync();
 
-								break;
+									break;
+								}
+								}
 							}
-							}
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
+						});
+						AlertDialog alert = builder.create();
+						alert.show();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-
 			}
+
 		});
 
 		mContactListView.setLongClickable(true);
@@ -916,6 +1065,7 @@ public class MainActivity extends BaseActivity implements
 		}
 	}
 
+	@SuppressLint("NewApi")
 	private void refreshOne2OneInside() {
 		// final ChatInsideFragment one2OneChatInsideFragment =
 		// (ChatInsideFragment) getSupportFragmentManager()
@@ -926,7 +1076,7 @@ public class MainActivity extends BaseActivity implements
 		// .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
 
 		ChatInsideFragment one2OneChatInsideFragment = null;
-		if (mPagerAdapter != null) {
+		if (mPagerAdapter != null && !getActionBar().isShowing()) {
 			one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
 		}
 		if (one2OneChatInsideFragment != null) {
@@ -993,7 +1143,7 @@ public class MainActivity extends BaseActivity implements
 		// }
 		if (!getActionBar().isShowing()) {
 			getActionBar().show();
-			//mViewPager.setVisibility(View.INVISIBLE);
+			// mViewPager.setVisibility(View.INVISIBLE);
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 			expandedImageView.setVisibility(View.INVISIBLE);
 			return;
@@ -1037,9 +1187,12 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName) {
-		getContentResolver().insert(QodemeContract.Messages.CONTENT_URI,
-				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto, replyTo_Id, latitude, longitude, senderName));
+	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
+			long replyTo_Id, double latitude, double longitude, String senderName) {
+		getContentResolver().insert(
+				QodemeContract.Messages.CONTENT_URI,
+				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
+						replyTo_Id, latitude, longitude, senderName));
 		SyncHelper.requestManualSync();
 		/*
 		 * RestAsyncHelper.getInstance().chatMessage(chatId, message,
@@ -1359,5 +1512,13 @@ public class MainActivity extends BaseActivity implements
 				mCurrentAnimator = set;
 			}
 		});
+	}
+
+	public void setCurrentChatId(long currentChatId) {
+		this.currentChatId = currentChatId;
+	}
+
+	public long getCurrentChatId() {
+		return currentChatId;
 	}
 }

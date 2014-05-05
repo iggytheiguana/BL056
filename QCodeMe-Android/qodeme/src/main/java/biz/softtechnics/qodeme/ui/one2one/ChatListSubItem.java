@@ -7,18 +7,22 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.Editable;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,15 +52,18 @@ public class ChatListSubItem extends RelativeLayout implements
 	private TextView message;
 	private ListView subList;
 	private ChatListSubAdapterCallback callback;
+	
 	private int position;
 	private Message previousMessage;
 	private Message currentMessage;
 	private CustomDotView date;
 	private TextView dateHeader;
 	private RelativeLayout headerContainer;
+	private LinearLayout mLinearLayout;
 	private View opponentSeparator;
 	private ImageButton mSendButton;
 	private CustomEdit mMessageField;
+	private ImageView mImageViewItem;
 
 	public ChatListSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -78,6 +85,16 @@ public class ChatListSubItem extends RelativeLayout implements
 	public TextView getDateHeader() {
 		return dateHeader = dateHeader != null ? dateHeader
 				: (TextView) findViewById(R.id.date_header);
+	}
+
+	public ImageView getImageMessage() {
+		return mImageViewItem = mImageViewItem != null ? mImageViewItem
+				: (ImageView) findViewById(R.id.imageView_item);
+	}
+
+	public LinearLayout getImageLayout() {
+		return mLinearLayout = mLinearLayout != null ? mLinearLayout
+				: (LinearLayout) findViewById(R.id.linearLayout_img);
 	}
 
 	public RelativeLayout getHeaderContainer() {
@@ -106,7 +123,19 @@ public class ChatListSubItem extends RelativeLayout implements
 	@Override
 	public void fill(Message me) {
 		getMessage().setText(me.message);
-		
+
+		if (me.hasPhoto == 1) {
+			String sss = me.photoUrl;
+			byte data[] = Base64.decode(sss, Base64.NO_WRAP);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			getImageMessage().setImageBitmap(bitmap);
+			getImageMessage().setVisibility(View.VISIBLE);
+			getImageLayout().setVisibility(View.VISIBLE);
+		} else {
+			getImageMessage().setImageBitmap(null);
+			getImageMessage().setVisibility(View.GONE);
+			getImageLayout().setVisibility(View.GONE);
+		}
 
 		int color = callback.getColor(me.qrcode);
 		// getMessage().setTextColor(color);
@@ -125,7 +154,7 @@ public class ChatListSubItem extends RelativeLayout implements
 		String mainString = str + dateString;
 		// Create our span sections, and assign a format to each.
 		SpannableString ss1 = new SpannableString(mainString);
-		ss1.setSpan(new RelativeSizeSpan(0.7f), str.length(), mainString.length(), 0); // set
+		ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
 																						// size
 		ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
 																								// size
@@ -136,15 +165,15 @@ public class ChatListSubItem extends RelativeLayout implements
 			param.width = (int) getDate().convertDpToPixel(70, getContext());
 			getDate().setLayoutParams(param);
 			getDate().setReply(true);
-//			if (previousMessage != null && previousMessage.replyTo_id > 0) {
-//				getDate().setSecondVerticalLine(true);
-//			}
+			// if (previousMessage != null && previousMessage.replyTo_id > 0) {
+			// getDate().setSecondVerticalLine(true);
+			// }
 			getDate().setSecondVerticalLine(me.isFirst);
 			getDate().setSecondVerticalLine2(me.isLast);
 			getDate().invalidate();
 			getMessage().setClickable(false);
 		} else {
-			
+
 			getMessage().setOnClickListener(new OnClickListener() {
 
 				@Override

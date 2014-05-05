@@ -9,12 +9,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import com.android.volley.VolleyError;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
-
+import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.ApplicationConstants;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.IntentKey;
@@ -30,6 +28,10 @@ import biz.softtechnics.qodeme.utils.PlayServicesUtils;
 import biz.softtechnics.qodeme.utils.QrUtils;
 import biz.softtechnics.qodeme.utils.RestUtils;
 
+import com.android.volley.VolleyError;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
+
 /**
  * Created by Alex on 10/7/13.
  */
@@ -39,7 +41,7 @@ public class LoginActivity extends Activity {
     private static final int REQUEST_ACTIVITY_SCAN_QR_CODE = 2;
 
     private ImageButton mQrCode;
-    private ImageButton mSignin;
+    private Button mSignin;
     private EditText mPassword;
     private String mQrCodeText;
 
@@ -54,7 +56,7 @@ public class LoginActivity extends Activity {
         AnalyticsHelper.onCreateActivity(this);
         setContentView(R.layout.activity_login);
         mQrCode = (ImageButton) findViewById(R.id.qr_code);
-        mSignin = (ImageButton) findViewById(R.id.signin);
+        mSignin = (Button) findViewById(R.id.signin);
         mPassword = (EditText) findViewById(R.id.password);
         mQrCodeText = QodemePreferences.getInstance().getQrcode();
         refreshQrCode();
@@ -117,6 +119,8 @@ public class LoginActivity extends Activity {
 
         // Check if play service available
         PlayServicesUtils.checkGooglePlaySevices(this);
+        
+        mPassword.setTypeface(Application.typefaceMediumItalic);
     }
 
 

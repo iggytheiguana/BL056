@@ -26,37 +26,50 @@ import biz.softtechnics.qodeme.utils.FontUtils;
  */
 public class Application extends android.app.Application {
 
-    private WeakReference<MainActivity> weekRefMainActivity;
-    public static Typeface typefaceRegular;
+	private WeakReference<MainActivity> weekRefMainActivity;
+	public static Typeface typefaceRegular;
+	public static Typeface typefaceBold;
+	public static Typeface typefaceItalic;
+	public static Typeface typefaceItalicBold;
+	public static Typeface typefaceMedium;
+	public static Typeface typefaceMediumItalic;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        AnalyticsHelper.onCreateApplication(this);
-        QodemePreferences.initialize(getApplicationContext());
-        RestAsyncHelper.initialize(getApplicationContext());
-//        FontUtils.setDefaultFontFormAssets(getAssets(), CALIBRI_REGULAR.toString(), CALIBRI_BOLD.toString(), CALIBRI_ITALIC.toString(), CALIBRI_BOLD_ITALIC.toString());
-        FontUtils.setDefaultFontFormAssets(getAssets(), ROBOTO_REGULAR.toString(), ROBOTO_BOLD.toString(), ROBOTO_ITALIC.toString(), ROBOTO_BOLD_ITALIC.toString());
-        
-//        typefaceRegular = Typeface.createFromAsset(getAssets(), "fonts/RobotoBold.ttf");
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		AnalyticsHelper.onCreateApplication(this);
+		QodemePreferences.initialize(getApplicationContext());
+		RestAsyncHelper.initialize(getApplicationContext());
+		// FontUtils.setDefaultFontFormAssets(getAssets(),
+		// CALIBRI_REGULAR.toString(), CALIBRI_BOLD.toString(),
+		// CALIBRI_ITALIC.toString(), CALIBRI_BOLD_ITALIC.toString());
+		FontUtils.setDefaultFontFormAssets(getAssets(), ROBOTO_REGULAR.toString(),
+				ROBOTO_BOLD.toString(), ROBOTO_ITALIC.toString(), ROBOTO_BOLD_ITALIC.toString());
 
-    public void setMainActivity(MainActivity mainActivity){
-        weekRefMainActivity = new WeakReference<MainActivity>(mainActivity);
-    }
+		typefaceRegular = Typeface.createFromAsset(getAssets(), "fonts/RobotoRegular.ttf");
+		typefaceBold = Typeface.createFromAsset(getAssets(), "fonts/RobotoBold.ttf");
+		typefaceItalic = Typeface.createFromAsset(getAssets(), "fonts/RobotoItalic.ttf");
+		typefaceItalicBold = Typeface.createFromAsset(getAssets(), "fonts/RobotoBoldItalic.ttf");
+		typefaceMedium = Typeface.createFromAsset(getAssets(), "fonts/Roboto_Medium_2.ttf");
+		typefaceMediumItalic = Typeface.createFromAsset(getAssets(),
+				"fonts/Roboto_MediumItalic_2.ttf");
+	}
 
-    public MainActivity getMainActivity() {
-        if (weekRefMainActivity == null)
-            return null;
-        return weekRefMainActivity.get();
-    }
+	public void setMainActivity(MainActivity mainActivity) {
+		weekRefMainActivity = new WeakReference<MainActivity>(mainActivity);
+	}
 
-    public boolean isActive(){
-        MainActivity activity = getMainActivity();
-        if (activity != null && activity.isActive())
-            return true;
-        return false;
-    }
+	public MainActivity getMainActivity() {
+		if (weekRefMainActivity == null)
+			return null;
+		return weekRefMainActivity.get();
+	}
 
+	public boolean isActive() {
+		MainActivity activity = getMainActivity();
+		if (activity != null && activity.isActive())
+			return true;
+		return false;
+	}
 
 }

@@ -10,14 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_message"
-        android:divider="@null" />
+        android:divider="@null"
+        android:visibility="visible" />
 
-<!--     <android.support.v7.widget.GridLayout -->
-<!--         android:id="@+id/listview" -->
-<!--         android:layout_width="match_parent" -->
-<!--         android:layout_height="match_parent" -->
-<!--         android:animateLayoutChanges="true" -->
-<!--         android:columnCount="2" /> -->
+    <LinearLayout
+        android:id="@+id/listview1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_message"
+        android:divider="@null"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:visibility="gone" />
+    <!-- <com.jake.quiltview.QuiltView -->
+    <!-- android:id="@+id/quilt" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:padding="5dip" -->
+    <!-- > -->
+    <!-- </com.jake.quiltview.QuiltView> -->
+    <!-- <android.support.v7.widget.GridLayout -->
+    <!-- android:id="@+id/listview" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:animateLayoutChanges="true" -->
+    <!-- android:columnCount="2" /> -->
 
     <RelativeLayout
         android:id="@+id/layout_message"

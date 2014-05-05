@@ -18,6 +18,7 @@
     <string name="reject_user">Reject user</string>
     <string name="block_user">Block user</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="decline">Decline</string>
 
     <!--Test to be deleted-->
     <string name="action_item_1">Item 1</string>
@@ -86,4 +87,9 @@
     <string name="alert_no_access_to_external_storage">Check that SD card installed and it has free space!</string>
 
     <string name="created">Created:</string>
+    
+    <!-- Sign In item -->
+     <string name="not_you">Not You?</string>
+      <string name="clear_qr_code">Clear QR Code</string>
+      <string name="enter_password_and_scan_qr_code">Enter your password and scan your QR Code to log in.</string>
 </resources>

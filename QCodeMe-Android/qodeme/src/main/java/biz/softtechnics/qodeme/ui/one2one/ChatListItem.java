@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.sdk.ch;
+import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExAdapterBasedView;
 import biz.softtechnics.qodeme.ui.common.ExtendedListAdapter;
@@ -70,7 +72,8 @@ public class ChatListItem extends RelativeLayout implements
 	private LinearLayout dragView;
 	private CustomEdit edit;
 	private ImageView dragImage;
-	private ImageButton sendImage;
+	private ImageButton sendMessageBtn;
+	private ImageButton sendImgMessageBtn;
 	private View cornerTop;
 	private View cornerBottom;
 	private View cornerLeft;
@@ -276,10 +279,20 @@ public class ChatListItem extends RelativeLayout implements
 			showMessage();
 		}
 
-		getSendImage().setOnClickListener(new OnClickListener() {
+		getSendMessage().setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sendMessage();
+			}
+		});
+		
+		getSendImage().setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity activity = (MainActivity) v.getContext();
+				activity.setCurrentChatId(mContact.chatId);
+				activity.takePhotoFromGallery();
 			}
 		});
 
@@ -336,10 +349,16 @@ public class ChatListItem extends RelativeLayout implements
 				: (ImageView) findViewById(R.id.drag_image);
 	}
 
-	public ImageButton getSendImage() {
-		return sendImage = sendImage != null ? sendImage
+	public ImageButton getSendMessage() {
+		return sendMessageBtn = sendMessageBtn != null ? sendMessageBtn
 				: (ImageButton) findViewById(R.id.button_message);
 	}
+	public ImageButton getSendImage() {
+		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
+				: (ImageButton) findViewById(R.id.btn_camera);
+	}
+//	sendImgMessageBtn
+	
 
 	// public View getCornerTop() {
 	// return cornerTop = cornerTop != null ? cornerTop :
@@ -419,9 +438,9 @@ public class ChatListItem extends RelativeLayout implements
 				ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
 
 				if (s.length() > 0) {
-					getSendImage().setVisibility(View.VISIBLE);
+					getSendMessage().setVisibility(View.VISIBLE);
 				} else {
-					getSendImage().setVisibility(View.GONE);
+					getSendMessage().setVisibility(View.GONE);
 				}
 
 			}
@@ -431,7 +450,7 @@ public class ChatListItem extends RelativeLayout implements
 			@Override
 			public void onImeBack(CustomEdit ctrl) {
 				ChatFocusSaver.setFocusedChatId(0);
-				getSendImage().setVisibility(View.GONE);
+				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
 			}
 		});

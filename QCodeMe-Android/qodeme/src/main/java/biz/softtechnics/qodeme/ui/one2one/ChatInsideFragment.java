@@ -40,6 +40,7 @@ import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.ExtendedListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
@@ -73,7 +74,7 @@ public class ChatInsideFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton;
+	private ImageButton mSendButton, mBtnImageSend;
 	private EditText mMessageField;
 	private TextView mName;
 	private TextView mDate;
@@ -101,22 +102,25 @@ public class ChatInsideFragment extends Fragment {
 	public interface One2OneChatInsideFragmentCallback {
 		List<Message> getChatMessages(long chatId);
 
-		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
+		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,
+				long replyTo_Id, double latitude, double longitude, String senderName);
 
 		Typeface getFont(Fonts font);
 	}
 
 	/**
-	 * callback for reply messages 
-	 * @author 
-	 *
+	 * callback for reply messages
+	 * 
+	 * @author
+	 * 
 	 */
 	public interface One2OneChatListInsideFragmentCallback {
 		void startTypingMessage();
 
 		void stopTypingMessage();
 
-		void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
+		void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto,
+				long replyTo_Id, double latitude, double longitude, String senderName);
 	}
 
 	@Override
@@ -159,12 +163,23 @@ public class ChatInsideFragment extends Fragment {
 	}
 
 	private void initSendMessage() {
+		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sendMessage();
+			}
+		});
+		
+		mBtnImageSend.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				MainActivity activity = (MainActivity) getActivity();
+				activity.takePhotoFromGallery();
 			}
 		});
 
@@ -405,6 +420,22 @@ public class ChatInsideFragment extends Fragment {
 		});
 	}
 
+	public void sendImageMessage(String message) {
+
+		// we need to send websocket message that the user has stopped typing
+		sendUserStoppedTypingMessage();
+		mMessageField.setText("");
+		// Helper.hideKeyboard(getActivity(), mMessageField);
+		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "");
+		mMessageField.post(new Runnable() {
+			@Override
+			public void run() {
+				mMessageField.requestFocus();
+				// Helper.showKeyboard(getActivity(), mMessageField);
+			}
+		});
+	}
+
 	private void initListView() {
 
 		// final String myQrCOde = QodemePreferences.getInstance().getQrcode();
@@ -445,7 +476,7 @@ public class ChatInsideFragment extends Fragment {
 						return callback.getFont(font);
 					}
 
-				},chatListInsideFragmentCallback);
+				}, chatListInsideFragmentCallback);
 
 		mListView.setAdapter(mListAdapter);
 		mListView.setOnTouchListener(new View.OnTouchListener() {
@@ -605,23 +636,26 @@ public class ChatInsideFragment extends Fragment {
 			// typing
 			sendUserStoppedTypingMessage();
 			// Helper.hideKeyboard(getActivity(), mMessageField);
-			callback.sendMessage(getChatId(), message, photoUrl, hashPhoto, replyTo_Id, latitude, longitude, senderName);
+			callback.sendMessage(getChatId(), message, photoUrl, hashPhoto, replyTo_Id, latitude,
+					longitude, senderName);
 		}
 
-//		@Override
-//		public void sendReplyMessage(String qrCode, String message) {
-//			if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim())) {
-//				Toast.makeText(getActivity(), "Empty message can't be sent", Toast.LENGTH_SHORT)
-//						.show();
-//				return;
-//			}
-//			// we need to send websocket message that the user has stopped
-//			// typing
-//			sendUserStoppedTypingMessage();
-//			// Helper.hideKeyboard(getActivity(), mMessageField);
-//			callback.sendMessage(getChatId(), message);
-//
-//		}
+		// @Override
+		// public void sendReplyMessage(String qrCode, String message) {
+		// if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim()))
+		// {
+		// Toast.makeText(getActivity(), "Empty message can't be sent",
+		// Toast.LENGTH_SHORT)
+		// .show();
+		// return;
+		// }
+		// // we need to send websocket message that the user has stopped
+		// // typing
+		// sendUserStoppedTypingMessage();
+		// // Helper.hideKeyboard(getActivity(), mMessageField);
+		// callback.sendMessage(getChatId(), message);
+		//
+		// }
 	};
 
 }

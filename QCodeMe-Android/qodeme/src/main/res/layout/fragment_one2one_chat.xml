@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white" >
@@ -12,10 +13,8 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="2dp" >
+            android:layout_marginRight="0dp" >
 
             <LinearLayout
                 android:id="@+id/namebox"
@@ -31,14 +30,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="15dp"
-                    android:visibility="gone"
-                    android:layout_marginTop="5dp" />
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone" />
 
-                <TextView
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
                     android:id="@+id/name"
                     style="@style/TextView.Chat.Name"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:text="Item" />
             </LinearLayout>
 
@@ -52,11 +52,19 @@
                 android:visibility="visible" >
 
                 <ImageButton
+                    android:id="@+id/btn_favourite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="5dp"
                     android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_chat_favorite" />
+
+                <ImageButton
+                    android:id="@+id/btn_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="10dp"
                     android:src="@drawable/ic_camera" />
             </LinearLayout>
 
@@ -89,31 +97,69 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/textView_status"
-            style="@style/TextView.Chat.Name"
+        <ImageView
+            android:id="@+id/img_nameline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/header"
             android:layout_marginLeft="10dp"
-            android:padding="5dp"
-            android:text="Item" />
+            android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            android:id="@+id/textView_status"
+            style="@style/TextView.Chat.Name"
+            android:layout_below="@id/img_nameline"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Status" />
+
+        <ImageView
+            android:id="@+id/img_statusline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView_status"
+            android:background="@drawable/line_horizontal" />
+        <!-- <LinearLayout -->
+        <!-- android:id="@+id/linear_message" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_marginLeft="10dp" -->
+        <!-- android:orientation="horizontal" > -->
+
+        <biz.softtechnics.qodeme.ui.common.CustomLineView
+            style="@style/TextView.Message.Date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layout_message"
+            android:layout_below="@+id/img_statusline"
+            android:layout_marginLeft="10dp"
+            tools:padding="5dp"
+            tools:text_size="18sp" />
 
         <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/layout_message"
-            android:layout_below="@+id/textView_status"
+            android:layout_above="@+id/img_bottomline"
+            android:layout_below="@+id/img_statusline"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@null"
             android:listSelector="@android:color/transparent" />
+
+        <ImageView
+            android:id="@+id/img_bottomline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/layout_message"
+            android:background="@drawable/line_horizontal" />
 
         <RelativeLayout
             android:id="@+id/layout_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:paddingLeft="0dp"
-            android:paddingRight="10dp"
             android:visibility="visible" >
 
             <ImageButton
@@ -121,10 +167,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:background="@null"
-                android:padding="4dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_menu_send"
-                
                 android:visibility="visible" />
 
             <ImageButton
@@ -132,9 +178,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:background="@null"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
+                android:background="@null"
+                android:padding="10dp"
                 android:src="@drawable/ic_camera"
                 android:visibility="visible" />
 
@@ -148,8 +194,10 @@
                 android:layout_toRightOf="@id/imageButton_imgMessage"
                 android:hint="@string/message"
                 android:inputType="textMultiLine"
-                android:maxHeight="50dp" />
-            
+                android:padding="10dp" >
+
+                <requestFocus />
+            </EditText>
         </RelativeLayout>
     </RelativeLayout>
 

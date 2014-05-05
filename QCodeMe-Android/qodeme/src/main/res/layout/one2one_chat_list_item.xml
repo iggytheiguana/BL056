@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <biz.softtechnics.qodeme.ui.one2one.ChatListItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
     android:layout_width="match_parent"
     android:layout_height="360dp" >
 
@@ -11,16 +12,7 @@
 
         <!-- android:background="@color/conversation_card_background" -->
 
-        <ImageView
-            android:id="@+id/drag_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:paddingLeft="4dp"
-            android:paddingTop="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/chat_panel_resizer_pressed" />
+        
 
         <!-- <View -->
         <!-- android:id="@+id/corner_top" -->
@@ -64,7 +56,7 @@
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp" >
 
-            <TextView
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
                 android:id="@+id/name"
                 style="@style/TextView.Chat.Name"
                 android:layout_width="wrap_content"
@@ -72,21 +64,22 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btn_favourite"
-                android:singleLine="true"
                 android:ellipsize="end"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
+                android:singleLine="true"
                 android:text="Item"
                 android:textStyle="bold" />
 
-            
-            <ImageButton android:id="@+id/btn_camera"
+            <ImageButton
+                android:id="@+id/btn_camera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/ic_camera" />
+
             <ImageButton
                 android:id="@+id/btn_favourite"
                 android:layout_width="wrap_content"
@@ -178,14 +171,22 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <View
+        <ImageView
             android:id="@+id/top_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="-5dp"
-            android:layout_marginRight="-5dp"
             android:layout_below="@+id/header"
-            android:background="@color/line_color" />
+            android:background="@drawable/line_horizontal" />
+
+        <biz.softtechnics.qodeme.ui.common.CustomLineView
+            style="@style/TextView.Message.Date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layout_message"
+            android:layout_below="@+id/top_line"
+            android:layout_marginLeft="10dp"
+            tools:padding="5dp"
+            tools:text_size="18sp" />
 
         <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
             android:id="@+id/subList"
@@ -196,6 +197,17 @@
             android:divider="@null"
             android:fadingEdge="none"
             android:visibility="visible" />
+        
+        <ImageView
+            android:id="@+id/drag_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="4dp"
+            android:paddingTop="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/chat_panel_resizer_pressed" />
     </RelativeLayout>
 
 </biz.softtechnics.qodeme.ui.one2one.ChatListItem>

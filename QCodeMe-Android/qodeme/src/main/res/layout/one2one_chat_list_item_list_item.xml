@@ -45,32 +45,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
-        <biz.softtechnics.qodeme.ui.common.CustomDotView
-            android:id="@+id/date"
-            style="@style/TextView.Message.Date"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:minHeight="10dp"
-            android:text="date"
-            tools:padding="5dp"
-            tools:text_size="18sp" />
-
-        <biz.softtechnics.qodeme.ui.common.TextViewRegular
-            android:id="@+id/message"
-            style="@style/TextView.Message.Text"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:text="Item"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:orientation="horizontal" >
+
+            <biz.softtechnics.qodeme.ui.common.CustomDotView
+                android:id="@+id/date"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                tools:padding="5dp"
+                tools:text_size="18sp" />
+            <!-- style="@style/TextView.Message.Date" -->
+
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/message"
+                style="@style/TextView.Message.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:text="Item"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <biz.softtechnics.qodeme.ui.common.CustomDotView
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                tools:padding="5dp"
+                tools:text_size="18sp" />
+
+            <ImageView
+                android:id="@+id/imageView_item"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:scaleType="fitStart"
+                android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
 
     <RelativeLayout
