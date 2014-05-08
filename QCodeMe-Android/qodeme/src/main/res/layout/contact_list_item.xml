@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <biz.softtechnics.qodeme.ui.contacts.ContactListItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selectable_background_actionbar"
@@ -11,11 +12,14 @@
         android:paddingTop="10dp">
 
         <biz.softtechnics.qodeme.ui.common.CustomDotView
+            android:id="@+id/textView_dot"
             style="@style/TextView.Chat.Name"
-            android:layout_width="15dp"
+            android:layout_width="25dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
             android:gravity="center_vertical"
+            tools:text_size="22sp" 
+            tools:padding="5dp"
             android:text="" />
 
         <TextView
@@ -24,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
+            android:paddingLeft="5dp"
             android:text="Text" />
     </LinearLayout>
 
@@ -33,19 +37,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <biz.softtechnics.qodeme.ui.common.CustomDotView
+       <biz.softtechnics.qodeme.ui.common.CustomDotView
             style="@style/TextView.Chat.Name"
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
-            android:text=""
-            android:visibility="invisible" />
+            android:gravity="center_vertical"
+            tools:text_size="22sp" 
+            tools:padding="5dp"
+            android:visibility="invisible"
+            android:text="" />
 
         <TextView
             android:id="@+id/contact_info"
             style="@style/TextView.Chat.Date"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:paddingLeft="5dp"
             android:text="TextLocation" />
     </LinearLayout>
 

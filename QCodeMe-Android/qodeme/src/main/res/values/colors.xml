@@ -26,4 +26,5 @@
     <color name="date_divider_color">#999</color>
 
     <color name="line_color">#cccccc</color>
+    <color name="text_message_not_read">#404040</color>
 </resources>
