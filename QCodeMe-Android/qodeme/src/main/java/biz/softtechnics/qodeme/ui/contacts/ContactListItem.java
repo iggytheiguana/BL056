@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.io.model.Contact;
+import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.ExAdapterBasedView;
 import biz.softtechnics.qodeme.utils.Converter;
 
@@ -25,6 +27,7 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
     private final Context mContext;
     private ImageView mQrCode;
     private TextView mName;
+    private CustomDotView mTextViewDot;
     private View mDragView;
     private Contact mContact;
     private Object mCallback;
@@ -45,8 +48,12 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
 
         getName().setText(mContact.title != null ? mContact.title : "User");
         getName().setTextColor(color);
+        
+        getDot().setDotColor(color);
+        getDot().invalidate();
 
-        SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+//        SimpleDateFormat format = new SimpleDateFormat("h:mm a", Locale.US);
+        SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a",Locale.US);
         String dateStr = fmtOut.format(new Date(Converter.getCrurentTimeFromTimestamp(mContact.date)));
         getContactInfo().setText(dateStr + ", " + mContact.location);
     }
@@ -55,6 +62,10 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
 
     public TextView getName() {
         return mName = mName != null ? mName : (TextView) findViewById(R.id.name);
+    }
+    
+    public CustomDotView getDot() {
+        return mTextViewDot = mTextViewDot != null ? mTextViewDot : (CustomDotView) findViewById(R.id.textView_dot);
     }
 
     public TextView getContactInfo() {

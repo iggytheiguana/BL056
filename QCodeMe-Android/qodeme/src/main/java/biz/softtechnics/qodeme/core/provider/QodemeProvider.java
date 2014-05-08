@@ -161,9 +161,9 @@ public class QodemeProvider extends ContentProvider{
             }
 
             case MESSAGES: {
-                db.insertOrThrow(Tables.MESSAGES, null, values);
+                long id = db.insertOrThrow(Tables.MESSAGES, null, values);
                 notifyChange(uri, syncToNetwork);
-                return Messages.buildMessageUri(values.getAsString(Messages.MESSAGE_ID));
+                return Messages.buildMessageUri(""+id);//values.getAsString(Messages.MESSAGE_ID));
             }
 
             default: {

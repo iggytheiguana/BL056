@@ -92,6 +92,14 @@ public class QodemeContract {
 		 * State of chat type=1 (private_group) или 2 (public_group)
 		 */
 		String CHAT_TYPE = "chat_type";
+		
+		String CHAT_LATITUDE = "chat_latitude";
+		String CHAT_LONGITUDE = "chat_longitude";
+		String CHAT_NUMBER_OF_MEMBER = "chat_number_of_member";
+		String CHAT_DESCRIPTION = "chat_description";
+		String CHAT_IS_LOCKED = "chat_is_locked";
+		String CHAT_NUMBER_OF_FLAGGED = "chat_number_of_flagged";
+		String CHAT_STATUS = "chat_status";
 	}
 
 	interface MessagesColumns {

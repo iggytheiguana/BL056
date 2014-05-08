@@ -92,4 +92,6 @@
      <string name="not_you">Not You?</string>
       <string name="clear_qr_code">Clear QR Code</string>
       <string name="enter_password_and_scan_qr_code">Enter your password and scan your QR Code to log in.</string>
+      
+      <string name="done">Done</string>
 </resources>

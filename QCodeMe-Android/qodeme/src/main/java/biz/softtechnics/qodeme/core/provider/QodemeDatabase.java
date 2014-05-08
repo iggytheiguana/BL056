@@ -75,7 +75,14 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Chats.CHAT_TITLE + " TEXT,"
                 + Chats.CHAT_TAGS + " TEXT,"
                 + Chats.CHAT_COLOR + " INTEGER NOT NULL DEFAULT 0,"
-                + Chats.CHAT_TYPE + " INTEGER NOT NULL)");
+                + Chats.CHAT_TYPE + " INTEGER NOT NULL," 
+                + Chats.CHAT_LATITUDE + " TEXT,"
+                + Chats.CHAT_LONGITUDE + " TEXT,"
+                + Chats.CHAT_NUMBER_OF_MEMBER + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_DESCRIPTION + " TEXT,"
+                + Chats.CHAT_IS_LOCKED + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_NUMBER_OF_FLAGGED + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_STATUS + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.MESSAGES + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

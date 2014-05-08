@@ -15,5 +15,9 @@ public class ChatLoad {
     public String[] members;
     public String qrcode;
     public Message[] messages;
+    public String latitude;
+    public String longitude;
+    public String description;
+    public String status;
 
 }

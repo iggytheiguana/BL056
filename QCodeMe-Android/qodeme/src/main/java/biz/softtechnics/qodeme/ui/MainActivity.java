@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
@@ -379,6 +380,7 @@ public class MainActivity extends BaseActivity implements
 						QodemeContract.Contacts.updateContactInfoValues(title, color, updated),
 						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
 				SyncHelper.requestManualSync();
+				mViewPager.setCurrentItem(1);
 				break;
 			case REQUEST_ACTIVITY_PHOTO_GALLERY:
 				if (!(data == null)) {
@@ -1097,6 +1099,8 @@ public class MainActivity extends BaseActivity implements
 
 			}
 			one2OneChatInsideFragment.updateUi();
+			mViewPager.setCurrentItem(1);
+			
 		}
 	}
 
@@ -1189,11 +1193,18 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName) {
-		getContentResolver().insert(
+		Uri uri = getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
 						replyTo_Id, latitude, longitude, senderName));
 		SyncHelper.requestManualSync();
+//		Long rawContactId = ContentUris.parseId(uri); 
+		String carId = uri.getPathSegments().get(1);
+
+		Log.d("insert", "Content inserted at: " + uri);
+		Log.d("insert", "Car_id: " + carId);
+
+		Log.d("insert", uri+"");
 		/*
 		 * RestAsyncHelper.getInstance().chatMessage(chatId, message,
 		 * unixTimeStamp, new RestListener() {
@@ -1520,5 +1531,13 @@ public class MainActivity extends BaseActivity implements
 
 	public long getCurrentChatId() {
 		return currentChatId;
+	}
+	public void callColorPicker(Contact ce) {
+		Intent i = new Intent(getContext(), ContactDetailsActivity.class);
+		i.putExtra(QodemeContract.Contacts._ID, ce._id);
+		i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
+		i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
+		i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
+		startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
 	}
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 import android.util.Log;
+
+import com.google.android.gms.internal.cu;
 import com.google.common.collect.Lists;
 
 import android.graphics.Bitmap;
@@ -41,6 +44,7 @@ import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.ui.MainActivity;
+import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.ExtendedListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
@@ -82,6 +86,9 @@ public class ChatInsideFragment extends Fragment {
 
 	private boolean mFirstUpdate = true;
 	private ImageView imgUserTyping;
+	private CustomDotView customDotViewUserTyping;
+	private View footerView;
+	private boolean isUsertyping = false;
 
 	public static ChatInsideFragment newInstance(Contact c, boolean firstUpdate) {
 		ChatInsideFragment f = new ChatInsideFragment();
@@ -172,12 +179,12 @@ public class ChatInsideFragment extends Fragment {
 				sendMessage();
 			}
 		});
-		
+
 		mBtnImageSend.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
+
 				MainActivity activity = (MainActivity) getActivity();
 				activity.takePhotoFromGallery();
 			}
@@ -234,6 +241,20 @@ public class ChatInsideFragment extends Fragment {
 
 	}
 
+	Handler handlerForUserTyping = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			if (isUsertyping) {
+				if (customDotViewUserTyping.getVisibility() == View.INVISIBLE
+						|| customDotViewUserTyping.getVisibility() == View.GONE)
+					customDotViewUserTyping.setVisibility(View.VISIBLE);
+				else
+					customDotViewUserTyping.setVisibility(View.INVISIBLE);
+				
+				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
+			}
+		};
+	};
+
 	private void sendRegisterForChatEvents() {
 		// this method sends a message over the websocket registering for
 		// notifications that
@@ -277,14 +298,23 @@ public class ChatInsideFragment extends Fragment {
 
 	private void receiveOtherUserStoppedTypingEvent(long chatId) {
 		if (chatId == getChatId()) {
-			this.imgUserTyping.setVisibility(View.INVISIBLE);
+//			this.imgUserTyping.setVisibility(View.INVISIBLE);
+			customDotViewUserTyping.setVisibility(View.INVISIBLE);
+			footerView.setVisibility(View.GONE);
+			isUsertyping = false;
 		}
 	}
 
 	private void receiveOtherUserStartedTypingEvent(long chatId) {
 		if (chatId == getChatId()) {
 			// we make visible the image view to show the other user is typing
-			this.imgUserTyping.setVisibility(View.VISIBLE);
+//			this.imgUserTyping.setVisibility(View.VISIBLE);
+			customDotViewUserTyping.setVisibility(View.VISIBLE);
+			footerView.setVisibility(View.VISIBLE);
+			if (!isUsertyping) {
+				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
+				isUsertyping = true;
+			}
 		}
 	}
 
@@ -453,7 +483,16 @@ public class ChatInsideFragment extends Fragment {
 		Canvas c = new Canvas(bmp);
 		c.drawCircle(20, 20, 20, paint);
 		imgUserTyping.setImageBitmap(bmp);
-		imgUserTyping.setVisibility(View.INVISIBLE);
+		imgUserTyping.setVisibility(View.GONE);
+
+		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		footerView.setVisibility(View.GONE);
+
+		customDotViewUserTyping = (CustomDotView) footerView.findViewById(R.id.dotView_userTyping);
+
+		customDotViewUserTyping.setDotColor(oponentColor);
+		customDotViewUserTyping.setSecondVerticalLine(true);
+		customDotViewUserTyping.invalidate();
 
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
 		mDate = (TextView) getView().findViewById(R.id.date);
@@ -478,7 +517,9 @@ public class ChatInsideFragment extends Fragment {
 
 				}, chatListInsideFragmentCallback);
 
+		mListView.addFooterView(footerView);
 		mListView.setAdapter(mListAdapter);
+
 		mListView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {

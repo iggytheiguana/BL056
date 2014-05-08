@@ -17,7 +17,7 @@ public interface RestClient {
     void chatMessage(long chatId, String message, long date,String photoUrl, int hasPhoto,int replyToId,int isFlagged,String senderName, double latitude, double longitude, RestListener callback);
     void chatLoad(long chatId, int page, int limit, RestListener callback);
     void contactAdd(String contactCqroce,double latitude, double longitude, RestListener callback);
-    void contactRemove(long contactId, RestListener callback);
+    void contactRemove(String contactId, RestListener callback);
     void chatDropMember(long chatId, String memberQrcode, RestListener callback);
     void lookup(String searchQuery, RestListener callback);
     void registerToken(String gcmToken, RestListener callback);

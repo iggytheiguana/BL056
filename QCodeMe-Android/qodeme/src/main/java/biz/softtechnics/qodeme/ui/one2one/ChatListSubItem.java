@@ -179,7 +179,6 @@ public class ChatListSubItem extends RelativeLayout implements
 				@Override
 				public void onClick(View v) {
 					initSendMessage();
-
 				}
 			});
 			getDate().setSecondVerticalLine(me.isFirst);
@@ -211,7 +210,7 @@ public class ChatListSubItem extends RelativeLayout implements
 			case QodemeContract.Messages.State.READ_LOCAL:
 			case QodemeContract.Messages.State.WAS_READ:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_reed));
-				getDate().setDotColor(context.getResources().getColor(R.color.text_message_reed));
+				getDate().setDotColor(context.getResources().getColor(R.color.text_message_not_read));
 				break;
 			}
 		} else {

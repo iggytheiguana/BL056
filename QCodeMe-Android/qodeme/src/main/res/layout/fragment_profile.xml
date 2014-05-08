@@ -99,36 +99,45 @@
                     android:layout_marginTop="15dp"
                     android:orientation="vertical" >
 
-                    <TextView
+                    <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                        style="@style/TextView.Message.Date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Created:"
-                        android:textColor="@android:color/black"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_message_not_read"
+                        android:textSize="14sp" />
 
-                    <TextView android:id="@+id/textView_createdDate"
+                    <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                        android:id="@+id/textView_createdDate"
+                        style="@style/TextView.Message.Date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="March 04, 2014, 1:23pm"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@color/text_message_not_read"
+                        android:textSize="14sp" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" >
 
-                        <TextView android:id="@+id/textView_location"
+                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                            android:id="@+id/textView_location"
+                            style="@style/TextView.Message.Date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Seattle, WA USA"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@color/text_message_not_read"
+                            android:textSize="14sp" />
 
-                        <TextView
+                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                            style="@style/TextView.Message.Date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:text="remove"
                             android:textColor="#059BE9"
+                            android:textSize="14sp"
                             android:visibility="gone" />
                     </LinearLayout>
                 </LinearLayout>
@@ -148,16 +157,28 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" >
 
-            <TextView android:id="@+id/textView_status"
+            <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                android:id="@+id/textView_status"
+                style="@style/TextView.Chat.Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="Status Message here."
+                android:textColor="@color/text_message_not_read" />
+
+            <EditText
+                android:id="@+id/editText_status"
+                style="@style/TextView.Chat.Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btnEditStatus"
+                android:text=""
                 android:textColor="@android:color/black"
-                android:textStyle="bold" />
+                android:visibility="gone" />
 
             <ImageButton
-                android:id="@+id/btnEdit"
+                android:id="@+id/btnEditStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -166,6 +187,18 @@
                 android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/ic_edit" />
+
+            <Button
+                android:id="@+id/btnSetStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/selector_button_blue"
+                android:padding="10dp"
+                android:text="@string/done"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <View
@@ -179,30 +212,33 @@
             android:id="@+id/linear_discription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp" >
+            android:layout_margin="10dp"
+            android:orientation="vertical" >
 
-            <RelativeLayout
+            <RelativeLayout android:id="@+id/relative_Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
                 <biz.softtechnics.qodeme.ui.common.CustomDotView
                     android:id="@+id/textView_profileDot"
                     style="@style/TextView.Message.Date"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_marginTop="10dp"
                     android:minHeight="10dp"
                     android:text="date"
-                    tools:text_size="16dp"
+                    tools:text_size="18dp"
                     tools:vertical_line="false" />
 
-                <ImageButton android:id="@+id/imgBtn_colorWheelSmall"
+                <ImageButton
+                    android:id="@+id/imgBtn_colorWheelSmall"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@id/btnEdit"
+                    android:layout_toLeftOf="@+id/btnEdit"
                     android:background="@drawable/bg_add_color" />
+
                 <ImageButton
                     android:id="@+id/btnEdit"
                     android:layout_width="wrap_content"
@@ -214,8 +250,9 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_edit" />
 
-                <TextView
+                <biz.softtechnics.qodeme.ui.common.TextViewMedium
                     android:id="@+id/textView_profilename"
+                    style="@style/TextView.Chat.Name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/textView_profileDot"
@@ -224,8 +261,9 @@
                     android:paddingTop="10dp"
                     android:text="USA" />
 
-                <TextView
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
                     android:id="@+id/textView_creationDateLocation"
+                    style="@style/TextView.Message.Date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textView_profilename"
@@ -233,7 +271,37 @@
                     android:paddingBottom="10dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="5dp"
-                    android:text="USA" />
+                    android:text="USA"
+                    android:textColor="@color/text_message_not_read"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/relative_editName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <EditText
+                    android:id="@+id/editText_name"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btnSetName"
+                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnSetName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/selector_button_blue"
+                    android:text="@string/done"
+                    android:visibility="visible" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -345,11 +413,14 @@
                 android:background="#E4E7EC"
                 android:visibility="gone" />
 
-            <TextView android:id="@+id/textView_totalMessages"
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_totalMessages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="1020 messages" />
+                android:text="1020 messages"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="2dp"
@@ -357,11 +428,14 @@
                 android:layout_marginLeft="10dp"
                 android:background="#E4E7EC" />
 
-            <TextView android:id="@+id/textView_totalPhoto"
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_totalPhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="32 photos" />
+                android:textColor="@color/text_message_not_read"
+                android:text="32 photos"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <View
@@ -392,12 +466,13 @@
                     android:background="@null"
                     android:src="@drawable/bg_add_color" />
 
-                <TextView
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="Edit Color"
                     android:textColor="#BABABA"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
