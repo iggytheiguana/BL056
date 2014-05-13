@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import biz.softtechnics.qodeme.R;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.ui.common.ExListAdapter;
@@ -49,6 +50,8 @@ public class ChatListFragment extends Fragment {
 
 	public interface One2OneChatListFragmentCallback {
 		List<Contact> getContactList();
+		
+		List<ChatLoad> getChatList(int type);
 
 		List<Message> getChatMessages(long chatId);
 
@@ -60,12 +63,16 @@ public class ChatListFragment extends Fragment {
 		void setChatHeight(long chatId, int height);
 
 		void showChat(Contact c, boolean firstUpdate);
+		
+		void showChat(ChatLoad c, boolean firstUpdate);
 
 		Typeface getFont(Fonts font);
 
 		int getNewMessagesCount(long chatId);
 
 		void messageRead(long chatId);
+		
+		Contact getContact(String qrString);
 	}
 
 	@Override
@@ -240,6 +247,36 @@ public class ChatListFragment extends Fragment {
 						callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
 								latitude, longitude, senderName);
 
+					}
+
+					@Override
+					public List<Message> getMessages(long chatId) {
+						return null;
+					}
+
+					@Override
+					public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
+							long replyTo_Id, double latitude, double longitude, String senderName) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onDoubleTap(View view, int position, ChatLoad c) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSingleTap(View view, int position, ChatLoad c) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public Contact getContact(String qrCode) {
+						// TODO Auto-generated method stub
+						return null;
 					}
 				});
 		mListView.setAdapter(mListAdapter);

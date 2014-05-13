@@ -19,14 +19,6 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal" >
 
-            <ImageView
-                android:id="@+id/img_qr"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/logo"
-                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -172,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btnEditStatus"
+                android:layout_toLeftOf="@+id/btnSetStatus"
                 android:text=""
                 android:textColor="@android:color/black"
                 android:visibility="gone" />
@@ -305,82 +297,6 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linear_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone" >
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="#hashtag, #hashtag, #hashtag"
-                    android:textColor="#059BE9" />
-
-                <ImageButton
-                    android:id="@+id/btnEdit1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:background="@null"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_edit" />
-            </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="Title of Conversation"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:text="xksnckndcvsndvkn vkdnvkdnsvk kvndkvnk svknaskvnk bnknfkbvn knsknk ndvksn scksnkcnsdkvnckasdn kwnfedasfask;lm avnks aksnvknasdkvgnksng kabfavafm"
-                android:textColor="@android:color/black" />
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="Include conversation in search?"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:id="@+id/btnEdit1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:background="@null"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_edit" />
-            </RelativeLayout>
-        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"

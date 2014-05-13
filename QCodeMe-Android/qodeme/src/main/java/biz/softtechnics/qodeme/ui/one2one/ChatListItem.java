@@ -213,6 +213,12 @@ public class ChatListItem extends RelativeLayout implements
 					public Typeface getFont(Fonts font) {
 						return mCallback.getFont(font);
 					}
+
+					@Override
+					public Contact getContact(String senderQrcode) {
+						// TODO Auto-generated method stub
+						return null;
+					}
 				}, callbackChatListInsideFragmentCallback);
 
 		if (listData != null)

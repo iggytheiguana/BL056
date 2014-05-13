@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +35,9 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
     private Contact mContact;
     private Object mCallback;
     private int mPosition;
+    private CheckBox mCheckBox;
     private TextView mContactInfoTextView;
+    private boolean isAddContactToChat = false;
 
     public ContactListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,7 +45,7 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
     }
 
     @Override
-    public void fill(ContactListItemEntity contactListItemEntity) {
+    public void fill(final ContactListItemEntity contactListItemEntity) {
         this.mContact = contactListItemEntity.getContact();
         int color = mContact.color == 0 ? Color.GRAY : mContact.color;
         String sQrCode = mContact.qrCode;
@@ -51,17 +56,41 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
         
         getDot().setDotColor(color);
         getDot().invalidate();
+        if(isAddContactToChat){
+        	getCheckBox().setVisibility(View.VISIBLE);
+        	getCheckBox().setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					contactListItemEntity.setChecked(isChecked);
+				}
+			});
+        }else{
+        	getCheckBox().setVisibility(View.GONE);
+        }
 
 //        SimpleDateFormat format = new SimpleDateFormat("h:mm a", Locale.US);
         SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a",Locale.US);
         String dateStr = fmtOut.format(new Date(Converter.getCrurentTimeFromTimestamp(mContact.date)));
         getContactInfo().setText(dateStr + ", " + mContact.location);
+        
+        getCheckBox().setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				contactListItemEntity.setChecked(isChecked);
+			}
+		});
     }
 
     ;
 
     public TextView getName() {
         return mName = mName != null ? mName : (TextView) findViewById(R.id.name);
+    }
+    
+    public CheckBox getCheckBox() {
+        return mCheckBox = mCheckBox != null ? mCheckBox : (CheckBox) findViewById(R.id.checkbox_add);
     }
     
     public CustomDotView getDot() {
@@ -83,4 +112,12 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
         this.mPosition = position;
         fill(contactListItemEntity);
     }
+
+	public void setAddContactToChat(boolean isAddContactToChat) {
+		this.isAddContactToChat = isAddContactToChat;
+	}
+
+	public boolean isAddContactToChat() {
+		return isAddContactToChat;
+	}
 }

@@ -431,7 +431,7 @@ public class ChatInsideFragment extends Fragment {
 
 	private void sendMessage() {
 
-		String message = mMessageField.getText().toString();
+		String message = mMessageField.getText().toString().trim();
 		if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim())) {
 			Toast.makeText(getActivity(), "Empty message can't be sent", Toast.LENGTH_SHORT).show();
 			return;
@@ -513,6 +513,12 @@ public class ChatInsideFragment extends Fragment {
 					@Override
 					public Typeface getFont(Fonts font) {
 						return callback.getFont(font);
+					}
+
+					@Override
+					public Contact getContact(String senderQrcode) {
+						// TODO Auto-generated method stub
+						return null;
 					}
 
 				}, chatListInsideFragmentCallback);

@@ -58,7 +58,7 @@
                 android:layout_height="match_parent"
                 tools:padding="5dp"
                 tools:text_size="18sp" />
-            <!-- style="@style/TextView.Message.Date" -->
+<!--             style="@style/TextView.Message.Date" -->
 
             <biz.softtechnics.qodeme.ui.common.TextViewRegular
                 android:id="@+id/message"
@@ -75,7 +75,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/linearLayout_img"
             android:layout_width="match_parent"
@@ -106,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/linear_message"
         android:paddingLeft="0dp"
-        android:paddingRight="10dp"
+        android:paddingRight="0dp"
         android:visibility="gone" >
 
         <ImageButton
@@ -115,7 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@null"
-            android:padding="4dp"
+            android:padding="10dp"
             android:src="@drawable/ic_menu_send"
             android:visibility="visible" />
 
@@ -125,9 +124,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:background="@null"
-            android:padding="4dp"
+            android:padding="10dp"
             android:src="@drawable/ic_menu_send"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <!-- <EditText -->
         <!-- android:id="@+id/edit_message" -->

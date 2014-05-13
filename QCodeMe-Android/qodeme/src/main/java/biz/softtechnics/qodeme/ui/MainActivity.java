@@ -53,12 +53,15 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,19 +70,27 @@ import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.accounts.GenericAccountService;
 import biz.softtechnics.qodeme.core.data.IntentKey;
+import biz.softtechnics.qodeme.core.data.entities.ChatType;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.RestAsyncHelper;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.io.model.ModelHelper;
 import biz.softtechnics.qodeme.core.io.responses.BaseResponse;
+import biz.softtechnics.qodeme.core.io.responses.ChatAddMemberResponse;
+import biz.softtechnics.qodeme.core.io.responses.ChatCreateResponse;
 import biz.softtechnics.qodeme.core.io.utils.RestError;
 import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
 import biz.softtechnics.qodeme.core.io.utils.RestListener;
@@ -87,12 +98,15 @@ import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import biz.softtechnics.qodeme.core.sync.SyncHelper;
 import biz.softtechnics.qodeme.ui.common.FullChatListAdapter;
 import biz.softtechnics.qodeme.ui.common.MenuListAdapter;
+import biz.softtechnics.qodeme.ui.common.MenuListAddToChatAdapter;
 import biz.softtechnics.qodeme.ui.contacts.ContactDetailsActivity;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItem;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItemEntity;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItemInvited;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
+import biz.softtechnics.qodeme.ui.one2one.ChatInsideGroupFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListFragment;
+import biz.softtechnics.qodeme.ui.one2one.ChatListGroupFragment;
 import biz.softtechnics.qodeme.ui.preferences.SettingsActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeCaptureActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeShowActivity;
@@ -107,8 +121,10 @@ import biz.softtechnics.qodeme.utils.NullHelper;
 
 import com.android.volley.VolleyError;
 import com.flurry.sdk.ch;
+import com.flurry.sdk.en;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.internal.cn;
 import com.google.android.gms.location.LocationClient;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -127,6 +143,8 @@ public class MainActivity extends BaseActivity implements
 	private static final int REQUEST_ACTIVITY_PHOTO_GALLERY = 4;
 	private static final int REQUEST_ACTIVITY_CAMERA = 5;
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
+	private static final String CHAT_LIST_PRIVATE_FRAGMENT = "chat_list_private_fragment";
+	private static final String CHAT_LIST_PUBLIC_FRAGMENT = "chat_list_public_fragment";
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
 	private static final int DEFAULT_HEIGHT_DP = 200;
 
@@ -140,28 +158,34 @@ public class MainActivity extends BaseActivity implements
 	private boolean mIsSearchActive;
 	private String mSearchText;
 	private long currentChatId = -1;
+	private int chatType = 0;
+	private int fullChatIndex = 0;
 
 	// Fonts cache
 	private Map<Fonts, Typeface> fontMap = new HashMap();
 
 	// Memory cache
 	private MenuListAdapter<ContactListItemEntity> mContactListAdapter;
+	// private MenuListAddToChatAdapter<ContactListItemEntity>
+	// mContactListAddChatAdapter;
 	private Map<Long, List<Message>> mChatMessagesMap = Maps.newHashMap();
 	private Map<Long, Long> mLastMessageInChatMap;
 	private Map<Long, Integer> mChatHeightMap;
 	private boolean mContactInfoUpdated;
 	private List<Contact> mContacts;
 	private List<Contact> mApprovedContacts;
+	private List<ChatLoad> mChatList;
 	private Map<Long, Integer> mChatNewMessagesMap;
 
 	private ContactListLoader mContactListLoader;
 	private MessageListLoader mMessageListLoader;
+	private ChatLoadListLoader mChatLoadListLoader;
 	private boolean mIsFirstResume;
 	private LocationClient mLocationClient;
 	// private Location mCurrentLocation;
 	private String mSearchFilter;
 	private boolean mKeyboardActive;
-
+	private boolean isAddContact = false;
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -217,6 +241,21 @@ public class MainActivity extends BaseActivity implements
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
 		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int arg0) {
+				fullChatIndex = arg0;
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+			}
+		});
 	}
 
 	private void initKeyboardListener() {
@@ -229,6 +268,30 @@ public class MainActivity extends BaseActivity implements
 						mKeyboardActive = (heightDiff > 100);
 					}
 				});
+		mDrawerLayout.setDrawerListener(new DrawerListener() {
+
+			@Override
+			public void onDrawerStateChanged(int arg0) {
+
+			}
+
+			@Override
+			public void onDrawerSlide(View arg0, float arg1) {
+
+			}
+
+			@Override
+			public void onDrawerOpened(View arg0) {
+
+			}
+
+			@Override
+			public void onDrawerClosed(View arg0) {
+				isAddContact = false;
+				mContactListAdapter.notifyDataSetChanged();
+				// mContactListView.setAdapter(mContactListAdapter);
+			}
+		});
 	}
 
 	private Handler mHandler = new Handler() // handler for commiting fragment
@@ -302,13 +365,58 @@ public class MainActivity extends BaseActivity implements
 		// zoomImageFromThumb(expandedImageView, 0);
 	}
 
+	@SuppressLint("NewApi")
+	public void showOne2OneChatFragment(ChatLoad c, boolean firstUpdate) {
+		// // ChatInsideFragment chatInsideFragment = (ChatInsideFragment)
+		// // getSupportFragmentManager()
+		// // .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
+		// FullViewChatFragment chatInsideFragment = (FullViewChatFragment)
+		// getSupportFragmentManager()
+		// .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
+		// FragmentTransaction transaction =
+		// getSupportFragmentManager().beginTransaction();
+		// if (chatInsideFragment != null) {
+		//
+		// getSupportFragmentManager().popBackStack();
+		// transaction.remove(chatInsideFragment);
+		// }
+		//
+		// // chatInsideFragment = ChatInsideFragment.newInstance(c,
+		// firstUpdate);
+		// chatInsideFragment = FullViewChatFragment.newInstance(c,
+		// firstUpdate);
+		// transaction.setCustomAnimations(R.anim.zoom_in, R.anim.zoom_out);
+		// transaction.replace(R.id.content_frame, chatInsideFragment,
+		// CHAT_INSIDE_FRAGMENT);
+		// transaction.addToBackStack(null);
+		// transaction.commit();
+		// mActionBar.setDisplayShowHomeEnabled(true);
+		// mActionBar.setDisplayHomeAsUpEnabled(true);
+		// mActionBar.setDisplayShowCustomEnabled(false);
+		// mSearchMenuItem.setVisible(false);
+		// mIsSearchActive = mSearchView.isShown();
+		// mSearchText = mSearchView.getQuery().toString();
+		// if (mIsSearchActive) {
+		// MenuItemCompat.collapseActionView(mSearchMenuItem);
+		// }
+		getActionBar().hide();
+		if (mPagerAdapter != null)
+			mPagerAdapter = null;
+		mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
+		mViewPager.setAdapter(mPagerAdapter);
+		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
+		expandedImageView.setVisibility(View.VISIBLE);
+		// zoomImageFromThumb(expandedImageView, 0);
+	}
+
 	private void initActionBar() {
 		mActionBar = getSupportActionBar();
 		mActionBar.setIcon(R.drawable.ic_action_camera);
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowHomeEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		View customActionView = getLayoutInflater().inflate(R.layout.action_home, null);
+		final RelativeLayout customActionView = (RelativeLayout) getLayoutInflater().inflate(
+				R.layout.action_home, null);
 		mActionBar.setCustomView(customActionView);
 		customActionView.findViewById(R.id.drawer).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -336,6 +444,83 @@ public class MainActivity extends BaseActivity implements
 						i.putExtra(IntentKey.QR_CODE, QodemePreferences.getInstance().getQrcode());
 						startActivity(i);
 						return true;
+					}
+				});
+		customActionView.findViewById(R.id.imgBtn_one2one).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						chatType = 0;
+						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
+						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+						v.setBackgroundResource(R.drawable.bg_tab_h);
+						
+						ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
+								.findFragmentByTag(CHAT_LIST_FRAGMENT);
+						if (one2OneChatListFragment != null) {
+
+						} else {
+							one2OneChatListFragment = new ChatListFragment();
+						}
+						FragmentTransaction transaction = getSupportFragmentManager()
+								.beginTransaction();
+						transaction.replace(R.id.content_frame, one2OneChatListFragment,
+								CHAT_LIST_FRAGMENT);
+						transaction.commit();
+					}
+				});
+		customActionView.findViewById(R.id.imgBtn_private).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						chatType = 1;
+						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+						v.setBackgroundResource(R.drawable.bg_tab_h);
+						
+						ChatListGroupFragment privateChatListFragment = new ChatListGroupFragment();
+						FragmentTransaction transaction = getSupportFragmentManager()
+								.beginTransaction();
+						transaction.replace(R.id.content_frame, privateChatListFragment,
+								CHAT_LIST_PRIVATE_FRAGMENT);
+						transaction.commit();
+					}
+				});
+		customActionView.findViewById(R.id.imgBtn_public).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						chatType = 2;
+						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
+						v.setBackgroundResource(R.drawable.bg_tab_h);
+						
+						ChatListGroupFragment privateChatListFragment = new ChatListGroupFragment();
+						FragmentTransaction transaction = getSupportFragmentManager()
+								.beginTransaction();
+						transaction.add(R.id.content_frame, privateChatListFragment,
+								CHAT_LIST_PRIVATE_FRAGMENT);
+						transaction.commit();
+
+					}
+				});
+		customActionView.findViewById(R.id.imgBtn_add).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// mContactListView.setAdapter(mContactListAddChatAdapter);
+						isAddContact = true;
+						mContactListAdapter.notifyDataSetChanged();
+						mDrawerLayout.openDrawer(mContactListView);
+						// Intent i = new Intent(getContext(),
+						// QrCodeShowActivity.class);
+						// i.putExtra(IntentKey.QR_CODE,
+						// QodemePreferences.getInstance().getQrcode());
+						// startActivity(i);
 					}
 				});
 	}
@@ -421,15 +606,17 @@ public class MainActivity extends BaseActivity implements
 							rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 							byte[] byteArray = stream.toByteArray();
 
+							String mProfileImageBase64 = Base64.encodeToString(byteArray,
+									Base64.NO_WRAP);
 
-							String mProfileImageBase64 = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-
-							ChatInsideFragment chatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
-							if(!getActionBar().isShowing() && chatInsideFragment != null){
+							ChatInsideFragment chatInsideFragment = (ChatInsideFragment) mPagerAdapter
+									.getItem(0);
+							if (!getActionBar().isShowing() && chatInsideFragment != null) {
 								chatInsideFragment.sendImageMessage(mProfileImageBase64);
-							}else{
-								if(currentChatId != -1)
-								sendMessage(currentChatId, "", mProfileImageBase64, 1, -1, 0, 0, "");
+							} else {
+								if (currentChatId != -1)
+									sendMessage(currentChatId, "", mProfileImageBase64, 1, -1, 0,
+											0, "");
 							}
 							// mImgProfile[selectedImagePosition]
 							// .setImageBitmap(rotatedBitmap);
@@ -450,15 +637,18 @@ public class MainActivity extends BaseActivity implements
 				break;
 			case REQUEST_ACTIVITY_CAMERA:
 				break;
-			}else{
-				setCurrentChatId(-1);
 			}
+		else {
+			setCurrentChatId(-1);
+		}
 	}
+
 	public void takePhotoFromGallery() {
 		Intent intent = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(intent, REQUEST_ACTIVITY_PHOTO_GALLERY);
 	}
+
 	public int getImageOrientation(String imagePath) {
 		int rotate = 0;
 		try {
@@ -597,20 +787,21 @@ public class MainActivity extends BaseActivity implements
 		// Templates.
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		mSearchMenuItem = menu.findItem(R.id.action_search);
-		mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchMenuItem);
-		if (mSearchText != null) {
-			mSearchView.setQuery(mSearchText, false);
-		}
-		if (getContactList() != null) {
-			initializeSearchView();
-		}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// getMenuInflater().inflate(R.menu.main, menu);
+	// mSearchMenuItem = menu.findItem(R.id.action_search);
+	// mSearchView = (SearchView)
+	// MenuItemCompat.getActionView(mSearchMenuItem);
+	// if (mSearchText != null) {
+	// mSearchView.setQuery(mSearchText, false);
+	// }
+	// if (getContactList() != null) {
+	// initializeSearchView();
+	// }
 
-		return true;
-	}
+	// return true;
+	// }
 
 	private void initializeSearchView() {
 		List<Contact> contacts = getContactList();
@@ -645,67 +836,72 @@ public class MainActivity extends BaseActivity implements
 		case android.R.id.home:
 			onBackPressed();
 			return true;
-		case R.id.action_logout:
-			RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+			// case R.id.action_logout:
+			// RestAsyncHelper.getInstance().registerToken("", new
+			// RestListener() {
+			//
+			// @Override
+			// public void onResponse(BaseResponse response) {
+			// RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+			// @Override
+			// public void onResponse(BaseResponse response) {
+			// logoutHandler();
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			// showMessage(RestErrorType.getMessage(getContext(),
+			// error.getErrorType())
+			// + error.getServerMsg());
+			// }
+			//
+			// @Override
+			// public void onNetworkError(VolleyError error) {
+			// super.onNetworkError(error);
+			// showMessage(error.getMessage());
+			// }
+			// });
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			// showMessage(RestErrorType.getMessage(getContext(),
+			// error.getErrorType())
+			// + error.getServerMsg());
+			// }
+			//
+			// @Override
+			// public void onNetworkError(VolleyError error) {
+			// super.onNetworkError(error);
+			// showMessage("No internet connection!");
+			// }
+			//
+			// private void logoutHandler() {
+			// clearActivityCache();
+			// QodemePreferences.getInstance().setLogged(false);
+			// QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+			// startActivity(new Intent(getApplicationContext(),
+			// LoginActivity.class));
+			// finish();
+			//
+			// }
+			// });
+			//
+			// return true;
 
-				@Override
-				public void onResponse(BaseResponse response) {
-					RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-						@Override
-						public void onResponse(BaseResponse response) {
-							logoutHandler();
-						}
-
-						@Override
-						public void onServiceError(RestError error) {
-							showMessage(RestErrorType.getMessage(getContext(), error.getErrorType())
-									+ error.getServerMsg());
-						}
-
-						@Override
-						public void onNetworkError(VolleyError error) {
-							super.onNetworkError(error);
-							showMessage(error.getMessage());
-						}
-					});
-				}
-
-				@Override
-				public void onServiceError(RestError error) {
-					showMessage(RestErrorType.getMessage(getContext(), error.getErrorType())
-							+ error.getServerMsg());
-				}
-
-				@Override
-				public void onNetworkError(VolleyError error) {
-					super.onNetworkError(error);
-					showMessage("No internet connection!");
-				}
-
-				private void logoutHandler() {
-					clearActivityCache();
-					QodemePreferences.getInstance().setLogged(false);
-					QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-					startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-					finish();
-
-				}
-			});
-
-			return true;
-
-		case R.id.action_share: {
-			Intent i = new Intent(getContext(), QrCodeShowActivity.class);
-			i.putExtra(IntentKey.QR_CODE, QodemePreferences.getInstance().getQrcode());
-			startActivity(i);
-			return true;
-		}
-
-		case R.id.action_help: {
-			Intent i = new Intent(getContext(), TutorialActivity.class);
-			startActivity(i);
-			return true;
-		}
+			// case R.id.action_share: {
+			// Intent i = new Intent(getContext(), QrCodeShowActivity.class);
+			// i.putExtra(IntentKey.QR_CODE,
+			// QodemePreferences.getInstance().getQrcode());
+			// startActivity(i);
+			// return true;
+			// }
+			//
+			// case R.id.action_help: {
+			// Intent i = new Intent(getContext(), TutorialActivity.class);
+			// startActivity(i);
+			// return true;
+			// }
 
 		case R.id.action_settings: {
 			Intent i = new Intent(getContext(), SettingsActivity.class);
@@ -810,6 +1006,9 @@ public class MainActivity extends BaseActivity implements
 					}
 
 					TextView tvHeader = ((TextView) convertView.findViewById(R.id.header));
+					Button addbtn = (Button) convertView.findViewById(R.id.btn_add);
+					addbtn.setVisibility(View.GONE);
+
 					switch (e.getState()) {
 					case QodemeContract.Contacts.State.INVITED:
 						tvHeader.setText("Invitation");
@@ -819,6 +1018,28 @@ public class MainActivity extends BaseActivity implements
 						break;
 					case QodemeContract.Contacts.State.APPRUVED:
 						tvHeader.setText("Contacts");
+						if (isAddContact) {
+							addbtn.setVisibility(View.VISIBLE);
+							addbtn.setOnClickListener(new View.OnClickListener() {
+
+								@Override
+								public void onClick(View v) {
+									List<Contact> selectedContact = Lists.newArrayList();
+									for (int i = 0; i < getCount(); i++) {
+										ContactListItemEntity entity = getItem(i);
+										if (entity.isChecked()) {
+											selectedContact.add(entity.getContact());
+											entity.setChecked(false);
+										}
+									}
+									if (selectedContact.size() > 0) {
+										createChat(selectedContact);
+									}
+									mDrawerLayout.closeDrawer(mContactListView);
+								}
+							});
+							addbtn.setVisibility(View.VISIBLE);
+						}
 						break;
 					case QodemeContract.Contacts.State.BLOCKED_BY:
 						tvHeader.setText("Blocked");
@@ -845,6 +1066,7 @@ public class MainActivity extends BaseActivity implements
 						} else {
 							view = (ContactListItem) convertView;
 						}
+						view.setAddContactToChat(isAddContact);
 						view.fill(e);
 						return view;
 
@@ -855,15 +1077,147 @@ public class MainActivity extends BaseActivity implements
 				return convertView;
 			}
 		};
+		// mContactListAddChatAdapter = new
+		// MenuListAddToChatAdapter<ContactListItemEntity>(this,
+		// R.layout.contact_list_item_add, listForAdapter) {
+		//
+		// @Override
+		// public View getView(int position, View convertView, ViewGroup parent)
+		// {
+		//
+		// ContactListItemEntity e = getItem(position);
+		//
+		// if (e.isHeader()) {
+		// if (convertView == null || (convertView instanceof ContactListItem)
+		// || (convertView instanceof ContactListItemInvited)) {
+		// convertView =
+		// layoutInflater.inflate(R.layout.contact_list_item_header,
+		// null);
+		// }
+		//
+		// TextView tvHeader = ((TextView)
+		// convertView.findViewById(R.id.header));
+		// Button addbtn = (Button) convertView.findViewById(R.id.btn_add);
+		// addbtn.setVisibility(View.GONE);
+		// switch (e.getState()) {
+		// case QodemeContract.Contacts.State.INVITED:
+		// tvHeader.setText("Invitation");
+		// break;
+		// case QodemeContract.Contacts.State.INVITATION_SENT:
+		// tvHeader.setText("Invited");
+		// break;
+		// case QodemeContract.Contacts.State.APPRUVED:
+		//
+		// addbtn.setOnClickListener(new View.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// List<Contact> selectedContact = Lists.newArrayList();
+		// for (int i = 0; i < getCount(); i++) {
+		// ContactListItemEntity entity = getItem(i);
+		// if (entity.isChecked()) {
+		// selectedContact.add(entity.getContact());
+		// entity.setChecked(false);
+		// }
+		// }
+		// if (selectedContact.size() > 0) {
+		// createChat(selectedContact);
+		// }
+		// mDrawerLayout.closeDrawer(mContactListView);
+		// }
+		// });
+		// addbtn.setVisibility(View.VISIBLE);
+		// tvHeader.setText("Contacts");
+		// break;
+		// case QodemeContract.Contacts.State.BLOCKED_BY:
+		// tvHeader.setText("Blocked");
+		// break;
+		//
+		// }
+		// } else {
+		// if (e.getState() == QodemeContract.Contacts.State.INVITED) {
+		// ContactListItemInvited view;
+		// if (convertView == null || !(convertView instanceof
+		// ContactListItemInvited)) {
+		// view = (ContactListItemInvited) layoutInflater.inflate(
+		// R.layout.contact_list_item_invited, null);
+		// } else {
+		//
+		// view = (ContactListItemInvited) convertView;
+		// }
+		// view.fill(e);
+		// return view;
+		//
+		// } else {
+		// ContactListItem view;
+		// if (convertView == null || !(convertView instanceof ContactListItem))
+		// {
+		// view = (ContactListItem) layoutInflater.inflate(layoutResId, null);
+		// } else {
+		// view = (ContactListItem) convertView;
+		// }
+		// view.fill(e);
+		// return view;
+		//
+		// }
+		//
+		// }
+		//
+		// return convertView;
+		// }
+		// };
 
 		mContactListView.setAdapter(mContactListAdapter);
 
 		mContactListLoader = new ContactListLoader();
 		mMessageListLoader = new MessageListLoader();
+		mChatLoadListLoader = new ChatLoadListLoader();
 
 		getSupportLoaderManager().initLoader(0, null, mContactListLoader);
 		getSupportLoaderManager().initLoader(1, null, mMessageListLoader);
+		getSupportLoaderManager().initLoader(2, null, mChatLoadListLoader);
 
+	}
+
+	private void createChat(final List<Contact> contactsList) {
+		Log.d("contact add", contactsList.get(0).title + "");
+		RestAsyncHelper.getInstance().chatCreate(ChatType.PRIVATE_GROUP, "", "", 0, "", 0, "", 0,
+				0, new RestListener<ChatCreateResponse>() {
+
+					@Override
+					public void onResponse(ChatCreateResponse response) {
+						// TODO Auto-generated method stub
+						Log.d("Chat create", "Chat Created " + response.getChat().getId());
+
+						getContentResolver().insert(
+								QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
+										response.getChat().getType(), response.getChat()
+												.getQrcode()));
+
+						for (Contact contact : contactsList) {
+							RestAsyncHelper.getInstance().chatAddMember(response.getChat().getId(),
+									contact.qrCode, new RestListener<ChatAddMemberResponse>() {
+
+										@Override
+										public void onResponse(ChatAddMemberResponse response) {
+											Log.d("Chat add ", "Chat add mem "
+													+ response.getChat().getId());
+										}
+
+										@Override
+										public void onServiceError(RestError error) {
+											Log.d("Error", "Chat add member");
+										}
+									});
+						}
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("Error", "Chat not Created");
+					}
+				});
 	}
 
 	private class ContactListLoader implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -888,6 +1242,33 @@ public class MainActivity extends BaseActivity implements
 			if (mSearchView != null) {
 				initializeSearchView();
 			}
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+		}
+
+	}
+
+	private class ChatLoadListLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+
+		@Override
+		public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+			return new CursorLoader(getActivity(), QodemeContract.Chats.CONTENT_URI,
+					QodemeContract.Chats.ChatQuery.PROJECTION, null, null,
+					QodemeContract.Chats.DEFAULT_SORT);
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+			mChatList = ModelHelper.getChatList(cursor);
+			Log.d("Chatlist", "size " + mChatList.size() + " ");
+			// refreshContactList();
+
+			// if (mSearchView != null) {
+			// initializeSearchView();
+			// }
 		}
 
 		@Override
@@ -998,7 +1379,28 @@ public class MainActivity extends BaseActivity implements
 					}
 				}));
 
+		// mChatList
 		mContactInfoUpdated = true;
+
+		// List<ContactListItemEntity> contactListItemsApp =
+		// Lists.newArrayList();
+		// if (!mApprovedContacts.isEmpty()) {
+		//
+		// contactListItemsApp.add(new ContactListItemEntity(true,
+		// mApprovedContacts.get(0).state,
+		// null));
+		// }
+		// for (Contact c : mApprovedContacts) {
+		// if (contactListItemsApp.get(mApprovedContacts.size() - 1).getState()
+		// != c.state) {
+		// contactListItemsApp.add(new ContactListItemEntity(true, c.state,
+		// null));
+		// }
+		// contactListItemsApp.add(new ContactListItemEntity(false, c.state,
+		// c));
+		// }
+		// mContactListAddChatAdapter.clear();
+		// mContactListAddChatAdapter.addAll(contactListItemsApp);
 
 		refreshOne2OneList();
 		mHandler.sendEmptyMessage(2);
@@ -1025,6 +1427,17 @@ public class MainActivity extends BaseActivity implements
 			 */
 
 			getSupportLoaderManager().restartLoader(2, null, mMessageListLoader);
+		}
+	};
+	private final ContentObserver mChatListObserver = new ContentObserver(new Handler()) {
+		@Override
+		public void onChange(boolean selfChange) {
+			// TODO check, do we need this line
+			/*
+			 * if (getActivity() == null) { return; }
+			 */
+
+			getSupportLoaderManager().restartLoader(3, null, mChatLoadListLoader);
 		}
 	};
 
@@ -1055,8 +1468,13 @@ public class MainActivity extends BaseActivity implements
 
 		ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
 				.findFragmentByTag(CHAT_LIST_FRAGMENT);
+
+		ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
+				.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
 		if (one2OneChatListFragment != null)
 			one2OneChatListFragment.updateUi();
+		if (privateChatListFragment != null)
+			privateChatListFragment.updateUi();
 	}
 
 	private void openChat(String name) {
@@ -1077,30 +1495,58 @@ public class MainActivity extends BaseActivity implements
 		// (FullViewChatFragment) getSupportFragmentManager()
 		// .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
 
-		ChatInsideFragment one2OneChatInsideFragment = null;
-		if (mPagerAdapter != null && !getActionBar().isShowing()) {
-			one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
-		}
-		if (one2OneChatInsideFragment != null) {
-			if (mContactInfoUpdated) {
-				long chatId = one2OneChatInsideFragment.getChatId();
-				int chatColor = 0;
-				String chatName = "";
-				Contact c = findContactEntityByChatId(chatId);
-				if (c != null) {
-					chatColor = c.color;
-					chatName = c.title;
-				}
-				// final int fColor = chatColor;
-				// final String fName = chatName;
+		if (chatType == 0) {
+			ChatInsideFragment one2OneChatInsideFragment = null;
+			if (mPagerAdapter != null && !getActionBar().isShowing()) {
+				one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
+			}
+			if (one2OneChatInsideFragment != null) {
+				if (mContactInfoUpdated) {
+					long chatId = one2OneChatInsideFragment.getChatId();
+					int chatColor = 0;
+					String chatName = "";
+					Contact c = findContactEntityByChatId(chatId);
+					if (c != null) {
+						chatColor = c.color;
+						chatName = c.title;
+					}
+					// final int fColor = chatColor;
+					// final String fName = chatName;
 
-				mContactInfoUpdated = false;
-				showOne2OneChatFragment(c, false);
+					mContactInfoUpdated = false;
+					showOne2OneChatFragment(c, false);
+
+				}
+				one2OneChatInsideFragment.updateUi();
+				mViewPager.setCurrentItem(fullChatIndex);
 
 			}
-			one2OneChatInsideFragment.updateUi();
-			mViewPager.setCurrentItem(1);
-			
+		} else {
+			ChatInsideGroupFragment one2OneChatInsideFragment = null;
+			if (mPagerAdapter != null && !getActionBar().isShowing()) {
+				one2OneChatInsideFragment = (ChatInsideGroupFragment) mPagerAdapter.getItem(0);
+			}
+			if (one2OneChatInsideFragment != null) {
+				// if (mContactInfoUpdated) {
+				// long chatId = one2OneChatInsideFragment.getChatId();
+				// int chatColor = 0;
+				// String chatName = "";
+				// Contact c = findContactEntityByChatId(chatId);
+				// if (c != null) {
+				// chatColor = c.color;
+				// chatName = c.title;
+				// }
+				// // final int fColor = chatColor;
+				// // final String fName = chatName;
+				//
+				// mContactInfoUpdated = false;
+				// showOne2OneChatFragment(c, false);
+				//
+				// }
+				one2OneChatInsideFragment.updateUi();
+				mViewPager.setCurrentItem(fullChatIndex);
+
+			}
 		}
 	}
 
@@ -1147,18 +1593,96 @@ public class MainActivity extends BaseActivity implements
 		// }
 		if (!getActionBar().isShowing()) {
 			getActionBar().show();
+			fullChatIndex = 0;
 			// mViewPager.setVisibility(View.INVISIBLE);
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 			expandedImageView.setVisibility(View.INVISIBLE);
 			return;
+		} else {
+			new AlertDialog.Builder(this).setTitle(R.string.app_name)
+					.setMessage("Are you want to logout?")
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+
+								@Override
+								public void onResponse(BaseResponse response) {
+									RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+										@Override
+										public void onResponse(BaseResponse response) {
+											logoutHandler();
+										}
+
+										@Override
+										public void onServiceError(RestError error) {
+											showMessage(RestErrorType.getMessage(getContext(),
+													error.getErrorType()) + error.getServerMsg());
+										}
+
+										@Override
+										public void onNetworkError(VolleyError error) {
+											super.onNetworkError(error);
+											showMessage(error.getMessage());
+										}
+									});
+								}
+
+								@Override
+								public void onServiceError(RestError error) {
+									showMessage(RestErrorType.getMessage(getContext(),
+											error.getErrorType())
+											+ error.getServerMsg());
+								}
+
+								@Override
+								public void onNetworkError(VolleyError error) {
+									super.onNetworkError(error);
+									showMessage("No internet connection!");
+								}
+
+								private void logoutHandler() {
+									clearActivityCache();
+									QodemePreferences.getInstance().setLogged(false);
+									QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+									startActivity(new Intent(getApplicationContext(),
+											LoginActivity.class));
+									finish();
+
+								}
+							});
+
+						}
+					}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							finish();
+						}
+					}).create().show();
 		}
 
-		super.onBackPressed();
+		// super.onBackPressed();
 	}
 
 	@Override
 	public List<Contact> getContactList() {
 		return mApprovedContacts;
+	}
+
+	@Override
+	public List<ChatLoad> getChatList(int chatType) {
+		List<ChatLoad> tempList = Lists.newArrayList();
+		for (ChatLoad chatLoad : mChatList) {
+			Log.d("Chattype", "" + chatLoad.type);
+			if (chatLoad.type == chatType) {
+				tempList.add(chatLoad);
+			}
+		}
+		return tempList;
 	}
 
 	@Override
@@ -1198,13 +1722,13 @@ public class MainActivity extends BaseActivity implements
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
 						replyTo_Id, latitude, longitude, senderName));
 		SyncHelper.requestManualSync();
-//		Long rawContactId = ContentUris.parseId(uri); 
+		// Long rawContactId = ContentUris.parseId(uri);
 		String carId = uri.getPathSegments().get(1);
 
 		Log.d("insert", "Content inserted at: " + uri);
 		Log.d("insert", "Car_id: " + carId);
 
-		Log.d("insert", uri+"");
+		Log.d("insert", uri + "");
 		/*
 		 * RestAsyncHelper.getInstance().chatMessage(chatId, message,
 		 * unixTimeStamp, new RestListener() {
@@ -1234,6 +1758,12 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public void showChat(Contact c, boolean firstUpdate) {
+		mContactInfoUpdated = false;
+		showOne2OneChatFragment(c, firstUpdate);
+	}
+
+	@Override
+	public void showChat(ChatLoad c, boolean firstUpdate) {
 		mContactInfoUpdated = false;
 		showOne2OneChatFragment(c, firstUpdate);
 	}
@@ -1296,11 +1826,15 @@ public class MainActivity extends BaseActivity implements
 		 */
 		getSupportLoaderManager().restartLoader(1, null, mContactListLoader);
 		getSupportLoaderManager().restartLoader(2, null, mMessageListLoader);
+		getSupportLoaderManager().restartLoader(3, null, mChatLoadListLoader);
 		// }
 		getContentResolver().registerContentObserver(QodemeContract.Contacts.CONTENT_URI, true,
 				mContactListObserver);
 		getContentResolver().registerContentObserver(QodemeContract.Messages.CONTENT_URI, true,
 				mMessageListObjerver);
+		getContentResolver().registerContentObserver(QodemeContract.Chats.CONTENT_URI, true,
+				mChatListObserver);
+
 	}
 
 	@Override
@@ -1532,6 +2066,7 @@ public class MainActivity extends BaseActivity implements
 	public long getCurrentChatId() {
 		return currentChatId;
 	}
+
 	public void callColorPicker(Contact ce) {
 		Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 		i.putExtra(QodemeContract.Contacts._ID, ce._id);
@@ -1540,4 +2075,27 @@ public class MainActivity extends BaseActivity implements
 		i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
 		startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
 	}
+
+	public void callColorPicker(ChatLoad ce) {
+		Intent i = new Intent(getContext(), ContactDetailsActivity.class);
+		i.putExtra(QodemeContract.Contacts._ID, ce._id);
+		i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
+		i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
+		i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
+		startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
+	}
+
+	@Override
+	public Contact getContact(String qrString) {
+		// int color = getResources().getColor(R.color.text_message_not_read);
+		Contact contact = null;
+		for (Contact c : getContactList()) {
+			if (c.qrCode.equals(qrString)) {
+				contact = c;
+				break;
+			}
+		}
+		return contact;
+	}
+
 }

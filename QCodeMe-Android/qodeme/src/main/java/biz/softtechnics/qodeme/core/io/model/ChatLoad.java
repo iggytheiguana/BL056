@@ -19,5 +19,12 @@ public class ChatLoad {
     public String longitude;
     public String description;
     public String status;
-
+    public int color;
+    public String tag;
+    public int number_of_flagged;
+    public int is_locked;
+    public int number_of_likes;
+    public int number_of_members;
+    public int number_of_dislikes;
+    public String title;
 }

@@ -2,6 +2,7 @@ package biz.softtechnics.qodeme.core.io.gcm.push;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Created by Alex on 12/10/13.
@@ -15,6 +16,9 @@ public class PushHendlerFactory {
     private static final String PUSH_CONTACT_REJECTED = "contact reject";
     private static final String PUSH_CONTACT_BLOCK = "contact block";
     private static final String PUSH_MESSAGE_WAS_READ = "Message was read";
+    private static final String PUSH_CHAT_UPDATE = "Chat was updated";
+    private static final String PUSH_CHAT_MEMBER_ADD = "Chat add member";
+//    
 
 
     private PushHendlerFactory(){}
@@ -23,6 +27,7 @@ public class PushHendlerFactory {
 
         BasePushHandler instance = null;
 
+        Log.d("Push", bundle.toString()+"");
         if (bundle.getString(TYPE).equals(PUSH_CONTACT_ADDED)){
             instance = new ContactAddPushHandler(context);
         } else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_IN_CHAT)){
@@ -35,6 +40,10 @@ public class PushHendlerFactory {
             instance = new ContactBlockPushHandler(context);
         } else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_WAS_READ)){
             instance = new MessageWasReadPushHandler(context);
+        } else if(bundle.getString(TYPE).equals(PUSH_CHAT_UPDATE)){
+        	 instance = new ChatUpdatePushHandler(context);
+        } else if(bundle.getString(TYPE).equals(PUSH_CHAT_MEMBER_ADD)){
+        	 instance = new ChatAddMemberPushHandler(context);
         }
 
         if (instance != null)

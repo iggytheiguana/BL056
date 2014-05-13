@@ -10,6 +10,7 @@ public class ContactListItemEntity {
     private Contact mContact;
     private int mState;
     private boolean mHeader;
+    private boolean isChecked = false;
 
     public ContactListItemEntity(boolean header, int state, Contact contact) {
         this.mContact = contact;
@@ -40,6 +41,14 @@ public class ContactListItemEntity {
     public void setHeader(boolean mHeader) {
         this.mHeader = mHeader;
     }
+
+	public void setChecked(boolean isChecked) {
+		this.isChecked = isChecked;
+	}
+
+	public boolean isChecked() {
+		return isChecked;
+	}
 
 }
 

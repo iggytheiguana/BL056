@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/img_qr"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/logo"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal" >
+
+                    <ImageButton
+                        android:id="@+id/btnLock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_lock_close"
+                        android:visibility="gone" />
+
+                    <ImageButton
+                        android:id="@+id/btnFavorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_profile_favorite" />
+
+                    <ImageButton
+                        android:id="@+id/btnArchive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_share_dark" />
+
+                    <ImageButton
+                        android:id="@+id/btnShare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_share_dark"
+                        android:visibility="gone" />
+
+                    <ImageButton
+                        android:id="@+id/btnDelete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_delete" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/line_horizontal" />
+                <!-- #E4E7EC -->
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical" >
+
+                    <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                        style="@style/TextView.Message.Date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Created:"
+                        android:textColor="@color/text_message_not_read"
+                        android:textSize="14sp" />
+
+                    <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                        android:id="@+id/textView_createdDate"
+                        style="@style/TextView.Message.Date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="March 04, 2014, 1:23pm"
+                        android:textColor="@color/text_message_not_read"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                            android:id="@+id/textView_location"
+                            style="@style/TextView.Message.Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Seattle, WA USA"
+                            android:textColor="@color/text_message_not_read"
+                            android:textSize="14sp" />
+
+                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                            style="@style/TextView.Message.Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="remove"
+                            android:textColor="#059BE9"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
+
+            <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                android:id="@+id/textView_status"
+                style="@style/TextView.Chat.Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btnEditStatus"
+                android:text="Status Message here."
+                android:textColor="@color/text_message_not_read" />
+
+            <EditText
+                android:id="@+id/editText_status"
+                style="@style/TextView.Chat.Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btnSetStatus"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnEditStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:padding="10dp"
+                android:src="@drawable/ic_edit" />
+
+            <Button
+                android:id="@+id/btnSetStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/selector_button_blue"
+                android:padding="10dp"
+                android:text="@string/done"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <LinearLayout
+            android:id="@+id/linear_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible" >
+
+            <RelativeLayout
+                android:id="@+id/relative_tags"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:visibility="gone"
+                android:layout_marginRight="10dp" >
+
+                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btnEditTags"
+                    android:text="#hashtag, #hashtag, #hashtag"
+                    android:textColor="#059BE9" />
+
+                <EditText
+                    android:id="@+id/editText_tags"
+                    style="@style/TextView.Chat.Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btnSetTags"
+                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btnEditTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_edit" />
+
+                <Button
+                    android:id="@+id/btnSetTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/selector_button_blue"
+                    android:padding="10dp"
+                    android:text="@string/done"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_desc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="visible" >
+
+                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                    android:id="@+id/textView_groupTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_toLeftOf="@+id/btnEditDesc"
+                    android:text="Title of Conversation"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnEditDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_edit" />
+
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    android:id="@+id/textView_groupDesc"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textView_groupTitle"
+                    android:layout_marginTop="5dp"
+                    android:layout_toLeftOf="@id/btnEditDesc"
+                    android:text="xksnckndcvsndvkn vkdnvkdnsvk kvndkvnk svknaskvnk bnknfkbvn knsknk ndvksn scksnkcnsdkvnckasdn kwnfedasfask;lm avnks aksnvknasdkvgnksng kabfavafm"
+                    android:textColor="@android:color/black" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_editDesc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone" >
+
+                <EditText
+                    android:id="@+id/editText_GroupTitle"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/btnSetDesc"
+                    android:textColor="@android:color/black"
+                    android:hint="Add Title"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnSetDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/selector_button_blue"
+                    android:padding="10dp"
+                    android:text="@string/done"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/editText_Desc"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/btnSetDesc"
+                    android:textColor="@android:color/black"
+                    android:layout_below="@id/editText_GroupTitle"
+                    android:hint="Add Desc"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_includeSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:visibility="gone"
+                android:layout_marginRight="10dp" >
+
+                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btnEditIncludeSearch"
+                    android:text="Include conversation in search?"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnEditIncludeSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_edit" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="32 members"
+                android:textColor="#059BE9"
+                android:visibility="visible" />
+
+            <View
+                android:id="@+id/view_line_member"
+                android:layout_width="2dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="10dp"
+                android:background="#E4E7EC"
+                android:visibility="visible" />
+
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_totalMessages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="1020 messages"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="10dp"
+                android:background="#E4E7EC" />
+
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_totalPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="32 photos"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <ImageButton
+                    android:id="@+id/imgBtn_colorWheelBig"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@drawable/bg_add_color" />
+
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    android:id="@+id/textView_private_thread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Edit Color"
+                    android:textColor="#BABABA"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_flagged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="6 Messages"
+                    android:textColor="#059BE9"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:src="@drawable/ic_flag_blue" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

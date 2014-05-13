@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.google.android.gms.internal.cu;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -38,6 +39,28 @@ public class ModelHelper {
 						.getString(QodemeContract.Contacts.ContactQuery.CONTACT_PUBLIC_NAME);
 				c.location = cursor
 						.getString(QodemeContract.Contacts.ContactQuery.CONTACT_LOCATION);
+				contactList.add(c);
+
+			} while (cursor.moveToNext());
+		return contactList;
+	}
+	public static List<ChatLoad> getChatList(Cursor cursor) {
+		List<ChatLoad> contactList = Lists.newArrayList();
+		if (cursor.moveToFirst())
+			do {
+				ChatLoad c = new ChatLoad();
+				c._id = cursor.getLong(QodemeContract.Chats.ChatQuery._ID);
+				c.updated = cursor.getInt(QodemeContract.Chats.ChatQuery.UPDATED);
+				c.chatId = cursor.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
+				c.color = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_COLOR);
+				c.description = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_DESCRIPTION);
+				c.latitude = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_LATITUDE);
+				c.longitude = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_LONGITUDE);
+				c.qrcode = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_QRCODE);
+				c.status = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
+				c.tag = cursor
+						.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
+				c.type = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
 				contactList.add(c);
 
 			} while (cursor.moveToNext());

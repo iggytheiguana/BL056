@@ -27,6 +27,7 @@ public class CustomDotView extends TextView {
 	private boolean isVerticalLine = true;
 	private boolean isSecondVerticalLine1 = false;
 	private boolean isSecondVerticalLine2 = false;
+	private boolean isCircle = true;
 	private int dotColor;
 	Bitmap circle = null;
 	int textSize = 16;
@@ -110,27 +111,33 @@ public class CustomDotView extends TextView {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-//		if (isVerticalLine)
-//			canvas.drawLine((textSize / 2)+2, 0, (textSize / 2)+2, getHeight(), mPaintLine);
+		// if (isVerticalLine)
+		// canvas.drawLine((textSize / 2)+2, 0, (textSize / 2)+2, getHeight(),
+		// mPaintLine);
 
 		if (isReply()) {
-			if ((!isSecondVerticalLine1 && isSecondVerticalLine2) || (!isSecondVerticalLine1 && !isSecondVerticalLine2))
-				canvas.drawLine((textSize / 2)+2, padding + 2 + (textSize / 2), getWidth() - 15, padding + 2
-						+ (textSize / 2), mPaintLine);
+			if ((!isSecondVerticalLine1 && isSecondVerticalLine2)
+					|| (!isSecondVerticalLine1 && !isSecondVerticalLine2))
+				canvas.drawLine((textSize / 2) + 2, padding + 2 + (textSize / 2), getWidth() - 15,
+						padding + 2 + (textSize / 2), mPaintLine);
 			if (isSecondVerticalLine1)
 				canvas.drawLine(getWidth() - 15, 0, getWidth() - 15, padding + 2 + (textSize / 2),
 						mPaintLine);
 			if (isSecondVerticalLine2)
 				canvas.drawLine(getWidth() - 15, padding + 2 + (textSize / 2), getWidth() - 15,
 						getHeight(), mPaintLine);
-			canvas.drawCircle(getWidth() - 15, getHeight()/2, (textSize / 2)-2, mPaintCircle);//RADIUS = 7
+			if (isCircle)
+				canvas.drawCircle(getWidth() - 15, padding + 2 + (textSize / 2), (textSize / 2) - 2,
+						mPaintCircle);// RADIUS = 7
 			// canvas.drawLine(10, padding+2+(textSize/2), getWidth() - 15,
 			// padding+2+(textSize/2), mPaintLine);
 
 			// canvas.drawBitmap(circle, 0,0,new Paint());
 		} else {
 			// int textHeight = (int) mPaintCircle.measureText("T");
-			canvas.drawCircle((textSize / 2)+2, getHeight()/2, (textSize / 2)-2, mPaintCircle);
+			if (isCircle)
+				canvas.drawCircle((textSize / 2) + 2, padding + 2 + (textSize / 2), (textSize / 2) - 2,
+						mPaintCircle);
 			// canvas.drawBitmap(circle, 0,0,new Paint());
 		}
 
@@ -167,6 +174,14 @@ public class CustomDotView extends TextView {
 
 	public boolean isSecondVerticalLine2() {
 		return isSecondVerticalLine2;
+	}
+
+	public void setCircle(boolean isCircle) {
+		this.isCircle = isCircle;
+	}
+
+	public boolean isCircle() {
+		return isCircle;
 	}
 
 }

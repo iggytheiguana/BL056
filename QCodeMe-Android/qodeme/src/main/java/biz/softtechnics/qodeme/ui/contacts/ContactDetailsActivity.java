@@ -29,7 +29,7 @@ public class ContactDetailsActivity extends Activity implements ColorPicker.OnCo
     private Button mButton;
     private TextView mText;
     private Button mApplyButton;
-    private EditText mName;
+//    private EditText mName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class ContactDetailsActivity extends Activity implements ColorPicker.OnCo
         mButton = (Button) findViewById(R.id.button1);
         mText = (TextView) findViewById(R.id.textView1);
         mApplyButton = (Button) findViewById(R.id.apply);
-        mName = (EditText) findViewById(R.id.name);
+//        mName = (EditText) findViewById(R.id.name);
 
         mPicker.addSVBar(mSvBar);
         mPicker.addOpacityBar(mOpacityBar);
@@ -54,8 +54,8 @@ public class ContactDetailsActivity extends Activity implements ColorPicker.OnCo
         mPicker.setOldCenterColor(color);
         mPicker.setNewCenterColor(color);
         mPicker.setColor(color);
-        mName.setText("");
-        mName.append(getIntent().getStringExtra(QodemeContract.Contacts.CONTACT_TITLE));
+//        mName.setText("");
+//        mName.append(getIntent().getStringExtra(QodemeContract.Contacts.CONTACT_TITLE));
 
         mApplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,8 +64,8 @@ public class ContactDetailsActivity extends Activity implements ColorPicker.OnCo
                 i.putExtra(QodemeContract.Contacts._ID, getIntent().getLongExtra(QodemeContract.Contacts._ID, -1));
                 i.putExtra(QodemeContract.Contacts.UPDATED, getIntent().getIntExtra(QodemeContract.Contacts.UPDATED, QodemeContract.Contacts.Sync.UPDATED));
                 i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, mPicker.getColor());
-                String sName = mName.getText().toString();
-                i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, TextUtils.isEmpty(sName) ? "User" : sName);
+//                String sName = mName.getText().toString();
+                //i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, TextUtils.isEmpty(sName) ? "User" : sName);
                 setResult(RESULT_OK, i);
                 finish();
             }

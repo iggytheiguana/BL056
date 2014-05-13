@@ -82,6 +82,7 @@ public class ChatListSubItem extends RelativeLayout implements
 		return date = date != null ? date : (CustomDotView) findViewById(R.id.date);
 	}
 
+	
 	public TextView getDateHeader() {
 		return dateHeader = dateHeader != null ? dateHeader
 				: (TextView) findViewById(R.id.date_header);

@@ -173,6 +173,24 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			mEditTextStatus.setVisibility(View.GONE);
 			mBtnSetStatus.setVisibility(View.GONE);
 
+			String status = mEditTextStatus.getText().toString();
+
+			if (!status.trim().equals("")) {
+				mTextViewStatus.setText(status);
+				int updated = contact.updated;
+				getActivity().getContentResolver().update(
+						QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateChatInfoValues("",-1, "", 0, status, "",
+								updated,4), QodemeContract.Chats.CHAT_ID+"=?",
+						DbUtils.getWhereArgsForId(contact.chatId));
+				
+//				String title, int color,
+//				String description, int is_locked, String status, String tags, int updated,
+//				int updateType) {
+				
+				SyncHelper.requestManualSync();
+			}
+			
 			break;
 		case R.id.btnSetName:
 			mRelativeLayoutName.setVisibility(View.VISIBLE);

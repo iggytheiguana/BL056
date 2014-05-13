@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import biz.softtechnics.qodeme.R;
+import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.ui.MainActivity;
 
 import android.content.Context;
@@ -19,9 +20,9 @@ import android.widget.LinearLayout;
 
 public class GridAdapter extends BaseAdapter {
 	private Context mContext = null;
-	private ArrayList<HashMap<String, String>> mArrayList = new ArrayList<HashMap<String, String>>();
+	private ArrayList<HashMap<String, Message>> mArrayList = new ArrayList<HashMap<String, Message>>();
 
-	public GridAdapter(Context context, ArrayList<HashMap<String, String>> mMapList) {
+	public GridAdapter(Context context, ArrayList<HashMap<String, Message>> mMapList) {
 		this.mContext = context;
 		this.mArrayList = mMapList;
 	}
@@ -60,8 +61,8 @@ public class GridAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		HashMap<String, String> map = (HashMap<String, String>) getItem(position);
-		String ss = map.get("1");
+		HashMap<String, Message> map = (HashMap<String, Message>) getItem(position);
+		Message ss = map.get("1");
 		if (ss == null)
 			holder.imageViewRight.setVisibility(View.INVISIBLE);
 		else

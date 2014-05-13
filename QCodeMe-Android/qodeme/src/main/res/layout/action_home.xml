@@ -1,31 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    >
+    android:layout_centerHorizontal="true" >
 
-    <ImageButton
-        android:id="@+id/drawer"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@drawable/selectable_background_actionbar"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_drawer"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"/>
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
 
+        <ImageButton
+            android:id="@+id/drawer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selectable_background_actionbar"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_drawer" />
 
-    <ImageButton
-        android:id="@+id/home"
+        <ImageButton
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="7dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_camera" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/imgBtn_one2one"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="7dp"
+            android:src="@drawable/ic_1_1_tab" />
+
+        <ImageButton
+            android:id="@+id/imgBtn_private"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="7dp"
+            android:src="@drawable/ic_private_group" />
+
+        <ImageButton
+            android:id="@+id/imgBtn_public"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="7dp"
+            android:src="@drawable/ic_public_group" />
+    </LinearLayout>
+<LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal" >
+    <ImageButton
+        android:id="@+id/imgBtn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        
         android:background="@drawable/selectable_background_actionbar"
+        android:padding="7dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_action_camera"
-        android:padding="7dp"/>
-
-
-
+        android:src="@drawable/ic_plus" />
 </LinearLayout>
+</RelativeLayout>

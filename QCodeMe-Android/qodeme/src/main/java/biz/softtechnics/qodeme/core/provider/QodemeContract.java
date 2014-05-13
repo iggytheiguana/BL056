@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.utils.Converter;
@@ -92,7 +93,7 @@ public class QodemeContract {
 		 * State of chat type=1 (private_group) или 2 (public_group)
 		 */
 		String CHAT_TYPE = "chat_type";
-		
+
 		String CHAT_LATITUDE = "chat_latitude";
 		String CHAT_LONGITUDE = "chat_longitude";
 		String CHAT_NUMBER_OF_MEMBER = "chat_number_of_member";
@@ -374,6 +375,102 @@ public class QodemeContract {
 		public static String getChatId(Uri uri) {
 			return uri.getPathSegments().get(1);
 		}
+
+		public interface ChatQuery {
+			String[] PROJECTION = { Chats._ID, Chats.UPDATED, Chats.CHAT_ID,
+					Chats.CHAT_DESCRIPTION, Chats.CHAT_COLOR, Chats.CHAT_IS_LOCKED,
+					Chats.CHAT_LATITUDE, Chats.CHAT_LONGITUDE, Chats.CHAT_NUMBER_OF_FLAGGED,
+					Chats.CHAT_NUMBER_OF_MEMBER, Chats.CHAT_QRCODE, Chats.CHAT_STATUS,
+					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE };
+
+			int _ID = 0;
+			int UPDATED = 1;
+			int CHAT_ID = 2;
+			int CHAT_DESCRIPTION = 3;
+			int CHAT_COLOR = 4;
+			int CHAT_IS_LOCKED = 5;
+			int CHAT_LATITUDE = 6;
+			int CHAT_LONGITUDE = 7;
+			int CHAT_NUMBER_OF_FLAGGED = 8;
+			int CHAT_NUMBER_OF_MEMBER = 9;
+			int CHAT_QRCODE = 10;
+			int CHAT_STATUS = 11;
+			int CHAT_TAGS = 12;
+			int CHAT_TITLE = 13;
+			int CHAT_TYPE = 14;
+		}
+
+		public static ContentValues addNewChatValues(long chatId, int type, String qrCode) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
+			contentValues.put(Chats.CHAT_ID, chatId);
+			contentValues.put(Chats.CHAT_QRCODE, qrCode);
+			contentValues.put(Chats.CHAT_TYPE, type);
+			contentValues.put(Chats.CHAT_COLOR, RandomColorGenerator.getInstance().nextColor());
+			contentValues.put(Chats.CHAT_DESCRIPTION, "");
+			contentValues.put(Chats.CHAT_IS_LOCKED, 0);
+
+			contentValues.put(Chats.CHAT_NUMBER_OF_FLAGGED, 0);
+			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, 0);
+			contentValues.put(Chats.CHAT_STATUS, "");
+			contentValues.put(Chats.CHAT_TAGS, "");
+			contentValues.put(Chats.CHAT_TITLE, "UserGroup");
+			// String location = "";
+			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
+			if (latLonCity != null) {// && latLonCity.getCity() != null) {
+				// location = latLonCity.getCity();
+				contentValues.put(Chats.CHAT_LATITUDE, latLonCity.getLat());
+				contentValues.put(Chats.CHAT_LONGITUDE, latLonCity.getLon());
+			} else {
+				contentValues.put(Chats.CHAT_LATITUDE, "");
+				contentValues.put(Chats.CHAT_LONGITUDE, "");
+			}
+			return contentValues;
+		}
+
+		public static ContentValues updateChatInfoValues(String title, int color,
+				String description, int is_locked, String status, String tags, int updated,
+				int updateType) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(SyncColumns.UPDATED, updated | Sync.UPDATED);
+			switch (updateType) {
+			case 0:
+				contentValues.put(CHAT_TITLE, title);
+				break;
+			case 1:
+				contentValues.put(CHAT_COLOR, color);
+				break;
+			case 2:
+				contentValues.put(CHAT_DESCRIPTION, description);
+				break;
+			case 3:
+				contentValues.put(CHAT_IS_LOCKED, is_locked);
+				break;
+			case 4:
+				contentValues.put(CHAT_STATUS, status);
+				break;
+			case 5:
+				contentValues.put(CHAT_TAGS, tags);
+				break;
+			default:
+				break;
+			}
+			return contentValues;
+		}
+
+		public static ContentValues updateChatInfoValuesAll(String title, int color,
+				String description, int is_locked, String status, String tags,
+				int number_of_flagged, int number_of_member) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(CHAT_TITLE, title);
+			contentValues.put(CHAT_DESCRIPTION, description);
+			contentValues.put(CHAT_IS_LOCKED, is_locked);
+			contentValues.put(CHAT_STATUS, status);
+			contentValues.put(CHAT_TAGS, tags);
+			contentValues.put(CHAT_NUMBER_OF_FLAGGED, "");
+			contentValues.put(CHAT_NUMBER_OF_MEMBER, "");
+			return contentValues;
+		}
 	}
 
 	public static Uri addCallerIsSyncAdapterParameter(Uri uri) {
@@ -506,7 +603,10 @@ public class QodemeContract {
 		public interface Query {
 			String[] PROJECTION = { Messages._ID, Messages.UPDATED, Messages.MESSAGE_ID,
 					Messages.MESSAGE_CHAT_ID, Messages.MESSAGE_QRCODE, Messages.MESSAGE_TEXT,
-					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE,Messages.MESSAGE_PHOTO_URL, Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID, Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE, Messages.MESSAGE_SENDERNAME };
+					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE, Messages.MESSAGE_PHOTO_URL,
+					Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID,
+					Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE,
+					Messages.MESSAGE_SENDERNAME };
 
 			int _ID = 0;
 			int UPDATED = 1;
