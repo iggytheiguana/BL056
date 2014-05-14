@@ -39,7 +39,7 @@ import de.tavendo.autobahn.WebSocketHandler;
  * Created by Alex on 10/7/13.
  */
 @SuppressLint("ValidFragment")
-public class ChatListGroupFragment extends Fragment {
+public class ChatListGroupPublicFragment extends Fragment {
 
 	private One2OneChatListFragmentCallback callback;
 	private boolean isViewCreated = false;
@@ -76,7 +76,7 @@ public class ChatListGroupFragment extends Fragment {
 	// void messageRead(long chatId);
 	// }
 
-	public ChatListGroupFragment(int chatType) {
+	public ChatListGroupPublicFragment(int chatType) {
 		this.chatType = chatType;
 	}
 	@Override

@@ -16,7 +16,7 @@ public class PushHendlerFactory {
     private static final String PUSH_CONTACT_REJECTED = "contact reject";
     private static final String PUSH_CONTACT_BLOCK = "contact block";
     private static final String PUSH_MESSAGE_WAS_READ = "Message was read";
-    private static final String PUSH_CHAT_UPDATE = "Chat was updated";
+    private static final String PUSH_CHAT_UPDATE = "Chat updated";
     private static final String PUSH_CHAT_MEMBER_ADD = "Chat add member";
 //    
 

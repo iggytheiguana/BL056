@@ -137,7 +137,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             //Sync contacts
             SyncHelper.doContactsSync(mContext, mContentResolver);
             //Sync chats
-            SyncHelper.doChatSync(mContext, mContentResolver);
+           // SyncHelper.doChatSync(mContext, mContentResolver);
             //Sync user settings
             SyncHelper.doSettingsSync(mContext);
             // Sync Messages

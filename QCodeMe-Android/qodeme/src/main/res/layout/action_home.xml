@@ -42,7 +42,7 @@
             android:id="@+id/imgBtn_one2one"
             android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:background="@drawable/selectable_background_actionbar"
+            android:background="@drawable/bg_tab_h"
             android:padding="7dp"
             android:src="@drawable/ic_1_1_tab" />
 

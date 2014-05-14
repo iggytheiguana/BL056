@@ -107,6 +107,7 @@ public class ChatInsideFragment extends Fragment {
 	}
 
 	public interface One2OneChatInsideFragmentCallback {
+		
 		List<Message> getChatMessages(long chatId);
 
 		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,

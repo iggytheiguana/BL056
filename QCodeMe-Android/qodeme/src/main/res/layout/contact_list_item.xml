@@ -20,7 +20,7 @@
             <biz.softtechnics.qodeme.ui.common.CustomDotView
                 android:id="@+id/textView_dot"
                 style="@style/TextView.Chat.Name"
-                android:layout_width="25dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
@@ -34,7 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingLeft="5dp"
+                android:paddingLeft="0dp"
+                android:paddingTop="10dp"
                 android:text="Text" />
         </LinearLayout>
 

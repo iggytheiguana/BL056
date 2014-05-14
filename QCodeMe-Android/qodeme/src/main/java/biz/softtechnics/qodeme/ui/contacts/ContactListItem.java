@@ -58,6 +58,7 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
         getDot().invalidate();
         if(isAddContactToChat){
         	getCheckBox().setVisibility(View.VISIBLE);
+        	getCheckBox().setChecked(contactListItemEntity.isChecked());
         	getCheckBox().setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				
 				@Override

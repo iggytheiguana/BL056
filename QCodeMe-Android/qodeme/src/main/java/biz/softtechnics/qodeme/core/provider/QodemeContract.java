@@ -268,7 +268,8 @@ public class QodemeContract {
 		public static ContentValues updateContactInfoValues(String title, int color, int updated) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, updated | Sync.UPDATED);
-			contentValues.put(CONTACT_TITLE, title);
+			if (title != null)
+				contentValues.put(CONTACT_TITLE, title);
 			contentValues.put(CONTACT_COLOR, color);
 			return contentValues;
 		}
@@ -458,7 +459,7 @@ public class QodemeContract {
 			return contentValues;
 		}
 
-		public static ContentValues updateChatInfoValuesAll(String title, int color,
+		public static ContentValues updateChatInfoValuesAll(String title, Integer color,
 				String description, int is_locked, String status, String tags,
 				int number_of_flagged, int number_of_member) {
 			ContentValues contentValues = new ContentValues();

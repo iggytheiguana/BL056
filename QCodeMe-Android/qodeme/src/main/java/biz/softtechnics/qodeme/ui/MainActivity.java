@@ -107,6 +107,7 @@ import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideGroupFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListGroupFragment;
+import biz.softtechnics.qodeme.ui.one2one.ChatListGroupPublicFragment;
 import biz.softtechnics.qodeme.ui.preferences.SettingsActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeCaptureActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeShowActivity;
@@ -287,6 +288,7 @@ public class MainActivity extends BaseActivity implements
 
 			@Override
 			public void onDrawerClosed(View arg0) {
+				refreshContactList();
 				isAddContact = false;
 				mContactListAdapter.notifyDataSetChanged();
 				// mContactListView.setAdapter(mContactListAdapter);
@@ -451,11 +453,13 @@ public class MainActivity extends BaseActivity implements
 
 					@Override
 					public void onClick(View v) {
+						if (chatType == 0)
+							return;
 						chatType = 0;
 						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
 						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
 						v.setBackgroundResource(R.drawable.bg_tab_h);
-						
+
 						ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
 								.findFragmentByTag(CHAT_LIST_FRAGMENT);
 						if (one2OneChatListFragment != null) {
@@ -475,12 +479,18 @@ public class MainActivity extends BaseActivity implements
 
 					@Override
 					public void onClick(View v) {
+						if (chatType == 1)
+							return;
 						chatType = 1;
 						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
 						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
 						v.setBackgroundResource(R.drawable.bg_tab_h);
-						
-						ChatListGroupFragment privateChatListFragment = new ChatListGroupFragment();
+
+						ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
+								.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
+						if (privateChatListFragment == null) {
+							privateChatListFragment = new ChatListGroupFragment(1);
+						}
 						FragmentTransaction transaction = getSupportFragmentManager()
 								.beginTransaction();
 						transaction.replace(R.id.content_frame, privateChatListFragment,
@@ -493,16 +503,24 @@ public class MainActivity extends BaseActivity implements
 
 					@Override
 					public void onClick(View v) {
+						if (chatType == 2)
+							return;
 						chatType = 2;
 						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
 						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
 						v.setBackgroundResource(R.drawable.bg_tab_h);
-						
-						ChatListGroupFragment privateChatListFragment = new ChatListGroupFragment();
+
+						ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()
+								.findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
+						if (publicChatListFragment == null) {
+							publicChatListFragment = new ChatListGroupPublicFragment(2);
+						}
+						// ChatListGroupFragment privateChatListFragment = new
+						// ChatListGroupFragment(2);
 						FragmentTransaction transaction = getSupportFragmentManager()
 								.beginTransaction();
-						transaction.add(R.id.content_frame, privateChatListFragment,
-								CHAT_LIST_PRIVATE_FRAGMENT);
+						transaction.replace(R.id.content_frame, publicChatListFragment,
+								CHAT_LIST_PUBLIC_FRAGMENT);
 						transaction.commit();
 
 					}
@@ -513,7 +531,12 @@ public class MainActivity extends BaseActivity implements
 					@Override
 					public void onClick(View v) {
 						// mContactListView.setAdapter(mContactListAddChatAdapter);
-						isAddContact = true;
+						if (chatType != 0) {
+							isAddContact = true;
+						} else {
+							isAddContact = false;
+						}
+						refreshContactList();
 						mContactListAdapter.notifyDataSetChanged();
 						mDrawerLayout.openDrawer(mContactListView);
 						// Intent i = new Intent(getContext(),
@@ -557,12 +580,12 @@ public class MainActivity extends BaseActivity implements
 			}
 			case REQUEST_ACTIVITY_CONTACT_DETAILS:
 				long id = data.getLongExtra(QodemeContract.Contacts._ID, -1);
-				String title = data.getStringExtra(QodemeContract.Contacts.CONTACT_TITLE);
+				//String title = data.getStringExtra(QodemeContract.Contacts.CONTACT_TITLE);
 				int color = data.getIntExtra(QodemeContract.Contacts.CONTACT_COLOR, 0);
 				int updated = data.getIntExtra(QodemeContract.Contacts.UPDATED,
 						QodemeContract.Contacts.Sync.UPDATED);
 				getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
-						QodemeContract.Contacts.updateContactInfoValues(title, color, updated),
+						QodemeContract.Contacts.updateContactInfoValues(null, color, updated),
 						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
 				SyncHelper.requestManualSync();
 				mViewPager.setCurrentItem(1);
@@ -1181,8 +1204,17 @@ public class MainActivity extends BaseActivity implements
 
 	private void createChat(final List<Contact> contactsList) {
 		Log.d("contact add", contactsList.get(0).title + "");
-		RestAsyncHelper.getInstance().chatCreate(ChatType.PRIVATE_GROUP, "", "", 0, "", 0, "", 0,
-				0, new RestListener<ChatCreateResponse>() {
+		ChatType mChatType = null;
+		if (chatType == 1)
+			mChatType = ChatType.PRIVATE_GROUP;
+		else if (chatType == 2)
+			mChatType = ChatType.PUBLIC_GROUP;
+
+		if (mChatType == null) {
+			mChatType = ChatType.PRIVATE_GROUP;
+		}
+		RestAsyncHelper.getInstance().chatCreate(mChatType, "", "", 0, "", 0, "", 0, 0,
+				new RestListener<ChatCreateResponse>() {
 
 					@Override
 					public void onResponse(ChatCreateResponse response) {
@@ -1269,6 +1301,8 @@ public class MainActivity extends BaseActivity implements
 			// if (mSearchView != null) {
 			// initializeSearchView();
 			// }
+			refreshOne2OneList();
+			mHandler.sendEmptyMessage(2);
 		}
 
 		@Override
@@ -1367,6 +1401,9 @@ public class MainActivity extends BaseActivity implements
 		}
 
 		// Refresh list of contacts
+		for (ContactListItemEntity c : contactListItems) {
+			c.setChecked(false);
+		}
 		mContactListAdapter.clear();
 		mContactListAdapter.addAll(contactListItems);
 
@@ -1471,10 +1508,14 @@ public class MainActivity extends BaseActivity implements
 
 		ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
 				.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
+		ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()
+				.findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
 		if (one2OneChatListFragment != null)
 			one2OneChatListFragment.updateUi();
 		if (privateChatListFragment != null)
 			privateChatListFragment.updateUi();
+		if (publicChatListFragment != null)
+			publicChatListFragment.updateUi();
 	}
 
 	private void openChat(String name) {

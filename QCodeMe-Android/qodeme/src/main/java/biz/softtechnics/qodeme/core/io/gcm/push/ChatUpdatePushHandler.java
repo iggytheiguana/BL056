@@ -29,7 +29,13 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 
     @Override
     public void parse(Bundle bundle) {
-        mChatLoad = new Gson().fromJson(bundle.getString(RestKeyMap.CONTACT_OBJECT), ChatLoad.class);
+        mChatLoad = new ChatLoad();//new Gson().fromJson(bundle.getString(RestKeyMap.CONTACT_OBJECT), ChatLoad.class);
+        mChatLoad.chatId = Long.parseLong(bundle.getString("id"));
+        mChatLoad.number_of_flagged = Integer.parseInt(bundle.getString("number_of_flagged"));
+        mChatLoad.status = bundle.getString("status");
+        mChatLoad.is_locked = Integer.parseInt(bundle.getString("is_locked"));
+        mChatLoad.number_of_members = Integer.parseInt(bundle.getString("number_of_members"));
+        mChatLoad.description = bundle.getString("description");
     }
 
     @Override
@@ -46,7 +52,9 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 //        getContext().getContentResolver().insert(
 //                QodemeContract.Contacts.CONTENT_URI,
 //                QodemeContract.Contacts.addNewContactPushValues(mContact));
-    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValues("",mChatLoad.color, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
+//    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValues("",mChatLoad.color, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
+    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValuesAll(null,null, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
+    	
         SyncHelper.requestManualSync();
     }
 }

@@ -24,7 +24,11 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 
 	@Override
 	public void parse(Bundle bundle) {
-//		mChatLoad = //new Gson().fromJson(bundle.getString(RestKeyMap.CONTACT_OBJECT), ChatAdd.class);
+		mChatLoad = new ChatAdd();
+		//new Gson().fromJson(bundle.get, ChatAdd.class);
+		mChatLoad.chatId = Long.parseLong(bundle.getString("chat_id"));
+		mChatLoad.type = Integer.parseInt(bundle.getString("chat_type"));
+		
 	}
 
 	@Override
@@ -41,6 +45,7 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 		// NOTIFICATION_REQUEST_NEW_CONTACT);
 		// }
 		//
+		
 		Cursor cursor = getContext().getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
 				QodemeContract.Chats.ChatQuery.PROJECTION,
 				QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null, null);
@@ -55,7 +60,7 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 		} else {
 			getContext().getContentResolver().insert(
 					QodemeContract.Chats.CONTENT_URI,
-					QodemeContract.Chats.addNewChatValues(mChatLoad.chatId, mChatLoad.type,
+					QodemeContract.Chats.addNewChatValues(mChatLoad.chatId,  mChatLoad.type,
 							mChatLoad.qrcode));
 		}
 
@@ -65,6 +70,6 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 		// mChatLoad.tag, mChatLoad.number_of_flagged,
 		// mChatLoad.number_of_members),
 		// QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
-		SyncHelper.requestManualSync();
+		//SyncHelper.requestManualSync();
 	}
 }

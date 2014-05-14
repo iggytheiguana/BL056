@@ -591,6 +591,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		List<Message> listForAdapter = Lists.newArrayList();
 		List<Message> listData = mCallback.getMessages(mChatLoad.chatId);
 		listData = sortMessages(listData);
+		
 		if (listData != null) {
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
