@@ -61,8 +61,8 @@ public class ChatGroupPhotosFragment extends Fragment {
 		args.putInt(CHAT_COLOR, c.color);
 		args.putString(CHAT_NAME, c.title);
 		args.putString(QRCODE, c.qrcode);
-//		args.putString(LOCATION, c.location);
-//		args.putString(DATE, c.date);
+		// args.putString(LOCATION, c.location);
+		// args.putString(DATE, c.date);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
 		f.chatLoad = c;
 		// f.contact = c;
@@ -111,36 +111,40 @@ public class ChatGroupPhotosFragment extends Fragment {
 		}
 		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
 
-//		SeparatedListAdapter adapter = new SeparatedListAdapter(getActivity());
-		mListAdapter  = new SeparatedListAdapter(getActivity());
+		// SeparatedListAdapter adapter = new
+		// SeparatedListAdapter(getActivity());
+		mListAdapter = new SeparatedListAdapter(getActivity());
 
-//		adapter.addSection("April 29, 2014", new GridAdapter(getActivity(), mMapList));
-//
-//		ArrayList<String> dd = new ArrayList<String>();
-//		dd.add("a");
-//		dd.add("b");
-//		dd.add("c");
-//		dd.add("d");
-//		if (dd.size() % 2 == 0) {
-//			count = dd.size() / 2;
-//		} else {
-//			count = (dd.size() / 2) + 1;
-//		}
-//
-//		j = 0;
-//		ArrayList<HashMap<String, String>> mm = new ArrayList<HashMap<String, String>>();
-//		for (int i = 0; i < count; i++) {
-//			HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-//
-//			mHashMapLeft.put("0", dd.get(j) + "");
-//			if ((j + 1) <= (dd.size() - 1)) {
-//				mHashMapLeft.put("1", dd.get(j + 1) + "");
-//			}
-//			mm.add(mHashMapLeft);
-//			j = j + 2;
-//		}
-//
-//		adapter.addSection("April 30, 2014", new GridAdapter(getActivity(), mm));
+		// adapter.addSection("April 29, 2014", new GridAdapter(getActivity(),
+		// mMapList));
+		//
+		// ArrayList<String> dd = new ArrayList<String>();
+		// dd.add("a");
+		// dd.add("b");
+		// dd.add("c");
+		// dd.add("d");
+		// if (dd.size() % 2 == 0) {
+		// count = dd.size() / 2;
+		// } else {
+		// count = (dd.size() / 2) + 1;
+		// }
+		//
+		// j = 0;
+		// ArrayList<HashMap<String, String>> mm = new ArrayList<HashMap<String,
+		// String>>();
+		// for (int i = 0; i < count; i++) {
+		// HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
+		//
+		// mHashMapLeft.put("0", dd.get(j) + "");
+		// if ((j + 1) <= (dd.size() - 1)) {
+		// mHashMapLeft.put("1", dd.get(j + 1) + "");
+		// }
+		// mm.add(mHashMapLeft);
+		// j = j + 2;
+		// }
+		//
+		// adapter.addSection("April 30, 2014", new GridAdapter(getActivity(),
+		// mm));
 
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
 		isViewCreated = true;
@@ -168,113 +172,118 @@ public class ChatGroupPhotosFragment extends Fragment {
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			mListAdapter = new SeparatedListAdapter(getActivity());
 			List<Message> messages = callback.getChatMessages(getChatId());
-			Message previousMessage = null;
-			List<Message> temp = new ArrayList<Message>();
-			for (Message me : messages) {
-				if (me.hasPhoto == 1) {
-					temp.add(me);
+
+			if (messages != null) {
+				Message previousMessage = null;
+				List<Message> temp = new ArrayList<Message>();
+				for (Message me : messages) {
+					if (me.hasPhoto == 1) {
+						temp.add(me);
+					}
 				}
-			}
-			// for(Message message:temp){
-//			messages.removeAll(temp);
-			// }
-			ArrayList<PhotoMessage> arrayListMessage = new ArrayList<ChatGroupPhotosFragment.PhotoMessage>();
-			for (Message me : temp) {
-				if (previousMessage != null /*
-											 * &&
-											 * !TextUtils.isEmpty(previousMessage
-											 * .created )
-											 */) {
-					try {
-						Calendar currentDate = Calendar.getInstance();
+				// for(Message message:temp){
+				// messages.removeAll(temp);
+				// }
+				ArrayList<PhotoMessage> arrayListMessage = new ArrayList<ChatGroupPhotosFragment.PhotoMessage>();
+				for (Message me : temp) {
+					if (previousMessage != null /*
+												 * && !TextUtils.isEmpty(
+												 * previousMessage .created )
+												 */) {
+						try {
+							Calendar currentDate = Calendar.getInstance();
+							String date = me.created;
+							if (me.created != null && !(me.created.contains(".")))
+								date += ".000";
+							currentDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(date));
+
+							Calendar previousDate = Calendar.getInstance();
+							String preDate = previousMessage.created;
+							// Log.d("preDate", preDate);
+							if (previousMessage.created != null
+									&& (!previousMessage.created.contains(".")))
+								preDate = preDate + ".000";
+							// Log.d("preDate", preDate);
+							previousDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(preDate));
+
+							if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
+								Date dateTemp = new Date(
+										Converter.getCrurentTimeFromTimestamp(date));
+								// Converter.getCrurentTimeFromTimestamp(me.created)
+								// getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+								// getHeaderContainer().setVisibility(View.VISIBLE);
+								PhotoMessage photoMessage = new PhotoMessage();
+								if (me.created != null && !(me.created.contains(".")))
+									date += ".000";
+								photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
+								photoMessage.arrayList.add(me);
+								arrayListMessage.add(photoMessage);
+							} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
+								// getOpponentSeparator().setVisibility(View.VISIBLE);
+							} else {
+								if (arrayListMessage.size() > 0) {
+									PhotoMessage message = arrayListMessage.get(arrayListMessage
+											.size() - 1);
+									message.arrayList.add(me);
+								}
+							}
+
+							// if
+							// (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)
+							// && currentDate.get(Calendar.MINUTE) ==
+							// previousDate
+							// .get(Calendar.MINUTE)
+							// && currentDate.get(Calendar.HOUR_OF_DAY) ==
+							// previousDate
+							// .get(Calendar.HOUR_OF_DAY)) {
+							//
+							// // getDate().setVisibility(View.INVISIBLE);
+							// // getDate().setVisibility(View.VISIBLE);
+							// } else {
+							// // getDate().setVisibility(View.VISIBLE);
+							// }
+
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					} else {
+						PhotoMessage photoMessage = new PhotoMessage();
 						String date = me.created;
 						if (me.created != null && !(me.created.contains(".")))
 							date += ".000";
-						currentDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(date));
+						Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
+						photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
+						photoMessage.arrayList.add(me);
+						arrayListMessage.add(photoMessage);
+					}
+					previousMessage = me;
+				}
 
-						Calendar previousDate = Calendar.getInstance();
-						String preDate = previousMessage.created;
-						// Log.d("preDate", preDate);
-						if (previousMessage.created != null
-								&& (!previousMessage.created.contains(".")))
-							preDate = preDate + ".000";
-						// Log.d("preDate", preDate);
-						previousDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(preDate));
+				for (PhotoMessage photoMessage : arrayListMessage) {
+					ArrayList<HashMap<String, Message>> mMapList = new ArrayList<HashMap<String, Message>>();
+					int count = 0;
+					if (photoMessage.arrayList.size() % 2 == 0) {
+						count = photoMessage.arrayList.size() / 2;
+					} else {
+						count = (photoMessage.arrayList.size() / 2) + 1;
+					}
 
-						if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
-							Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
-							// Converter.getCrurentTimeFromTimestamp(me.created)
-							// getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
-							// getHeaderContainer().setVisibility(View.VISIBLE);
-							PhotoMessage photoMessage = new PhotoMessage();
-							if (me.created != null && !(me.created.contains(".")))
-								date += ".000";
-							photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
-							photoMessage.arrayList.add(me);
-							arrayListMessage.add(photoMessage);
-						} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
-							// getOpponentSeparator().setVisibility(View.VISIBLE);
-						} else {
-							if (arrayListMessage.size() > 0) {
-								PhotoMessage message = arrayListMessage
-										.get(arrayListMessage.size() - 1);
-								message.arrayList.add(me);
-							}
+					int j = 0;
+					for (int i = 0; i < count; i++) {
+						HashMap<String, Message> mHashMapLeft = new HashMap<String, Message>();
+
+						mHashMapLeft.put("0", photoMessage.arrayList.get(j));
+						if ((j + 1) <= (photoMessage.arrayList.size() - 1)) {
+							mHashMapLeft.put("1", photoMessage.arrayList.get(j + 1));
 						}
-
-						// if
-						// (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)
-						// && currentDate.get(Calendar.MINUTE) == previousDate
-						// .get(Calendar.MINUTE)
-						// && currentDate.get(Calendar.HOUR_OF_DAY) ==
-						// previousDate
-						// .get(Calendar.HOUR_OF_DAY)) {
-						//
-						// // getDate().setVisibility(View.INVISIBLE);
-						// // getDate().setVisibility(View.VISIBLE);
-						// } else {
-						// // getDate().setVisibility(View.VISIBLE);
-						// }
-
-					} catch (ParseException e) {
-						e.printStackTrace();
+						mMapList.add(mHashMapLeft);
+						j = j + 2;
 					}
-				} else {
-					PhotoMessage photoMessage = new PhotoMessage();
-					String date = me.created;
-					if (me.created != null && !(me.created.contains(".")))
-						date += ".000";
-					Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
-					photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
-					photoMessage.arrayList.add(me);
-					arrayListMessage.add(photoMessage);
+					mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(),
+							mMapList));
 				}
-				previousMessage = me;
+				mListViewPhotos.setAdapter(mListAdapter);
 			}
-
-			for (PhotoMessage photoMessage : arrayListMessage) {
-				ArrayList<HashMap<String, Message>> mMapList = new ArrayList<HashMap<String, Message>>();
-				int count = 0;
-				if (photoMessage.arrayList.size() % 2 == 0) {
-					count = photoMessage.arrayList.size() / 2;
-				} else {
-					count = (photoMessage.arrayList.size() / 2) + 1;
-				}
-
-				int j = 0;
-				for (int i = 0; i < count; i++) {
-					HashMap<String, Message> mHashMapLeft = new HashMap<String, Message>();
-
-					mHashMapLeft.put("0", photoMessage.arrayList.get(j));
-					if ((j + 1) <= (photoMessage.arrayList.size() - 1)) {
-						mHashMapLeft.put("1", photoMessage.arrayList.get(j + 1));
-					}
-					mMapList.add(mHashMapLeft);
-					j = j + 2;
-				}
-				mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(), mMapList));
-			}
-			mListViewPhotos.setAdapter(mListAdapter);
 		}
 		// mName.setText(getChatName());
 		// mName.setTextColor(getChatColor());

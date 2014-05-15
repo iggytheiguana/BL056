@@ -188,7 +188,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
 
 		mListAdapter = new ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback>(
-				getActivity(), R.layout.group_chat_list_item, listForAdapter,
+				getActivity(), R.layout.group_public_chat_list_item, listForAdapter,
 				new ChatListAdapterCallback() {
 
 					public void onSingleTap(View view, int position, Contact ce) {

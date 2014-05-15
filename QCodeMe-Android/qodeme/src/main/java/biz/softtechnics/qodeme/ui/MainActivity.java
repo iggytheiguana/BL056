@@ -161,6 +161,7 @@ public class MainActivity extends BaseActivity implements
 	private long currentChatId = -1;
 	private int chatType = 0;
 	private int fullChatIndex = 0;
+	private boolean isAddMemberOnExistingChat = false;
 
 	// Fonts cache
 	private Map<Fonts, Typeface> fontMap = new HashMap();
@@ -290,6 +291,7 @@ public class MainActivity extends BaseActivity implements
 			public void onDrawerClosed(View arg0) {
 				refreshContactList();
 				isAddContact = false;
+				isAddMemberOnExistingChat = false;
 				mContactListAdapter.notifyDataSetChanged();
 				// mContactListView.setAdapter(mContactListAdapter);
 			}
@@ -580,7 +582,8 @@ public class MainActivity extends BaseActivity implements
 			}
 			case REQUEST_ACTIVITY_CONTACT_DETAILS:
 				long id = data.getLongExtra(QodemeContract.Contacts._ID, -1);
-				//String title = data.getStringExtra(QodemeContract.Contacts.CONTACT_TITLE);
+				// String title =
+				// data.getStringExtra(QodemeContract.Contacts.CONTACT_TITLE);
 				int color = data.getIntExtra(QodemeContract.Contacts.CONTACT_COLOR, 0);
 				int updated = data.getIntExtra(QodemeContract.Contacts.UPDATED,
 						QodemeContract.Contacts.Sync.UPDATED);
@@ -1056,7 +1059,10 @@ public class MainActivity extends BaseActivity implements
 										}
 									}
 									if (selectedContact.size() > 0) {
-										createChat(selectedContact);
+										if (isAddMemberOnExistingChat) {
+											addMemberInChat(selectedContact);
+										} else
+											createChat(selectedContact);
 									}
 									mDrawerLayout.closeDrawer(mContactListView);
 								}
@@ -2139,4 +2145,38 @@ public class MainActivity extends BaseActivity implements
 		return contact;
 	}
 
+	public void addMemberInExistingChat() {
+		isAddMemberOnExistingChat = true;
+		if (chatType != 0) {
+			isAddContact = true;
+		} else {
+			isAddContact = false;
+		}
+		refreshContactList();
+		mContactListAdapter.notifyDataSetChanged();
+		mDrawerLayout.openDrawer(mContactListView);
+	}
+
+	private void addMemberInChat(final List<Contact> contactsList) {
+		isAddMemberOnExistingChat = false;
+		Log.d("contact add in public", contactsList.get(0).title + "");
+
+		for (Contact contact : contactsList) {
+			RestAsyncHelper.getInstance().chatAddMember(currentChatId, contact.qrCode,
+					new RestListener<ChatAddMemberResponse>() {
+
+						@Override
+						public void onResponse(ChatAddMemberResponse response) {
+							Log.d("Chat add in public ", "Chat add mem "
+									+ response.getChat().getId());
+						}
+
+						@Override
+						public void onServiceError(RestError error) {
+							Log.d("Error", "Chat add member");
+						}
+					});
+		}
+
+	}
 }

@@ -86,6 +86,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private int mPosition;
 	// private Contact mContact;
 	private ChatLoad mChatLoad;
+	private ImageButton shareChatBtn;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -363,6 +364,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public ImageButton getSendImage() {
 		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
 				: (ImageButton) findViewById(R.id.btn_camera);
+	}
+	
+	public ImageButton getShareChatBtn() {
+		return shareChatBtn = shareChatBtn != null ? shareChatBtn
+				: (ImageButton) findViewById(R.id.btn_share);
 	}
 
 	// sendImgMessageBtn
@@ -772,6 +778,16 @@ public class ChatListGroupItem extends RelativeLayout implements
 				MainActivity activity = (MainActivity) v.getContext();
 				activity.setCurrentChatId(mChatLoad.chatId);
 				activity.takePhotoFromGallery();
+			}
+		});
+		
+		getShareChatBtn().setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity activity = (MainActivity) v.getContext();
+				activity.setCurrentChatId(mChatLoad.chatId);
+				activity.addMemberInExistingChat();
 			}
 		});
 	}
