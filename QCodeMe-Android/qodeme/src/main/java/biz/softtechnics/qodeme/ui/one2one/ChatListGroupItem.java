@@ -366,7 +366,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
 				: (ImageButton) findViewById(R.id.btn_camera);
 	}
-	
+
 	public ImageButton getShareChatBtn() {
 		return shareChatBtn = shareChatBtn != null ? shareChatBtn
 				: (ImageButton) findViewById(R.id.btn_share);
@@ -508,7 +508,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 			Toast.makeText(context, "Empty message can't be sent", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		mCallback.sendMessage(mChatLoad.chatId, message, "", 0, -1, 0, 0, "","");
+		mCallback.sendMessage(mChatLoad.chatId, message, "", 0, -1, 0, 0, "", "");
 		mCallback.messageRead(mChatLoad.chatId);
 	}
 
@@ -546,7 +546,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 				return;
 			}
 			mCallback.sendMessage(mChatLoad.chatId, message, photoUrl, hashPhoto, replyTo_Id,
-					latitude, longitude, senderName,"");
+					latitude, longitude, senderName, "");
 			mCallback.messageRead(mChatLoad.chatId);
 		}
 
@@ -604,7 +604,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		List<Message> listForAdapter = Lists.newArrayList();
 		List<Message> listData = mCallback.getMessages(mChatLoad.chatId);
 		listData = sortMessages(listData);
-		
+
 		if (listData != null) {
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
@@ -691,7 +691,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 						if (QodemePreferences.getInstance().getQrcode().equals(senderQrcode))
 							return myColor;
 						else {
-							return mCallback.getContact(senderQrcode).color;
+							Contact contact = mCallback.getContact(senderQrcode);
+							if (contact != null)
+								return mCallback.getContact(senderQrcode).color;
+							else
+								return myColor;
 						}
 
 					}
@@ -787,9 +791,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 				activity.takePhotoFromGallery();
 			}
 		});
-		
+
 		getShareChatBtn().setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				MainActivity activity = (MainActivity) v.getContext();

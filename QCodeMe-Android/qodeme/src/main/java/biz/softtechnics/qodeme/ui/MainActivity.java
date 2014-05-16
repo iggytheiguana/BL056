@@ -1148,6 +1148,20 @@ public class MainActivity extends BaseActivity implements
 
 		});
 
+		View moreBtnView = getLayoutInflater().inflate(R.layout.more_item_header, null);
+		Button button = (Button) moreBtnView.findViewById(R.id.btn_more);
+		button.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this,
+						MoreOptionActivity.class);
+				startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
+				mDrawerLayout.closeDrawers();
+			}
+		});
+		
+		mContactListView.addHeaderView(moreBtnView);
 		mContactListView.setLongClickable(true);
 
 		List<ContactListItemEntity> listForAdapter = Lists.newArrayList();
@@ -1183,7 +1197,7 @@ public class MainActivity extends BaseActivity implements
 						tvHeader.setText("Invited");
 						break;
 					case QodemeContract.Contacts.State.APPRUVED:
-						btnMore.setVisibility(View.VISIBLE);
+						btnMore.setVisibility(View.GONE);
 						btnMore.setOnClickListener(new View.OnClickListener() {
 
 							@Override
@@ -1819,75 +1833,75 @@ public class MainActivity extends BaseActivity implements
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 			expandedImageView.setVisibility(View.INVISIBLE);
 			return;
-		} 
-//		else {
-//			new AlertDialog.Builder(this).setTitle(R.string.app_name)
-//					.setMessage("Are you want to logout?")
-//					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							// TODO Auto-generated method stub
-//							RestAsyncHelper.getInstance().registerToken("", new RestListener() {
-//
-//								@Override
-//								public void onResponse(BaseResponse response) {
-//									RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-//										@Override
-//										public void onResponse(BaseResponse response) {
-//											logoutHandler();
-//										}
-//
-//										@Override
-//										public void onServiceError(RestError error) {
-//											showMessage(RestErrorType.getMessage(getContext(),
-//													error.getErrorType()) + error.getServerMsg());
-//										}
-//
-//										@Override
-//										public void onNetworkError(VolleyError error) {
-//											super.onNetworkError(error);
-//											showMessage(error.getMessage());
-//										}
-//									});
-//								}
-//
-//								@Override
-//								public void onServiceError(RestError error) {
-//									showMessage(RestErrorType.getMessage(getContext(),
-//											error.getErrorType())
-//											+ error.getServerMsg());
-//								}
-//
-//								@Override
-//								public void onNetworkError(VolleyError error) {
-//									super.onNetworkError(error);
-//									showMessage("No internet connection!");
-//								}
-//
-//								private void logoutHandler() {
-//									clearActivityCache();
-//									QodemePreferences.getInstance().setLogged(false);
-//									QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-//									startActivity(new Intent(getApplicationContext(),
-//											LoginActivity.class));
-//									finish();
-//
-//								}
-//							});
-//
-//						}
-//					}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-//
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							// TODO Auto-generated method stub
-//							finish();
-//						}
-//					}).create().show();
-//		}
+		}
+		// else {
+		// new AlertDialog.Builder(this).setTitle(R.string.app_name)
+		// .setMessage("Are you want to logout?")
+		// .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(DialogInterface dialog, int which) {
+		// // TODO Auto-generated method stub
+		// RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+		//
+		// @Override
+		// public void onResponse(BaseResponse response) {
+		// RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+		// @Override
+		// public void onResponse(BaseResponse response) {
+		// logoutHandler();
+		// }
+		//
+		// @Override
+		// public void onServiceError(RestError error) {
+		// showMessage(RestErrorType.getMessage(getContext(),
+		// error.getErrorType()) + error.getServerMsg());
+		// }
+		//
+		// @Override
+		// public void onNetworkError(VolleyError error) {
+		// super.onNetworkError(error);
+		// showMessage(error.getMessage());
+		// }
+		// });
+		// }
+		//
+		// @Override
+		// public void onServiceError(RestError error) {
+		// showMessage(RestErrorType.getMessage(getContext(),
+		// error.getErrorType())
+		// + error.getServerMsg());
+		// }
+		//
+		// @Override
+		// public void onNetworkError(VolleyError error) {
+		// super.onNetworkError(error);
+		// showMessage("No internet connection!");
+		// }
+		//
+		// private void logoutHandler() {
+		// clearActivityCache();
+		// QodemePreferences.getInstance().setLogged(false);
+		// QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+		// startActivity(new Intent(getApplicationContext(),
+		// LoginActivity.class));
+		// finish();
+		//
+		// }
+		// });
+		//
+		// }
+		// }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(DialogInterface dialog, int which) {
+		// // TODO Auto-generated method stub
+		// finish();
+		// }
+		// }).create().show();
+		// }
 
-		// super.onBackPressed();
+		 super.onBackPressed();
 	}
 
 	@Override

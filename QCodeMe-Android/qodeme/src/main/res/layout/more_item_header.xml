@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <Button  android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:id="@+id/btn_more"
+        android:text="@string/more"
+        android:layout_margin="10dp"
+        android:visibility="visible"
+        android:background="@drawable/selector_button_blue"/>
+
+
+    <View
+        android:layout_height="1dip"
+        android:layout_width="match_parent"
+        android:background="@color/divider_color" />
+
+</LinearLayout>
