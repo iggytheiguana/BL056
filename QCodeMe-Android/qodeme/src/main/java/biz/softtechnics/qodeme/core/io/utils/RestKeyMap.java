@@ -61,4 +61,8 @@ public class RestKeyMap {
     public static final String REPLY_TO_ID = "replyto_id";
     public static final String IS_FLAGGED = "is_flagged";
     public static final String SENDER_NAME = "sendername";
+    
+    public static final String IMAGE = "image";
+    public static final String IMAGE_URL = "image_url";
+    
 }

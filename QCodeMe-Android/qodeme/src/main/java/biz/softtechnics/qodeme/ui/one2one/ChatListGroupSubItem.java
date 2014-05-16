@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -24,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +34,8 @@ import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
+import biz.softtechnics.qodeme.images.utils.ImageResizer;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExtendedGroupAdapterBasedView;
@@ -66,6 +70,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private ImageButton mSendButton;
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
+	private ProgressBar mProgressBar;
 
 	public ChatListGroupSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -97,6 +102,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	public ImageView getImageMessage() {
 		return mImageViewItem = mImageViewItem != null ? mImageViewItem
 				: (ImageView) findViewById(R.id.imageView_item);
+	}
+
+	public ProgressBar getImageProgress() {
+		return mProgressBar = mProgressBar != null ? mProgressBar
+				: (ProgressBar) findViewById(R.id.progressBar_img);
 	}
 
 	public LinearLayout getImageLayout() {
@@ -132,10 +142,31 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 1) {
-			String sss = me.photoUrl;
-			byte data[] = Base64.decode(sss, Base64.NO_WRAP);
-			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-			getImageMessage().setImageBitmap(bitmap);
+			// String sss = me.photoUrl;
+			// byte data[] = Base64.decode(sss, Base64.NO_WRAP);
+			// Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
+			// data.length);
+			// getImageMessage().setImageBitmap(bitmap);
+			if (me.localImgPath != null && !me.localImgPath.trim().equals("")) {
+				int size = 200;
+				ImageFetcher fetcher = callback2.getImageFetcher();
+				if (fetcher != null)
+					size = fetcher.getRequiredSize();
+
+				Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size, size, null);
+//				getImageMessage().setImageURI(Uri.parse(me.localImgPath));
+				getImageMessage().setImageBitmap(bitmap);
+				getImageProgress().setVisibility(View.GONE);
+			} else {
+				Log.d("imgUrl", me.photoUrl+"");
+				ImageFetcher fetcher = callback2.getImageFetcher();
+				if (fetcher != null)
+					fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
+			}
+			// ImageFetcher fetcher = callback2.getImageFetcher();
+			// if (fetcher != null)
+			// fetcher.loadImage(me.photoUrl, getImageMessage(),
+			// getImageProgress());
 			getImageMessage().setVisibility(View.VISIBLE);
 			getImageLayout().setVisibility(View.VISIBLE);
 		} else {

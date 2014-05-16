@@ -60,6 +60,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -96,6 +97,8 @@ import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
 import biz.softtechnics.qodeme.core.io.utils.RestListener;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import biz.softtechnics.qodeme.core.sync.SyncHelper;
+import biz.softtechnics.qodeme.images.utils.ImageCache;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.FullChatListAdapter;
 import biz.softtechnics.qodeme.ui.common.MenuListAdapter;
 import biz.softtechnics.qodeme.ui.common.MenuListAddToChatAdapter;
@@ -143,6 +146,8 @@ public class MainActivity extends BaseActivity implements
 	private static final int REQUEST_ACTIVITY_CONTACT_DETAILS = 3;
 	private static final int REQUEST_ACTIVITY_PHOTO_GALLERY = 4;
 	private static final int REQUEST_ACTIVITY_CAMERA = 5;
+	private static final int REQUEST_ACTIVITY_MORE = 6;
+
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
 	private static final String CHAT_LIST_PRIVATE_FRAGMENT = "chat_list_private_fragment";
 	private static final String CHAT_LIST_PUBLIC_FRAGMENT = "chat_list_public_fragment";
@@ -212,6 +217,16 @@ public class MainActivity extends BaseActivity implements
 	private Object mSyncObserverHandle;
 
 	/**
+	 * Load Images by url parameter for cache
+	 */
+	private static final String TAG = "ImageGridFragment";
+	private static final String IMAGE_CACHE_DIR = "thumbs";
+
+	private int mImageThumbSize;
+	private int mImageThumbSpacing;
+	private ImageFetcher mImageFetcher;
+
+	/**
 	 * Called when the activity is first created.
 	 */
 	@Override
@@ -221,6 +236,7 @@ public class MainActivity extends BaseActivity implements
 		setContentView(R.layout.activity_main);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// loadData();
+		initImageFetcher();
 		initActionBar();
 		initContactsList();
 		// TODO remove temporary solution
@@ -237,6 +253,31 @@ public class MainActivity extends BaseActivity implements
 		initKeyboardListener();
 
 		initFullChatLayout();
+
+	}
+
+	private void initImageFetcher() {
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		final int height = displayMetrics.heightPixels;
+		final int width = displayMetrics.widthPixels;
+
+		final int longest = (height > width ? height : width) / 2;
+
+		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+
+		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(),
+				IMAGE_CACHE_DIR);
+
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of
+													// app memory
+
+		// The ImageFetcher takes care of loading images into our ImageView
+		// children asynchronously
+		mImageFetcher = new ImageFetcher(this, longest);// mImageThumbSize
+		// mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+		mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 	}
 
 	private void initFullChatLayout() {
@@ -612,7 +653,7 @@ public class MainActivity extends BaseActivity implements
 						 */
 						// Log.i("s---", "" + photoData);
 						try {
-							Bitmap resizedBitmap = decodeFile(file);
+							// Bitmap resizedBitmap = decodeFile(file);
 							// Bitmap resizedBitmap = Media.getBitmap(
 							// getContentResolver(), targetUri);
 							// resizedBitmap = Bitmap.createScaledBitmap(
@@ -621,28 +662,47 @@ public class MainActivity extends BaseActivity implements
 							// mImgProfile[selectedImagePosition].getWidth(),
 							// true);
 
-							Matrix matrix = new Matrix();
-							matrix.postRotate(getImageOrientation(file.getAbsolutePath().toString()
-									.trim()));
-							Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0,
-									resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix,
-									true);
+							// Matrix matrix = new Matrix();
+							// matrix.postRotate(getImageOrientation(file.getAbsolutePath().toString()
+							// .trim()));
+							// Bitmap rotatedBitmap =
+							// Bitmap.createBitmap(resizedBitmap, 0, 0,
+							// resizedBitmap.getWidth(),
+							// resizedBitmap.getHeight(), matrix,
+							// true);
+							//
+							// ByteArrayOutputStream stream = new
+							// ByteArrayOutputStream();
+							// rotatedBitmap.compress(Bitmap.CompressFormat.PNG,
+							// 100, stream);
+							// byte[] byteArray = stream.toByteArray();
+							//
+							// String mProfileImageBase64 =
+							// Base64.encodeToString(byteArray,
+							// Base64.NO_WRAP);
 
-							ByteArrayOutputStream stream = new ByteArrayOutputStream();
-							rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-							byte[] byteArray = stream.toByteArray();
+							ChatInsideFragment chatInsideFragment = null;
+							ChatInsideGroupFragment chatInsideGroupFragment = null;
 
-							String mProfileImageBase64 = Base64.encodeToString(byteArray,
-									Base64.NO_WRAP);
-
-							ChatInsideFragment chatInsideFragment = (ChatInsideFragment) mPagerAdapter
-									.getItem(0);
-							if (!getActionBar().isShowing() && chatInsideFragment != null) {
-								chatInsideFragment.sendImageMessage(mProfileImageBase64);
+							if (!getActionBar().isShowing()) {
+								if (mPagerAdapter != null) {
+									if (chatType == 0)
+										chatInsideFragment = (ChatInsideFragment) mPagerAdapter
+												.getItem(0);
+									else
+										chatInsideGroupFragment = (ChatInsideGroupFragment) mPagerAdapter
+												.getItem(0);
+								}
+								if (chatInsideFragment != null)
+									chatInsideFragment.sendImageMessage(file.getAbsolutePath());
+								else if (chatInsideGroupFragment != null) {
+									chatInsideGroupFragment
+											.sendImageMessage(file.getAbsolutePath());
+								}
 							} else {
 								if (currentChatId != -1)
-									sendMessage(currentChatId, "", mProfileImageBase64, 1, -1, 0,
-											0, "");
+									sendMessage(currentChatId, "", "", 1, -1, 0, 0, "",
+											file.getAbsolutePath());
 							}
 							// mImgProfile[selectedImagePosition]
 							// .setImageBitmap(rotatedBitmap);
@@ -663,10 +723,88 @@ public class MainActivity extends BaseActivity implements
 				break;
 			case REQUEST_ACTIVITY_CAMERA:
 				break;
+			case REQUEST_ACTIVITY_MORE:
+				RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+
+					@Override
+					public void onResponse(BaseResponse response) {
+						RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+							@Override
+							public void onResponse(BaseResponse response) {
+								logoutHandler();
+							}
+
+							@Override
+							public void onServiceError(RestError error) {
+								showMessage(RestErrorType.getMessage(getContext(),
+										error.getErrorType())
+										+ error.getServerMsg());
+							}
+
+							@Override
+							public void onNetworkError(VolleyError error) {
+								super.onNetworkError(error);
+								showMessage(error.getMessage());
+							}
+						});
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						showMessage(RestErrorType.getMessage(getContext(), error.getErrorType())
+								+ error.getServerMsg());
+					}
+
+					@Override
+					public void onNetworkError(VolleyError error) {
+						super.onNetworkError(error);
+						showMessage("No internet connection!");
+					}
+
+					private void logoutHandler() {
+						clearActivityCache();
+						QodemePreferences.getInstance().setLogged(false);
+						QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+						startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+						finish();
+
+					}
+				});
+				break;
 			}
 		else {
 			setCurrentChatId(-1);
 		}
+	}
+
+	private void uploadImage(String imageLocal) {
+		String mProfileImageBase64 = null;
+		try {
+			File file = new File(imageLocal);
+			Bitmap resizedBitmap = decodeFile(file);
+
+			Matrix matrix = new Matrix();
+			matrix.postRotate(getImageOrientation(file.getAbsolutePath().toString().trim()));
+			Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0,
+					resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+			byte[] byteArray = stream.toByteArray();
+
+			mProfileImageBase64 = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+
+		} catch (OutOfMemoryError e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (mProfileImageBase64 != null) {
+			// UploadImageResponse imageResponse = rest.chatImage(id,
+			// mProfileImageBase64);
+			// new ChatImageUploadHandler(context, id).parse(imageResponse);
+		}
+
 	}
 
 	public void takePhotoFromGallery() {
@@ -1034,6 +1172,8 @@ public class MainActivity extends BaseActivity implements
 					TextView tvHeader = ((TextView) convertView.findViewById(R.id.header));
 					Button addbtn = (Button) convertView.findViewById(R.id.btn_add);
 					addbtn.setVisibility(View.GONE);
+					Button btnMore = (Button) convertView.findViewById(R.id.btn_more);
+					btnMore.setVisibility(View.GONE);
 
 					switch (e.getState()) {
 					case QodemeContract.Contacts.State.INVITED:
@@ -1043,6 +1183,17 @@ public class MainActivity extends BaseActivity implements
 						tvHeader.setText("Invited");
 						break;
 					case QodemeContract.Contacts.State.APPRUVED:
+						btnMore.setVisibility(View.VISIBLE);
+						btnMore.setOnClickListener(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								Intent intent = new Intent(MainActivity.this,
+										MoreOptionActivity.class);
+								startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
+								mDrawerLayout.closeDrawers();
+							}
+						});
 						tvHeader.setText("Contacts");
 						if (isAddContact) {
 							addbtn.setVisibility(View.VISIBLE);
@@ -1503,11 +1654,34 @@ public class MainActivity extends BaseActivity implements
 		}
 	}
 
+	private class ApprovedChatComparator implements Comparator<ChatLoad> {
+
+		private Map<Long, Long> lastMessaheTimeMap;
+
+		ApprovedChatComparator(Map<Long, Long> lastMessaheTimeMap) {
+			this.lastMessaheTimeMap = lastMessaheTimeMap;
+		}
+
+		private long getLastTimeMarker(Long chatId) {
+			return lastMessaheTimeMap != null ? NullHelper.notNull(lastMessaheTimeMap.get(chatId),
+					0L) : 0L;
+		}
+
+		@Override
+		public int compare(ChatLoad lhs, ChatLoad rhs) {
+			return Longs.compare(getLastTimeMarker(rhs.chatId), getLastTimeMarker(lhs.chatId));
+		}
+	}
+
 	private void refreshOne2OneList() {
 		// Sort by new messages
 		if (mApprovedContacts != null)
 			Collections.sort(mApprovedContacts, new ApprovedContactsComparator(
 					mLastMessageInChatMap));
+
+		if (mChatList != null) {
+			Collections.sort(mChatList, new ApprovedChatComparator(mLastMessageInChatMap));
+		}
 
 		ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
 				.findFragmentByTag(CHAT_LIST_FRAGMENT);
@@ -1645,72 +1819,73 @@ public class MainActivity extends BaseActivity implements
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 			expandedImageView.setVisibility(View.INVISIBLE);
 			return;
-		} else {
-			new AlertDialog.Builder(this).setTitle(R.string.app_name)
-					.setMessage("Are you want to logout?")
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							RestAsyncHelper.getInstance().registerToken("", new RestListener() {
-
-								@Override
-								public void onResponse(BaseResponse response) {
-									RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-										@Override
-										public void onResponse(BaseResponse response) {
-											logoutHandler();
-										}
-
-										@Override
-										public void onServiceError(RestError error) {
-											showMessage(RestErrorType.getMessage(getContext(),
-													error.getErrorType()) + error.getServerMsg());
-										}
-
-										@Override
-										public void onNetworkError(VolleyError error) {
-											super.onNetworkError(error);
-											showMessage(error.getMessage());
-										}
-									});
-								}
-
-								@Override
-								public void onServiceError(RestError error) {
-									showMessage(RestErrorType.getMessage(getContext(),
-											error.getErrorType())
-											+ error.getServerMsg());
-								}
-
-								@Override
-								public void onNetworkError(VolleyError error) {
-									super.onNetworkError(error);
-									showMessage("No internet connection!");
-								}
-
-								private void logoutHandler() {
-									clearActivityCache();
-									QodemePreferences.getInstance().setLogged(false);
-									QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-									startActivity(new Intent(getApplicationContext(),
-											LoginActivity.class));
-									finish();
-
-								}
-							});
-
-						}
-					}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							finish();
-						}
-					}).create().show();
-		}
+		} 
+//		else {
+//			new AlertDialog.Builder(this).setTitle(R.string.app_name)
+//					.setMessage("Are you want to logout?")
+//					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// TODO Auto-generated method stub
+//							RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+//
+//								@Override
+//								public void onResponse(BaseResponse response) {
+//									RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+//										@Override
+//										public void onResponse(BaseResponse response) {
+//											logoutHandler();
+//										}
+//
+//										@Override
+//										public void onServiceError(RestError error) {
+//											showMessage(RestErrorType.getMessage(getContext(),
+//													error.getErrorType()) + error.getServerMsg());
+//										}
+//
+//										@Override
+//										public void onNetworkError(VolleyError error) {
+//											super.onNetworkError(error);
+//											showMessage(error.getMessage());
+//										}
+//									});
+//								}
+//
+//								@Override
+//								public void onServiceError(RestError error) {
+//									showMessage(RestErrorType.getMessage(getContext(),
+//											error.getErrorType())
+//											+ error.getServerMsg());
+//								}
+//
+//								@Override
+//								public void onNetworkError(VolleyError error) {
+//									super.onNetworkError(error);
+//									showMessage("No internet connection!");
+//								}
+//
+//								private void logoutHandler() {
+//									clearActivityCache();
+//									QodemePreferences.getInstance().setLogged(false);
+//									QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+//									startActivity(new Intent(getApplicationContext(),
+//											LoginActivity.class));
+//									finish();
+//
+//								}
+//							});
+//
+//						}
+//					}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+//
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// TODO Auto-generated method stub
+//							finish();
+//						}
+//					}).create().show();
+//		}
 
 		// super.onBackPressed();
 	}
@@ -1763,11 +1938,11 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
-			long replyTo_Id, double latitude, double longitude, String senderName) {
+			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
 		Uri uri = getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
-						replyTo_Id, latitude, longitude, senderName));
+						replyTo_Id, latitude, longitude, senderName, localUrl));
 		SyncHelper.requestManualSync();
 		// Long rawContactId = ContentUris.parseId(uri);
 		String carId = uri.getPathSegments().get(1);
@@ -2178,5 +2353,10 @@ public class MainActivity extends BaseActivity implements
 					});
 		}
 
+	}
+
+	@Override
+	public ImageFetcher getImageFetcher() {
+		return mImageFetcher;
 	}
 }

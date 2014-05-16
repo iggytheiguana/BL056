@@ -10,28 +10,34 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import biz.softtechnics.qodeme.R;
-import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageCache;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.GridAdapter;
 import biz.softtechnics.qodeme.ui.common.SeparatedListAdapter;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
-import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Converter;
-import biz.softtechnics.qodeme.utils.Helper;
 
 public class ChatPhotosFragment extends Fragment {
+
+	/**
+	 * Load Images by url parameter for cache
+	 */
+	private static final String TAG = "ImageGridFragment";
+	private static final String IMAGE_CACHE_DIR = "thumbs";
+
+	private int mImageThumbSize;
+	private int mImageThumbSpacing;
+	private ImageFetcher mImageFetcher;
 
 	private static final String CHAT_ID = "chat_id";
 	private static final String CHAT_COLOR = "chat_color";
@@ -68,6 +74,12 @@ public class ChatPhotosFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_chat_photos, null);
 	}
@@ -81,6 +93,28 @@ public class ChatPhotosFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		final int height = displayMetrics.heightPixels;
+		final int width = displayMetrics.widthPixels;
+
+		final int longest = (height > width ? height : width) / 2;
+
+		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+
+		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(),
+				IMAGE_CACHE_DIR);
+
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of
+													// app memory
+
+		// The ImageFetcher takes care of loading images into our ImageView
+		// children asynchronously
+		mImageFetcher = new ImageFetcher(getActivity(), longest);//mImageThumbSize
+		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
 		ArrayList<String> arrayList = new ArrayList<String>();
 		ArrayList<HashMap<String, String>> mMapList = new ArrayList<HashMap<String, String>>();
@@ -155,7 +189,7 @@ public class ChatPhotosFragment extends Fragment {
 	public void sendImageMessage(String message) {
 
 		// we need to send websocket message that the user has stopped typing
-		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "", "");
 	}
 
 	class PhotoMessage {
@@ -277,7 +311,7 @@ public class ChatPhotosFragment extends Fragment {
 						j = j + 2;
 					}
 					mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(),
-							mMapList));
+							mMapList, mImageFetcher));
 				}
 				mListViewPhotos.setAdapter(mListAdapter);
 			}

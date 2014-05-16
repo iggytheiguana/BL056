@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageCache;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.GridAdapter;
 import biz.softtechnics.qodeme.ui.common.SeparatedListAdapter;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
@@ -51,6 +54,16 @@ public class ChatGroupPhotosFragment extends Fragment {
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_HEADER = new SimpleDateFormat(
 			"MMM dd yyyy", Locale.US);
+	
+	/**
+	 * Load Images by url parameter for cache
+	 */
+	private static final String TAG = "ImageGridFragment";
+	private static final String IMAGE_CACHE_DIR = "thumbs";
+
+	private int mImageThumbSize;
+	private int mImageThumbSpacing;
+	private ImageFetcher mImageFetcher;
 
 	public static ChatGroupPhotosFragment newInstance(ChatLoad c, boolean firstUpdate) {
 		ChatGroupPhotosFragment f = new ChatGroupPhotosFragment();
@@ -68,6 +81,32 @@ public class ChatGroupPhotosFragment extends Fragment {
 		// f.contact = c;
 		f.setArguments(args);
 		return f;
+	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+
+		
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		final int height = displayMetrics.heightPixels;
+		final int width = displayMetrics.widthPixels;
+
+		final int longest = (height > width ? height : width) / 2;
+		
+		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(),
+				IMAGE_CACHE_DIR);
+
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of
+													// app memory
+
+		// The ImageFetcher takes care of loading images into our ImageView
+		// children asynchronously
+		mImageFetcher = new ImageFetcher(getActivity(), longest);
+		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 	}
 
 	@Override
@@ -158,7 +197,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void sendImageMessage(String message) {
 
 		// we need to send websocket message that the user has stopped typing
-		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "","");
 	}
 
 	class PhotoMessage {
@@ -280,7 +319,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 						j = j + 2;
 					}
 					mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(),
-							mMapList));
+							mMapList, mImageFetcher));
 				}
 				mListViewPhotos.setAdapter(mListAdapter);
 			}

@@ -24,7 +24,9 @@ public enum RequestType{
     CONTACT_BLOCK("contact_block"),
     SET_USER_SETTINGS("set_user_settings"),
     GET_USER_SETTINGS("get_user_settings"),
-    MESSAGE_READ("messageRead");
+    MESSAGE_READ("messageRead"),
+    UPLOAD_IMAGE("uploadImage");
+    
 
 
 

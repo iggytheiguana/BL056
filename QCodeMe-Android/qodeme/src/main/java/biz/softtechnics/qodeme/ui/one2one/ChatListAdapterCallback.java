@@ -8,6 +8,7 @@ import java.util.List;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.ExAdapterCallback;
 import biz.softtechnics.qodeme.utils.Fonts;
 
@@ -22,8 +23,8 @@ public interface ChatListAdapterCallback extends ExAdapterCallback {
     int getChatHeight(long chatId);
     void setChatHeight(long chatId, int height);
     void setDragModeEnabled(boolean value);
-    void sendMessage(Contact c, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
-    void sendMessage(long c, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName);
+    void sendMessage(Contact c, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName, String localUrl);
+    void sendMessage(long c, String message,  String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName, String localUrl);
     List<Message> getMessages(Contact c);
     List<Message> getMessages(long chatId);
     Typeface getFont(Fonts font);
@@ -32,4 +33,5 @@ public interface ChatListAdapterCallback extends ExAdapterCallback {
     void messageRead(long chatId);
     
     Contact getContact(String qrCode);
+    ImageFetcher getImageFetcher();
 }

@@ -22,6 +22,7 @@ import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.ExGroupListAdapter;
 import biz.softtechnics.qodeme.ui.common.ExListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
@@ -246,9 +247,9 @@ public class ChatListGroupFragment extends Fragment {
 					@Override
 					public void sendMessage(Contact c, String message, String photoUrl,
 							int hashPhoto, long replyTo_Id, double latitude, double longitude,
-							String senderName) {
+							String senderName,String localUrl) {
 						callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
-								latitude, longitude, senderName);
+								latitude, longitude, senderName, localUrl);
 
 					}
 
@@ -259,10 +260,10 @@ public class ChatListGroupFragment extends Fragment {
 
 					@Override
 					public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
-							long replyTo_Id, double latitude, double longitude, String senderName) {
+							long replyTo_Id, double latitude, double longitude, String senderName,String localUrl) {
 						// TODO Auto-generated method stub
 						callback.sendMessage(c, message, photoUrl, hashPhoto, replyTo_Id, latitude,
-								longitude, senderName);
+								longitude, senderName,localUrl);
 					}
 
 					@Override
@@ -284,6 +285,12 @@ public class ChatListGroupFragment extends Fragment {
 					public Contact getContact(String qrCode) {
 						// TODO Auto-generated method stub
 						return callback.getContact(qrCode);
+					}
+
+					@Override
+					public ImageFetcher getImageFetcher() {
+						// TODO Auto-generated method stub
+						return callback.getImageFetcher();
 					}
 				});
 		mListView.setAdapter(mListAdapter);

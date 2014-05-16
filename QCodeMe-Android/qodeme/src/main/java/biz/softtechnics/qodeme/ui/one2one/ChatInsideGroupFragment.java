@@ -7,6 +7,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -38,6 +39,7 @@ import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.ExtendedGroupListAdapter;
@@ -57,6 +59,7 @@ import de.tavendo.autobahn.WebSocketHandler;
 /**
  * Created by Alex on 10/7/13.
  */
+@SuppressLint("SimpleDateFormat")
 public class ChatInsideGroupFragment extends Fragment {
 
 	private static final String CHAT_ID = "chat_id";
@@ -67,7 +70,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private static final String STATUS = "status";
 	private static final String DESCRIPTION = "description";
 
-//	private static final String DATE = "date";
+	// private static final String DATE = "date";
 	private static final String FIRST_UPDATE = "first_update";
 
 	private final WebSocketConnection mConnection = new WebSocketConnection();
@@ -78,7 +81,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton, mBtnImageSend;
+	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
 	private EditText mMessageField;
 	private TextView mName;
 	private TextView mDate;
@@ -102,20 +105,21 @@ public class ChatInsideGroupFragment extends Fragment {
 		args.putString(STATUS, c.status);
 		args.putString(DESCRIPTION, c.description);
 		// args.putString(LOCATION, c.location);
-//		 args.putString(DATE, c.date);
+		// args.putString(DATE, c.date);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
 		f.setArguments(args);
 		return f;
 	}
 
-//	public interface One2OneChatInsideFragmentCallback {
-//		List<Message> getChatMessages(long chatId);
-//
-//		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,
-//				long replyTo_Id, double latitude, double longitude, String senderName);
-//
-//		Typeface getFont(Fonts font);
-//	}
+	// public interface One2OneChatInsideFragmentCallback {
+	// List<Message> getChatMessages(long chatId);
+	//
+	// void sendMessage(long chatId, String message, String photoUrl, int
+	// hashPhoto,
+	// long replyTo_Id, double latitude, double longitude, String senderName);
+	//
+	// Typeface getFont(Fonts font);
+	// }
 
 	/**
 	 * callback for reply messages
@@ -130,6 +134,8 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto,
 				long replyTo_Id, double latitude, double longitude, String senderName);
+
+		ImageFetcher getImageFetcher();
 	}
 
 	@Override
@@ -174,6 +180,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private void initSendMessage() {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
+		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -191,7 +198,15 @@ public class ChatInsideGroupFragment extends Fragment {
 				activity.takePhotoFromGallery();
 			}
 		});
+		mBtnImageSendBottom.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+
+				MainActivity activity = (MainActivity) getActivity();
+				activity.takePhotoFromGallery();
+			}
+		});
 		/*
 		 * mMessageField.setOnKeyListener(new View.OnKeyListener() {
 		 * 
@@ -442,7 +457,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "", "");
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -458,7 +473,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), "", "", 1, -1, 0, 0, "", message);
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -553,7 +568,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	}
 
 	public String getChatName() {
-		return "Private group";//getArguments().getString(CHAT_NAME);
+		return "Group Title";// getArguments().getString(CHAT_NAME);
 	}
 
 	public String getSenderQr() {
@@ -567,6 +582,8 @@ public class ChatInsideGroupFragment extends Fragment {
 		if (isViewCreated) {
 			mListAdapter.clear();
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
+			if (mListAdapter.getCount() > 0)
+				mListView.setSelection(mListAdapter.getCount() - 1);
 			mName.setText(getChatName());
 			mName.setTextColor(getChatColor());
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
@@ -646,7 +663,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	}
 
 	private String getDate() {
-		return null;//getArguments().getString(DATE);
+		return null;// getArguments().getString(DATE);
 	}
 
 	private String getLocation() {
@@ -686,7 +703,12 @@ public class ChatInsideGroupFragment extends Fragment {
 			sendUserStoppedTypingMessage();
 			// Helper.hideKeyboard(getActivity(), mMessageField);
 			callback.sendMessage(getChatId(), message, photoUrl, hashPhoto, replyTo_Id, latitude,
-					longitude, senderName);
+					longitude, senderName, "");
+		}
+
+		@Override
+		public ImageFetcher getImageFetcher() {
+			return getFetcher();
 		}
 
 		// @Override
@@ -707,4 +729,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		// }
 	};
 
+	public ImageFetcher getFetcher() {
+		return callback.getImageFetcher();
+	}
 }

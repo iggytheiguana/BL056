@@ -23,17 +23,30 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.flurry.sdk.ch;
 import com.google.android.gms.internal.cu;
+import com.google.android.gms.wallet.Cart;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -42,6 +55,7 @@ import biz.softtechnics.qodeme.core.data.entities.ChatEntity;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.RestSyncHelper;
 import biz.softtechnics.qodeme.core.io.hendler.AccountContactsHandler;
+import biz.softtechnics.qodeme.core.io.hendler.ChatImageUploadHandler;
 import biz.softtechnics.qodeme.core.io.hendler.ChatLoadHandler;
 import biz.softtechnics.qodeme.core.io.hendler.ChatMessageHandler;
 import biz.softtechnics.qodeme.core.io.hendler.ContactAcceptHandler;
@@ -55,10 +69,12 @@ import biz.softtechnics.qodeme.core.io.responses.AccountContactsResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
 import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
+import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
 import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
 import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
 import biz.softtechnics.qodeme.core.io.utils.RestError;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
+import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
 import biz.softtechnics.qodeme.utils.Converter;
 
 import static biz.softtechnics.qodeme.utils.LogUtils.LOGE;
@@ -383,7 +399,7 @@ public class SyncHelper {
 
 			} while (cursorChat.moveToNext());
 
-		//QodemeContract.applyBatch(context, batch);
+		// QodemeContract.applyBatch(context, batch);
 	}
 
 	public static void doSettingsSync(Context context) {
@@ -437,9 +453,51 @@ public class SyncHelper {
 								.getString(QodemeContract.Messages.Query.MESSAGE_LONGITUDE);
 						String senderName = cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_SENDERNAME);
-						ChatMessageResponse response = rest.chatMessage(chatId, message, created,
-								photoUrl, hashPhoto, replyTo_id, latitude, longitude, senderName);
-						new ChatMessageHandler(context, id).parseAndApply(response);
+						String imageLocal = cursor
+								.getString(QodemeContract.Messages.Query.MESSAGE_PHOTO_URL_LOCAL);
+
+						if (hashPhoto == 1 && photoUrl.trim().equals("")) {
+							String mProfileImageBase64 = null;
+							try {
+								File file = new File(imageLocal);
+//								Bitmap resizedBitmap = decodeFile(file);
+//
+//								Matrix matrix = new Matrix();
+//								matrix.postRotate(getImageOrientation(file.getAbsolutePath()
+//										.toString().trim()));
+//								Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0,
+//										resizedBitmap.getWidth(), resizedBitmap.getHeight(),
+//										matrix, true);
+//
+//								ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//								rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//								byte[] byteArray = stream.toByteArray();
+								byte[] byteArray  = convertFileToByteArray(file);
+
+								mProfileImageBase64 = Base64.encodeToString(byteArray,
+										Base64.NO_WRAP);
+
+							} catch (OutOfMemoryError e) {
+								e.printStackTrace();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							if (mProfileImageBase64 != null) {
+								UploadImageResponse imageResponse = rest.chatImage(id,
+										mProfileImageBase64);
+								new ChatImageUploadHandler(context, id)
+										.parseAndApply(imageResponse);
+								ChatMessageResponse response = rest.chatMessage(chatId, message,
+										created, imageResponse.getUrl(), hashPhoto, replyTo_id, latitude, longitude,
+										senderName);
+								new ChatMessageHandler(context, id).parseAndApply(response);
+							}
+						} else {
+							ChatMessageResponse response = rest.chatMessage(chatId, message,
+									created, photoUrl, hashPhoto, replyTo_id, latitude, longitude,
+									senderName);
+							new ChatMessageHandler(context, id).parseAndApply(response);
+						}
 					} catch (RestError e) {
 						BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
 						LOGE(TAG, e.toString(context), e);
@@ -470,5 +528,77 @@ public class SyncHelper {
 					}
 				}
 			} while (cursor.moveToNext());
+	}
+
+	public static byte[] convertFileToByteArray(File f) {
+		byte[] byteArray = null;
+		try {
+			InputStream inputStream = new FileInputStream(f);
+			
+			byteArray = ByteStreams.toByteArray(inputStream);
+//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//			byte[] b = new byte[1024 * 8];
+//			int bytesRead = 0;
+//
+//			while ((bytesRead = inputStream.read(b)) != -1) {
+//				bos.write(b, 0, bytesRead);
+//			}
+//
+//			byteArray = bos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return byteArray;
+	}
+
+	private static Bitmap decodeFile(File f) {
+		try {
+			// Decode image size
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+			// The new size we want to scale to
+			final int REQUIRED_SIZE = 70;
+
+			// Find the correct scale value. It should be the power of 2.
+			int scale = 1;
+			while (o.outWidth / scale / 2 >= REQUIRED_SIZE
+					&& o.outHeight / scale / 2 >= REQUIRED_SIZE)
+				scale *= 2;
+
+			// Decode with inSampleSize
+			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			o2.inSampleSize = scale;
+			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+		} catch (FileNotFoundException e) {
+		}
+		return null;
+	}
+
+	public static int getImageOrientation(String imagePath) {
+		int rotate = 0;
+		try {
+
+			File imageFile = new File(imagePath);
+			ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+			int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+			// Log.d(TAG,"orientation : "+orientation);
+			switch (orientation) {
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				rotate = 270;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				rotate = 180;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				rotate = 90;
+				break;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return rotate;
 	}
 }

@@ -160,6 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:paddingBottom="2dp"
             android:visibility="visible" >
 
             <ImageButton
@@ -194,8 +195,7 @@
                 android:layout_toRightOf="@id/imageButton_imgMessage"
                 android:hint="@string/message"
                 android:inputType="textMultiLine"
-                android:padding="10dp" >
-
+                android:padding="5dp" >
                 <requestFocus />
             </EditText>
         </RelativeLayout>

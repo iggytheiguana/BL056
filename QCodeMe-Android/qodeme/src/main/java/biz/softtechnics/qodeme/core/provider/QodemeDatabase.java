@@ -98,7 +98,8 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Messages.MESSAGE_REPLY_TO_ID + " INTEGER,"
                 + Messages.MESSAGE_LATITUDE + " TEXT,"
                 + Messages.MESSAGE_LONGITUDE + " TEXT,"
-                + Messages.MESSAGE_SENDERNAME + " TEXT )");
+                + Messages.MESSAGE_SENDERNAME + " TEXT,"
+                + Messages.MESSAGE_PHOTO_URL_LOCAL + " TEXT )");
 
         db.execSQL("CREATE TABLE " + Tables.CHAT_SETTINGS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

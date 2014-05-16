@@ -53,8 +53,8 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 //                QodemeContract.Contacts.CONTENT_URI,
 //                QodemeContract.Contacts.addNewContactPushValues(mContact));
 //    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValues("",mChatLoad.color, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
-    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValuesAll(null,null, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
+//    	getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI, QodemeContract.Chats.updateChatInfoValuesAll(null,null, mChatLoad.description, mChatLoad.is_locked, mChatLoad.status, mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members), QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
     	
-        SyncHelper.requestManualSync();
+        //SyncHelper.requestManualSync();
     }
 }

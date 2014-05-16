@@ -21,6 +21,7 @@ import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.common.ExListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.utils.ChatFocusSaver;
@@ -56,7 +57,7 @@ public class ChatListFragment extends Fragment {
 		List<Message> getChatMessages(long chatId);
 
 		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,
-				long replyTo_Id, double latitude, double longitude, String senderName);
+				long replyTo_Id, double latitude, double longitude, String senderName, String localUrl);
 
 		int getHeight(long chatId);
 
@@ -73,6 +74,8 @@ public class ChatListFragment extends Fragment {
 		void messageRead(long chatId);
 		
 		Contact getContact(String qrString);
+		
+		ImageFetcher getImageFetcher();
 	}
 
 	@Override
@@ -243,9 +246,9 @@ public class ChatListFragment extends Fragment {
 					@Override
 					public void sendMessage(Contact c, String message, String photoUrl,
 							int hashPhoto, long replyTo_Id, double latitude, double longitude,
-							String senderName) {
+							String senderName, String localUrl) {
 						callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
-								latitude, longitude, senderName);
+								latitude, longitude, senderName,localUrl);
 
 					}
 
@@ -256,7 +259,7 @@ public class ChatListFragment extends Fragment {
 
 					@Override
 					public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
-							long replyTo_Id, double latitude, double longitude, String senderName) {
+							long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -276,7 +279,12 @@ public class ChatListFragment extends Fragment {
 					@Override
 					public Contact getContact(String qrCode) {
 						// TODO Auto-generated method stub
-						return null;
+						return callback.getContact(qrCode);
+					}
+
+					@Override
+					public ImageFetcher getImageFetcher() {
+						return callback.getImageFetcher();
 					}
 				});
 		mListView.setAdapter(mListAdapter);

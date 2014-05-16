@@ -128,6 +128,8 @@ public class QodemeContract {
 		String MESSAGE_LONGITUDE = "message_longitude";
 		/** Message sendername */
 		String MESSAGE_SENDERNAME = "message_sender_name";
+		/** Message photo url local*/
+		String MESSAGE_PHOTO_URL_LOCAL = "message_phot_url_local";
 	}
 
 	interface ChatSettingColumns {
@@ -560,7 +562,7 @@ public class QodemeContract {
 
 		public static ContentValues addNewMessageValues(long chatId, String message,
 				String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude,
-				String senderName) {
+				String senderName, String localUrl) {
 			ContentValues c = new ContentValues();
 			c.put(SyncColumns.UPDATED, Sync.NEW);
 			c.put(MESSAGE_STATE, State.LOCAL);
@@ -574,6 +576,7 @@ public class QodemeContract {
 			c.put(MESSAGE_LATITUDE, String.valueOf(latitude));
 			c.put(MESSAGE_LONGITUDE, String.valueOf(longitude));
 			c.put(MESSAGE_SENDERNAME, senderName);
+			c.put(MESSAGE_PHOTO_URL_LOCAL, localUrl);
 			return c;
 		}
 
@@ -586,6 +589,13 @@ public class QodemeContract {
 			c.put(MESSAGE_ID, String.valueOf(mMessage.messageId));
 			c.put(MESSAGE_TEXT, mMessage.message);
 			c.put(MESSAGE_QRCODE, mMessage.qrcode);
+			c.put(MESSAGE_HASH_PHOTO, mMessage.hasPhoto);
+			c.put(MESSAGE_PHOTO_URL, mMessage.photoUrl);
+			c.put(MESSAGE_REPLY_TO_ID, mMessage.replyTo_id);
+			c.put(MESSAGE_LATITUDE, mMessage.latitude);
+			c.put(MESSAGE_LONGITUDE, mMessage.longitude);
+			c.put(MESSAGE_SENDERNAME, mMessage.senderName);
+			
 			return c;
 		}
 
@@ -607,7 +617,7 @@ public class QodemeContract {
 					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE, Messages.MESSAGE_PHOTO_URL,
 					Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID,
 					Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE,
-					Messages.MESSAGE_SENDERNAME };
+					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -623,6 +633,7 @@ public class QodemeContract {
 			int MESSAGE_LATITUDE = 11;
 			int MESSAGE_LONGITUDE = 12;
 			int MESSAGE_SENDERNAME = 13;
+			int MESSAGE_PHOTO_URL_LOCAL = 14;
 		}
 	}
 

@@ -3,10 +3,6 @@ package biz.softtechnics.qodeme.ui.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import biz.softtechnics.qodeme.R;
-import biz.softtechnics.qodeme.core.io.model.Message;
-import biz.softtechnics.qodeme.ui.MainActivity;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,14 +13,20 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import biz.softtechnics.qodeme.R;
+import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
+import biz.softtechnics.qodeme.ui.MainActivity;
 
 public class GridAdapter extends BaseAdapter {
 	private Context mContext = null;
+	ImageFetcher mImageFetcher;
 	private ArrayList<HashMap<String, Message>> mArrayList = new ArrayList<HashMap<String, Message>>();
 
-	public GridAdapter(Context context, ArrayList<HashMap<String, Message>> mMapList) {
+	public GridAdapter(Context context, ArrayList<HashMap<String, Message>> mMapList, ImageFetcher fetcher) {
 		this.mContext = context;
 		this.mArrayList = mMapList;
+		this.mImageFetcher = fetcher;
 	}
 
 	@Override
@@ -62,11 +64,17 @@ public class GridAdapter extends BaseAdapter {
 		}
 
 		HashMap<String, Message> map = (HashMap<String, Message>) getItem(position);
-		Message ss = map.get("1");
-		if (ss == null)
+		Message leftMessage = map.get("0");
+		Message rightMessage = map.get("1");
+		
+		
+		  mImageFetcher.loadImage(leftMessage.photoUrl, holder.imageViewLeft, null);
+		if (rightMessage == null)
 			holder.imageViewRight.setVisibility(View.INVISIBLE);
-		else
+		else{
 			holder.imageViewRight.setVisibility(View.VISIBLE);
+			  mImageFetcher.loadImage(rightMessage.photoUrl, holder.imageViewRight, null);
+		}
 		holder.imageViewRight.setOnClickListener(new OnClickListener() {
 
 			@Override

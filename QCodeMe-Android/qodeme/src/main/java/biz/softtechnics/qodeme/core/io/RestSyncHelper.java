@@ -29,6 +29,7 @@ import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
 import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
+import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
 import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
 import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
@@ -125,6 +126,14 @@ public class RestSyncHelper {
 		params.put(RestKeyMap.SENDER_NAME, senderName);
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_MESSAGE, params);
 		return new ChatMessageResponse().parse(jsonObject);
+	}
+	public UploadImageResponse chatImage(long messageId, String imageString) throws InterruptedException, ExecutionException, JSONException,
+			RestError {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.IMAGE, imageString);
+		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
+		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.UPLOAD_IMAGE, params);
+		return new UploadImageResponse().parse(jsonObject);
 	}
 
 	public ChatLoadResponse chatLoad(long chatId, int page, int limit) throws InterruptedException,
@@ -231,6 +240,7 @@ public class RestSyncHelper {
 		newSyncJsonObjectRequest(RequestType.MESSAGE_READ, params);
 		return new VoidResponse();
 	}
+	
 
 	/**
 	 * Synchronous volley request

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -24,12 +25,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
+import biz.softtechnics.qodeme.images.utils.ImageResizer;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExtendedAdapterBasedView;
@@ -52,7 +56,7 @@ public class ChatListSubItem extends RelativeLayout implements
 	private TextView message;
 	private ListView subList;
 	private ChatListSubAdapterCallback callback;
-	
+
 	private int position;
 	private Message previousMessage;
 	private Message currentMessage;
@@ -64,6 +68,7 @@ public class ChatListSubItem extends RelativeLayout implements
 	private ImageButton mSendButton;
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
+	private ProgressBar mProgressBar;
 
 	public ChatListSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -82,7 +87,6 @@ public class ChatListSubItem extends RelativeLayout implements
 		return date = date != null ? date : (CustomDotView) findViewById(R.id.date);
 	}
 
-	
 	public TextView getDateHeader() {
 		return dateHeader = dateHeader != null ? dateHeader
 				: (TextView) findViewById(R.id.date_header);
@@ -91,6 +95,11 @@ public class ChatListSubItem extends RelativeLayout implements
 	public ImageView getImageMessage() {
 		return mImageViewItem = mImageViewItem != null ? mImageViewItem
 				: (ImageView) findViewById(R.id.imageView_item);
+	}
+
+	public ProgressBar getImageProgress() {
+		return mProgressBar = mProgressBar != null ? mProgressBar
+				: (ProgressBar) findViewById(R.id.progressBar_img);
 	}
 
 	public LinearLayout getImageLayout() {
@@ -126,10 +135,29 @@ public class ChatListSubItem extends RelativeLayout implements
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 1) {
-			String sss = me.photoUrl;
-			byte data[] = Base64.decode(sss, Base64.NO_WRAP);
-			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-			getImageMessage().setImageBitmap(bitmap);
+			if (me.localImgPath != null && !me.localImgPath.trim().equals("")) {
+				int size = 200;
+				ImageFetcher fetcher = callback2.getImageFetcher();
+				if (fetcher != null)
+					size = fetcher.getRequiredSize();
+
+				Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size, size, null);
+//				getImageMessage().setImageURI(Uri.parse(me.localImgPath));
+				getImageMessage().setImageBitmap(bitmap);
+				getImageProgress().setVisibility(View.GONE);
+			} else {
+				Log.d("imgUrl", me.photoUrl+"");
+				ImageFetcher fetcher = callback2.getImageFetcher();
+				if (fetcher != null)
+					fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
+			}
+			// String sss = me.localImgPath;
+			// if(sss == null || sss.trim().equals(""))
+			// sss = me.photoUrl;
+			// byte data[] = Base64.decode(sss, Base64.NO_WRAP);
+			// Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
+			// data.length);
+			// getImageMessage().setImageBitmap(bitmap);
 			getImageMessage().setVisibility(View.VISIBLE);
 			getImageLayout().setVisibility(View.VISIBLE);
 		} else {
@@ -211,7 +239,8 @@ public class ChatListSubItem extends RelativeLayout implements
 			case QodemeContract.Messages.State.READ_LOCAL:
 			case QodemeContract.Messages.State.WAS_READ:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_reed));
-				getDate().setDotColor(context.getResources().getColor(R.color.text_message_not_read));
+				getDate().setDotColor(
+						context.getResources().getColor(R.color.text_message_not_read));
 				break;
 			}
 		} else {

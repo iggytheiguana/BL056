@@ -30,6 +30,7 @@ public class Message {
 	@SerializedName("sendername")
 	public String senderName;
 	public String is_flagged;
+	public String localImgPath;
 	
 	public boolean isFirst = false;
 	public boolean isLast = false;

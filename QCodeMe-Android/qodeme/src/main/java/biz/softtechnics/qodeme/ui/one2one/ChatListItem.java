@@ -35,6 +35,7 @@ import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExAdapterBasedView;
@@ -501,7 +502,7 @@ public class ChatListItem extends RelativeLayout implements
 			Toast.makeText(context, "Empty message can't be sent", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		mCallback.sendMessage(mContact, message, "", 0, -1, 0, 0, "");
+		mCallback.sendMessage(mContact, message, "", 0, -1, 0, 0, "","");
 		mCallback.messageRead(mContact.chatId);
 	}
 
@@ -539,8 +540,13 @@ public class ChatListItem extends RelativeLayout implements
 				return;
 			}
 			mCallback.sendMessage(mContact, message, photoUrl, hashPhoto, replyTo_Id, latitude,
-					longitude, senderName);
+					longitude, senderName,"");
 			mCallback.messageRead(mContact.chatId);
+		}
+
+		@Override
+		public ImageFetcher getImageFetcher() {
+			return mCallback.getImageFetcher();
 		}
 
 		// @Override

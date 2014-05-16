@@ -4,6 +4,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    
+    <Button  android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:id="@+id/btn_more"
+        android:text="@string/more"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:background="@drawable/selector_button_blue"/>
 <LinearLayout 
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -24,9 +32,10 @@
         android:id="@+id/btn_add"
         android:text="@string/add"
         android:layout_margin="10dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@drawable/selector_button_blue"/>
 </LinearLayout>
+
     <View
         android:layout_height="1dip"
         android:layout_width="match_parent"

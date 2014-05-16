@@ -124,6 +124,7 @@ public class ModelHelper {
 				m.latitude = cursor.getString(QodemeContract.Messages.Query.MESSAGE_LATITUDE);
 				m.longitude = cursor.getString(QodemeContract.Messages.Query.MESSAGE_LONGITUDE);
 				m.senderName = cursor.getString(QodemeContract.Messages.Query.MESSAGE_SENDERNAME);
+				m.localImgPath = cursor.getString(QodemeContract.Messages.Query.MESSAGE_PHOTO_URL_LOCAL);
 
 				Long createdLong = Converter.getCrurentTimeFromTimestamp(m.created);
 				m.timeStamp = createdLong;

@@ -90,14 +90,25 @@
                 tools:padding="5dp"
                 tools:text_size="18sp" />
 
-            <ImageView
-                android:id="@+id/imageView_item"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp"
-                android:scaleType="fitStart"
-                android:visibility="gone" />
+                android:layout_height="wrap_content" >
+
+                <ProgressBar android:id="@+id/progressBar_img"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" 
+                    android:layout_gravity="center"
+                    style="@style/Widget.AppCompat.ProgressBar"/>
+
+                <ImageView
+                    android:id="@+id/imageView_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:scaleType="fitStart"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 

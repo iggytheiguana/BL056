@@ -1,8 +1,18 @@
 package biz.softtechnics.qodeme.ui.one2one;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,41 +28,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ImageView;
-import android.util.Log;
-
-import com.google.android.gms.internal.cu;
-import com.google.common.collect.Lists;
-
-import android.graphics.Bitmap;
-import android.graphics.Paint;
-import android.graphics.Canvas;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import biz.softtechnics.qodeme.ApplicationConstants;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.ExtendedListAdapter;
 import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
-import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
 import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Converter;
 import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
+
+import com.google.common.collect.Lists;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -78,7 +74,7 @@ public class ChatInsideFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton, mBtnImageSend;
+	private ImageButton mSendButton, mBtnImageSend,mBtnImageSendBottom;
 	private EditText mMessageField;
 	private TextView mName;
 	private TextView mDate;
@@ -111,9 +107,11 @@ public class ChatInsideFragment extends Fragment {
 		List<Message> getChatMessages(long chatId);
 
 		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,
-				long replyTo_Id, double latitude, double longitude, String senderName);
+				long replyTo_Id, double latitude, double longitude, String senderName,String localUrl);
 
 		Typeface getFont(Fonts font);
+		
+		ImageFetcher getImageFetcher();
 	}
 
 	/**
@@ -129,6 +127,8 @@ public class ChatInsideFragment extends Fragment {
 
 		void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto,
 				long replyTo_Id, double latitude, double longitude, String senderName);
+		
+		ImageFetcher getImageFetcher();
 	}
 
 	@Override
@@ -173,6 +173,7 @@ public class ChatInsideFragment extends Fragment {
 	private void initSendMessage() {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
+		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -190,7 +191,16 @@ public class ChatInsideFragment extends Fragment {
 				activity.takePhotoFromGallery();
 			}
 		});
+		
+		mBtnImageSendBottom.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+
+				MainActivity activity = (MainActivity) getActivity();
+				activity.takePhotoFromGallery();
+			}
+		});
 		/*
 		 * mMessageField.setOnKeyListener(new View.OnKeyListener() {
 		 * 
@@ -441,7 +451,7 @@ public class ChatInsideFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "","");
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -457,7 +467,7 @@ public class ChatInsideFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "");
+		callback.sendMessage(getChatId(), "", "", 1, -1, 0, 0, "",message);
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -685,8 +695,14 @@ public class ChatInsideFragment extends Fragment {
 			sendUserStoppedTypingMessage();
 			// Helper.hideKeyboard(getActivity(), mMessageField);
 			callback.sendMessage(getChatId(), message, photoUrl, hashPhoto, replyTo_Id, latitude,
-					longitude, senderName);
+					longitude, senderName,"");
 		}
+
+		@Override
+		public ImageFetcher getImageFetcher() {
+			return getFetcher();
+		}
+
 
 		// @Override
 		// public void sendReplyMessage(String qrCode, String message) {
@@ -705,5 +721,8 @@ public class ChatInsideFragment extends Fragment {
 		//
 		// }
 	};
+	public ImageFetcher getFetcher(){
+		return callback.getImageFetcher();
+	}
 
 }

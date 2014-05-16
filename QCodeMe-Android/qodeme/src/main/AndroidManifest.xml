@@ -109,6 +109,13 @@
             android:label="@string/activity_login_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseTheme.NoTitle" />
+        
+        <activity
+            android:name=".ui.MoreOptionActivity"
+            android:label="@string/activity_login_title"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseTheme.NoTitle" />
+       
 
         <!--Tutorial activity-->
         <activity

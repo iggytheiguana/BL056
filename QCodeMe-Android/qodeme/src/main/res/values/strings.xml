@@ -95,5 +95,6 @@
       
       <string name="done">Done</string>
       <string name="add">Add</string>
-      
+      <string name="more">More</string>
+       <string name="no_network_connection_toast">No network connection found</string>
 </resources>

@@ -3,6 +3,7 @@ package biz.softtechnics.qodeme.core.io.responses;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import biz.softtechnics.qodeme.core.io.hendler.ChatImageUploadHandler;
 import biz.softtechnics.qodeme.core.io.utils.RequestType;
 import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
 
@@ -57,6 +58,8 @@ public class ResponseFactory {
                 return new LookupResponse().parse(getResult(jsonObject));
             case REGISTER_TOKEN:
                 return new VoidResponse();
+            case UPLOAD_IMAGE:
+                return new UploadImageResponse().parse(jsonObject);
             default:
                 throw new ResponseTypeError();
         }

@@ -112,7 +112,7 @@
                         style="@style/TextView.Message.Date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="March 04, 2014, 1:23pm"
+                        android:text="Created Date here"
                         android:textColor="@color/text_message_not_read"
                         android:textSize="14sp" />
 
@@ -126,7 +126,7 @@
                             style="@style/TextView.Message.Date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Seattle, WA USA"
+                            android:text="Location"
                             android:textColor="@color/text_message_not_read"
                             android:textSize="14sp" />
 
@@ -305,7 +305,7 @@
                     android:layout_below="@id/textView_groupTitle"
                     android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@id/btnEditDesc"
-                    android:text="xksnckndcvsndvkn vkdnvkdnsvk kvndkvnk svknaskvnk bnknfkbvn knsknk ndvksn scksnkcnsdkvnckasdn kwnfedasfask;lm avnks aksnvknasdkvgnksng kabfavafm"
+                    android:text="Description"
                     android:textColor="@android:color/black" />
             </RelativeLayout>
 

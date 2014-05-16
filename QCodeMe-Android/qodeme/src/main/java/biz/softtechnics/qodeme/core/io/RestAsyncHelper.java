@@ -1,5 +1,7 @@
 package biz.softtechnics.qodeme.core.io;
 
+import java.util.concurrent.ExecutionException;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +23,7 @@ import biz.softtechnics.qodeme.core.io.gcm.GcmController;
 import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
 import biz.softtechnics.qodeme.core.io.responses.BaseResponse;
 import biz.softtechnics.qodeme.core.io.responses.ResponseFactory;
+import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
 import biz.softtechnics.qodeme.core.io.utils.RequestParams;
 import biz.softtechnics.qodeme.core.io.utils.RequestType;
 import biz.softtechnics.qodeme.core.io.utils.RestClient;
@@ -283,7 +286,8 @@ public class RestAsyncHelper implements RestClient {
 	 * @param callback
 	 */
 	public void chatCreate(ChatType chatType, String title, String tags, int color,
-			String description, int is_locked, String status,double latitude,double longitude, RestListener callback) {
+			String description, int is_locked, String status, double latitude, double longitude,
+			RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.CHAT_TYPE, String.valueOf(chatType.getValue()));
 		params.put(RestKeyMap.TITLE, title);
@@ -305,7 +309,8 @@ public class RestAsyncHelper implements RestClient {
 	 * @param color
 	 * @param callback
 	 */
-	public void chatSetInfo(long chatId, String title, int color,String tag,String description, int is_locked, String status, RestListener callback) {
+	public void chatSetInfo(long chatId, String title, int color, String tag, String description,
+			int is_locked, String status, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.ID, String.valueOf(chatId));
 		params.put(RestKeyMap.TITLE, title);
@@ -338,7 +343,9 @@ public class RestAsyncHelper implements RestClient {
 	 * @param message
 	 * @param callback
 	 */
-	public void chatMessage(long chatId, String message, long unixTimeStamp,String photoUrl, int hasPhoto,int replyToId,int isFlagged,String senderName, double latitude, double longitude, RestListener callback) {
+	public void chatMessage(long chatId, String message, long unixTimeStamp, String photoUrl,
+			int hasPhoto, int replyToId, int isFlagged, String senderName, double latitude,
+			double longitude, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chatId));
 		params.put(RestKeyMap.MESSAGE, message);
@@ -350,8 +357,17 @@ public class RestAsyncHelper implements RestClient {
 		params.put(RestKeyMap.REPLY_TO_ID, String.valueOf(replyToId));
 		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(isFlagged));
 		params.put(RestKeyMap.SENDER_NAME, senderName);
-		
+
 		post(RequestType.CHAT_MESSAGE, params, callback);
+	}
+
+	public void chatImage(long messageId, String imageString, RestListener callback)
+			throws InterruptedException, ExecutionException, JSONException, RestError {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.IMAGE, imageString);
+		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
+		
+		post(RequestType.UPLOAD_IMAGE, params, callback);
 	}
 
 	/**
@@ -376,7 +392,8 @@ public class RestAsyncHelper implements RestClient {
 	 * @param contactCqroce
 	 * @param callback
 	 */
-	public void contactAdd(String contactCqroce,double latitude, double longitude, RestListener callback) {
+	public void contactAdd(String contactCqroce, double latitude, double longitude,
+			RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.PARTNER_QRCODE, contactCqroce);
 		params.put(RestKeyMap.LATITUDE, String.valueOf(latitude));
