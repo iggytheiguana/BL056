@@ -610,6 +610,12 @@ public class QodemeContract {
 			c.put(MESSAGE_STATE, State.READ_LOCAL);
 			return c;
 		}
+		
+		public static ContentValues updateMessageImageUrl(String url) {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_PHOTO_URL, url);
+			return c;
+		}
 
 		public interface Query {
 			String[] PROJECTION = { Messages._ID, Messages.UPDATED, Messages.MESSAGE_ID,

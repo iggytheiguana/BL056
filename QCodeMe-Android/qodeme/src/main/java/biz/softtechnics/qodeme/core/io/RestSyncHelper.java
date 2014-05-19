@@ -112,12 +112,13 @@ public class RestSyncHelper {
 
 	public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp,
 			String photoUrl, int hashPhoto, long replyTo_Id, String latitude, String longitude,
-			String senderName) throws InterruptedException, ExecutionException, JSONException,
+			String senderName, String dateString) throws InterruptedException, ExecutionException, JSONException,
 			RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chatId));
-		params.put(RestKeyMap.DATETIME, String.valueOf(unixTimeStamp));
+//		params.put(RestKeyMap.DATETIME, String.valueOf(unixTimeStamp));
+		params.put(RestKeyMap.DATETIME, dateString);
 		params.put(RestKeyMap.PHOTURL, photoUrl);
 		params.put(RestKeyMap.HAS_PHOTO, String.valueOf(hashPhoto));
 		params.put(RestKeyMap.REPLY_TO_ID, String.valueOf(replyTo_Id));

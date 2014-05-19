@@ -21,4 +21,5 @@ public interface RestClient {
     void chatDropMember(long chatId, String memberQrcode, RestListener callback);
     void lookup(String searchQuery, RestListener callback);
     void registerToken(String gcmToken, RestListener callback);
+    void chatImage(long messageId, String imageString, RestListener callback);
 }

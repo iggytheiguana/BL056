@@ -292,6 +292,12 @@ public class ChatListGroupFragment extends Fragment {
 						// TODO Auto-generated method stub
 						return callback.getImageFetcher();
 					}
+
+					@Override
+					public int getChatType(long chatId) {
+						// TODO Auto-generated method stub
+						return callback.getChatType(chatId);
+					}
 				});
 		mListView.setAdapter(mListAdapter);
 		mListView.setOnTouchListener(new View.OnTouchListener() {

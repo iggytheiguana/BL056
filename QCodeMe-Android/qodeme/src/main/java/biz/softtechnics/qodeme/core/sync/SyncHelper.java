@@ -20,6 +20,7 @@ import android.accounts.Account;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
@@ -441,6 +442,10 @@ public class SyncHelper {
 								.getString(QodemeContract.Messages.Query.MESSAGE_TEXT);
 						long created = (long) (Converter.getCrurentTimeFromTimestamp(cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED)) / 1E3);
+
+						String dateString = cursor
+								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED);
+
 						String photoUrl = cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_PHOTO_URL);
 						int hashPhoto = cursor
@@ -460,19 +465,23 @@ public class SyncHelper {
 							String mProfileImageBase64 = null;
 							try {
 								File file = new File(imageLocal);
-//								Bitmap resizedBitmap = decodeFile(file);
-//
-//								Matrix matrix = new Matrix();
-//								matrix.postRotate(getImageOrientation(file.getAbsolutePath()
-//										.toString().trim()));
-//								Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0,
-//										resizedBitmap.getWidth(), resizedBitmap.getHeight(),
-//										matrix, true);
-//
-//								ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//								rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//								byte[] byteArray = stream.toByteArray();
-								byte[] byteArray  = convertFileToByteArray(file);
+								// Bitmap resizedBitmap = decodeFile(file);
+								//
+								// Matrix matrix = new Matrix();
+								// matrix.postRotate(getImageOrientation(file.getAbsolutePath()
+								// .toString().trim()));
+								// Bitmap rotatedBitmap =
+								// Bitmap.createBitmap(resizedBitmap, 0, 0,
+								// resizedBitmap.getWidth(),
+								// resizedBitmap.getHeight(),
+								// matrix, true);
+								//
+								// ByteArrayOutputStream stream = new
+								// ByteArrayOutputStream();
+								// rotatedBitmap.compress(Bitmap.CompressFormat.PNG,
+								// 100, stream);
+								// byte[] byteArray = stream.toByteArray();
+								byte[] byteArray = convertFileToByteArray(file);
 
 								mProfileImageBase64 = Base64.encodeToString(byteArray,
 										Base64.NO_WRAP);
@@ -488,14 +497,18 @@ public class SyncHelper {
 								new ChatImageUploadHandler(context, id)
 										.parseAndApply(imageResponse);
 								ChatMessageResponse response = rest.chatMessage(chatId, message,
-										created, imageResponse.getUrl(), hashPhoto, replyTo_id, latitude, longitude,
-										senderName);
+										created, imageResponse.getUrl(), hashPhoto, replyTo_id,
+										latitude, longitude, senderName, dateString);
 								new ChatMessageHandler(context, id).parseAndApply(response);
 							}
+//							Intent intent = new Intent(context, UploadImageService.class);
+//							intent.putExtra(UploadImageService.LOCAL_PATH, imageLocal);
+//							intent.putExtra(UploadImageService.MESSAGE_ID, id);
+//							context.startService(intent);
 						} else {
 							ChatMessageResponse response = rest.chatMessage(chatId, message,
 									created, photoUrl, hashPhoto, replyTo_id, latitude, longitude,
-									senderName);
+									senderName, dateString);
 							new ChatMessageHandler(context, id).parseAndApply(response);
 						}
 					} catch (RestError e) {
@@ -534,17 +547,17 @@ public class SyncHelper {
 		byte[] byteArray = null;
 		try {
 			InputStream inputStream = new FileInputStream(f);
-			
+
 			byteArray = ByteStreams.toByteArray(inputStream);
-//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//			byte[] b = new byte[1024 * 8];
-//			int bytesRead = 0;
-//
-//			while ((bytesRead = inputStream.read(b)) != -1) {
-//				bos.write(b, 0, bytesRead);
-//			}
-//
-//			byteArray = bos.toByteArray();
+			// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			// byte[] b = new byte[1024 * 8];
+			// int bytesRead = 0;
+			//
+			// while ((bytesRead = inputStream.read(b)) != -1) {
+			// bos.write(b, 0, bytesRead);
+			// }
+			//
+			// byteArray = bos.toByteArray();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -218,7 +218,7 @@ public class ChatListItem extends RelativeLayout implements
 					@Override
 					public Contact getContact(String senderQrcode) {
 						// TODO Auto-generated method stub
-						return null;
+						return mCallback.getContact(senderQrcode);
 					}
 				}, callbackChatListInsideFragmentCallback);
 
@@ -547,6 +547,12 @@ public class ChatListItem extends RelativeLayout implements
 		@Override
 		public ImageFetcher getImageFetcher() {
 			return mCallback.getImageFetcher();
+		}
+
+		@Override
+		public int getChatType(long chatId) {
+			// TODO Auto-generated method stub
+			return mCallback.getChatType(chatId);
 		}
 
 		// @Override

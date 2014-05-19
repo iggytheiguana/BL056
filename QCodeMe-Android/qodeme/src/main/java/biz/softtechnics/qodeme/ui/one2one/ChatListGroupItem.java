@@ -556,6 +556,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 			return mCallback.getImageFetcher();
 		}
 
+		@Override
+		public int getChatType(long chatId) {
+			// TODO Auto-generated method stub
+			return mCallback.getChatType(chatId);
+		}
+
 		// @Override
 		// public void sendReplyMessage(int replyToId, String message) {
 		//

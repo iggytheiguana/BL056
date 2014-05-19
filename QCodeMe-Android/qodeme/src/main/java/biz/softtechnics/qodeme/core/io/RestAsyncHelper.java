@@ -362,7 +362,7 @@ public class RestAsyncHelper implements RestClient {
 	}
 
 	public void chatImage(long messageId, String imageString, RestListener callback)
-			throws InterruptedException, ExecutionException, JSONException, RestError {
+			 {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.IMAGE, imageString);
 		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));

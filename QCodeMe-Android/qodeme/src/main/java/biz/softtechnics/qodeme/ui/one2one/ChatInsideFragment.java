@@ -112,6 +112,9 @@ public class ChatInsideFragment extends Fragment {
 		Typeface getFont(Fonts font);
 		
 		ImageFetcher getImageFetcher();
+		int getChatType(long chatId);
+		Contact getContact(String qrCode);
+		
 	}
 
 	/**
@@ -129,6 +132,8 @@ public class ChatInsideFragment extends Fragment {
 				long replyTo_Id, double latitude, double longitude, String senderName);
 		
 		ImageFetcher getImageFetcher();
+		
+		int getChatType(long chatId);
 	}
 
 	@Override
@@ -501,7 +506,7 @@ public class ChatInsideFragment extends Fragment {
 
 		customDotViewUserTyping = (CustomDotView) footerView.findViewById(R.id.dotView_userTyping);
 
-		customDotViewUserTyping.setDotColor(oponentColor);
+		customDotViewUserTyping.setDotColor(getResources().getColor(R.color.user_typing));
 		customDotViewUserTyping.setSecondVerticalLine(true);
 		customDotViewUserTyping.invalidate();
 
@@ -528,8 +533,7 @@ public class ChatInsideFragment extends Fragment {
 
 					@Override
 					public Contact getContact(String senderQrcode) {
-						// TODO Auto-generated method stub
-						return null;
+						return callback.getContact(senderQrcode);
 					}
 
 				}, chatListInsideFragmentCallback);
@@ -703,6 +707,11 @@ public class ChatInsideFragment extends Fragment {
 			return getFetcher();
 		}
 
+		@Override
+		public int getChatType(long chatId) {
+			return getChatTypeFromMain(chatId);
+		}
+
 
 		// @Override
 		// public void sendReplyMessage(String qrCode, String message) {
@@ -723,6 +732,10 @@ public class ChatInsideFragment extends Fragment {
 	};
 	public ImageFetcher getFetcher(){
 		return callback.getImageFetcher();
+	}
+	
+	int getChatTypeFromMain(long chatId){
+		return callback.getChatType(chatId);
 	}
 
 }

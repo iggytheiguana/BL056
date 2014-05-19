@@ -76,6 +76,7 @@ public class ChatListFragment extends Fragment {
 		Contact getContact(String qrString);
 		
 		ImageFetcher getImageFetcher();
+		int getChatType(long chatId);
 	}
 
 	@Override
@@ -285,6 +286,12 @@ public class ChatListFragment extends Fragment {
 					@Override
 					public ImageFetcher getImageFetcher() {
 						return callback.getImageFetcher();
+					}
+
+					@Override
+					public int getChatType(long chatId) {
+						// TODO Auto-generated method stub
+						return callback.getChatType(chatId);
 					}
 				});
 		mListView.setAdapter(mListAdapter);

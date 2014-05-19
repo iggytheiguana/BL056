@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
@@ -55,7 +56,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			"MMM dd yyyy", Locale.US);
 
 	private final Context context;
-	private TextView message;
+	private TextView message, messagerName;
 	private ListView subList;
 	private ChatListSubAdapterCallback callback;
 
@@ -79,6 +80,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	public TextView getMessage() {
 		return message = message != null ? message : (TextView) findViewById(R.id.message);
+	}
+
+	public TextView getMessagerName() {
+		return messagerName = messagerName != null ? messagerName
+				: (TextView) findViewById(R.id.textView_messagerName);
 	}
 
 	// Change Textview (for display time/date) to CustomDotView
@@ -153,12 +159,13 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				if (fetcher != null)
 					size = fetcher.getRequiredSize();
 
-				Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size, size, null);
-//				getImageMessage().setImageURI(Uri.parse(me.localImgPath));
+				Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size,
+						size, null);
+				// getImageMessage().setImageURI(Uri.parse(me.localImgPath));
 				getImageMessage().setImageBitmap(bitmap);
 				getImageProgress().setVisibility(View.GONE);
 			} else {
-				Log.d("imgUrl", me.photoUrl+"");
+				Log.d("imgUrl", me.photoUrl + "");
 				ImageFetcher fetcher = callback2.getImageFetcher();
 				if (fetcher != null)
 					fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
@@ -181,6 +188,19 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			color = contact.color;
 		} else {
 			color = Color.GRAY;
+		}
+		if (callback2.getChatType(me.chatId) == 1) {
+			getMessagerName().setVisibility(View.VISIBLE);
+
+			if (contact != null) {
+				getMessagerName().setText(contact.title);
+				getMessagerName().setBackgroundColor(color);
+			} else {
+				getMessagerName().setText("User");
+				getMessagerName().setBackgroundColor(color);
+			}
+		}else{
+			getMessagerName().setVisibility(View.GONE);
 		}
 		// getMessage().setTextColor(color);
 		// getMessage().setTypeface(callback.getFont(Fonts.ROBOTO_LIGHT));
@@ -239,12 +259,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		// getMessage().setText(Html.fromHtml(getMessage().getText() + " " +
 		// dateString));
 		// changes
+		getMessage().setTypeface(Application.typefaceRegular);
+		getMessage().setTextColor(Color.BLACK);
 		if (isMyMessage(me.qrcode)) {
 			switch (me.state) {
 			case QodemeContract.Messages.State.LOCAL:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
 				getDate().setDotColor(
-						context.getResources().getColor(R.color.text_message_not_send));
+						context.getResources().getColor(R.color.user_typing));
+				getMessage().setTextColor(getResources().getColor(R.color.user_typing));
+				getDate().invalidate();
 				break;
 			case QodemeContract.Messages.State.SENT:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
@@ -262,6 +286,13 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		} else {
 			// getDate().setTextColor(color);
 			getDate().setDotColor(color);
+			if (QodemeContract.Messages.State.NOT_READ == me.state) {
+				getDate().setOutLine(true);
+				getMessage().setTypeface(Application.typefaceBold);
+			} else {
+				
+			}
+			getDate().invalidate();
 		}
 
 		getHeaderContainer().setVisibility(View.GONE);

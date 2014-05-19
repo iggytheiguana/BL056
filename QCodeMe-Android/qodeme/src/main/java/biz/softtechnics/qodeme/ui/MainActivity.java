@@ -1151,16 +1151,15 @@ public class MainActivity extends BaseActivity implements
 		View moreBtnView = getLayoutInflater().inflate(R.layout.more_item_header, null);
 		Button button = (Button) moreBtnView.findViewById(R.id.btn_more);
 		button.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this,
-						MoreOptionActivity.class);
+				Intent intent = new Intent(MainActivity.this, MoreOptionActivity.class);
 				startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
 				mDrawerLayout.closeDrawers();
 			}
 		});
-		
+
 		mContactListView.addHeaderView(moreBtnView);
 		mContactListView.setLongClickable(true);
 
@@ -1901,7 +1900,7 @@ public class MainActivity extends BaseActivity implements
 		// }).create().show();
 		// }
 
-		 super.onBackPressed();
+		super.onBackPressed();
 	}
 
 	@Override
@@ -2372,5 +2371,18 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public ImageFetcher getImageFetcher() {
 		return mImageFetcher;
+	}
+
+	@Override
+	public int getChatType(long chatId) {
+		int chatType = 0;
+		if (mChatList != null) {
+			for (ChatLoad chatLoad : mChatList) {
+				if (chatLoad.chatId == chatId) {
+					chatType = chatLoad.type;
+				}
+			}
+		}
+		return chatType;
 	}
 }

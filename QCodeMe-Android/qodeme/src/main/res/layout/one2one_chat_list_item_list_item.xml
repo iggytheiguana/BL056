@@ -58,23 +58,47 @@
                 android:layout_height="match_parent"
                 tools:padding="5dp"
                 tools:text_size="18sp" />
-<!--             style="@style/TextView.Message.Date" -->
+            <!-- style="@style/TextView.Message.Date" -->
 
-            <biz.softtechnics.qodeme.ui.common.TextViewRegular
-                android:id="@+id/message"
-                style="@style/TextView.Message.Text"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:text="Item"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:orientation="vertical" >
+
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    android:id="@+id/textView_messagerName"
+                    style="@style/TextView.Message.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingBottom="0dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="0dp"
+                    android:text="Item"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    android:id="@+id/message"
+                    style="@style/TextView.Message.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    android:text="Item"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+            </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/linearLayout_img"
             android:layout_width="match_parent"
@@ -92,11 +116,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
-                <ProgressBar android:id="@+id/progressBar_img"
+                <ProgressBar
+                    android:id="@+id/progressBar_img"
+                    style="@style/Widget.AppCompat.ProgressBar"
                     android:layout_width="50dp"
-                    android:layout_height="50dp" 
-                    android:layout_gravity="center"
-                    style="@style/Widget.AppCompat.ProgressBar"/>
+                    android:layout_height="50dp"
+                    android:layout_gravity="center" />
 
                 <ImageView
                     android:id="@+id/imageView_item"

@@ -162,6 +162,11 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+         <service
+            android:name=".core.sync.UploadImageService"
+            android:exported="true">
+        </service>
+        
         <!-- This implements the account we'll use as an attachment point for our SyncAdapter. Since
        our SyncAdapter doesn't need to authenticate the current user (it just fetches a public RSS
        feed), this account's implementation is largely empty.
