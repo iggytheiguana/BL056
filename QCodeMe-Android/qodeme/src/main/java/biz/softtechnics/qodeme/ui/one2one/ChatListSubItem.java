@@ -200,8 +200,16 @@ public class ChatListSubItem extends RelativeLayout implements
 		// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
 		String createdDate = me.created;
 		// Log.d("me.Date", createdDate + "");
-		String dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-		dateString = " " + dateString;
+		String dateString = "";
+		try {
+			dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+			dateString = " " + dateString;
+		} catch (Exception e) {
+			Log.d("timeError", e+"");
+			dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+			dateString = " " + dateString;
+		}
+		// dateString = " " + dateString;
 		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
 		// "</font>";
 		String str = getMessage().getText().toString();
@@ -255,8 +263,7 @@ public class ChatListSubItem extends RelativeLayout implements
 			switch (me.state) {
 			case QodemeContract.Messages.State.LOCAL:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
-				getDate().setDotColor(
-						context.getResources().getColor(R.color.user_typing));
+				getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
 				getMessage().setTextColor(getResources().getColor(R.color.user_typing));
 				getDate().invalidate();
 				break;
@@ -282,7 +289,7 @@ public class ChatListSubItem extends RelativeLayout implements
 				getDate().setOutLine(true);
 				getMessage().setTypeface(Application.typefaceBold);
 			} else {
-				
+
 			}
 			getDate().invalidate();
 		}

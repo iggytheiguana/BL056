@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import biz.softtechnics.qodeme.R;
 
@@ -62,6 +64,18 @@ public class Helper {
 		SimpleDateFormat format = new SimpleDateFormat("h:mm a", Locale.US);
 		return format.format(date);
 	}
+	
+public static String getLocalTimeFromGTM(String str) throws Exception{
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+	Date date = (Date) dateFormat.parse(str);
+	
+	dateFormat.setTimeZone(TimeZone.getDefault());
+	SimpleDateFormat format = new SimpleDateFormat("h:mm a", Locale.US);
+	String gmtTime = format.format(date);
+	return gmtTime;
+}
 
 	public static String getTime24(Long time) {
 		if (time == null)

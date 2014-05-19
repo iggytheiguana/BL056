@@ -36,6 +36,8 @@ public class Converter {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(new Date(System.currentTimeMillis()));
     }
+    
+    
 
     public static Long getCrurentTimeFromTimestamp(String timestamp){
         if (TextUtils.isEmpty(timestamp))
@@ -43,7 +45,8 @@ public class Converter {
         if(!timestamp.contains(".")){
         	timestamp+=".0";
         }
-        TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = TimeZone.getDefault();//TimeZone.getTimeZone("GMT");
         return Timestamp.valueOf(timestamp).getTime() + tz.getRawOffset();
     }
+    
 }
