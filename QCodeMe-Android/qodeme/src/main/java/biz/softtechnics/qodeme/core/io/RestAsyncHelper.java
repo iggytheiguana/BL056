@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.internal.co;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -309,16 +310,40 @@ public class RestAsyncHelper implements RestClient {
 	 * @param color
 	 * @param callback
 	 */
-	public void chatSetInfo(long chatId, String title, int color, String tag, String description,
-			int is_locked, String status, RestListener callback) {
+	public void chatSetInfo(long chatId, String title, Integer color, String tag,
+			String description, Integer is_locked, String status, String chat_title, RestListener callback) {
 		RequestParams params = new RequestParams();
+		// params.put(RestKeyMap.ID, String.valueOf(chatId));
+		// params.put(RestKeyMap.TITLE, title);
+		// params.put(RestKeyMap.COLOR, String.valueOf(color));
+		// params.put(RestKeyMap.TAGS, tag);
+		// params.put(RestKeyMap.DESCRIPTION, description);
+		// params.put(RestKeyMap.IS_LOCKED, String.valueOf(is_locked));
+		// params.put(RestKeyMap.STATUS, status);
+
+		// RequestParams params = new RequestParams();
 		params.put(RestKeyMap.ID, String.valueOf(chatId));
-		params.put(RestKeyMap.TITLE, title);
-		params.put(RestKeyMap.COLOR, String.valueOf(color));
-		params.put(RestKeyMap.TAGS, tag);
-		params.put(RestKeyMap.DESCRIPTION, description);
-		params.put(RestKeyMap.IS_LOCKED, String.valueOf(is_locked));
-		params.put(RestKeyMap.STATUS, status);
+		if (title != null)
+			params.put(RestKeyMap.TITLE, title);
+		// if (color != null)
+		// params.put(RestKeyMap.COLOR, String.valueOf(color));
+		// if (height != null)
+		// params.put(RestKeyMap.CHAT_HEIGHT, String.valueOf(height));
+		if (description != null)
+			params.put(RestKeyMap.DESCRIPTION, description);
+		if (is_locked != null)
+			params.put(RestKeyMap.IS_LOCKED, String.valueOf(is_locked));
+		if (status != null)
+			params.put(RestKeyMap.STATUS, status);
+		if (tag != null)
+			params.put(RestKeyMap.TAGS, tag);
+		if (color != null)
+			params.put("chat_color", String.valueOf(color));
+		if(chat_title != null)
+			params.put("chat_title", chat_title);
+			
+			
+
 		post(RequestType.CHAT_SET_INFO, params, callback);
 	}
 
@@ -361,12 +386,11 @@ public class RestAsyncHelper implements RestClient {
 		post(RequestType.CHAT_MESSAGE, params, callback);
 	}
 
-	public void chatImage(long messageId, String imageString, RestListener callback)
-			 {
+	public void chatImage(long messageId, String imageString, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.IMAGE, imageString);
 		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
-		
+
 		post(RequestType.UPLOAD_IMAGE, params, callback);
 	}
 

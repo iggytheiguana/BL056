@@ -23,6 +23,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -106,11 +107,14 @@ import biz.softtechnics.qodeme.ui.contacts.ContactDetailsActivity;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItem;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItemEntity;
 import biz.softtechnics.qodeme.ui.contacts.ContactListItemInvited;
+import biz.softtechnics.qodeme.ui.one2one.ChatGroupPhotosFragment;
+import biz.softtechnics.qodeme.ui.one2one.ChatGroupProfileFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideGroupFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListGroupFragment;
 import biz.softtechnics.qodeme.ui.one2one.ChatListGroupPublicFragment;
+import biz.softtechnics.qodeme.ui.one2one.ChatProfileFragment;
 import biz.softtechnics.qodeme.ui.preferences.SettingsActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeCaptureActivity;
 import biz.softtechnics.qodeme.ui.qr.QrCodeShowActivity;
@@ -499,9 +503,9 @@ public class MainActivity extends BaseActivity implements
 						if (chatType == 0)
 							return;
 						chatType = 0;
-						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
-						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
-						v.setBackgroundResource(R.drawable.bg_tab_h);
+						// customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
+						// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+						// v.setBackgroundResource(R.drawable.bg_tab_h);
 
 						ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
 								.findFragmentByTag(CHAT_LIST_FRAGMENT);
@@ -525,9 +529,9 @@ public class MainActivity extends BaseActivity implements
 						if (chatType == 1)
 							return;
 						chatType = 1;
-						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
-						customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
-						v.setBackgroundResource(R.drawable.bg_tab_h);
+						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+						// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+						// v.setBackgroundResource(R.drawable.bg_tab_h);
 
 						ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
 								.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
@@ -549,9 +553,9 @@ public class MainActivity extends BaseActivity implements
 						if (chatType == 2)
 							return;
 						chatType = 2;
-						customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
-						customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
-						v.setBackgroundResource(R.drawable.bg_tab_h);
+						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+						// customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
+						// v.setBackgroundResource(R.drawable.bg_tab_h);
 
 						ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()
 								.findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
@@ -1395,6 +1399,7 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Chats.CONTENT_URI,
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
 										response.getChat().getType(), response.getChat()
+												.getQrcode(), QodemePreferences.getInstance()
 												.getQrcode()));
 
 						for (Contact contact : contactsList) {
@@ -1465,7 +1470,7 @@ public class MainActivity extends BaseActivity implements
 		@Override
 		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 			mChatList = ModelHelper.getChatList(cursor);
-			Log.d("Chatlist", "size " + mChatList.size() + " ");
+			//Log.d("Chatlist", "size " + mChatList.size() + " ");
 			// refreshContactList();
 
 			// if (mSearchView != null) {
@@ -1756,11 +1761,16 @@ public class MainActivity extends BaseActivity implements
 
 			}
 		} else {
-			ChatInsideGroupFragment one2OneChatInsideFragment = null;
+			ChatInsideGroupFragment groupChatInsideFragment = null;
+			ChatGroupProfileFragment chatGroupProfileFragment = null;
+			ChatGroupPhotosFragment chatGroupPhotosFragment = null;
+			
 			if (mPagerAdapter != null && !getActionBar().isShowing()) {
-				one2OneChatInsideFragment = (ChatInsideGroupFragment) mPagerAdapter.getItem(0);
+				groupChatInsideFragment = (ChatInsideGroupFragment) mPagerAdapter.getItem(0);
+				chatGroupProfileFragment = (ChatGroupProfileFragment) mPagerAdapter.getItem(1);
+				chatGroupPhotosFragment = (ChatGroupPhotosFragment) mPagerAdapter.getItem(2);
 			}
-			if (one2OneChatInsideFragment != null) {
+			if (groupChatInsideFragment != null) {
 				// if (mContactInfoUpdated) {
 				// long chatId = one2OneChatInsideFragment.getChatId();
 				// int chatColor = 0;
@@ -1777,10 +1787,24 @@ public class MainActivity extends BaseActivity implements
 				// showOne2OneChatFragment(c, false);
 				//
 				// }
-				one2OneChatInsideFragment.updateUi();
+				groupChatInsideFragment.updateUi();
+				if(chatGroupProfileFragment != null)
+				{
+					
+					List<ChatLoad> chatLoads = getChatList(chatType);
+					for(ChatLoad chatLoad : chatLoads)
+					{
+						if(chatLoad.chatId == chatGroupProfileFragment.getChatload().chatId){
+							chatGroupProfileFragment.setChatload(chatLoad);
+							break;
+						}
+					}
+					chatGroupProfileFragment.setData();
+				}
 				mViewPager.setCurrentItem(fullChatIndex);
 
 			}
+			
 		}
 	}
 
@@ -1794,14 +1818,18 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	private void showMessage(String message) {
-		new AlertDialog.Builder(getContext()).setTitle("Attention").setMessage(message)
-				.setCancelable(true)
-				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				}).create().show();
+		try {
+			new AlertDialog.Builder(getContext()).setTitle("Attention").setMessage(message)
+					.setCancelable(true)
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					}).create().show();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -1831,6 +1859,32 @@ public class MainActivity extends BaseActivity implements
 			// mViewPager.setVisibility(View.INVISIBLE);
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 			expandedImageView.setVisibility(View.INVISIBLE);
+			if (mPagerAdapter != null) {
+				Long chatId = null;
+				if (mPagerAdapter.getItem(0) instanceof ChatInsideFragment) {
+					ChatInsideFragment chatInsideFragment = (ChatInsideFragment) mPagerAdapter
+							.getItem(0);
+					chatId = chatInsideFragment.getChatId();
+				} else if (mPagerAdapter.getItem(0) instanceof ChatInsideGroupFragment) {
+					ChatInsideGroupFragment chatInsideGroupFragment = (ChatInsideGroupFragment) mPagerAdapter
+							.getItem(0);
+					chatId = chatInsideGroupFragment.getChatId();
+				}
+				if (chatId != null) {
+					List<Message> messages = getChatMessages(chatId);
+					if (messages != null)
+						for (Message message : messages) {
+							if (message.state == QodemeContract.Messages.State.NOT_READ) {
+								getContentResolver().update(
+										QodemeContract.Messages.CONTENT_URI,
+										QodemeContract.Messages.msssageReadLocalValues(),
+										QodemeContract.Messages.MESSAGE_ID + "="
+												+ message.messageId, null);
+							}
+						}
+
+				}
+			}
 			return;
 		}
 		// else {
@@ -1912,7 +1966,7 @@ public class MainActivity extends BaseActivity implements
 	public List<ChatLoad> getChatList(int chatType) {
 		List<ChatLoad> tempList = Lists.newArrayList();
 		for (ChatLoad chatLoad : mChatList) {
-			Log.d("Chattype", "" + chatLoad.type);
+			// Log.d("Chattype", "" + chatLoad.type);
 			if (chatLoad.type == chatType) {
 				tempList.add(chatLoad);
 			}

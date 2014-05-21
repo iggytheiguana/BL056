@@ -27,4 +27,5 @@ public class ChatLoad {
     public int number_of_members;
     public int number_of_dislikes;
     public String title;
+    public String user_qrcode;
 }

@@ -58,9 +58,13 @@ public class ModelHelper {
 				c.longitude = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_LONGITUDE);
 				c.qrcode = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_QRCODE);
 				c.status = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
+				c.title = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_TITLE);
 				c.tag = cursor
 						.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
 				c.type = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
+				c.user_qrcode = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_ADMIN);
+				c.is_locked = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_LOCKED);
+				
 				contactList.add(c);
 
 			} while (cursor.moveToNext());

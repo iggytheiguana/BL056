@@ -95,6 +95,11 @@
       
       <string name="done">Done</string>
       <string name="add">Add</string>
+      <string name="status_hint">Add Status Message Here</string>
+       <string name="add_descrioption_hint">Add Description</string>
+       <string name="add_title_hint">Add Title</string>
+       
       <string name="more">More</string>
+      
        <string name="no_network_connection_toast">No network connection found</string>
 </resources>

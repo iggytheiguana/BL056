@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_HEADER = new SimpleDateFormat(
 			"MMM dd yyyy", Locale.US);
-	
+
 	/**
 	 * Load Images by url parameter for cache
 	 */
@@ -82,20 +83,20 @@ public class ChatGroupPhotosFragment extends Fragment {
 		f.setArguments(args);
 		return f;
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
-		
 		final DisplayMetrics displayMetrics = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		final int height = displayMetrics.heightPixels;
 		final int width = displayMetrics.widthPixels;
 
 		final int longest = (height > width ? height : width) / 2;
-		
+
 		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(),
 				IMAGE_CACHE_DIR);
 
@@ -124,30 +125,31 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		ArrayList<String> arrayList = new ArrayList<String>();
-		ArrayList<HashMap<String, String>> mMapList = new ArrayList<HashMap<String, String>>();
-
-		arrayList.add("a");
-		arrayList.add("b");
-		arrayList.add("c");
-		int count = 0;
-		if (arrayList.size() % 2 == 0) {
-			count = arrayList.size() / 2;
-		} else {
-			count = (arrayList.size() / 2) + 1;
-		}
-
-		int j = 0;
-		for (int i = 0; i < count; i++) {
-			HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-
-			mHashMapLeft.put("0", arrayList.get(j) + "");
-			if ((j + 1) <= (arrayList.size() - 1)) {
-				mHashMapLeft.put("1", arrayList.get(j + 1) + "");
-			}
-			mMapList.add(mHashMapLeft);
-			j = j + 2;
-		}
+		// ArrayList<String> arrayList = new ArrayList<String>();
+		// ArrayList<HashMap<String, String>> mMapList = new
+		// ArrayList<HashMap<String, String>>();
+		//
+		// arrayList.add("a");
+		// arrayList.add("b");
+		// arrayList.add("c");
+		// int count = 0;
+		// if (arrayList.size() % 2 == 0) {
+		// count = arrayList.size() / 2;
+		// } else {
+		// count = (arrayList.size() / 2) + 1;
+		// }
+		//
+		// int j = 0;
+		// for (int i = 0; i < count; i++) {
+		// HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
+		//
+		// mHashMapLeft.put("0", arrayList.get(j) + "");
+		// if ((j + 1) <= (arrayList.size() - 1)) {
+		// mHashMapLeft.put("1", arrayList.get(j + 1) + "");
+		// }
+		// mMapList.add(mHashMapLeft);
+		// j = j + 2;
+		// }
 		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
 
 		// SeparatedListAdapter adapter = new
@@ -197,7 +199,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void sendImageMessage(String message) {
 
 		// we need to send websocket message that the user has stopped typing
-		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "","");
+		callback.sendMessage(getChatId(), "", message, 1, -1, 0, 0, "", "");
 	}
 
 	class PhotoMessage {
@@ -220,6 +222,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 						temp.add(me);
 					}
 				}
+				Log.d("photo", temp.size() + "");
 				// for(Message message:temp){
 				// messages.removeAll(temp);
 				// }
@@ -257,9 +260,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 								photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
 								photoMessage.arrayList.add(me);
 								arrayListMessage.add(photoMessage);
-							} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
-								// getOpponentSeparator().setVisibility(View.VISIBLE);
-							} else {
+							}  else {
 								if (arrayListMessage.size() > 0) {
 									PhotoMessage message = arrayListMessage.get(arrayListMessage
 											.size() - 1);
@@ -298,23 +299,37 @@ public class ChatGroupPhotosFragment extends Fragment {
 					previousMessage = me;
 				}
 
+				Log.d("photo", arrayListMessage.size() + "");
 				for (PhotoMessage photoMessage : arrayListMessage) {
 					ArrayList<HashMap<String, Message>> mMapList = new ArrayList<HashMap<String, Message>>();
 					int count = 0;
+					boolean isOdd = false;
 					if (photoMessage.arrayList.size() % 2 == 0) {
 						count = photoMessage.arrayList.size() / 2;
+						isOdd = false;
 					} else {
 						count = (photoMessage.arrayList.size() / 2) + 1;
+						isOdd = true;
 					}
 
+					Log.d("photo size", photoMessage.arrayList.size()+"");
 					int j = 0;
 					for (int i = 0; i < count; i++) {
 						HashMap<String, Message> mHashMapLeft = new HashMap<String, Message>();
 
 						mHashMapLeft.put("0", photoMessage.arrayList.get(j));
-						if ((j + 1) <= (photoMessage.arrayList.size() - 1)) {
-							mHashMapLeft.put("1", photoMessage.arrayList.get(j + 1));
+						// if ((j + 1) <= (photoMessage.arrayList.size() - 1)) {
+						// mHashMapLeft.put("1", photoMessage.arrayList.get(j +
+						// 1));
+						// }
+						// if(isOdd && i == count-1){}
+						// else
+						try{
+							mHashMapLeft.put("1", photoMessage.arrayList.get(j +1));
+						}catch (Exception e) {
+							e.printStackTrace();
 						}
+							
 						mMapList.add(mHashMapLeft);
 						j = j + 2;
 					}

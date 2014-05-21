@@ -8,20 +8,23 @@
     <RelativeLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
-        android:padding="5dip" >
+        android:layout_marginBottom="5dp"
+         >
 
-        <TextView
+        <biz.softtechnics.qodeme.ui.common.TextViewRegular
             android:id="@+id/date_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            style="@style/TextView.Message.Text"
             android:paddingBottom="2dp"
             android:paddingRight="10dp"
             android:paddingTop="2dp"
             android:text="jul 10th 2014"
-            android:textColor="@color/date_divider_color"
-            android:textSize="10sp" />
+            android:background="@android:color/white"
+            android:textColor="@color/text_message_not_read"
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <View
@@ -42,6 +45,7 @@
 
     <LinearLayout
         android:id="@+id/linear_message"
+        android:layout_below="@id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

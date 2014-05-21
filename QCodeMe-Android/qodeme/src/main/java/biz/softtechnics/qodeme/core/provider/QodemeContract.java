@@ -101,6 +101,7 @@ public class QodemeContract {
 		String CHAT_IS_LOCKED = "chat_is_locked";
 		String CHAT_NUMBER_OF_FLAGGED = "chat_number_of_flagged";
 		String CHAT_STATUS = "chat_status";
+		String CHAT_ADMIN_QRCODE = "chat_admin";
 	}
 
 	interface MessagesColumns {
@@ -384,7 +385,7 @@ public class QodemeContract {
 					Chats.CHAT_DESCRIPTION, Chats.CHAT_COLOR, Chats.CHAT_IS_LOCKED,
 					Chats.CHAT_LATITUDE, Chats.CHAT_LONGITUDE, Chats.CHAT_NUMBER_OF_FLAGGED,
 					Chats.CHAT_NUMBER_OF_MEMBER, Chats.CHAT_QRCODE, Chats.CHAT_STATUS,
-					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE };
+					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE, Chats.CHAT_ADMIN_QRCODE };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -401,9 +402,10 @@ public class QodemeContract {
 			int CHAT_TAGS = 12;
 			int CHAT_TITLE = 13;
 			int CHAT_TYPE = 14;
+			int CHAT_ADMIN = 15;
 		}
 
-		public static ContentValues addNewChatValues(long chatId, int type, String qrCode) {
+		public static ContentValues addNewChatValues(long chatId, int type, String qrCode, String admin) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
 			contentValues.put(Chats.CHAT_ID, chatId);
@@ -418,6 +420,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_STATUS, "");
 			contentValues.put(Chats.CHAT_TAGS, "");
 			contentValues.put(Chats.CHAT_TITLE, "UserGroup");
+			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
 			// String location = "";
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
 			if (latLonCity != null) {// && latLonCity.getCity() != null) {

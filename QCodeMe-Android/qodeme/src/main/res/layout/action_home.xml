@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     android:layout_centerHorizontal="true" >
 
-    <LinearLayout
+    <LinearLayout android:id="@+id/homeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -26,43 +27,45 @@
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_action_camera" />
+            android:src="@drawable/ic_home_as_up" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
         android:layout_gravity="center"
         android:gravity="center"
+        android:layout_toRightOf="@+id/homeLayout"
+        android:layout_toLeftOf="@+id/addLayout"
         android:orientation="horizontal" >
 
         <ImageButton
             android:id="@+id/imgBtn_one2one"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_tab_h"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:src="@drawable/ic_1_1_tab" />
+            android:src="@drawable/ic_one_to_one" />
 
         <ImageButton
             android:id="@+id/imgBtn_private"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
+            android:layout_marginRight="10dp"
             android:src="@drawable/ic_private_group" />
 
         <ImageButton
             android:id="@+id/imgBtn_public"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
             android:src="@drawable/ic_public_group" />
     </LinearLayout>
-<LinearLayout
+<LinearLayout android:id="@+id/addLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"

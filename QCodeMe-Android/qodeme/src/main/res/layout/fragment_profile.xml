@@ -58,7 +58,7 @@
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="10dp"
-                        android:src="@drawable/ic_share_dark" />
+                        android:src="@drawable/ic_archive" />
 
                     <ImageButton
                         android:id="@+id/btnShare"

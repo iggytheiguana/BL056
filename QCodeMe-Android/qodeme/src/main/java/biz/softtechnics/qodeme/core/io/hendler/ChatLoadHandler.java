@@ -6,6 +6,9 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.flurry.sdk.ch;
+import com.google.android.gms.internal.bu;
+
 import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Message;
@@ -68,6 +71,7 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Chats.CHAT_STATUS, chatLoad.status);
 		builder.withValue(Chats.CHAT_TAGS, chatLoad.tag);
 		builder.withValue(Chats.CHAT_TYPE, chatLoad.type);
+		builder.withValue(Chats.CHAT_ADMIN_QRCODE, chatLoad.user_qrcode);
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());
