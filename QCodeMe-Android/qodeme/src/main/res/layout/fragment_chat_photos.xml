@@ -33,13 +33,13 @@
                     android:layout_marginTop="5dp"
                     android:visibility="gone" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <biz.softtechnics.qodeme.ui.common.TextViewMedium
                     android:id="@+id/name"
                     style="@style/TextView.Chat.Name"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:text="Item" />
+                    android:textColor="@color/text_message_not_read" />
             </LinearLayout>
 
             <LinearLayout
@@ -106,14 +106,14 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/line_horizontal" />
 
-        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+        <biz.softtechnics.qodeme.ui.common.TextViewMedium
             android:id="@+id/textView_status"
             style="@style/TextView.Chat.Name"
             android:layout_below="@id/img_nameline"
             android:layout_marginLeft="10dp"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="Status" />
+             android:textColor="@color/text_message_not_read"  />
 
         <ImageView
             android:id="@+id/img_statusline"

@@ -189,7 +189,8 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		} else {
 			color = Color.GRAY;
 		}
-		if (callback2.getChatType(me.chatId) == 1) {
+		int chatType = callback2.getChatType(me.chatId);
+		if (chatType == 1) {
 			getMessagerName().setVisibility(View.VISIBLE);
 
 			if (contact != null) {
@@ -210,8 +211,17 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
 		String createdDate = me.created;
 		// Log.d("me.Date", createdDate + "");
-		String dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-		dateString = " " + dateString;
+//		String dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+		String dateString = "";
+		try {
+			dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+			dateString = " " + dateString;
+		} catch (Exception e) {
+			Log.d("timeError", e+"");
+			dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+			dateString = " " + dateString;
+		}
+//		dateString = " " + dateString;
 		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
 		// "</font>";
 		String str = getMessage().getText().toString();
@@ -336,7 +346,32 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				} else {
 					getDate().setVisibility(View.VISIBLE);
 				}
+				/**
+				 * Grouped Same user message
+				 */
+				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
+					if (previousMessage.replyTo_id>0) {
+//						getDate().setVisibility(View.INVISIBLE);
+						if (chatType == 1) 
+							getMessagerName().setVisibility(View.GONE);
+							
+						getDate().setCircle(false);
+					}else if(me.replyTo_id>0){
+						getDate().setCircle(true);
+						getDate().setVisibility(View.VISIBLE);
+					}
+					else{
+						if (chatType == 1) 
+							getMessagerName().setVisibility(View.GONE);
+						getDate().setCircle(false);
+						getDate().setVisibility(View.VISIBLE);
+					}
+				}else{
+					getDate().setCircle(true);
+					getDate().setVisibility(View.VISIBLE);
+				}
 
+				getDate().invalidate();
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

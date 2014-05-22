@@ -119,21 +119,21 @@ public class CustomDotView extends TextView {
 		if (isReply()) {
 			if ((!isSecondVerticalLine1 && isSecondVerticalLine2)
 					|| (!isSecondVerticalLine1 && !isSecondVerticalLine2))
-				canvas.drawLine((textSize / 2) + 2, padding + 2 + (textSize / 2), getWidth() - 15,
+				canvas.drawLine((textSize / 2) + 2, padding + 2 + (textSize / 2), getWidth() - (textSize / 2) - 5,
 						padding + 2 + (textSize / 2), mPaintLine);
 			if (isSecondVerticalLine1)
-				canvas.drawLine(getWidth() - 15, 0, getWidth() - 15, padding + 2 + (textSize / 2),
+				canvas.drawLine(getWidth() - (textSize / 2) - 5, 0, getWidth() - (textSize / 2) - 5, padding + 2 + (textSize / 2),
 						mPaintLine);
 			if (isSecondVerticalLine2)
-				canvas.drawLine(getWidth() - 15, padding + 2 + (textSize / 2), getWidth() - 15,
+				canvas.drawLine(getWidth() - (textSize / 2) - 5, padding + 2 + (textSize / 2), getWidth() - (textSize / 2) - 5,
 						getHeight(), mPaintLine);
 			if (isCircle){
 				mPaintCircle.setColor(dotColor);
-				canvas.drawCircle(getWidth() - 15, padding + 2 + (textSize / 2), (textSize / 2) - 2,
+				canvas.drawCircle(getWidth() - (textSize / 2) - 5, padding + 2 + (textSize / 2), (textSize / 2) - 2,
 						mPaintCircle);// RADIUS = 7
 				if(isOutLine()){
 					mPaintCircle.setColor(Color.WHITE);
-				canvas.drawCircle(getWidth() - 15, padding + 2 + (textSize / 2), ((textSize / 2) - 2)-1,
+				canvas.drawCircle(getWidth() - (textSize / 2) - 5, padding + 2 + (textSize / 2), ((textSize / 2) - 2)-1,
 						mPaintCircle);
 				}
 			}

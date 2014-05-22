@@ -323,6 +323,7 @@ public class RestAsyncHelper implements RestClient {
 
 		// RequestParams params = new RequestParams();
 		params.put(RestKeyMap.ID, String.valueOf(chatId));
+		params.put(RestKeyMap.CHAT_TYPE, String.valueOf(1));
 		if (title != null)
 			params.put(RestKeyMap.TITLE, title);
 		// if (color != null)
@@ -333,6 +334,8 @@ public class RestAsyncHelper implements RestClient {
 			params.put(RestKeyMap.DESCRIPTION, description);
 		if (is_locked != null)
 			params.put(RestKeyMap.IS_LOCKED, String.valueOf(is_locked));
+		if (status != null)
+			params.put("chat_status", status);
 		if (status != null)
 			params.put(RestKeyMap.STATUS, status);
 		if (tag != null)

@@ -229,6 +229,7 @@ public class RestSyncHelper {
 			params.put(RestKeyMap.STATUS, status);
 		if (tags != null)
 			params.put(RestKeyMap.TAGS, tags);
+		params.put(RestKeyMap.CHAT_TYPE, String.valueOf(0));
 		params.put("chat_color", String.valueOf(chat_color));
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_SET_INFO, params);
 		return new VoidResponse().parse(jsonObject);

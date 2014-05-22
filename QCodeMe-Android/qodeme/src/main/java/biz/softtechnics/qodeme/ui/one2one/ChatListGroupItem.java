@@ -1,5 +1,6 @@
 package biz.softtechnics.qodeme.ui.one2one;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,14 +10,19 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.flurry.sdk.ch;
@@ -33,9 +39,14 @@ import java.util.List;
 
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.RestAsyncHelper;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
+import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
+import biz.softtechnics.qodeme.core.io.utils.RestError;
+import biz.softtechnics.qodeme.core.io.utils.RestListener;
+import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
@@ -47,6 +58,7 @@ import biz.softtechnics.qodeme.ui.common.ScrollDisabledListView;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
 import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Converter;
+import biz.softtechnics.qodeme.utils.DbUtils;
 import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
 
@@ -88,6 +100,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	// private Contact mContact;
 	private ChatLoad mChatLoad;
 	private ImageButton shareChatBtn;
+	private EditText editTextTitle;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -323,6 +336,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 		mCallback.messageRead(mChatLoad.chatId);
 	}
 
+	public EditText getTitleEditText() {
+		return editTextTitle = editTextTitle != null ? editTextTitle
+				: (EditText) findViewById(R.id.editText_group_title);
+	}
+
 	public TextView getName() {
 		return name = name != null ? name : (TextView) findViewById(R.id.name);
 	}
@@ -434,7 +452,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	}
 
 	public void showMessage() {
-
+		getSendMessage().setVisibility(View.VISIBLE);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -450,11 +468,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 			public void afterTextChanged(Editable s) {
 				ChatFocusSaver.setCurrentMessage(mChatLoad.chatId, s.toString());
 
-				if (s.length() > 0) {
-					getSendMessage().setVisibility(View.VISIBLE);
-				} else {
-					getSendMessage().setVisibility(View.GONE);
-				}
+//				if (s.length() > 0) {
+//					getSendMessage().setVisibility(View.VISIBLE);
+//				} else {
+//					getSendMessage().setVisibility(View.GONE);
+//				}
 
 			}
 		});
@@ -584,11 +602,72 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		mChatLoad = t;
 
+		if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId) {
+			getTitleEditText().setVisibility(VISIBLE);
+				getTitleEditText().setText(mChatLoad.title);
+				getName().setVisibility(GONE);
+				getSendMessage().setVisibility(View.VISIBLE);
+				getMessageEdit().setVisibility(VISIBLE);
+				if (mChatLoad.title.trim().length() > 0) {
+				} else {
+				getTitleEditText().setFocusable(true);
+				getTitleEditText().requestFocus();
+				// InputMethodManager
+				// inputMethodManager=(InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				// inputMethodManager.toggleSoftInputFromWindow(getTitleEditText().getWindowToken(),
+				// InputMethodManager.SHOW_FORCED, 0);
+
+				getTitleEditText().post(new Runnable() {
+					@Override
+					public void run() {
+						getTitleEditText().requestFocus();
+						Helper.showKeyboard(getContext(), getTitleEditText());
+					}
+				});
+				getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
+
+					@Override
+					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+						if (actionId == EditorInfo.IME_ACTION_SEARCH
+								|| actionId == EditorInfo.IME_ACTION_DONE
+								|| event.getAction() == KeyEvent.ACTION_DOWN
+								&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+							String title = v.getText().toString().trim();
+
+							int updated = mChatLoad.updated;
+							getContext().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "",
+											"", updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
+									DbUtils.getWhereArgsForId(mChatLoad.chatId));
+							// setChatInfo(chatload.chatId, title, null, null,
+							// null,
+							// null, null);
+							mChatLoad.title = title;
+							setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
+									mChatLoad.description, mChatLoad.status, mChatLoad.is_locked,
+									mChatLoad.title);
+
+							Helper.hideKeyboard(getContext(), getTitleEditText());
+							// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
+							return true;
+						}
+						return false;
+					}
+				});
+			}
+		} else {
+			getTitleEditText().setVisibility(GONE);
+			getName().setVisibility(VISIBLE);
+			getTitleEditText().setText("");
+		}
+
 		final String oponentQr = mChatLoad.qrcode;
 		final int oponentColor = mChatLoad.color == 0 ? Color.GRAY : mChatLoad.color;
 		final int myColor = context.getResources().getColor(R.color.text_chat_name);
-		getName().setText(mChatLoad.tag != null ? mChatLoad.tag : "");
-		getName().setTextColor(oponentColor);
+		getName().setText(mChatLoad.title != null ? mChatLoad.title : "");
+		// getName().setTextColor(oponentColor);
 		setCornerColor(mCallback.getNewMessagesCount(mChatLoad.chatId), oponentColor);
 		// getName().setTypeface(mCallback.getFont(Fonts.ROBOTO_BOLD));
 		if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
@@ -807,6 +886,22 @@ public class ChatListGroupItem extends RelativeLayout implements
 				activity.addMemberInExistingChat();
 			}
 		});
+	}
+
+	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
+			String status, Integer isLocked, String chat_title) {
+		RestAsyncHelper.getInstance().chatSetInfo(mChatLoad.chatId, title, color, tag, desc,
+				isLocked, status, chat_title, new RestListener<VoidResponse>() {
+
+					@Override
+					public void onResponse(VoidResponse response) {
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("Error", error.getMessage() + "");
+					}
+				});
 	}
 
 	@Override

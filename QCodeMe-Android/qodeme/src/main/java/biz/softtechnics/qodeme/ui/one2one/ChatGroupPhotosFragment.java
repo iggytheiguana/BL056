@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
@@ -50,6 +51,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	SeparatedListAdapter mListAdapter;
 	ListView mListViewPhotos;
 	public ChatLoad chatLoad;
+	private TextView mName, mStatus;
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
@@ -65,6 +67,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	private int mImageThumbSize;
 	private int mImageThumbSpacing;
 	private ImageFetcher mImageFetcher;
+	private boolean mFirstUpdate;
 
 	public static ChatGroupPhotosFragment newInstance(ChatLoad c, boolean firstUpdate) {
 		ChatGroupPhotosFragment f = new ChatGroupPhotosFragment();
@@ -125,68 +128,11 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		// ArrayList<String> arrayList = new ArrayList<String>();
-		// ArrayList<HashMap<String, String>> mMapList = new
-		// ArrayList<HashMap<String, String>>();
-		//
-		// arrayList.add("a");
-		// arrayList.add("b");
-		// arrayList.add("c");
-		// int count = 0;
-		// if (arrayList.size() % 2 == 0) {
-		// count = arrayList.size() / 2;
-		// } else {
-		// count = (arrayList.size() / 2) + 1;
-		// }
-		//
-		// int j = 0;
-		// for (int i = 0; i < count; i++) {
-		// HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-		//
-		// mHashMapLeft.put("0", arrayList.get(j) + "");
-		// if ((j + 1) <= (arrayList.size() - 1)) {
-		// mHashMapLeft.put("1", arrayList.get(j + 1) + "");
-		// }
-		// mMapList.add(mHashMapLeft);
-		// j = j + 2;
-		// }
-		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
-
-		// SeparatedListAdapter adapter = new
-		// SeparatedListAdapter(getActivity());
 		mListAdapter = new SeparatedListAdapter(getActivity());
 
-		// adapter.addSection("April 29, 2014", new GridAdapter(getActivity(),
-		// mMapList));
-		//
-		// ArrayList<String> dd = new ArrayList<String>();
-		// dd.add("a");
-		// dd.add("b");
-		// dd.add("c");
-		// dd.add("d");
-		// if (dd.size() % 2 == 0) {
-		// count = dd.size() / 2;
-		// } else {
-		// count = (dd.size() / 2) + 1;
-		// }
-		//
-		// j = 0;
-		// ArrayList<HashMap<String, String>> mm = new ArrayList<HashMap<String,
-		// String>>();
-		// for (int i = 0; i < count; i++) {
-		// HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-		//
-		// mHashMapLeft.put("0", dd.get(j) + "");
-		// if ((j + 1) <= (dd.size() - 1)) {
-		// mHashMapLeft.put("1", dd.get(j + 1) + "");
-		// }
-		// mm.add(mHashMapLeft);
-		// j = j + 2;
-		// }
-		//
-		// adapter.addSection("April 30, 2014", new GridAdapter(getActivity(),
-		// mm));
-
+		mName = (TextView) getView().findViewById(R.id.name);
+		mStatus= (TextView) getView().findViewById(R.id.textView_status);
+		
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
 		isViewCreated = true;
 		updateUi();
@@ -206,14 +152,37 @@ public class ChatGroupPhotosFragment extends Fragment {
 		String date;
 		ArrayList<Message> arrayList = new ArrayList<Message>();
 	}
-
+	
+public void setArgument(ChatLoad c){
+		
+//		Bundle args = new Bundle();
+//		args.putLong(CHAT_ID, c.chatId);
+//		args.putInt(CHAT_COLOR, c.color);
+//		// args.putString(CHAT_NAME, c.title);
+//		args.putString(QRCODE, c.qrcode);
+////		args.putString(STATUS, c.status);
+//		// args.putString(LOCATION, c.location);
+//		// args.putString(DATE, c.date);
+//		args.putBoolean(FIRST_UPDATE, getFirstUpdate());
+//		
+//		setArguments(args);
+		this.chatLoad = c;
+	}
+//private boolean getFirstUpdate() {
+//	boolean result = getArguments().getBoolean(FIRST_UPDATE) & mFirstUpdate;
+//	mFirstUpdate = false;
+//	return result;
+//}
 	public void updateUi() {
-		if (isViewCreated) {
+		if (isViewCreated && getActivity() != null) {
 			// mListAdapter.clear();
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			mListAdapter = new SeparatedListAdapter(getActivity());
 			List<Message> messages = callback.getChatMessages(getChatId());
 
+			mName.setText(chatLoad.title);
+			mStatus.setText(chatLoad.status);
+			
 			if (messages != null) {
 				Message previousMessage = null;
 				List<Message> temp = new ArrayList<Message>();

@@ -68,7 +68,23 @@
                 android:paddingTop="5dp"
                 android:singleLine="true"
                 android:text="Item"
+                android:textColor="@color/text_message_not_read"
                 android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editText_group_title"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/linear_btn"
+                android:hint="@string/add_title_hint"
+                android:imeOptions="actionDone|actionGo"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/linear_btn"

@@ -69,6 +69,7 @@
                 android:paddingTop="5dp"
                 android:singleLine="true"
                 android:text="Item"
+                android:textColor="@color/text_message_not_read"
                 android:textStyle="bold" />
 
             <ImageButton

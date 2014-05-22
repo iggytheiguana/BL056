@@ -1,5 +1,6 @@
 package biz.softtechnics.qodeme.ui.one2one;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import biz.softtechnics.qodeme.R;
+import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
@@ -80,6 +82,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 	public ChatListGroupPublicFragment(int chatType) {
 		this.chatType = chatType;
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -247,9 +250,9 @@ public class ChatListGroupPublicFragment extends Fragment {
 					@Override
 					public void sendMessage(Contact c, String message, String photoUrl,
 							int hashPhoto, long replyTo_Id, double latitude, double longitude,
-							String senderName,String localUrl) {
+							String senderName, String localUrl) {
 						callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
-								latitude, longitude, senderName,localUrl);
+								latitude, longitude, senderName, localUrl);
 
 					}
 
@@ -260,10 +263,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 					@Override
 					public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
-							long replyTo_Id, double latitude, double longitude, String senderName,String localUrl) {
+							long replyTo_Id, double latitude, double longitude, String senderName,
+							String localUrl) {
 						// TODO Auto-generated method stub
 						callback.sendMessage(c, message, photoUrl, hashPhoto, replyTo_Id, latitude,
-								longitude, senderName,localUrl);
+								longitude, senderName, localUrl);
 					}
 
 					@Override
@@ -277,7 +281,6 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 					@Override
 					public void onSingleTap(View view, int position, ChatLoad c) {
-						// TODO Auto-generated method stub
 
 					}
 
@@ -324,14 +327,26 @@ public class ChatListGroupPublicFragment extends Fragment {
 			Log.d("Chatlist", "size " + callback.getChatList(chatType).size() + " ");
 			if (callback.getChatList(chatType) != null) {
 				mListAdapter.clear();
-				mListAdapter.addAll(callback.getChatList(chatType));
-				
-				for(ChatLoad chatLoad: callback.getChatList(chatType)){
-					
+				List<ChatLoad> chatLoads = callback.getChatList(chatType);
+				if (chatLoads != null && QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
+					ChatLoad newChatLoad = null;
+					for(ChatLoad c:chatLoads){
+						if(QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId){
+							newChatLoad = c;
+							break;
+						}
+					}
+					chatLoads.remove(newChatLoad);
+					chatLoads.add(0, newChatLoad);
+					mListAdapter.addAll(chatLoads);
+					mListView.setSelection(0);
+				}else{
+					mListAdapter.addAll(chatLoads);
 				}
-				
-				long focusedChat = ChatFocusSaver.getFocusedChatId();
-				selectChat(focusedChat);
+
+
+				//long focusedChat = ChatFocusSaver.getFocusedChatId();
+				//selectChat(focusedChat);
 			}
 		}
 	}

@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -83,7 +84,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private GestureDetector mGestureDetector;
 	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
 	private EditText mMessageField;
-	private TextView mName;
+	private TextView mName, mStatus;
 	private TextView mDate;
 	private TextView mLocation;
 
@@ -92,6 +93,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private CustomDotView customDotViewUserTyping;
 	private View footerView;
 	private boolean isUsertyping = false;
+	private ChatLoad chatLoad;
 
 	public static ChatInsideGroupFragment newInstance(ChatLoad c, boolean firstUpdate) {
 		ChatInsideGroupFragment f = new ChatInsideGroupFragment();
@@ -108,6 +110,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		// args.putString(DATE, c.date);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
 		f.setArguments(args);
+		f.setChatLoad(c);
 		return f;
 	}
 
@@ -175,6 +178,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		initSendMessage();
 		mName = (TextView) getView().findViewById(R.id.name);
+		mStatus= (TextView) getView().findViewById(R.id.textView_status);
 		updateUi();
 
 	}
@@ -585,8 +589,10 @@ public class ChatInsideGroupFragment extends Fragment {
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			if (mListAdapter.getCount() > 0)
 				mListView.setSelection(mListAdapter.getCount() - 1);
-			mName.setText(getChatName());
-			mName.setTextColor(getChatColor());
+			mName.setText(chatLoad.title);
+			mStatus.setText(chatLoad.status);
+//			mName.setTextColor(getChatColor());
+			
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
 				if (getDate() != null) {
 					SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm a");
@@ -603,26 +609,26 @@ public class ChatInsideGroupFragment extends Fragment {
 				mLocation.setText("");
 			}
 
-			String message = ChatFocusSaver.getCurrentMessage(getChatId());
-
-			if (!TextUtils.isEmpty(message)) {
-				mMessageField.setText(message);
-				// Helper.showKeyboard(getActivity(), mMessageField);
-				// mMessageField.setSelection(mMessageField.getText().length());
-				mMessageField.post(new Runnable() {
-					@Override
-					public void run() {
-						mMessageField.requestFocus();
-						mMessageField.setSelection(mMessageField.getText().length());
-						Context c = getActivity();
-						if (c != null)
-							Helper.showKeyboard(getActivity(), mMessageField);
-						mFirstUpdate = false;
-					}
-				});
-			} else if (getFirstUpdate()) {
-				Helper.hideKeyboard(getActivity(), mMessageField);
-			}
+			// String message = ChatFocusSaver.getCurrentMessage(getChatId());
+			//
+			// if (!TextUtils.isEmpty(message)) {
+			// mMessageField.setText(message);
+			// // Helper.showKeyboard(getActivity(), mMessageField);
+			// // mMessageField.setSelection(mMessageField.getText().length());
+			// mMessageField.post(new Runnable() {
+			// @Override
+			// public void run() {
+			// mMessageField.requestFocus();
+			// mMessageField.setSelection(mMessageField.getText().length());
+			// Context c = getActivity();
+			// if (c != null)
+			// Helper.showKeyboard(getActivity(), mMessageField);
+			// mFirstUpdate = false;
+			// }
+			// });
+			// } else if (getFirstUpdate()) {
+			// Helper.hideKeyboard(getActivity(), mMessageField);
+			// }
 
 			mMessageField.addTextChangedListener(new TextWatcher() {
 				@Override
@@ -661,6 +667,22 @@ public class ChatInsideGroupFragment extends Fragment {
 			getActivity().onBackPressed();
 			return true;
 		}
+	}
+	public void setArgument(ChatLoad c){
+		
+//		Bundle args = new Bundle();
+//		args.putLong(CHAT_ID, c.chatId);
+//		args.putInt(CHAT_COLOR, c.color);
+//		// args.putString(CHAT_NAME, c.title);
+//		args.putString(QRCODE, c.qrcode);
+//		args.putString(STATUS, c.status);
+//		args.putString(DESCRIPTION, c.description);
+//		// args.putString(LOCATION, c.location);
+//		// args.putString(DATE, c.date);
+//		args.putBoolean(FIRST_UPDATE, getFirstUpdate());
+//		
+//		setArguments(args);
+		this.chatLoad = c;
 	}
 
 	private String getDate() {
@@ -740,5 +762,13 @@ public class ChatInsideGroupFragment extends Fragment {
 	}
 	public ImageFetcher getFetcher() {
 		return callback.getImageFetcher();
+	}
+
+	public void setChatLoad(ChatLoad chatLoad) {
+		this.chatLoad = chatLoad;
+	}
+
+	public ChatLoad getChatLoad() {
+		return chatLoad;
 	}
 }

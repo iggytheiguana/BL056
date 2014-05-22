@@ -166,6 +166,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btnSetStatus"
                 android:text=""
+                android:imeOptions="actionDone|actionGo"
                 android:textColor="@android:color/black"
                 android:visibility="gone" />
 

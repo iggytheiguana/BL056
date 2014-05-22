@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import biz.softtechnics.qodeme.ApplicationConstants;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
@@ -74,9 +76,9 @@ public class ChatInsideFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton, mBtnImageSend,mBtnImageSendBottom;
+	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
 	private EditText mMessageField;
-	private TextView mName;
+	private TextView mName, mStatus;
 	private TextView mDate;
 	private TextView mLocation;
 
@@ -103,18 +105,21 @@ public class ChatInsideFragment extends Fragment {
 	}
 
 	public interface One2OneChatInsideFragmentCallback {
-		
+
 		List<Message> getChatMessages(long chatId);
 
 		void sendMessage(long chatId, String message, String photoUrl, int hashPhoto,
-				long replyTo_Id, double latitude, double longitude, String senderName,String localUrl);
+				long replyTo_Id, double latitude, double longitude, String senderName,
+				String localUrl);
 
 		Typeface getFont(Fonts font);
-		
+
 		ImageFetcher getImageFetcher();
+
 		int getChatType(long chatId);
+
 		Contact getContact(String qrCode);
-		
+
 	}
 
 	/**
@@ -130,9 +135,9 @@ public class ChatInsideFragment extends Fragment {
 
 		void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto,
 				long replyTo_Id, double latitude, double longitude, String senderName);
-		
+
 		ImageFetcher getImageFetcher();
-		
+
 		int getChatType(long chatId);
 	}
 
@@ -171,6 +176,7 @@ public class ChatInsideFragment extends Fragment {
 
 		initSendMessage();
 		mName = (TextView) getView().findViewById(R.id.name);
+		mStatus = (TextView) getView().findViewById(R.id.textView_status);
 		updateUi();
 
 	}
@@ -183,6 +189,7 @@ public class ChatInsideFragment extends Fragment {
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
 				sendMessage();
 			}
 		});
@@ -196,7 +203,7 @@ public class ChatInsideFragment extends Fragment {
 				activity.takePhotoFromGallery();
 			}
 		});
-		
+
 		mBtnImageSendBottom.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -265,7 +272,7 @@ public class ChatInsideFragment extends Fragment {
 					customDotViewUserTyping.setVisibility(View.VISIBLE);
 				else
 					customDotViewUserTyping.setVisibility(View.INVISIBLE);
-				
+
 				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
 			}
 		};
@@ -314,7 +321,7 @@ public class ChatInsideFragment extends Fragment {
 
 	private void receiveOtherUserStoppedTypingEvent(long chatId) {
 		if (chatId == getChatId()) {
-//			this.imgUserTyping.setVisibility(View.INVISIBLE);
+			// this.imgUserTyping.setVisibility(View.INVISIBLE);
 			customDotViewUserTyping.setVisibility(View.INVISIBLE);
 			footerView.setVisibility(View.GONE);
 			isUsertyping = false;
@@ -324,7 +331,7 @@ public class ChatInsideFragment extends Fragment {
 	private void receiveOtherUserStartedTypingEvent(long chatId) {
 		if (chatId == getChatId()) {
 			// we make visible the image view to show the other user is typing
-//			this.imgUserTyping.setVisibility(View.VISIBLE);
+			// this.imgUserTyping.setVisibility(View.VISIBLE);
 			customDotViewUserTyping.setVisibility(View.VISIBLE);
 			footerView.setVisibility(View.VISIBLE);
 			if (!isUsertyping) {
@@ -456,7 +463,7 @@ public class ChatInsideFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "","");
+		callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "", "");
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -472,7 +479,7 @@ public class ChatInsideFragment extends Fragment {
 		sendUserStoppedTypingMessage();
 		mMessageField.setText("");
 		// Helper.hideKeyboard(getActivity(), mMessageField);
-		callback.sendMessage(getChatId(), "", "", 1, -1, 0, 0, "",message);
+		callback.sendMessage(getChatId(), "", "", 1, -1, 0, 0, "", message);
 		mMessageField.post(new Runnable() {
 			@Override
 			public void run() {
@@ -581,7 +588,11 @@ public class ChatInsideFragment extends Fragment {
 			mListAdapter.clear();
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			mName.setText(getChatName());
-			mName.setTextColor(getChatColor());
+			MainActivity activity = (MainActivity) getActivity();
+			ChatLoad chatLoad = activity.getChatLoad(getChatId());
+			if (chatLoad != null)
+				mStatus.setText(chatLoad.status);
+			// mName.setTextColor(getChatColor());
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
 				if (getDate() != null) {
 					SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm a");
@@ -598,26 +609,26 @@ public class ChatInsideFragment extends Fragment {
 				mLocation.setText("");
 			}
 
-			String message = ChatFocusSaver.getCurrentMessage(getChatId());
-
-			if (!TextUtils.isEmpty(message)) {
-				mMessageField.setText(message);
-				// Helper.showKeyboard(getActivity(), mMessageField);
-				// mMessageField.setSelection(mMessageField.getText().length());
-				mMessageField.post(new Runnable() {
-					@Override
-					public void run() {
-						mMessageField.requestFocus();
-						mMessageField.setSelection(mMessageField.getText().length());
-						Context c = getActivity();
-						if (c != null)
-							Helper.showKeyboard(getActivity(), mMessageField);
-						mFirstUpdate = false;
-					}
-				});
-			} else if (getFirstUpdate()) {
-				Helper.hideKeyboard(getActivity(), mMessageField);
-			}
+			// String message = ChatFocusSaver.getCurrentMessage(getChatId());
+			//
+			// if (!TextUtils.isEmpty(message)) {
+			// mMessageField.setText(message);
+			// // Helper.showKeyboard(getActivity(), mMessageField);
+			// // mMessageField.setSelection(mMessageField.getText().length());
+			// mMessageField.post(new Runnable() {
+			// @Override
+			// public void run() {
+			// mMessageField.requestFocus();
+			// mMessageField.setSelection(mMessageField.getText().length());
+			// Context c = getActivity();
+			// if (c != null)
+			// Helper.showKeyboard(getActivity(), mMessageField);
+			// mFirstUpdate = false;
+			// }
+			// });
+			// } else if (getFirstUpdate()) {
+			// Helper.hideKeyboard(getActivity(), mMessageField);
+			// }
 
 			mMessageField.addTextChangedListener(new TextWatcher() {
 				@Override
@@ -699,7 +710,7 @@ public class ChatInsideFragment extends Fragment {
 			sendUserStoppedTypingMessage();
 			// Helper.hideKeyboard(getActivity(), mMessageField);
 			callback.sendMessage(getChatId(), message, photoUrl, hashPhoto, replyTo_Id, latitude,
-					longitude, senderName,"");
+					longitude, senderName, "");
 		}
 
 		@Override
@@ -711,7 +722,6 @@ public class ChatInsideFragment extends Fragment {
 		public int getChatType(long chatId) {
 			return getChatTypeFromMain(chatId);
 		}
-
 
 		// @Override
 		// public void sendReplyMessage(String qrCode, String message) {
@@ -730,11 +740,12 @@ public class ChatInsideFragment extends Fragment {
 		//
 		// }
 	};
-	public ImageFetcher getFetcher(){
+
+	public ImageFetcher getFetcher() {
 		return callback.getImageFetcher();
 	}
-	
-	int getChatTypeFromMain(long chatId){
+
+	int getChatTypeFromMain(long chatId) {
 		return callback.getChatType(chatId);
 	}
 

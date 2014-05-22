@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -289,6 +290,9 @@ public class ChatListItem extends RelativeLayout implements
 		getSendMessage().setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(
+						Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 				sendMessage();
 			}
 		});
@@ -412,7 +416,7 @@ public class ChatListItem extends RelativeLayout implements
 			showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mContact);
-			messageRead();
+			//messageRead();
 			Log.i("GestureListener", "onSingleTap");
 			return true;
 		}
@@ -421,14 +425,14 @@ public class ChatListItem extends RelativeLayout implements
 		public boolean onDoubleTap(MotionEvent e) {
 			// Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mContact);
-			messageRead();
+			//messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
 		}
 	}
 
 	public void showMessage() {
-
+		getSendMessage().setVisibility(View.VISIBLE);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -444,11 +448,11 @@ public class ChatListItem extends RelativeLayout implements
 			public void afterTextChanged(Editable s) {
 				ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
 
-				if (s.length() > 0) {
-					getSendMessage().setVisibility(View.VISIBLE);
-				} else {
-					getSendMessage().setVisibility(View.GONE);
-				}
+//				if (s.length() > 0) {
+//					getSendMessage().setVisibility(View.VISIBLE);
+//				} else {
+//					getSendMessage().setVisibility(View.GONE);
+//				}
 
 			}
 		});

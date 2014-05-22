@@ -21,11 +21,11 @@
 
             <ImageView
                 android:id="@+id/img_qr"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/logo"
+                android:src="@drawable/ic_qr_small_dark"
                 android:visibility="visible" />
 
             <LinearLayout
@@ -45,7 +45,7 @@
 
                     <ImageButton
                         android:id="@+id/btnDelete"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="5dp"
@@ -53,7 +53,7 @@
 
                     <ImageButton
                         android:id="@+id/btnFavorite"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="5dp"
@@ -61,7 +61,7 @@
 
                     <ImageButton
                         android:id="@+id/btnSearch"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="5dp"
@@ -69,7 +69,7 @@
 
                     <ImageButton
                         android:id="@+id/btnShare"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="5dp"
@@ -78,7 +78,7 @@
 
                     <ImageButton
                         android:id="@+id/btnLock"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:padding="5dp"
@@ -86,7 +86,8 @@
                         android:visibility="visible" />
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" >
 
                         <ImageButton
@@ -107,54 +108,110 @@
                     android:background="@drawable/line_horizontal" />
                 <!-- #E4E7EC -->
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
+
+                <!-- <LinearLayout -->
+                <!-- android:layout_width="fill_parent" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:layout_marginTop="15dp" -->
+                <!-- android:orientation="vertical" > -->
+
+
+                <!-- <biz.softtechnics.qodeme.ui.common.TextViewMedium -->
+                <!-- style="@style/TextView.Message.Date" -->
+                <!-- android:layout_width="wrap_content" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:text="Created:" -->
+                <!-- android:textColor="@color/text_message_not_read" -->
+                <!-- android:textSize="14sp" /> -->
+
+
+                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- android:id="@+id/textView_createdDate" -->
+                <!-- style="@style/TextView.Message.Date" -->
+                <!-- android:layout_width="wrap_content" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:text="Created Date here" -->
+                <!-- android:textColor="@color/text_message_not_read" -->
+                <!-- android:textSize="14sp" /> -->
+
+
+                <!-- <LinearLayout -->
+                <!-- android:layout_width="fill_parent" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:orientation="horizontal" > -->
+
+
+                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- android:id="@+id/textView_location" -->
+                <!-- style="@style/TextView.Message.Date" -->
+                <!-- android:layout_width="wrap_content" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:text="Location" -->
+                <!-- android:textColor="@color/text_message_not_read" -->
+                <!-- android:textSize="14sp" /> -->
+
+
+                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- style="@style/TextView.Message.Date" -->
+                <!-- android:layout_width="wrap_content" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:layout_marginLeft="5dp" -->
+                <!-- android:text="remove" -->
+                <!-- android:textColor="#059BE9" -->
+                <!-- android:textSize="14sp" -->
+                <!-- android:visibility="gone" /> -->
+                <!-- </LinearLayout> -->
+                <!-- </LinearLayout> -->
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical" >
+
+            <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                style="@style/TextView.Message.Date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created:"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="14sp" />
+
+            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                android:id="@+id/textView_createdDate"
+                style="@style/TextView.Message.Date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created Date here"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    android:id="@+id/textView_location"
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:orientation="vertical" >
+                    android:text="Location"
+                    android:textColor="@color/text_message_not_read"
+                    android:textSize="14sp" />
 
-                    <biz.softtechnics.qodeme.ui.common.TextViewMedium
-                        style="@style/TextView.Message.Date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Created:"
-                        android:textColor="@color/text_message_not_read"
-                        android:textSize="14sp" />
-
-                    <biz.softtechnics.qodeme.ui.common.TextViewRegular
-                        android:id="@+id/textView_createdDate"
-                        style="@style/TextView.Message.Date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Created Date here"
-                        android:textColor="@color/text_message_not_read"
-                        android:textSize="14sp" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
-                            android:id="@+id/textView_location"
-                            style="@style/TextView.Message.Date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Location"
-                            android:textColor="@color/text_message_not_read"
-                            android:textSize="14sp" />
-
-                        <biz.softtechnics.qodeme.ui.common.TextViewRegular
-                            style="@style/TextView.Message.Date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:text="remove"
-                            android:textColor="#059BE9"
-                            android:textSize="14sp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-                </LinearLayout>
+                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="remove"
+                    android:textColor="#059BE9"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
@@ -163,6 +220,7 @@
             android:layout_height="1px"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/line_horizontal" />
 
         <RelativeLayout
@@ -306,8 +364,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_toLeftOf="@+id/btnEditDesc"
                     android:text="Title of Conversation"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_message_not_read"
+                     />
 
                 <ImageButton
                     android:id="@+id/btnEditDesc"
@@ -327,7 +385,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@id/btnEditDesc"
                     android:text="Description"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/text_message_not_read"/>
             </RelativeLayout>
 
             <RelativeLayout

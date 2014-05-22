@@ -292,12 +292,26 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mBtnEditDesc.setVisibility(View.GONE);
 					mBtnEditStatus.setVisibility(View.GONE);
 					mImgBtnLocked.setVisibility(View.GONE);
+					mImgBtnSearch.setVisibility(View.GONE);
+					if(chatload.type == 2){
+						mImgBtnShare.setVisibility(View.VISIBLE);
+					}else
+					{
+						mImgBtnShare.setVisibility(View.GONE);
+					}
 				}
 			} else {
 				mBtnDelete.setVisibility(View.GONE);
 				mBtnEditDesc.setVisibility(View.GONE);
 				mBtnEditStatus.setVisibility(View.GONE);
 				mImgBtnLocked.setVisibility(View.GONE);
+				mImgBtnSearch.setVisibility(View.GONE);
+				if(chatload.type == 2){
+					mImgBtnShare.setVisibility(View.VISIBLE);
+				}else
+				{
+					mImgBtnShare.setVisibility(View.GONE);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

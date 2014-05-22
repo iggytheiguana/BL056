@@ -419,7 +419,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, 0);
 			contentValues.put(Chats.CHAT_STATUS, "");
 			contentValues.put(Chats.CHAT_TAGS, "");
-			contentValues.put(Chats.CHAT_TITLE, "UserGroup");
+			contentValues.put(Chats.CHAT_TITLE, "");
 			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
 			// String location = "";
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();

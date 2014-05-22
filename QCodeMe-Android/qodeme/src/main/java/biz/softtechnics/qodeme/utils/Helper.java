@@ -72,7 +72,7 @@ public static String getLocalTimeFromGTM(String str) throws Exception{
 	Date date = (Date) dateFormat.parse(str);
 	
 	dateFormat.setTimeZone(TimeZone.getDefault());
-	SimpleDateFormat format = new SimpleDateFormat("h:mm a", Locale.US);
+	SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.US);
 	String gmtTime = format.format(date);
 	return gmtTime;
 }

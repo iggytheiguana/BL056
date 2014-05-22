@@ -178,7 +178,8 @@ public class ChatListSubItem extends RelativeLayout implements
 		int color = callback.getColor(me.qrcode);
 		Contact contact = callback.getContact(me.qrcode);
 
-		if (callback2.getChatType(me.chatId) == 1) {
+		int chatType = callback2.getChatType(me.chatId);
+		if (chatType == 1) {
 			getMessagerName().setVisibility(View.VISIBLE);
 
 			if (contact != null) {
@@ -205,7 +206,7 @@ public class ChatListSubItem extends RelativeLayout implements
 			dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 			dateString = " " + dateString;
 		} catch (Exception e) {
-			Log.d("timeError", e+"");
+			Log.d("timeError", e + "");
 			dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 			dateString = " " + dateString;
 		}
@@ -335,7 +336,30 @@ public class ChatListSubItem extends RelativeLayout implements
 				} else {
 					getDate().setVisibility(View.VISIBLE);
 				}
+				/**
+				 * Grouped Same user message
+				 */
+				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
+					if (previousMessage.replyTo_id > 0) {
+						// getDate().setVisibility(View.INVISIBLE);
+						if (chatType == 1) 
+							getMessagerName().setVisibility(View.GONE);
+						getDate().setCircle(false);
+					} else if (me.replyTo_id > 0) {
+						getDate().setCircle(true);
+						getDate().setVisibility(View.VISIBLE);
+					} else {
+						if (chatType == 1) 
+							getMessagerName().setVisibility(View.GONE);
+						getDate().setCircle(false);
+						getDate().setVisibility(View.VISIBLE);
+					}
+				} else {
+					getDate().setCircle(true);
+					getDate().setVisibility(View.VISIBLE);
+				}
 
+				getDate().invalidate();
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

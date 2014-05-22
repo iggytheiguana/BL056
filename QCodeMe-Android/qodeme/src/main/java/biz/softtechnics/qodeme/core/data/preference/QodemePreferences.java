@@ -1,5 +1,7 @@
 package biz.softtechnics.qodeme.core.data.preference;
 
+import com.flurry.sdk.ch;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -38,6 +40,7 @@ public class QodemePreferences extends CommonPreferences {
     private static final boolean DEFAULT_PREF_CHECKBOX_SAVE_LOCATION_DATE = true;
     private static final boolean DEFAULT_PREF_CHECKBOX_AUTO_ACCEPT = false;
     private static final boolean DEFAULT_PREF_USER_SETTINGS_UPTODATE = false;
+    private static final String PUBLIC_GROUP_CHAT_ID = "public_group_chat_id";
 
 	private static QodemePreferences instance;
     private Context context;
@@ -269,5 +272,14 @@ public class QodemePreferences extends CommonPreferences {
         ed.putInt(PREF_LAST_LOCATION_LON, value.getLon());
         ed.putString(PREF_LAST_LOCATION_CITY, value.getCity());
         commit(ed);
+    }
+    
+    public void setNewPublicGroupChatId(long chatId){
+    	 SharedPreferences.Editor ed = getEditor();
+         ed.putLong(PUBLIC_GROUP_CHAT_ID, chatId);
+         commit(ed);
+    }
+    public long getNewPublicGroupChatId(){
+        return get(PUBLIC_GROUP_CHAT_ID, -1l);
     }
 }

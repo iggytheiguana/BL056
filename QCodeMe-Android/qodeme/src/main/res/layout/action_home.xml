@@ -46,7 +46,7 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:src="@drawable/ic_one_to_one" />
+            android:src="@drawable/ic_one_to_one_h" />
 
         <ImageButton
             android:id="@+id/imgBtn_private"
