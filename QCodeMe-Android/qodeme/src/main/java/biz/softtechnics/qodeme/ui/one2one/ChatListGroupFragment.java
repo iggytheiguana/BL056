@@ -76,6 +76,11 @@ public class ChatListGroupFragment extends Fragment {
 	//
 	// void messageRead(long chatId);
 	// }
+	
+	public ChatListGroupFragment()
+	{
+		super();
+	}
 
 	public ChatListGroupFragment(int chatType) {
 		this.chatType = chatType;

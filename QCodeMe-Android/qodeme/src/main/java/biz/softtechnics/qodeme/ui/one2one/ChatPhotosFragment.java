@@ -22,6 +22,7 @@ import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.images.utils.ImageCache;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
+import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.GridAdapter;
 import biz.softtechnics.qodeme.ui.common.SeparatedListAdapter;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
@@ -116,68 +117,15 @@ public class ChatPhotosFragment extends Fragment {
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
-		ArrayList<String> arrayList = new ArrayList<String>();
-		ArrayList<HashMap<String, String>> mMapList = new ArrayList<HashMap<String, String>>();
-
-		arrayList.add("a");
-		arrayList.add("b");
-		arrayList.add("c");
-		int count = 0;
-		if (arrayList.size() % 2 == 0) {
-			count = arrayList.size() / 2;
-		} else {
-			count = (arrayList.size() / 2) + 1;
-		}
-
-		int j = 0;
-		for (int i = 0; i < count; i++) {
-			HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-
-			mHashMapLeft.put("0", arrayList.get(j) + "");
-			if ((j + 1) <= (arrayList.size() - 1)) {
-				mHashMapLeft.put("1", arrayList.get(j + 1) + "");
-			}
-			mMapList.add(mHashMapLeft);
-			j = j + 2;
-		}
 		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
 
 		// SeparatedListAdapter adapter = new
 		// SeparatedListAdapter(getActivity());
 		mListAdapter = new SeparatedListAdapter(getActivity());
 
-		// adapter.addSection("April 29, 2014", new GridAdapter(getActivity(),
-		// mMapList));
-		//
-		// ArrayList<String> dd = new ArrayList<String>();
-		// dd.add("a");
-		// dd.add("b");
-		// dd.add("c");
-		// dd.add("d");
-		// if (dd.size() % 2 == 0) {
-		// count = dd.size() / 2;
-		// } else {
-		// count = (dd.size() / 2) + 1;
-		// }
-		//
-		// j = 0;
-		// ArrayList<HashMap<String, String>> mm = new ArrayList<HashMap<String,
-		// String>>();
-		// for (int i = 0; i < count; i++) {
-		// HashMap<String, String> mHashMapLeft = new HashMap<String, String>();
-		//
-		// mHashMapLeft.put("0", dd.get(j) + "");
-		// if ((j + 1) <= (dd.size() - 1)) {
-		// mHashMapLeft.put("1", dd.get(j + 1) + "");
-		// }
-		// mm.add(mHashMapLeft);
-		// j = j + 2;
-		// }
-		//
-		// adapter.addSection("April 30, 2014", new GridAdapter(getActivity(),
-		// mm));
 
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
+		mListViewPhotos.setAdapter(mListAdapter);
 		isViewCreated = true;
 		updateUi();
 	}
@@ -198,10 +146,12 @@ public class ChatPhotosFragment extends Fragment {
 	}
 
 	public void updateUi() {
-		if (isViewCreated) {
+		if (isViewCreated && callback!= null) {
 			// mListAdapter.clear();
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
-			mListAdapter = new SeparatedListAdapter(getActivity());
+			mListAdapter = new SeparatedListAdapter((MainActivity)callback);
+//			mListAdapter.clearData();
+//			mListAdapter.notifyDataSetChanged();
 			List<Message> messages = callback.getChatMessages(getChatId());
 
 			if (messages != null) {
@@ -315,6 +265,7 @@ public class ChatPhotosFragment extends Fragment {
 				}
 				mListViewPhotos.setAdapter(mListAdapter);
 			}
+//			mListAdapter.notifyDataSetChanged();
 			// mName.setText(getChatName());
 			// mName.setTextColor(getChatColor());
 			// if (QodemePreferences.getInstance().isSaveLocationDateChecked())

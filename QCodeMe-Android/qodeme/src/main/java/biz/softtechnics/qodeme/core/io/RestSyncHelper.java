@@ -1,6 +1,35 @@
 package biz.softtechnics.qodeme.core.io;
 
+import static biz.softtechnics.qodeme.utils.LogUtils.LOGI;
+import static biz.softtechnics.qodeme.utils.LogUtils.makeLogTag;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
+import android.util.Log;
+import biz.softtechnics.qodeme.ApplicationConstants;
+import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.responses.AccountContactsResponse;
+import biz.softtechnics.qodeme.core.io.responses.AccountCreateResponse;
+import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
+import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
+import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
+import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
+import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse1;
+import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
+import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
+import biz.softtechnics.qodeme.core.io.utils.RequestParams;
+import biz.softtechnics.qodeme.core.io.utils.RequestType;
+import biz.softtechnics.qodeme.core.io.utils.RestError;
+import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
+import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
+import biz.softtechnics.qodeme.utils.Converter;
+import biz.softtechnics.qodeme.utils.RestUtils;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -9,35 +38,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import biz.softtechnics.qodeme.ApplicationConstants;
-import biz.softtechnics.qodeme.core.io.utils.RequestParams;
-import biz.softtechnics.qodeme.core.io.utils.RequestType;
-import biz.softtechnics.qodeme.core.io.utils.RestError;
-import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
-import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
-import biz.softtechnics.qodeme.core.io.responses.AccountContactsResponse;
-import biz.softtechnics.qodeme.core.io.responses.AccountCreateResponse;
-import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
-import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
-import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
-import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
-import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
-import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
-import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
-import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
-import biz.softtechnics.qodeme.utils.Converter;
-import biz.softtechnics.qodeme.utils.RestUtils;
-
-import static biz.softtechnics.qodeme.utils.LogUtils.LOGI;
-import static biz.softtechnics.qodeme.utils.LogUtils.makeLogTag;
 
 /**
  * Created by Alex on 12/1/13.
@@ -128,13 +128,13 @@ public class RestSyncHelper {
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_MESSAGE, params);
 		return new ChatMessageResponse().parse(jsonObject);
 	}
-	public UploadImageResponse chatImage(long messageId, String imageString) throws InterruptedException, ExecutionException, JSONException,
+	public UploadImageResponse1 chatImage(long messageId, String imageString) throws InterruptedException, ExecutionException, JSONException,
 			RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.IMAGE, imageString);
 		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.UPLOAD_IMAGE, params);
-		return new UploadImageResponse().parse(jsonObject);
+		return new UploadImageResponse1().parse(jsonObject);
 	}
 
 	public ChatLoadResponse chatLoad(long chatId, int page, int limit) throws InterruptedException,
@@ -260,6 +260,7 @@ public class RestSyncHelper {
 		int method = Request.Method.POST;
 		RequestFuture<String> future = RequestFuture.newFuture();
 		String absoluteUrl = RestUtils.getAbsoluteUrl(requestType);
+		Log.d("Image Url", RestUtils.getAbsoluteUrl(requestType)+"");
 
 		StringRequest request = new StringRequest(method, absoluteUrl, future, future) {
 			@Override

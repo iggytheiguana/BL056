@@ -16,33 +16,10 @@
 
 package biz.softtechnics.qodeme.core.sync;
 
-import android.accounts.Account;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SyncResult;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Base64;
+import static biz.softtechnics.qodeme.utils.LogUtils.LOGE;
+import static biz.softtechnics.qodeme.utils.LogUtils.LOGI;
+import static biz.softtechnics.qodeme.utils.LogUtils.makeLogTag;
 
-import com.bugsense.trace.BugSenseHandler;
-import com.flurry.sdk.ch;
-import com.google.android.gms.internal.cu;
-import com.google.android.gms.wallet.Cart;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
-
-import org.json.JSONException;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,6 +28,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import org.json.JSONException;
+
+import android.accounts.Account;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SyncResult;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Base64;
 import biz.softtechnics.qodeme.core.accounts.GenericAccountService;
 import biz.softtechnics.qodeme.core.data.entities.ChatEntity;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
@@ -70,17 +62,16 @@ import biz.softtechnics.qodeme.core.io.responses.AccountContactsResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
 import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
-import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
+import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse1;
 import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
 import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
 import biz.softtechnics.qodeme.core.io.utils.RestError;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
-import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment;
 import biz.softtechnics.qodeme.utils.Converter;
 
-import static biz.softtechnics.qodeme.utils.LogUtils.LOGE;
-import static biz.softtechnics.qodeme.utils.LogUtils.LOGI;
-import static biz.softtechnics.qodeme.utils.LogUtils.makeLogTag;
+import com.bugsense.trace.BugSenseHandler;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 
 /**
  * A helper class for dealing with sync and other remote persistence operations.
@@ -492,7 +483,7 @@ public class SyncHelper {
 								e.printStackTrace();
 							}
 							if (mProfileImageBase64 != null) {
-								UploadImageResponse imageResponse = rest.chatImage(id,
+								UploadImageResponse1 imageResponse = rest.chatImage(id,
 										mProfileImageBase64);
 								new ChatImageUploadHandler(context, id)
 										.parseAndApply(imageResponse);

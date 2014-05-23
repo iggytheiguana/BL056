@@ -4,17 +4,34 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.app.IntentService;
+import android.content.Entity;
 import android.content.Intent;
 import android.util.Base64;
 import android.util.Log;
 import biz.softtechnics.qodeme.core.io.RestAsyncHelper;
 import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse1;
+import biz.softtechnics.qodeme.core.io.utils.RequestType;
 import biz.softtechnics.qodeme.core.io.utils.RestError;
+import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
 import biz.softtechnics.qodeme.core.io.utils.RestListener;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import biz.softtechnics.qodeme.utils.DbUtils;
+import biz.softtechnics.qodeme.utils.RestUtils;
 
 import com.google.common.io.ByteStreams;
 
@@ -32,7 +49,7 @@ public class UploadImageService extends IntentService {
 		long messageId = intent.getLongExtra(MESSAGE_ID, 0);
 		String imageLocalPath = intent.getStringExtra(LOCAL_PATH);
 		String mProfileImageBase64 = null;
-		//RestSyncHelper rest = RestSyncHelper.getInstance(this);
+		// RestSyncHelper rest = RestSyncHelper.getInstance(this);
 		try {
 			File file = new File(imageLocalPath);
 			byte[] byteArray = convertFileToByteArray(file);
@@ -49,21 +66,44 @@ public class UploadImageService extends IntentService {
 			// mProfileImageBase64);
 			// new ChatImageUploadHandler(this,
 			// messageId).parseAndApply(imageResponse);
-			RestAsyncHelper.getInstance().chatImage(messageId, imageLocalPath,
-					new RestListener<UploadImageResponse1>() {
 
-						@Override
-						public void onResponse(UploadImageResponse1 response) {
-							Log.d("Upload", "Url = "+response.getUrl());
-							getContentResolver().update(QodemeContract.Messages.CONTENT_URI, QodemeContract.Messages.updateMessageImageUrl(response.getUrl()), DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(response.getMessageId()));
-							
-						}
+//			HttpClient client = new DefaultHttpClient();
+//			HttpPost httpPost = new HttpPost(RestUtils.getAbsoluteUrl(RequestType.UPLOAD_IMAGE));
+//
+//			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+//			urlParameters.add(new BasicNameValuePair(RestKeyMap.IMAGE, mProfileImageBase64));
+//			urlParameters.add(new BasicNameValuePair(RestKeyMap.MESSAGE_ID, String.valueOf(messageId)));
+//			try {
+//				httpPost.setEntity(urlParameters);
+//				
+//				HttpResponse httpResponse = client.execute(httpPost);
+//				
+//				String response = EntityUtils.toString(httpResponse.getEntity());
+//				Log.d("ImgeUpload response", response+"");
+//			} catch (Exception e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//			}
 
-						@Override
-						public void onServiceError(RestError error) {
-
-						}
-					});
+			// RestAsyncHelper.getInstance().chatImage(messageId,
+			// mProfileImageBase64,
+			// new RestListener<UploadImageResponse1>() {
+			//
+			// @Override
+			// public void onResponse(UploadImageResponse1 response) {
+			// Log.d("Upload", "Url = "+response.getUrl());
+			// getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+			// QodemeContract.Messages.updateMessageImageUrl(response.getUrl()),
+			// DbUtils.getWhereClauseForId(),
+			// DbUtils.getWhereArgsForId(response.getMessageId()));
+			//
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			//
+			// }
+			// });
 		}
 	}
 

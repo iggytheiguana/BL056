@@ -139,7 +139,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				long replyTo_Id, double latitude, double longitude, String senderName);
 
 		ImageFetcher getImageFetcher();
-		
+
 		int getChatType(long chatId);
 	}
 
@@ -178,7 +178,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		initSendMessage();
 		mName = (TextView) getView().findViewById(R.id.name);
-		mStatus= (TextView) getView().findViewById(R.id.textView_status);
+		mStatus = (TextView) getView().findViewById(R.id.textView_status);
 		updateUi();
 
 	}
@@ -306,9 +306,12 @@ public class ChatInsideGroupFragment extends Fragment {
 			JSONObject messageJson = new JSONObject(message);
 			long chatId = messageJson.getLong("chatId");
 			int event = messageJson.getInt("event");
+			// String token = messageJson.getString("authToken");
 
 			Log.d(TAG, activityName + "Received event: " + event + " in chat: " + chatId);
 			if (event == GetEventForUserStartedTypingMessage()) {
+				// if
+				// (!QodemePreferences.getInstance().getRestToken().equals(token))
 				receiveOtherUserStartedTypingEvent(chatId);
 			} else if (event == GetEventForUserStoppedTypingMessage()) {
 				receiveOtherUserStoppedTypingEvent(chatId);
@@ -591,8 +594,8 @@ public class ChatInsideGroupFragment extends Fragment {
 				mListView.setSelection(mListAdapter.getCount() - 1);
 			mName.setText(chatLoad.title);
 			mStatus.setText(chatLoad.status);
-//			mName.setTextColor(getChatColor());
-			
+			// mName.setTextColor(getChatColor());
+
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
 				if (getDate() != null) {
 					SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm a");
@@ -668,20 +671,21 @@ public class ChatInsideGroupFragment extends Fragment {
 			return true;
 		}
 	}
-	public void setArgument(ChatLoad c){
-		
-//		Bundle args = new Bundle();
-//		args.putLong(CHAT_ID, c.chatId);
-//		args.putInt(CHAT_COLOR, c.color);
-//		// args.putString(CHAT_NAME, c.title);
-//		args.putString(QRCODE, c.qrcode);
-//		args.putString(STATUS, c.status);
-//		args.putString(DESCRIPTION, c.description);
-//		// args.putString(LOCATION, c.location);
-//		// args.putString(DATE, c.date);
-//		args.putBoolean(FIRST_UPDATE, getFirstUpdate());
-//		
-//		setArguments(args);
+
+	public void setArgument(ChatLoad c) {
+
+		// Bundle args = new Bundle();
+		// args.putLong(CHAT_ID, c.chatId);
+		// args.putInt(CHAT_COLOR, c.color);
+		// // args.putString(CHAT_NAME, c.title);
+		// args.putString(QRCODE, c.qrcode);
+		// args.putString(STATUS, c.status);
+		// args.putString(DESCRIPTION, c.description);
+		// // args.putString(LOCATION, c.location);
+		// // args.putString(DATE, c.date);
+		// args.putBoolean(FIRST_UPDATE, getFirstUpdate());
+		//
+		// setArguments(args);
 		this.chatLoad = c;
 	}
 
@@ -711,10 +715,12 @@ public class ChatInsideGroupFragment extends Fragment {
 			sendUserTypingMessage();
 
 		}
+
 		@Override
 		public int getChatType(long chatId) {
 			return getChatTypeFromActivity(chatId);
 		}
+
 		@Override
 		public void sendReplyMessage(long messageReplyId, String message, String photoUrl,
 				int hashPhoto, long replyTo_Id, double latitude, double longitude, String senderName) {
@@ -736,8 +742,6 @@ public class ChatInsideGroupFragment extends Fragment {
 		public ImageFetcher getImageFetcher() {
 			return getFetcher();
 		}
-		
-		
 
 		// @Override
 		// public void sendReplyMessage(String qrCode, String message) {
@@ -757,9 +761,10 @@ public class ChatInsideGroupFragment extends Fragment {
 		// }
 	};
 
-	private int getChatTypeFromActivity(long chatId){
+	private int getChatTypeFromActivity(long chatId) {
 		return callback.getChatType(chatId);
 	}
+
 	public ImageFetcher getFetcher() {
 		return callback.getImageFetcher();
 	}

@@ -6,10 +6,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -143,6 +147,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		fill(me);
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public void fill(Message me) {
 		getMessage().setText(me.message);
@@ -189,6 +194,20 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		} else {
 			color = Color.GRAY;
 		}
+		getDate().invalidate();
+		
+		Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setColor(color);
+		
+		Canvas c = new Canvas(bmp);
+		c.drawCircle(20, 20, 20, paint);
+		
+		BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(),bmp);
+		
+		//getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable, null, null, null);
+		
 		int chatType = callback2.getChatType(me.chatId);
 		if (chatType == 1) {
 			getMessagerName().setVisibility(View.VISIBLE);
@@ -237,6 +256,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
 					.getLayoutParams();
 			param.width = (int) getDate().convertDpToPixel(70, getContext());
+			if (previousMessage != null){
+				if(previousMessage.replyTo_id>0){
+					param.topMargin = 0;
+				}
+			}
 			getDate().setLayoutParams(param);
 			getDate().setReply(true);
 			// if (previousMessage != null && previousMessage.replyTo_id > 0) {

@@ -59,7 +59,7 @@ public class ResponseFactory {
             case REGISTER_TOKEN:
                 return new VoidResponse();
             case UPLOAD_IMAGE:
-                return new UploadImageResponse().parse(jsonObject);
+                return new UploadImageResponse1().parse(getResult(jsonObject));
             default:
                 throw new ResponseTypeError();
         }

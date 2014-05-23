@@ -22,6 +22,10 @@ public class SeparatedListAdapter extends BaseAdapter {
 		headers = new ArrayAdapter<String>(context, R.layout.list_header);
 	}
 
+	public void clearData(){
+		sections.clear();
+		headers.clear();
+	}
 	public void addSection(String section, Adapter adapter) {
 		this.headers.add(section);
 		this.sections.put(section, adapter);

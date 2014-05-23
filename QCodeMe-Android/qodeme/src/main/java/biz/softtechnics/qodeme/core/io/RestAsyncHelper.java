@@ -1,30 +1,19 @@
 package biz.softtechnics.qodeme.core.io;
 
-import java.util.concurrent.ExecutionException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.internal.co;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import biz.softtechnics.qodeme.ApplicationConstants;
-import biz.softtechnics.qodeme.core.io.utils.RequestPackage;
 import biz.softtechnics.qodeme.core.data.entities.ChatType;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.gcm.GcmController;
 import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
 import biz.softtechnics.qodeme.core.io.responses.BaseResponse;
 import biz.softtechnics.qodeme.core.io.responses.ResponseFactory;
-import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse;
+import biz.softtechnics.qodeme.core.io.utils.RequestPackage;
 import biz.softtechnics.qodeme.core.io.utils.RequestParams;
 import biz.softtechnics.qodeme.core.io.utils.RequestType;
 import biz.softtechnics.qodeme.core.io.utils.RestClient;
@@ -33,6 +22,12 @@ import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
 import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
 import biz.softtechnics.qodeme.core.io.utils.RestListener;
 import biz.softtechnics.qodeme.core.io.utils.RestRequest;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 /**
  * Created with IntelliJ IDEA. User: Alex Vegner Date: 8/15/13 Time: 6:24 PM
@@ -77,7 +72,7 @@ public class RestAsyncHelper implements RestClient {
 	private void post(RequestType requestType, RequestParams params, RestListener callback) {
 		RequestPackage pack = new RequestPackage(JsonObjectRequest.Method.POST, requestType,
 				params, callback);
-		if (ApplicationConstants.DEVELOP_MODE)
+		if (ApplicationConstants.DEVELOP_MODE && !requestType.equals(RequestType.UPLOAD_IMAGE))
 			Log.i(TAG,
 					String.format("Request type:%s, params: %s", pack.getRequestType(),
 							pack.getParams() == null ? "null" : pack.getParams().toString()));

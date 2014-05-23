@@ -226,6 +226,12 @@ public class ChatListSubItem extends RelativeLayout implements
 			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
 					.getLayoutParams();
 			param.width = (int) getDate().convertDpToPixel(70, getContext());
+			if (previousMessage != null){
+				if(previousMessage.replyTo_id>0){
+					param.topMargin = 0;
+					getDate().setCircleTopMargine((int)getDate().convertDpToPixel(2, getContext()));
+				}
+			}
 			getDate().setLayoutParams(param);
 			getDate().setReply(true);
 			// if (previousMessage != null && previousMessage.replyTo_id > 0) {

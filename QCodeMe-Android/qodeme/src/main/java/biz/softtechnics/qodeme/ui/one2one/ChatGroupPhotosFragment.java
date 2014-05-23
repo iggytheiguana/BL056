@@ -30,6 +30,7 @@ import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.images.utils.ImageCache;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
+import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.GridAdapter;
 import biz.softtechnics.qodeme.ui.common.SeparatedListAdapter;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
@@ -128,12 +129,13 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mListAdapter = new SeparatedListAdapter(getActivity());
+//		mListAdapter = new SeparatedListAdapter(getActivity());
 
 		mName = (TextView) getView().findViewById(R.id.name);
 		mStatus= (TextView) getView().findViewById(R.id.textView_status);
 		
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
+		
 		isViewCreated = true;
 		updateUi();
 	}
@@ -174,10 +176,13 @@ public void setArgument(ChatLoad c){
 //	return result;
 //}
 	public void updateUi() {
-		if (isViewCreated && getActivity() != null) {
+		if (isViewCreated && callback != null) {
 			// mListAdapter.clear();
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
-			mListAdapter = new SeparatedListAdapter(getActivity());
+			
+//			mListAdapter.clearData();
+//			mListAdapter.notifyDataSetChanged();
+			mListAdapter = new SeparatedListAdapter((MainActivity)callback);
 			List<Message> messages = callback.getChatMessages(getChatId());
 
 			mName.setText(chatLoad.title);
@@ -305,9 +310,11 @@ public void setArgument(ChatLoad c){
 					mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(),
 							mMapList, mImageFetcher));
 				}
-				mListViewPhotos.setAdapter(mListAdapter);
+				
 			}
+			mListViewPhotos.setAdapter(mListAdapter);
 		}
+//		mListAdapter.notifyDataSetChanged();
 		// mName.setText(getChatName());
 		// mName.setTextColor(getChatColor());
 		// if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {

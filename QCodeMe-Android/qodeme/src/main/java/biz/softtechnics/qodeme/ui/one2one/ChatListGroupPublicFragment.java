@@ -79,6 +79,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 	// void messageRead(long chatId);
 	// }
 
+	public ChatListGroupPublicFragment() {
+		super();
+	}
+
 	public ChatListGroupPublicFragment(int chatType) {
 		this.chatType = chatType;
 	}
@@ -328,10 +332,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 			if (callback.getChatList(chatType) != null) {
 				mListAdapter.clear();
 				List<ChatLoad> chatLoads = callback.getChatList(chatType);
-				if (chatLoads != null && QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
+				if (chatLoads != null
+						&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
 					ChatLoad newChatLoad = null;
-					for(ChatLoad c:chatLoads){
-						if(QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId){
+					for (ChatLoad c : chatLoads) {
+						if (QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId) {
 							newChatLoad = c;
 							break;
 						}
@@ -340,13 +345,12 @@ public class ChatListGroupPublicFragment extends Fragment {
 					chatLoads.add(0, newChatLoad);
 					mListAdapter.addAll(chatLoads);
 					mListView.setSelection(0);
-				}else{
+				} else {
 					mListAdapter.addAll(chatLoads);
 				}
 
-
-				//long focusedChat = ChatFocusSaver.getFocusedChatId();
-				//selectChat(focusedChat);
+				// long focusedChat = ChatFocusSaver.getFocusedChatId();
+				// selectChat(focusedChat);
 			}
 		}
 	}

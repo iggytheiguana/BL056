@@ -296,6 +296,7 @@ public class MainActivity extends BaseActivity implements
 			@Override
 			public void onPageSelected(int arg0) {
 				fullChatIndex = arg0;
+				Helper.hideKeyboard(MainActivity.this);
 			}
 
 			@Override
@@ -414,6 +415,7 @@ public class MainActivity extends BaseActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
+		Helper.hideKeyboard(this);
 		// zoomImageFromThumb(expandedImageView, 0);
 	}
 
@@ -459,6 +461,7 @@ public class MainActivity extends BaseActivity implements
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
 		// zoomImageFromThumb(expandedImageView, 0);
+		Helper.hideKeyboard(MainActivity.this);
 	}
 
 	private void initActionBar() {
@@ -1417,7 +1420,7 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	private void createChat(final List<Contact> contactsList) {
-//		Log.d("contact add", contactsList.get(0).title + "");
+		// Log.d("contact add", contactsList.get(0).title + "");
 		ChatType mChatType = null;
 		if (chatType == 1)
 			mChatType = ChatType.PRIVATE_GROUP;
@@ -2021,10 +2024,12 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public List<ChatLoad> getChatList(int chatType) {
 		List<ChatLoad> tempList = Lists.newArrayList();
-		for (ChatLoad chatLoad : mChatList) {
-			// Log.d("Chattype", "" + chatLoad.type);
-			if (chatLoad.type == chatType) {
-				tempList.add(chatLoad);
+		if (mChatList != null) {
+			for (ChatLoad chatLoad : mChatList) {
+				// Log.d("Chattype", "" + chatLoad.type);
+				if (chatLoad.type == chatType) {
+					tempList.add(chatLoad);
+				}
 			}
 		}
 		return tempList;
@@ -2468,7 +2473,7 @@ public class MainActivity extends BaseActivity implements
 						public void onResponse(ChatAddMemberResponse response) {
 							Log.d("Chat add in public ", "Chat add mem "
 									+ response.getChat().getId());
-							
+
 						}
 
 						@Override
@@ -2477,13 +2482,15 @@ public class MainActivity extends BaseActivity implements
 						}
 					});
 		}
-		setChatInfo(currentChatId, null, chatload.color, chatload.tag, chatload.description, chatload.status, chatload.is_locked, chatload.title);
+		setChatInfo(currentChatId, null, chatload.color, chatload.tag, chatload.description,
+				chatload.status, chatload.is_locked, chatload.title);
 
 	}
+
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
 			String status, Integer isLocked, String chat_title) {
-		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc,
-				isLocked, status, chat_title, new RestListener<VoidResponse>() {
+		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc, isLocked,
+				status, chat_title, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {
@@ -2497,6 +2504,7 @@ public class MainActivity extends BaseActivity implements
 					}
 				});
 	}
+
 	@Override
 	public ImageFetcher getImageFetcher() {
 		return mImageFetcher;

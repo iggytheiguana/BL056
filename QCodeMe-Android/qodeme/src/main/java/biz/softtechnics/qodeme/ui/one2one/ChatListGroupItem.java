@@ -345,6 +345,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return name = name != null ? name : (TextView) findViewById(R.id.name);
 	}
 
+	
 	public TextView getDate() {
 		return date = date != null ? date : (TextView) findViewById(R.id.date);
 	}

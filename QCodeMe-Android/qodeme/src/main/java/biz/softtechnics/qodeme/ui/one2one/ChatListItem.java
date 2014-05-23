@@ -1,5 +1,14 @@
 package biz.softtechnics.qodeme.ui.one2one;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -19,19 +28,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.flurry.sdk.ch;
-import com.google.android.gms.internal.ac;
-import com.google.common.collect.Lists;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
@@ -48,6 +44,8 @@ import biz.softtechnics.qodeme.utils.ChatFocusSaver;
 import biz.softtechnics.qodeme.utils.Converter;
 import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
+
+import com.google.common.collect.Lists;
 
 /**
  * Created by Alex on 10/23/13.
@@ -80,6 +78,7 @@ public class ChatListItem extends RelativeLayout implements
 	private View cornerBottom;
 	private View cornerLeft;
 	private View cornerRight;
+	private RelativeLayout mChatItem;
 
 	private GestureDetector gestureDetector;
 	private ChatListAdapterCallback mCallback;
@@ -95,6 +94,8 @@ public class ChatListItem extends RelativeLayout implements
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@SuppressLint("SimpleDateFormat")
 	@Override
 	public void fill(Contact ce) {
 
@@ -125,14 +126,19 @@ public class ChatListItem extends RelativeLayout implements
 		List<Message> listForAdapter = Lists.newArrayList();
 		List<Message> listData = mCallback.getMessages(mContact);
 		listData = sortMessages(listData);
+		boolean isContainUnread = false;
 		if (listData != null) {
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
 			tempMessage.addAll(listData);
+			
 			for (Message message : tempMessage) {
 				if (message.replyTo_id > 0) {
 					replyMessage.add(message);
 					listData.remove(message);
+				}
+				if(message.state == 3){
+					isContainUnread = true;
 				}
 			}
 
@@ -223,8 +229,15 @@ public class ChatListItem extends RelativeLayout implements
 					}
 				}, callbackChatListInsideFragmentCallback);
 
-		if (listData != null)
+		if (listData != null) {
 			listAdapter.addAll(listData);
+
+		}
+		if(isContainUnread)
+			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
+		else{
+			getChatItem().setBackgroundResource(R.drawable.bg_box);
+		}
 		getList().setAdapter(listAdapter);
 		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		getList().setStackFromBottom(true);
@@ -296,9 +309,9 @@ public class ChatListItem extends RelativeLayout implements
 				sendMessage();
 			}
 		});
-		
+
 		getSendImage().setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				MainActivity activity = (MainActivity) v.getContext();
@@ -364,12 +377,18 @@ public class ChatListItem extends RelativeLayout implements
 		return sendMessageBtn = sendMessageBtn != null ? sendMessageBtn
 				: (ImageButton) findViewById(R.id.button_message);
 	}
+
 	public ImageButton getSendImage() {
 		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
 				: (ImageButton) findViewById(R.id.btn_camera);
 	}
-//	sendImgMessageBtn
+	public RelativeLayout getChatItem() {
+		return mChatItem = mChatItem != null ? mChatItem
+				: (RelativeLayout) findViewById(R.id.relative_chatItem);
+	}
 	
+
+	// sendImgMessageBtn
 
 	// public View getCornerTop() {
 	// return cornerTop = cornerTop != null ? cornerTop :
@@ -416,7 +435,7 @@ public class ChatListItem extends RelativeLayout implements
 			showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mContact);
-			//messageRead();
+			// messageRead();
 			Log.i("GestureListener", "onSingleTap");
 			return true;
 		}
@@ -425,7 +444,7 @@ public class ChatListItem extends RelativeLayout implements
 		public boolean onDoubleTap(MotionEvent e) {
 			// Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mContact);
-			//messageRead();
+			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
 		}
@@ -448,11 +467,11 @@ public class ChatListItem extends RelativeLayout implements
 			public void afterTextChanged(Editable s) {
 				ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
 
-//				if (s.length() > 0) {
-//					getSendMessage().setVisibility(View.VISIBLE);
-//				} else {
-//					getSendMessage().setVisibility(View.GONE);
-//				}
+				// if (s.length() > 0) {
+				// getSendMessage().setVisibility(View.VISIBLE);
+				// } else {
+				// getSendMessage().setVisibility(View.GONE);
+				// }
 
 			}
 		});
@@ -506,7 +525,7 @@ public class ChatListItem extends RelativeLayout implements
 			Toast.makeText(context, "Empty message can't be sent", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		mCallback.sendMessage(mContact, message, "", 0, -1, 0, 0, "","");
+		mCallback.sendMessage(mContact, message, "", 0, -1, 0, 0, "", "");
 		mCallback.messageRead(mContact.chatId);
 	}
 
@@ -544,7 +563,7 @@ public class ChatListItem extends RelativeLayout implements
 				return;
 			}
 			mCallback.sendMessage(mContact, message, photoUrl, hashPhoto, replyTo_Id, latitude,
-					longitude, senderName,"");
+					longitude, senderName, "");
 			mCallback.messageRead(mContact.chatId);
 		}
 

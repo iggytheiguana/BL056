@@ -121,6 +121,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mBtnSetStatus.setOnClickListener(this);
 		mBtnEditDesc.setOnClickListener(this);
 		mBtnSetDesc.setOnClickListener(this);
+		mImgBtnShare.setOnClickListener(this);
 
 		mEditTextStatus.setOnEditorActionListener(new OnEditorActionListener() {
 
@@ -387,6 +388,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			break;
 		case R.id.btnDelete:
 			deleteContact();
+			break;
+		case R.id.btnShare:
+			MainActivity activity = (MainActivity) getActivity();
+			activity.addMemberInExistingChat();
 			break;
 		default:
 			break;

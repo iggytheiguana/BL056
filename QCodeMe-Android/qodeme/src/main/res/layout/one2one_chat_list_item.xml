@@ -4,48 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="360dp" >
 
-    <RelativeLayout
+    
+    <RelativeLayout android:id="@+id/relative_chatItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:background="@drawable/bg_box" >
 
-        <!-- android:background="@color/conversation_card_background" -->
-
-        
-
-        <!-- <View -->
-        <!-- android:id="@+id/corner_top" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="2dp" -->
-        <!-- android:layout_alignParentTop="true" -->
-        <!-- android:background="@android:color/darker_gray" /> -->
-
-
-        <!-- <View -->
-        <!-- android:id="@+id/corner_bottom" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="2dp" -->
-        <!-- android:layout_alignParentBottom="true" -->
-        <!-- android:layout_toLeftOf="@+id/drag_image" -->
-        <!-- android:background="@android:color/darker_gray" /> -->
-
-
-        <!-- <View -->
-        <!-- android:id="@+id/corner_left" -->
-        <!-- android:layout_width="2dp" -->
+        <!-- <ImageView -->
+        <!-- android:layout_width="match_parent" android:id="@+id/imageView_chatItem" -->
         <!-- android:layout_height="match_parent" -->
-        <!-- android:layout_alignParentLeft="true" -->
-        <!-- android:background="@android:color/darker_gray" /> -->
+        <!-- android:scaleType="fitXY"/> -->
 
-
-        <!-- <View -->
-        <!-- android:id="@+id/corner_right" -->
-        <!-- android:layout_width="2dp" -->
-        <!-- android:layout_height="match_parent" -->
-        <!-- android:layout_above="@+id/drag_image" -->
-        <!-- android:layout_alignParentRight="true" -->
-        <!-- android:background="@android:color/darker_gray" /> -->
 
         <RelativeLayout
             android:id="@+id/header"
@@ -167,7 +137,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/button_message"
                 android:hint="@string/message"
-                android:inputType="textMultiLine"
+                android:inputType="textMultiLine|textNoSuggestions"
                 android:maxHeight="50dp"
                 android:visibility="gone" />
         </RelativeLayout>

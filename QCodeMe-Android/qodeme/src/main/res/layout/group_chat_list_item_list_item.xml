@@ -5,25 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+<RelativeLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
-        android:padding="5dip" >
+        android:layout_marginBottom="5dp"
+         >
 
-        <TextView
+        <biz.softtechnics.qodeme.ui.common.TextViewRegular
             android:id="@+id/date_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            style="@style/TextView.Message.Text"
             android:paddingBottom="2dp"
             android:paddingRight="10dp"
             android:paddingTop="2dp"
             android:text="jul 10th 2014"
-            android:textColor="@color/date_divider_color"
-            android:textSize="10sp" />
+            android:background="@android:color/white"
+            android:textColor="@color/text_message_not_read"
+            android:textSize="18sp" />
     </RelativeLayout>
-
     <View
         android:id="@+id/opponent_separator"
         android:layout_width="match_parent"
@@ -44,6 +46,7 @@
         android:id="@+id/linear_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/header_container"
         android:layout_marginLeft="10dp"
         android:orientation="vertical" >
 
@@ -57,13 +60,15 @@
                 android:id="@+id/date"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
                 tools:padding="5dp"
                 tools:text_size="18sp" />
+            
             <!-- style="@style/TextView.Message.Date" -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical" >
 
                 <biz.softtechnics.qodeme.ui.common.TextViewRegular
@@ -77,7 +82,7 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingTop="0dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="0dp"
                     android:text="Item"
                     android:visibility="gone"
                     android:textColor="@android:color/black"
@@ -93,7 +98,7 @@
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="5dp"
+                    android:paddingTop="0dp"
                     android:text="Item"
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />

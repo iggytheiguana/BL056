@@ -23,7 +23,8 @@ public class GridAdapter extends BaseAdapter {
 	ImageFetcher mImageFetcher;
 	private ArrayList<HashMap<String, Message>> mArrayList = new ArrayList<HashMap<String, Message>>();
 
-	public GridAdapter(Context context, ArrayList<HashMap<String, Message>> mMapList, ImageFetcher fetcher) {
+	public GridAdapter(Context context, ArrayList<HashMap<String, Message>> mMapList,
+			ImageFetcher fetcher) {
 		this.mContext = context;
 		this.mArrayList = mMapList;
 		this.mImageFetcher = fetcher;
@@ -66,14 +67,18 @@ public class GridAdapter extends BaseAdapter {
 		HashMap<String, Message> map = (HashMap<String, Message>) getItem(position);
 		Message leftMessage = map.get("0");
 		Message rightMessage = map.get("1");
-		
-		
-		  mImageFetcher.loadImage(leftMessage.photoUrl, holder.imageViewLeft, null);
-		if (rightMessage == null)
-			holder.imageViewRight.setVisibility(View.INVISIBLE);
-		else{
-			holder.imageViewRight.setVisibility(View.VISIBLE);
-			  mImageFetcher.loadImage(rightMessage.photoUrl, holder.imageViewRight, null);
+
+		try {
+			mImageFetcher.loadImage(leftMessage.photoUrl, holder.imageViewLeft, null);
+
+			if (rightMessage == null)
+				holder.imageViewRight.setVisibility(View.INVISIBLE);
+			else {
+				holder.imageViewRight.setVisibility(View.VISIBLE);
+				mImageFetcher.loadImage(rightMessage.photoUrl, holder.imageViewRight, null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		holder.imageViewRight.setOnClickListener(new OnClickListener() {
 
@@ -81,7 +86,7 @@ public class GridAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				MainActivity activity = (MainActivity) mContext;
-				//activity.zoomImageFromThumb(v, R.drawable.logo);
+				// activity.zoomImageFromThumb(v, R.drawable.logo);
 			}
 		});
 		holder.imageViewLeft.setOnClickListener(new OnClickListener() {
@@ -90,7 +95,7 @@ public class GridAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				MainActivity activity = (MainActivity) mContext;
-//				activity.zoomImageFromThumb(v, R.drawable.logo1);
+				// activity.zoomImageFromThumb(v, R.drawable.logo1);
 			}
 		});
 		// holder.gridView.setAdapter(new ImageAdapter(mContext, mArrayList));
