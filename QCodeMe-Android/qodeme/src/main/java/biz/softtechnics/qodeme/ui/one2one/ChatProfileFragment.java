@@ -10,7 +10,9 @@ import com.google.android.gms.internal.co;
 import com.google.android.gms.internal.cu;
 
 import biz.softtechnics.qodeme.R;
+import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.RestAsyncHelper;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
 import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
@@ -22,6 +24,7 @@ import biz.softtechnics.qodeme.ui.LoginActivity;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.contacts.ContactDetailsActivity;
+import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import biz.softtechnics.qodeme.utils.Converter;
 import biz.softtechnics.qodeme.utils.DbUtils;
 import android.app.Activity;
@@ -29,15 +32,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 public class ChatProfileFragment extends Fragment implements OnClickListener {
 
@@ -58,6 +65,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	private EditText mEditTextStatus, mEdittextName;
 	private RelativeLayout mRelativeLayoutName, mRelativeLayoutSetName;
 	Contact contact;
+	private One2OneChatInsideFragmentCallback callback;
 
 	public static ChatProfileFragment newInstance(Contact c, boolean firstUpdate) {
 		ChatProfileFragment f = new ChatProfileFragment();
@@ -74,6 +82,13 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		f.contact = c;
 		f.setArguments(args);
 		return f;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		callback = (One2OneChatInsideFragmentCallback) activity;
 	}
 
 	@Override
@@ -113,10 +128,70 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mBtnSetName.setOnClickListener(this);
 		mBtnSetStatus.setOnClickListener(this);
 
+		mEditTextStatus.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH
+						|| actionId == EditorInfo.IME_ACTION_GO
+						|| actionId == EditorInfo.IME_ACTION_DONE
+						|| event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+					String status = mEditTextStatus.getText().toString();
+
+					// if (!status.trim().equals("")) {
+					mTextViewStatus.setText(status);
+					mTextViewStatus.setVisibility(View.VISIBLE);
+					mBtnEditStatus.setVisibility(View.VISIBLE);
+					mEditTextStatus.setVisibility(View.GONE);
+					
+					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status,
+							0, "");
+					// }
+					// mEditTextStatus.setVisibility(View.GONE);
+					// mTextViewStatus.setVisibility(View.VISIBLE);
+					// mBtnEditStatus.setVisibility(View.VISIBLE);
+					//
+					// String status = v.getText().toString().trim();
+					//
+					// mTextViewStatus.setText(status);
+					//
+					// int updated = contact.updated;
+					// getActivity().getContentResolver().update(
+					// QodemeContract.Chats.CONTENT_URI,
+					// QodemeContract.Chats.updateChatInfoValues("", -1, "", 0,
+					// status, "",
+					// updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+					// DbUtils.getWhereArgsForId(contact.chatId));
+					// // setChatInfo(chatload.chatId, null, null, null, null,
+					// // status, null);
+					// // getChatload().status = status;
+					// // setChatInfo(getChatload().chatId, null,
+					// // getChatload().color, getChatload().tag,
+					// // getChatload().description, status,
+					// // getChatload().is_locked,
+					// // getChatload().title);
+					return true;
+				}
+
+				return false;
+			}
+		});
+
 		setData();
 	}
 
-	private void setData() {
+	public void setData() {
+		// if (callback != null) {
+		// try {
+		// MainActivity activity = (MainActivity) callback;
+		// ChatLoad chatLoad = activity.getChatLoad(contact.chatId);
+		mTextViewStatus.setText(QodemePreferences.getInstance().getStatus());
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
 		mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
 		mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
 		customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
@@ -127,17 +202,18 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		String dateStr = fmtOut.format(new Date(Converter
 				.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 		mTextViewLocation.setText(contact.location + "");
-		mTextViewDatelocation.setText(dateStr + ", " + contact.location);
+		mTextViewDatelocation.setText(dateStr + ", " + contact.location != null?contact.location:"");
 
 		SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMMM dd,yyyy, h:mm a", Locale.US);
 		String dateStr1 = fmtOut1.format(new Date(Converter
 				.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 		mTextViewDate.setText(dateStr1);
+
 	}
 
-	private void callColorPicker() {
+	private void callColorPicker(int type) {
 		MainActivity activity = (MainActivity) getActivity();
-		activity.callColorPicker(contact);
+		activity.callColorPicker(contact,type);
 		// Intent i = new Intent((MainActivity)getActivity(),
 		// ContactDetailsActivity.class);
 		// i.putExtra(QodemeContract.Contacts._ID,
@@ -154,14 +230,16 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imgBtn_colorWheelSmall:
+			callColorPicker(0);
+			break;
 		case R.id.imgBtn_colorWheelBig:
-			callColorPicker();
+			callColorPicker(1);
 			break;
 		case R.id.btnEditStatus:
 			mTextViewStatus.setVisibility(View.GONE);
 			mBtnEditStatus.setVisibility(View.GONE);
 			mEditTextStatus.setVisibility(View.VISIBLE);
-			mBtnSetStatus.setVisibility(View.VISIBLE);
+//			mBtnSetStatus.setVisibility(View.VISIBLE);
 			break;
 		case R.id.btnEdit:
 			mRelativeLayoutName.setVisibility(View.GONE);
@@ -177,20 +255,26 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 
 			if (!status.trim().equals("")) {
 				mTextViewStatus.setText(status);
-				int updated = contact.updated;
-				getActivity().getContentResolver().update(
-						QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateChatInfoValues("",-1, "", 0, status, "",
-								updated,4), QodemeContract.Chats.CHAT_ID+"=?",
-						DbUtils.getWhereArgsForId(contact.chatId));
-				
-//				String title, int color,
-//				String description, int is_locked, String status, String tags, int updated,
-//				int updateType) {
-				
-				SyncHelper.requestManualSync();
+				// int updated = contact.updated;
+				// getActivity().getContentResolver().update(
+				// QodemeContract.Chats.CONTENT_URI,
+				// QodemeContract.Chats.updateChatInfoValues("", -1, "", 0,
+				// status, "",
+				// updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+				// DbUtils.getWhereArgsForId(contact.chatId));
+				//
+				// QodemePreferences.getInstance().setStatus(status);
+
+				setChatInfo(getArguments().getLong(CHAT_ID), "", contact.color, "", "", status, 0,
+						"");
+				// String title, int color,
+				// String description, int is_locked, String status, String
+				// tags, int updated,
+				// int updateType) {
+
+				// SyncHelper.requestManualSync();
 			}
-			
+
 			break;
 		case R.id.btnSetName:
 			mRelativeLayoutName.setVisibility(View.VISIBLE);
@@ -215,20 +299,39 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			break;
 		}
 	}
-	
-	private void deleteContact(){
-		RestAsyncHelper.getInstance().contactRemove(contact.qrCode,  new RestListener<VoidResponse>() {
 
-			@Override
-			public void onResponse(VoidResponse response) {
-				Log.d("Response", "successfull remove contact");
-			}
+	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
+			String status, Integer isLocked, String chat_title) {
+		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc, isLocked,
+				status, chat_title, new RestListener<VoidResponse>() {
 
-			@Override
-			public void onServiceError(RestError error) {
-				Log.d("Error", "Error in remove contact");
-				
-			}
-        });
+					@Override
+					public void onResponse(VoidResponse response) {
+						Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("Error", error.getMessage() + "");
+						Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_LONG).show();
+					}
+				});
+	}
+
+	private void deleteContact() {
+		RestAsyncHelper.getInstance().contactRemove(contact.qrCode,
+				new RestListener<VoidResponse>() {
+
+					@Override
+					public void onResponse(VoidResponse response) {
+						Log.d("Response", "successfull remove contact");
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("Error", "Error in remove contact");
+
+					}
+				});
 	}
 }

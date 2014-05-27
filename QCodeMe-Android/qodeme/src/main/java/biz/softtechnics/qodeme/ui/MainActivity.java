@@ -6,9 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +47,9 @@ import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
@@ -128,6 +132,7 @@ import biz.softtechnics.qodeme.utils.DbUtils;
 import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
 import biz.softtechnics.qodeme.utils.LatLonCity;
+import biz.softtechnics.qodeme.utils.LocationUtils;
 import biz.softtechnics.qodeme.utils.NullHelper;
 
 import com.android.volley.VolleyError;
@@ -233,6 +238,10 @@ public class MainActivity extends BaseActivity implements
 	private int mImageThumbSpacing;
 	private ImageFetcher mImageFetcher;
 
+	private static final String JPEG_FILE_PREFIX = "IMG_";
+	private static final String JPEG_FILE_SUFFIX = ".jpg";
+	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -261,6 +270,11 @@ public class MainActivity extends BaseActivity implements
 
 		initFullChatLayout();
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+		} else {
+			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+		}
 	}
 
 	private void initImageFetcher() {
@@ -358,6 +372,7 @@ public class MainActivity extends BaseActivity implements
 			}
 		}
 	};
+	private String mCurrentPhotoPath;
 
 	private void initChatHeight() {
 		mDefaultHeightPx = Converter.dipToPx(getApplicationContext(), DEFAULT_HEIGHT_DP);
@@ -672,13 +687,19 @@ public class MainActivity extends BaseActivity implements
 				long id = data.getLongExtra(QodemeContract.Contacts._ID, -1);
 				// String title =
 				// data.getStringExtra(QodemeContract.Contacts.CONTACT_TITLE);
+				int type = data.getIntExtra("color_type", 0);
 				int color = data.getIntExtra(QodemeContract.Contacts.CONTACT_COLOR, 0);
-				int updated = data.getIntExtra(QodemeContract.Contacts.UPDATED,
-						QodemeContract.Contacts.Sync.UPDATED);
-				getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
-						QodemeContract.Contacts.updateContactInfoValues(null, color, updated),
-						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
-				SyncHelper.requestManualSync();
+				if (type == 0) {
+					int updated = data.getIntExtra(QodemeContract.Contacts.UPDATED,
+							QodemeContract.Contacts.Sync.UPDATED);
+					getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+							QodemeContract.Contacts.updateContactInfoValues(null, color, updated),
+							DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
+					SyncHelper.requestManualSync();
+				} 
+				else {
+					//setChatInfo(currentChatId, null, null, null, null, null, isLocked, chat_title)
+				}
 				mViewPager.setCurrentItem(1);
 				break;
 			case REQUEST_ACTIVITY_PHOTO_GALLERY:
@@ -768,7 +789,30 @@ public class MainActivity extends BaseActivity implements
 					}
 				}
 				break;
+
 			case REQUEST_ACTIVITY_CAMERA:
+				// handleBigCameraPhoto();
+				File file = new File(mCurrentPhotoPath);
+				ChatInsideFragment chatInsideFragment = null;
+				ChatInsideGroupFragment chatInsideGroupFragment = null;
+
+				if (!getActionBar().isShowing()) {
+					if (mPagerAdapter != null) {
+						if (chatType == 0)
+							chatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
+						else
+							chatInsideGroupFragment = (ChatInsideGroupFragment) mPagerAdapter
+									.getItem(0);
+					}
+					if (chatInsideFragment != null)
+						chatInsideFragment.sendImageMessage(file.getAbsolutePath());
+					else if (chatInsideGroupFragment != null) {
+						chatInsideGroupFragment.sendImageMessage(file.getAbsolutePath());
+					}
+				} else {
+					if (currentChatId != -1)
+						sendMessage(currentChatId, "", "", 1, -1, 0, 0, "", file.getAbsolutePath());
+				}
 				break;
 			case REQUEST_ACTIVITY_MORE:
 				RestAsyncHelper.getInstance().registerToken("", new RestListener() {
@@ -824,6 +868,24 @@ public class MainActivity extends BaseActivity implements
 		}
 	}
 
+	private void handleBigCameraPhoto() {
+
+		if (mCurrentPhotoPath != null) {
+			// setPic();
+			galleryAddPic();
+			mCurrentPhotoPath = null;
+		}
+
+	}
+
+	private void galleryAddPic() {
+		Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+		File f = new File(mCurrentPhotoPath);
+		Uri contentUri = Uri.fromFile(f);
+		mediaScanIntent.setData(contentUri);
+		this.sendBroadcast(mediaScanIntent);
+	}
+
 	private void uploadImage(String imageLocal) {
 		String mProfileImageBase64 = null;
 		try {
@@ -858,6 +920,102 @@ public class MainActivity extends BaseActivity implements
 		Intent intent = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(intent, REQUEST_ACTIVITY_PHOTO_GALLERY);
+	}
+
+	// public void takePhotoFromCamera() {
+	// Intent intent = new Intent(Intent.ACTION_PICK,
+	// android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+	// startActivityForResult(intent, REQUEST_ACTIVITY_PHOTO_GALLERY);
+	// }
+
+	private void dispatchTakePictureIntent(int actionCode) {
+
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+		switch (actionCode) {
+		case REQUEST_ACTIVITY_CAMERA:
+			File f = null;
+
+			try {
+				f = setUpPhotoFile();
+				mCurrentPhotoPath = f.getAbsolutePath();
+				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+			} catch (IOException e) {
+				e.printStackTrace();
+				f = null;
+				mCurrentPhotoPath = null;
+			}
+			break;
+
+		default:
+			break;
+		} // switch
+
+		startActivityForResult(takePictureIntent, actionCode);
+	}
+
+	private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+		File albumF = getAlbumDir();
+		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+		return imageF;
+	}
+
+	private File setUpPhotoFile() throws IOException {
+
+		File f = createImageFile();
+		mCurrentPhotoPath = f.getAbsolutePath();
+
+		return f;
+	}
+
+	/* Photo album for this application */
+	private String getAlbumName() {
+		return getString(R.string.album_name);
+	}
+
+	private File getAlbumDir() {
+		File storageDir = null;
+
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+
+			if (storageDir != null) {
+				if (!storageDir.mkdirs()) {
+					if (!storageDir.exists()) {
+						Log.d("CameraSample", "failed to create directory");
+						return null;
+					}
+				}
+			}
+
+		} else {
+			Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+		}
+
+		return storageDir;
+	}
+
+	public void takePhoto() {
+		CharSequence charSequence[] = { "Camera", "Gallery" };
+		new AlertDialog.Builder(this).setTitle("Select")
+				.setItems(charSequence, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == 0) {
+							// takePhotoFromCamera();
+							dispatchTakePictureIntent(REQUEST_ACTIVITY_CAMERA);
+
+						} else {
+							takePhotoFromGallery();
+						}
+						dialog.dismiss();
+					}
+				}).create().show();
 	}
 
 	public int getImageOrientation(String imagePath) {
@@ -2067,18 +2225,19 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
+		String public_name = QodemePreferences.getInstance().getPublicName();
 		Uri uri = getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
-						replyTo_Id, latitude, longitude, senderName, localUrl));
+						replyTo_Id, latitude, longitude, public_name, localUrl));
 		SyncHelper.requestManualSync();
 		// Long rawContactId = ContentUris.parseId(uri);
-		String carId = uri.getPathSegments().get(1);
+		// String carId = uri.getPathSegments().get(1);
 
-		Log.d("insert", "Content inserted at: " + uri);
-		Log.d("insert", "Car_id: " + carId);
-
-		Log.d("insert", uri + "");
+		// Log.d("insert", "Content inserted at: " + uri);
+		// Log.d("insert", "Car_id: " + carId);
+		//
+		// Log.d("insert", uri + "");
 		/*
 		 * RestAsyncHelper.getInstance().chatMessage(chatId, message,
 		 * unixTimeStamp, new RestListener() {
@@ -2417,21 +2576,23 @@ public class MainActivity extends BaseActivity implements
 		return currentChatId;
 	}
 
-	public void callColorPicker(Contact ce) {
+	public void callColorPicker(Contact ce, int type) {
 		Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 		i.putExtra(QodemeContract.Contacts._ID, ce._id);
 		i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
 		i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
 		i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
+		i.putExtra("color_type", type);
 		startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
 	}
 
-	public void callColorPicker(ChatLoad ce) {
+	public void callColorPicker(ChatLoad ce, int type) {
 		Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 		i.putExtra(QodemeContract.Contacts._ID, ce._id);
 		i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
 		i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, ce.color);
 		i.putExtra(QodemeContract.Contacts.UPDATED, ce.updated);
+		i.putExtra("color_type", type);
 		startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
 	}
 
@@ -2482,8 +2643,8 @@ public class MainActivity extends BaseActivity implements
 						}
 					});
 		}
-		setChatInfo(currentChatId, null, chatload.color, chatload.tag, chatload.description,
-				chatload.status, chatload.is_locked, chatload.title);
+//		setChatInfo(currentChatId, null, chatload.color, chatload.tag, chatload.description,
+//				chatload.status, chatload.is_locked, chatload.title);
 
 	}
 

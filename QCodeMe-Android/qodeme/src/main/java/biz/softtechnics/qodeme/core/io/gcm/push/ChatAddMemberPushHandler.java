@@ -7,7 +7,7 @@ import biz.softtechnics.qodeme.core.io.model.ChatAdd;
 import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import biz.softtechnics.qodeme.core.sync.SyncHelper;
-
+import biz.softtechnics.qodeme.Application;
 import com.google.android.gms.internal.cu;
 import com.google.gson.Gson;
 
@@ -25,27 +25,27 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 	@Override
 	public void parse(Bundle bundle) {
 		mChatLoad = new ChatAdd();
-		//new Gson().fromJson(bundle.get, ChatAdd.class);
+		// new Gson().fromJson(bundle.get, ChatAdd.class);
 		mChatLoad.chatId = Long.parseLong(bundle.getString("chat_id"));
 		mChatLoad.type = Integer.parseInt(bundle.getString("chat_type"));
-		
+
 	}
 
 	@Override
 	public void handle() {
-		// if (!((Application)getContext().getApplicationContext()).isActive())
-		// {
-		// String msg = null;
-		// if (mContact.state == QodemeContract.Contacts.State.INVITED)
-		// msg = "A new invitation:" + mContact.message != null ?
-		// mContact.message : "" + "   " + mContact.publicName;
-		// else
-		// msg = "A new contact was added";
-		// sendNotification(msg, getContext(),
-		// NOTIFICATION_REQUEST_NEW_CONTACT);
-		// }
+		if (!((Application) getContext().getApplicationContext()).isActive()) {
+			String msg = null;
+			// if (mContact.state == QodemeContract.Contacts.State.INVITED)
+			// msg = "A new invitation:" + mContact.message != null ?
+			// mContact.message : ""
+			// + "   " + mContact.publicName;
+			// else
+			// msg = "A new contact was added";
+			// sendNotification(msg, getContext(),
+			// NOTIFICATION_REQUEST_NEW_CONTACT);
+		}
 		//
-		
+
 		Cursor cursor = getContext().getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
 				QodemeContract.Chats.ChatQuery.PROJECTION,
 				QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null, null);
@@ -55,13 +55,13 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 				getContext().getContentResolver().insert(
 						QodemeContract.Chats.CONTENT_URI,
 						QodemeContract.Chats.addNewChatValues(mChatLoad.chatId, mChatLoad.type,
-								mChatLoad.qrcode,""));
+								mChatLoad.qrcode, ""));
 			}
 		} else {
 			getContext().getContentResolver().insert(
 					QodemeContract.Chats.CONTENT_URI,
-					QodemeContract.Chats.addNewChatValues(mChatLoad.chatId,  mChatLoad.type,
-							mChatLoad.qrcode,""));
+					QodemeContract.Chats.addNewChatValues(mChatLoad.chatId, mChatLoad.type,
+							mChatLoad.qrcode, ""));
 		}
 
 		// getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
@@ -70,6 +70,6 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 		// mChatLoad.tag, mChatLoad.number_of_flagged,
 		// mChatLoad.number_of_members),
 		// QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
-		//SyncHelper.requestManualSync();
+		// SyncHelper.requestManualSync();
 	}
 }

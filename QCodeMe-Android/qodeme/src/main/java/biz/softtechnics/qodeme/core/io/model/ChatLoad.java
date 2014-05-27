@@ -19,6 +19,7 @@ public class ChatLoad {
     public String longitude;
     public String description;
     public String status;
+    public String chat_status;
     public int color;
     public String tag;
     public int number_of_flagged;
@@ -26,6 +27,7 @@ public class ChatLoad {
     public int number_of_likes;
     public int number_of_members;
     public int number_of_dislikes;
+    @SerializedName("chat_title")
     public String title;
     public String user_qrcode;
 }

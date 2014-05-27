@@ -13,10 +13,11 @@ import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract.Chats;
+import biz.softtechnics.qodeme.core.provider.QodemeContract.Contacts;
+import biz.softtechnics.qodeme.core.provider.QodemeContract.SyncColumns;
+import biz.softtechnics.qodeme.utils.DbUtils;
 
-import static biz.softtechnics.qodeme.core.provider.QodemeContract.Contacts;
 import static biz.softtechnics.qodeme.core.provider.QodemeContract.Messages;
-import static biz.softtechnics.qodeme.core.provider.QodemeContract.SyncColumns;
 import static biz.softtechnics.qodeme.core.provider.QodemeContract.addCallerIsSyncAdapterParameter;
 
 /**
@@ -59,7 +60,7 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		batch.add(builder.build());
 	}
 
-	private static void parseChat(ChatLoad chatLoad,ArrayList<ContentProviderOperation> batch) {
+	private static void parseChat(ChatLoad chatLoad, ArrayList<ContentProviderOperation> batch) {
 		ContentProviderOperation.Builder builder = ContentProviderOperation
 				.newInsert(addCallerIsSyncAdapterParameter(Chats.CONTENT_URI));
 		builder.withValue(Chats.CHAT_ID, chatLoad.chatId);
@@ -68,13 +69,24 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Chats.CHAT_LATITUDE, chatLoad.latitude);
 		builder.withValue(Chats.CHAT_LONGITUDE, chatLoad.longitude);
 		builder.withValue(Chats.CHAT_QRCODE, chatLoad.qrcode);
-		builder.withValue(Chats.CHAT_STATUS, chatLoad.status);
+		builder.withValue(Chats.CHAT_STATUS, chatLoad.chat_status);
 		builder.withValue(Chats.CHAT_TAGS, chatLoad.tag);
 		builder.withValue(Chats.CHAT_TYPE, chatLoad.type);
 		builder.withValue(Chats.CHAT_ADMIN_QRCODE, chatLoad.user_qrcode);
+		builder.withValue(Chats.CHAT_TITLE, chatLoad.title);
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());
+
+//		ContentProviderOperation.Builder builder1 = ContentProviderOperation
+//				.newUpdate(addCallerIsSyncAdapterParameter(Contacts.CONTENT_URI));
+//		builder1.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
+//		builder.withValue(Contacts.CONTACT_STATUS, chatLoad.status);
+//		builder1.withSelection(Contacts.CONTACT_CHAT_ID+"=?", new String[]{chatLoad.chatId+""});
+//		batch.add(builder1.build());
+	}
+	private static void parseChat1(ChatLoad chatLoad, ArrayList<ContentProviderOperation> batch) {
+		
 	}
 
 }

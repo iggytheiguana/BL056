@@ -63,6 +63,7 @@ public class ContactDetailsActivity extends Activity implements ColorPicker.OnCo
                 Intent i = new Intent();
                 i.putExtra(QodemeContract.Contacts._ID, getIntent().getLongExtra(QodemeContract.Contacts._ID, -1));
                 i.putExtra(QodemeContract.Contacts.UPDATED, getIntent().getIntExtra(QodemeContract.Contacts.UPDATED, QodemeContract.Contacts.Sync.UPDATED));
+                i.putExtra("color_type", getIntent().getIntExtra("color_type", 0));
                 i.putExtra(QodemeContract.Contacts.CONTACT_COLOR, mPicker.getColor());
 //                String sName = mName.getText().toString();
                 //i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, TextUtils.isEmpty(sName) ? "User" : sName);

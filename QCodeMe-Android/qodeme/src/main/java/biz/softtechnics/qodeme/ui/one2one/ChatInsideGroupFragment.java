@@ -201,7 +201,7 @@ public class ChatInsideGroupFragment extends Fragment {
 			public void onClick(View v) {
 
 				MainActivity activity = (MainActivity) getActivity();
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 		mBtnImageSendBottom.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +210,7 @@ public class ChatInsideGroupFragment extends Fragment {
 			public void onClick(View v) {
 
 				MainActivity activity = (MainActivity) getActivity();
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 		/*

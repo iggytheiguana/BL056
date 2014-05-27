@@ -76,6 +76,7 @@ public class QodemeContract {
 		String CONTACT_LOCATION = "location";
 		/** Message */
 		String CONTACT_MESSAGE = "message";
+		/** Status */
 	}
 
 	interface ChatColumns {
@@ -314,7 +315,7 @@ public class QodemeContract {
 			String[] PROJECTION = { Contacts._ID, Contacts.UPDATED, Contacts.CONTACT_ID,
 					Contacts.CONTACT_TITLE, Contacts.CONTACT_QRCODE, Contacts.CONTACT_COLOR,
 					Contacts.CONTACT_CHAT_ID, Contacts.CONTACT_STATE, Contacts.CONTACT_PUBLIC_NAME,
-					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME };
+					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME};
 
 			int _ID = 0;
 			int UPDATED = 1;

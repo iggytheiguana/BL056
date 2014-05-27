@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_solid" >
+    android:background="@drawable/bg_main" >
 
     <Button
         android:id="@+id/signin"
@@ -13,9 +13,12 @@
         android:layout_marginBottom="60dp"
         android:background="@drawable/selector_button_blue"
         android:focusable="true"
+        android:paddingBottom="10dp"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
-        android:text="Signin" />
+        android:paddingTop="10dp"
+        android:text="@string/log_in"
+        android:textSize="18sp" />
 
     <ImageButton
         android:id="@+id/qr_code"
@@ -35,7 +38,7 @@
         style="@style/TextView.Message.Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/password"
+        android:layout_above="@+id/layout_password"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
@@ -46,24 +49,24 @@
         android:paddingRight="5dp"
         android:paddingTop="5dp"
         android:text="Item"
-        android:visibility="invisible"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/linear_clear_qr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/password"
+        android:layout_above="@+id/layout_password"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="50dp"
-        android:gravity="center_horizontal"
         android:layout_marginRight="50dp"
         android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal" >
 
         <biz.softtechnics.qodeme.ui.common.TextViewMedium
-            android:id="@+id/textView_clearQR"
+            android:id="@+id/textView_not_you"
             style="@style/TextView.Message.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,10 +76,11 @@
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:text="@string/not_you"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
 
         <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            android:id="@+id/textView_clearQR"
             style="@style/TextView.Message.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,17 +90,37 @@
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:text="@string/clear_qr_code"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/password"
-        style="@style/EditText.Password.Signin"
+    <LinearLayout
+        android:id="@+id/layout_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/signin"
         android:layout_marginBottom="20dp"
-        android:hint="Enter password"
-        android:background="@drawable/bg_signin_btn"
-        android:nextFocusDown="@+id/signin" />
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/EditText.Password.Signin"
+             android:layout_width="match_parent"
+            android:background="@drawable/bg_signin_btn"
+            android:hint="@string/enter_password"
+            android:textColor="@android:color/white"
+            android:nextFocusDown="@+id/signin" />
+
+        <biz.softtechnics.qodeme.ui.common.TextViewItalic
+            android:id="@+id/textView_errorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:paddingLeft="10dp"
+            android:text="@string/password_must_match"
+            android:textColor="@color/red_dark"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </RelativeLayout>

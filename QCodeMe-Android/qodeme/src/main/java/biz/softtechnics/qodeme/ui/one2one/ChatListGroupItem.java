@@ -874,7 +874,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 			public void onClick(View v) {
 				MainActivity activity = (MainActivity) v.getContext();
 				activity.setCurrentChatId(mChatLoad.chatId);
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 

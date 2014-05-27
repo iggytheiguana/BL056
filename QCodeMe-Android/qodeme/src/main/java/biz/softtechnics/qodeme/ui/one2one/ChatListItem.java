@@ -230,6 +230,11 @@ public class ChatListItem extends RelativeLayout implements
 				}, callbackChatListInsideFragmentCallback);
 
 		if (listData != null) {
+			if(listData.size()>15){
+				for(int i=0; i<listData.size() - 15; i++){
+					listData.remove(i);
+				}
+			}
 			listAdapter.addAll(listData);
 
 		}
@@ -316,7 +321,7 @@ public class ChatListItem extends RelativeLayout implements
 			public void onClick(View v) {
 				MainActivity activity = (MainActivity) v.getContext();
 				activity.setCurrentChatId(mContact.chatId);
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 

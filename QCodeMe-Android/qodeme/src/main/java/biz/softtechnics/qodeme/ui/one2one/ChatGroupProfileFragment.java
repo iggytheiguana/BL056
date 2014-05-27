@@ -7,9 +7,12 @@ import java.util.Locale;
 import com.google.android.gms.internal.co;
 import com.google.common.collect.Lists;
 
+import android.R.mipmap;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,10 +23,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import biz.softtechnics.qodeme.ApplicationConstants;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.RestAsyncHelper;
@@ -37,6 +42,7 @@ import biz.softtechnics.qodeme.core.sync.SyncHelper;
 import biz.softtechnics.qodeme.ui.MainActivity;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import biz.softtechnics.qodeme.utils.DbUtils;
+import biz.softtechnics.qodeme.utils.QrUtils;
 
 public class ChatGroupProfileFragment extends Fragment implements OnClickListener {
 
@@ -53,6 +59,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	private ImageButton mImgBtnColorWheel, mImgBtnLocked, mImgBtnSearch, mImgBtnShare;
 	private ImageButton mBtnEditStatus, mBtnDelete, mBtnEditDesc;
 	private Button mBtnSetStatus, mBtnSetDesc;
+	private ImageView mImgQr;
 	private EditText mEditTextStatus, mEditTextTitle, mEditTextDesc;
 	private RelativeLayout mRelativeLayoutDesc, mRelativeLayoutSetDesc;
 	private ChatLoad chatload;
@@ -111,6 +118,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 		mEditTextTitle = (EditText) getView().findViewById(R.id.editText_GroupTitle);
 		mEditTextDesc = (EditText) getView().findViewById(R.id.editText_Desc);
+		mImgQr = (ImageView) getView().findViewById(R.id.img_qr);
 
 		mRelativeLayoutDesc = (RelativeLayout) getView().findViewById(R.id.relative_desc);
 		mRelativeLayoutSetDesc = (RelativeLayout) getView().findViewById(R.id.relative_editDesc);
@@ -123,6 +131,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mBtnSetDesc.setOnClickListener(this);
 		mImgBtnShare.setOnClickListener(this);
 
+		String mQrCodeText = chatload != null?chatload.qrcode:"";
+		mImgQr.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
+				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + mQrCodeText), 500, 500,
+				getResources().getColor(R.color.login_qrcode), Color.TRANSPARENT));
 		mEditTextStatus.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -136,11 +148,11 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mEditTextStatus.setVisibility(View.GONE);
 					mTextViewStatus.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
-					
+
 					String status = v.getText().toString().trim();
-					
+
 					mTextViewStatus.setText(status);
-					
+
 					int updated = getChatload().updated;
 					getActivity().getContentResolver().update(
 							QodemeContract.Chats.CONTENT_URI,
@@ -150,9 +162,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					// setChatInfo(chatload.chatId, null, null, null, null,
 					// status, null);
 					getChatload().status = status;
-					setChatInfo(getChatload().chatId, null, getChatload().color,
-							getChatload().tag, getChatload().description, status,
-							getChatload().is_locked, getChatload().title);
+					setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+							getChatload().description, status, getChatload().is_locked,
+							getChatload().title);
 					return true;
 				}
 
@@ -171,9 +183,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 					mRelativeLayoutSetDesc.setVisibility(View.GONE);
 					String title = v.getText().toString().trim();
-					
+
 					mTextViewGroupTitle.setText(title);
-					
+
 					int updated = getChatload().updated;
 					getActivity().getContentResolver().update(
 							QodemeContract.Chats.CONTENT_URI,
@@ -183,9 +195,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					// setChatInfo(chatload.chatId, title, null, null, null,
 					// null, null);
 					getChatload().title = title;
-					setChatInfo(getChatload().chatId, null, getChatload().color,
-							getChatload().tag, getChatload().description, getChatload().status,
-							getChatload().is_locked,getChatload().title);
+					setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+							getChatload().description, getChatload().status,
+							getChatload().is_locked, getChatload().title);
 					return true;
 				}
 
@@ -203,11 +215,11 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 					mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 					mRelativeLayoutSetDesc.setVisibility(View.GONE);
-					
+
 					String desc = v.getText().toString().trim();
-					
+
 					mTextViewGroupDesc.setText(desc);
-					
+
 					int updated = getChatload().updated;
 					getActivity().getContentResolver().update(
 							QodemeContract.Chats.CONTENT_URI,
@@ -217,9 +229,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					// setChatInfo(chatload.chatId, title, null, null, null,
 					// null, null);
 					getChatload().description = desc;
-					setChatInfo(getChatload().chatId, null, getChatload().color,
-							getChatload().tag, getChatload().description, getChatload().status,
-							getChatload().is_locked,getChatload().title);
+					setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+							getChatload().description, getChatload().status,
+							getChatload().is_locked, getChatload().title);
 					return true;
 				}
 
@@ -275,11 +287,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					}
 				}
 				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
-					if(chatload.type == 2){
+					if (chatload.type == 2) {
 						mImgBtnSearch.setVisibility(View.VISIBLE);
 						mImgBtnShare.setVisibility(View.VISIBLE);
-					}else
-					{
+					} else {
 						mImgBtnSearch.setVisibility(View.GONE);
 						mImgBtnShare.setVisibility(View.GONE);
 					}
@@ -294,10 +305,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mBtnEditStatus.setVisibility(View.GONE);
 					mImgBtnLocked.setVisibility(View.GONE);
 					mImgBtnSearch.setVisibility(View.GONE);
-					if(chatload.type == 2){
+					if (chatload.type == 2) {
 						mImgBtnShare.setVisibility(View.VISIBLE);
-					}else
-					{
+					} else {
 						mImgBtnShare.setVisibility(View.GONE);
 					}
 				}
@@ -307,10 +317,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				mBtnEditStatus.setVisibility(View.GONE);
 				mImgBtnLocked.setVisibility(View.GONE);
 				mImgBtnSearch.setVisibility(View.GONE);
-				if(chatload.type == 2){
+				if (chatload.type == 2) {
 					mImgBtnShare.setVisibility(View.VISIBLE);
-				}else
-				{
+				} else {
 					mImgBtnShare.setVisibility(View.GONE);
 				}
 			}
@@ -321,7 +330,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 	private void callColorPicker() {
 		MainActivity activity = (MainActivity) getActivity();
-		activity.callColorPicker(getChatload());
+		activity.callColorPicker(getChatload(),1);
 		// Intent i = new Intent((MainActivity)getActivity(),
 		// ContactDetailsActivity.class);
 		// i.putExtra(QodemeContract.Contacts._ID,
@@ -339,13 +348,13 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		switch (v.getId()) {
 		case R.id.imgBtn_colorWheelSmall:
 		case R.id.imgBtn_colorWheelBig:
-			//callColorPicker();
+			// callColorPicker();
 			break;
 		case R.id.btnEditStatus:
 			mTextViewStatus.setVisibility(View.GONE);
 			mBtnEditStatus.setVisibility(View.GONE);
 			mEditTextStatus.setVisibility(View.VISIBLE);
-//			mBtnSetStatus.setVisibility(View.VISIBLE);
+			// mBtnSetStatus.setVisibility(View.VISIBLE);
 			break;
 
 		case R.id.btnSetStatus:
@@ -371,9 +380,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				// tags, int updated,
 				// int updateType) {
 
-				setChatInfo(getChatload().chatId, null, getChatload().color,
-						getChatload().tag, getChatload().description, status,
-						getChatload().is_locked,getChatload().title);
+				setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+						getChatload().description, status, getChatload().is_locked,
+						getChatload().title);
 				// SyncHelper.requestManualSync();
 			}
 

@@ -1,6 +1,9 @@
 package biz.softtechnics.qodeme.core.io.gcm.push;
 
+import com.google.android.gms.internal.cu;
+
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import biz.softtechnics.qodeme.Application;
@@ -10,33 +13,58 @@ import biz.softtechnics.qodeme.core.provider.QodemeContract;
 import static biz.softtechnics.qodeme.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_CONTACT;
 import static biz.softtechnics.qodeme.utils.NotificationUtils.sendNotification;
 
-
 /**
  * Created by Alex on 12/10/13.
  */
-public class ContactAcceptPushHandler extends BasePushHandler{
+public class ContactAcceptPushHandler extends BasePushHandler {
 
-    private long mContactId;
+	private long mContactId;
 
-    public ContactAcceptPushHandler(Context context) {
-        super(context);
-    }
+	public ContactAcceptPushHandler(Context context) {
+		super(context);
+	}
 
-    @Override
-    public void parse(Bundle bundle) {
-        mContactId = Long.parseLong(bundle.getString(RestKeyMap.CONTACT_ID));
-    }
+	@Override
+	public void parse(Bundle bundle) {
+		mContactId = Long.parseLong(bundle.getString(RestKeyMap.CONTACT_ID));
+	}
 
-    @Override
-    public void handle() {
-        if (!((Application)getContext().getApplicationContext()).isActive()) {
-            String msg = "A contact accepted an invitation";
-            sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_CONTACT);
-        }
+	@Override
+	public void handle() {
+		if (!((Application) getContext().getApplicationContext()).isActive()) {
+			String userName = "User";
+			try {
+				Cursor cursor = getContext().getContentResolver().query(
+						QodemeContract.Contacts.CONTENT_URI,
+						QodemeContract.Contacts.ContactQuery.PROJECTION,
+						QodemeContract.Contacts.CONTACT_ID + " = " + String.valueOf(mContactId),
+						null, null);
+				if (cursor != null && cursor.getCount() > 0) {
+					if (cursor.moveToFirst()) {
+						do {
+							String name = cursor
+									.getString(QodemeContract.Contacts.ContactQuery.CONTACT_PUBLIC_NAME);
+							String name1 = cursor
+									.getString(QodemeContract.Contacts.ContactQuery.CONTACT_TITLE);
+							if (name.equals(""))
+								if (name1.equals(""))
+									userName = "User";
+								else
+									userName = name1;
+							else
+								userName = name;
+						} while (cursor.moveToNext());
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String msg = userName + " has approved your contact request";
+			sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_CONTACT);
+		}
 
-        getContext().getContentResolver().update(
-                QodemeContract.Contacts.CONTENT_URI,
-                QodemeContract.Contacts.acceptContactPushValues(), QodemeContract.Contacts.CONTACT_ID + " = " + String.valueOf(mContactId),
-                null);
-    }
+		getContext().getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+				QodemeContract.Contacts.acceptContactPushValues(),
+				QodemeContract.Contacts.CONTACT_ID + " = " + String.valueOf(mContactId), null);
+	}
 }

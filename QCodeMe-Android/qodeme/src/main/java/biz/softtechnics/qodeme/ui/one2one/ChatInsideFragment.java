@@ -200,7 +200,7 @@ public class ChatInsideFragment extends Fragment {
 			public void onClick(View v) {
 
 				MainActivity activity = (MainActivity) getActivity();
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 
@@ -210,7 +210,7 @@ public class ChatInsideFragment extends Fragment {
 			public void onClick(View v) {
 
 				MainActivity activity = (MainActivity) getActivity();
-				activity.takePhotoFromGallery();
+				activity.takePhoto();
 			}
 		});
 		/*

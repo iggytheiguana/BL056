@@ -41,6 +41,7 @@ public class QodemePreferences extends CommonPreferences {
     private static final boolean DEFAULT_PREF_CHECKBOX_AUTO_ACCEPT = false;
     private static final boolean DEFAULT_PREF_USER_SETTINGS_UPTODATE = false;
     private static final String PUBLIC_GROUP_CHAT_ID = "public_group_chat_id";
+    private static final String PREF_EDIT_STATUS = "pref_edit_status";
 
 	private static QodemePreferences instance;
     private Context context;
@@ -177,6 +178,14 @@ public class QodemePreferences extends CommonPreferences {
 
     public void setPublicName(String value){
         set(PREF_EDIT_PUBLIC_NAME, value);
+    }
+    
+    public String getStatus(){
+        return get(PREF_EDIT_STATUS, "");
+    }
+
+    public void setStatus(String value){
+        set(PREF_EDIT_STATUS, value);
     }
 
     public boolean isPublicNameChecked(){
