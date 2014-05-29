@@ -8,37 +8,48 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RelativeLayout.LayoutParams;
 import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
+import biz.softtechnics.qodeme.core.provider.QodemeContract.Contacts.Sync;
+import biz.softtechnics.qodeme.core.sync.SyncHelper;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.images.utils.ImageResizer;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
@@ -150,6 +161,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	@SuppressLint("NewApi")
 	@Override
 	public void fill(Message me) {
+		final Message msg = me;
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 1) {
@@ -181,6 +193,14 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			// getImageProgress());
 			getImageMessage().setVisibility(View.VISIBLE);
 			getImageLayout().setVisibility(View.VISIBLE);
+			getImageMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					showPopupMenu(getMessage(), msg);
+					return true;
+				}
+			});
 		} else {
 			getImageMessage().setImageBitmap(null);
 			getImageMessage().setVisibility(View.GONE);
@@ -195,19 +215,20 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			color = Color.GRAY;
 		}
 		getDate().invalidate();
-		
+
 		Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(color);
-		
+
 		Canvas c = new Canvas(bmp);
 		c.drawCircle(20, 20, 20, paint);
-		
-		BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(),bmp);
-		
-		//getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable, null, null, null);
-		
+
+		BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
+
+		// getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable,
+		// null, null, null);
+
 		int chatType = callback2.getChatType(me.chatId);
 		if (chatType == 1) {
 			getMessagerName().setVisibility(View.VISIBLE);
@@ -219,7 +240,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getMessagerName().setText("User");
 				getMessagerName().setBackgroundColor(color);
 			}
-		}else{
+		} else {
 			getMessagerName().setVisibility(View.GONE);
 		}
 		// getMessage().setTextColor(color);
@@ -230,34 +251,47 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
 		String createdDate = me.created;
 		// Log.d("me.Date", createdDate + "");
-//		String dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+		// String dateString =
+		// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 		String dateString = "";
 		try {
 			dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 			dateString = " " + dateString;
 		} catch (Exception e) {
-			Log.d("timeError", e+"");
+			Log.d("timeError", e + "");
 			dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 			dateString = " " + dateString;
 		}
-//		dateString = " " + dateString;
+		// dateString = " " + dateString;
 		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
 		// "</font>";
 		String str = getMessage().getText().toString();
-		String mainString = str + dateString;
+		String mainString = str + dateString+" ";
+		String flag = "f";
+		if (me.is_flagged == 1) {
+			mainString = mainString + flag;
+		}
+
 		// Create our span sections, and assign a format to each.
 		SpannableString ss1 = new SpannableString(mainString);
 		ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
 																						// size
 		ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
 																								// size
+		if (me.is_flagged == 1) {
+			Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
+			bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
+			ImageSpan is = new ImageSpan(bm,ImageSpan.ALIGN_BASELINE);
+			ss1.setSpan(is, mainString.length() - flag.length(), mainString.length(),
+					Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+		}
 		getMessage().setText(ss1);
 		if (me.replyTo_id > 0) {
 			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
 					.getLayoutParams();
 			param.width = (int) getDate().convertDpToPixel(70, getContext());
-			if (previousMessage != null){
-				if(previousMessage.replyTo_id>0){
+			if (previousMessage != null) {
+				if (previousMessage.replyTo_id > 0) {
 					param.topMargin = 0;
 				}
 			}
@@ -271,6 +305,21 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			getDate().invalidate();
 
 			getMessage().setClickable(false);
+			getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// Toast.makeText(getContext(), "Text on long press",
+					// Toast.LENGTH_LONG).show();
+					// QuickAction action = new QuickAction(getContext());
+					// action.addActionItem(new ActionItem(0, "Hi"));
+					// action.addActionItem(new ActionItem(1, "Hii"));
+					// action.addActionItem(new ActionItem(2, "Hiii"));
+					// action.show(v);
+					showPopupMenu(v, msg);
+					return true;
+				}
+			});
 		} else {
 
 			getMessage().setOnClickListener(new OnClickListener() {
@@ -278,6 +327,21 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				@Override
 				public void onClick(View v) {
 					initSendMessage();
+				}
+			});
+			getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// Toast.makeText(getContext(), "Text on long press",
+					// Toast.LENGTH_LONG).show();
+					// QuickAction action = new QuickAction(getContext());
+					// action.addActionItem(new ActionItem(0, "Hi"));
+					// action.addActionItem(new ActionItem(1, "Hii"));
+					// action.addActionItem(new ActionItem(2, "Hiii"));
+					// action.show(v);
+					showPopupMenu(v, msg);
+					return true;
 				}
 			});
 			getDate().setSecondVerticalLine(me.isFirst);
@@ -299,8 +363,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			switch (me.state) {
 			case QodemeContract.Messages.State.LOCAL:
 				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
-				getDate().setDotColor(
-						context.getResources().getColor(R.color.user_typing));
+				getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
 				getMessage().setTextColor(getResources().getColor(R.color.user_typing));
 				getDate().invalidate();
 				break;
@@ -324,7 +387,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getDate().setOutLine(true);
 				getMessage().setTypeface(Application.typefaceBold);
 			} else {
-				
+
 			}
 			getDate().invalidate();
 		}
@@ -374,23 +437,22 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				 * Grouped Same user message
 				 */
 				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
-					if (previousMessage.replyTo_id>0) {
-//						getDate().setVisibility(View.INVISIBLE);
-						if (chatType == 1) 
+					if (previousMessage.replyTo_id > 0) {
+						// getDate().setVisibility(View.INVISIBLE);
+						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
-							
+
 						getDate().setCircle(false);
-					}else if(me.replyTo_id>0){
+					} else if (me.replyTo_id > 0) {
 						getDate().setCircle(true);
 						getDate().setVisibility(View.VISIBLE);
-					}
-					else{
-						if (chatType == 1) 
+					} else {
+						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
 						getDate().setCircle(false);
 						getDate().setVisibility(View.VISIBLE);
 					}
-				}else{
+				} else {
 					getDate().setCircle(true);
 					getDate().setVisibility(View.VISIBLE);
 				}
@@ -401,6 +463,81 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			}
 		}
 
+	}
+
+	@SuppressWarnings("deprecation")
+	private void showPopupMenu(View v, final Message message) {
+		boolean isContactAvail = false;
+		if (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
+			isContactAvail = true;
+		else {
+			Cursor cursor = getContext().getContentResolver().query(
+					QodemeContract.Contacts.CONTENT_URI,
+					QodemeContract.Contacts.ContactQuery.PROJECTION,
+					QodemeContract.Contacts.CONTACT_QRCODE + " = '" + message.qrcode + "'", null,
+					null);
+			if (cursor != null) {
+				if (cursor.getCount() > 0) {
+					isContactAvail = true;
+				}
+			}
+		}
+		// if (!isContactAvail) {
+		// if
+		// (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
+		// isContactAvail = true;
+		// }
+		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+		View view = inflater.inflate(R.layout.context_menu_layout, null);
+
+		final PopupWindow popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
+
+		if (isContactAvail) {
+			view.findViewById(R.id.textView_addContact).setVisibility(GONE);
+			view.findViewById(R.id.view_divider1).setVisibility(GONE);
+		}
+		if (QodemePreferences.getInstance().getQrcode().equals(message.qrcode)) {
+			view.findViewById(R.id.textView_block).setVisibility(GONE);
+			view.findViewById(R.id.view_divider2).setVisibility(GONE);
+		}
+		view.findViewById(R.id.textView_addContact).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getContext().getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
+						QodemeContract.Contacts.addNewContactValues(message.qrcode));
+				SyncHelper.requestManualSync();
+				popupWindow.dismiss();
+			}
+		});
+		view.findViewById(R.id.textView_block).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getContext().getContentResolver()
+						.update(QodemeContract.Contacts.CONTENT_URI,
+								QodemeContract.Contacts.blockContactValues(Sync.STATE_UPDATED),
+								QodemeContract.Contacts.CONTACT_QRCODE + "= '" + message.qrcode
+										+ "'", null);
+				SyncHelper.requestManualSync();
+				popupWindow.dismiss();
+
+			}
+		});
+		view.findViewById(R.id.textView_flagged).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				popupWindow.dismiss();
+			}
+		});
+
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+		popupWindow.setContentView(view);
+		popupWindow.setOutsideTouchable(true);
+		popupWindow.showAsDropDown(v);
 	}
 
 	private ImageButton getSendButton() {

@@ -125,6 +125,7 @@
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
             android:paddingTop="10dp"
+            android:textColor="@android:color/white"
             android:text="@string/sign_up"
             android:textSize="18sp" />
     </LinearLayout>

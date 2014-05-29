@@ -647,6 +647,18 @@ public class ChatInsideGroupFragment extends Fragment {
 					ChatFocusSaver.setCurrentMessage(getChatId(), s.toString());
 				}
 			});
+			
+			if(getChatLoad() != null && getChatLoad().is_locked == 1 && !QodemePreferences.getInstance().getQrcode().equals(getChatLoad().user_qrcode)){
+				mBtnImageSend.setVisibility(View.INVISIBLE);
+				mSendButton.setVisibility(View.INVISIBLE);
+				mBtnImageSendBottom.setVisibility(View.INVISIBLE);
+				mMessageField.setVisibility(View.INVISIBLE); 
+			}else{
+				mBtnImageSend.setVisibility(View.VISIBLE);
+				mSendButton.setVisibility(View.VISIBLE);
+				mBtnImageSendBottom.setVisibility(View.VISIBLE);
+				mMessageField.setVisibility(View.VISIBLE); 
+			}
 		}
 	}
 

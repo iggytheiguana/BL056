@@ -230,11 +230,11 @@ public class ChatListItem extends RelativeLayout implements
 				}, callbackChatListInsideFragmentCallback);
 
 		if (listData != null) {
-			if(listData.size()>15){
-				for(int i=0; i<listData.size() - 15; i++){
-					listData.remove(i);
-				}
-			}
+//			if(listData.size()>15){
+//				for(int i=0; i<listData.size() - 15; i++){
+//					listData.remove(i);
+//				}
+//			}
 			listAdapter.addAll(listData);
 
 		}
@@ -246,7 +246,15 @@ public class ChatListItem extends RelativeLayout implements
 		getList().setAdapter(listAdapter);
 		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		getList().setStackFromBottom(true);
-		getList().setDisabled(true);
+//		getList().setDisabled(true);
+		getList().setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				 
+				return gestureDetector.onTouchEvent(event);
+			}
+		});
 
 		height = mCallback.getChatHeight(mContact.chatId);
 		ListView.LayoutParams lParams = new ListView.LayoutParams(
@@ -418,6 +426,7 @@ public class ChatListItem extends RelativeLayout implements
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		return super.onTouchEvent(e) ? true : gestureDetector.onTouchEvent(e);
+//		return true;
 	}
 
 	@Override
@@ -452,6 +461,10 @@ public class ChatListItem extends RelativeLayout implements
 			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
+		}
+		@Override
+		public void onLongPress(MotionEvent e) {
+			super.onLongPress(e);
 		}
 	}
 

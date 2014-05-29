@@ -3,6 +3,7 @@ package biz.softtechnics.qodeme.core.io.gcm.push;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.google.android.gms.internal.bu;
 import com.google.gson.Gson;
 
 import biz.softtechnics.qodeme.Application;
@@ -36,9 +37,11 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 		mChatLoad.status = bundle.getString("status");
 		mChatLoad.is_locked = Integer.parseInt(bundle.getString("is_locked"));
 		mChatLoad.number_of_members = Integer.parseInt(bundle.getString("number_of_members"));
-		 mChatLoad.description = bundle.getString("description");
-		 mChatLoad.title = bundle.getString("chat_title");
-		 //mChatLoad.tag = bundle.getString("");
+		mChatLoad.description = bundle.getString("description");
+		mChatLoad.title = bundle.getString("chat_title");
+		mChatLoad.tag = bundle.getString("tags");
+		mChatLoad.latitude = bundle.getString("latitude");
+		mChatLoad.longitude = bundle.getString("longitude");
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 				QodemeContract.Chats.CONTENT_URI,
 				QodemeContract.Chats.updateChatInfoValuesAll(mChatLoad.title, mChatLoad.color,
 						mChatLoad.description, mChatLoad.is_locked, mChatLoad.status,
-						mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members),
+						mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members, mChatLoad.latitude, mChatLoad.longitude),
 				QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
 
 		// SyncHelper.requestManualSync();

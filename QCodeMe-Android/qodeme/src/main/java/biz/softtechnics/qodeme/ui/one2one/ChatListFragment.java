@@ -295,12 +295,12 @@ public class ChatListFragment extends Fragment {
 					}
 				});
 		mListView.setAdapter(mListAdapter);
-		mListView.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return false;
-			}
-		});
+//		mListView.setOnTouchListener(new View.OnTouchListener() {
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				return false;
+//			}
+//		});
 	}
 
 	/**

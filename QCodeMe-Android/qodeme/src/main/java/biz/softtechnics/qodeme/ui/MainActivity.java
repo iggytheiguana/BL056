@@ -133,6 +133,8 @@ import biz.softtechnics.qodeme.utils.Fonts;
 import biz.softtechnics.qodeme.utils.Helper;
 import biz.softtechnics.qodeme.utils.LatLonCity;
 import biz.softtechnics.qodeme.utils.LocationUtils;
+import biz.softtechnics.qodeme.utils.MyLocation;
+import biz.softtechnics.qodeme.utils.MyLocation.LocationResult;
 import biz.softtechnics.qodeme.utils.NullHelper;
 
 import com.android.volley.VolleyError;
@@ -193,6 +195,7 @@ public class MainActivity extends BaseActivity implements
 	private boolean mContactInfoUpdated;
 	private List<Contact> mContacts;
 	private List<Contact> mApprovedContacts;
+	private List<Contact> mBlockContacts;
 	private List<ChatLoad> mChatList;
 	private Map<Long, Integer> mChatNewMessagesMap;
 
@@ -241,6 +244,7 @@ public class MainActivity extends BaseActivity implements
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+	private MyLocation myLocation;
 
 	/**
 	 * Called when the activity is first created.
@@ -275,6 +279,7 @@ public class MainActivity extends BaseActivity implements
 		} else {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
+		myLocation = new MyLocation();
 	}
 
 	private void initImageFetcher() {
@@ -696,9 +701,21 @@ public class MainActivity extends BaseActivity implements
 							QodemeContract.Contacts.updateContactInfoValues(null, color, updated),
 							DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
 					SyncHelper.requestManualSync();
-				} 
-				else {
-					//setChatInfo(currentChatId, null, null, null, null, null, isLocked, chat_title)
+				} else {
+					int updated = QodemeContract.Contacts.Sync.DONE;// data.getIntExtra(QodemeContract.Contacts.UPDATED,QodemeContract.Contacts.Sync.DONE);
+					getContentResolver().update(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateChatInfoValues("", color, "", 0, "", "",
+									updated, 1),
+							// updateContactInfoValues(null, color, updated),
+							DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
+
+					ChatLoad chatLoad = getChatLoad(currentChatId);
+					if (chatLoad != null)
+						setChatInfo(currentChatId, null, color, chatLoad.tag, chatLoad.description,
+								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title);
+					else
+						setChatInfo(currentChatId, null, color, null, null, null, null, null);
 				}
 				mViewPager.setCurrentItem(1);
 				break;
@@ -1102,6 +1119,21 @@ public class MainActivity extends BaseActivity implements
 	public void onConnected(Bundle bundle) {
 		// mCurrentLocation = mLocationClient.getLastLocation();
 		Location loc = mLocationClient.getLastLocation();
+		if (loc != null)
+			getMyLocation(loc);
+		else
+			myLocation.getLocation(this, locationResult);
+	}
+
+	LocationResult locationResult = new LocationResult() {
+
+		@Override
+		public void gotLocation(Location location) {
+			getMyLocation(location);
+		}
+	};
+
+	private void getMyLocation(Location loc) {
 		if (loc != null) {
 			final LatLonCity latLonCity = new LatLonCity();
 			latLonCity.setLat((int) (loc.getLatitude() * 1E6));
@@ -1115,7 +1147,8 @@ public class MainActivity extends BaseActivity implements
 								.getFromLocation(latLonCity.getLat() / 1E6,
 										latLonCity.getLon() / 1E6, 1);
 						if (!addresses.isEmpty()) {
-							return addresses.get(0).getLocality();
+							return addresses.get(0).getLocality() + ", "
+									+ addresses.get(0).getCountryName();
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -1134,6 +1167,11 @@ public class MainActivity extends BaseActivity implements
 				}
 			}.execute(latLonCity);
 		}
+	}
+
+	public Location getLastLocation() {
+		Location loc = mLocationClient.getLastLocation();
+		return loc;
 	}
 
 	@Override
@@ -1324,7 +1362,7 @@ public class MainActivity extends BaseActivity implements
 						final CharSequence[] items = { "Unblock" };
 
 						AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-						builder.setTitle("Pick a color");
+						builder.setTitle(R.string.app_name);
 						builder.setItems(items, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
 								switch (item) {
@@ -1588,8 +1626,17 @@ public class MainActivity extends BaseActivity implements
 		if (mChatType == null) {
 			mChatType = ChatType.PRIVATE_GROUP;
 		}
-		RestAsyncHelper.getInstance().chatCreate(mChatType, "", "", 0, "", 0, "", 0, 0,
-				new RestListener<ChatCreateResponse>() {
+		Location location = mLocationClient.getLastLocation();
+		double latitude = 0;
+		double longitude = 0;
+		if (location != null) {
+			latitude = location.getLatitude();
+			longitude = location.getLongitude();
+		}
+		final double lat = latitude;
+		final double lng = longitude;
+		RestAsyncHelper.getInstance().chatCreate(mChatType, "", "", 0, "", 0, "", latitude,
+				longitude, new RestListener<ChatCreateResponse>() {
 
 					@Override
 					public void onResponse(ChatCreateResponse response) {
@@ -1604,7 +1651,7 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
 										response.getChat().getType(), response.getChat()
 												.getQrcode(), QodemePreferences.getInstance()
-												.getQrcode()));
+												.getQrcode(), lat, lng));
 
 						for (Contact contact : contactsList) {
 							RestAsyncHelper.getInstance().chatAddMember(response.getChat().getId(),
@@ -1801,6 +1848,13 @@ public class MainActivity extends BaseActivity implements
 					}
 				}));
 
+		mBlockContacts = Lists.newArrayList(Iterables.filter(filtredContacts,
+				new Predicate<Contact>() {
+					@Override
+					public boolean apply(Contact contact) {
+						return contact.state == QodemeContract.Contacts.State.BLOCKED_BY;
+					}
+				}));
 		// mChatList
 		mContactInfoUpdated = true;
 
@@ -2195,7 +2249,27 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public List<Message> getChatMessages(long chatId) {
-		return mChatMessagesMap.get(chatId);
+		List<Message> messages = mChatMessagesMap.get(chatId);
+//		List<Message> temp = Lists.newArrayList();
+//		if (messages != null) {
+//			if (mBlockContacts != null && mBlockContacts.size()>0) {
+//				
+//				for (Contact contact : mBlockContacts) {
+//					for (Message msg : messages) {
+//						if (!msg.qrcode.trim().equals(contact.qrCode.trim())) {
+//							temp.add(msg);
+//						}
+//					}
+//				}
+//			}else{
+//				//temp.addAll(messages);
+//				return messages;
+//			}
+////			if (temp.size() > 0)
+////				messages.removeAll(temp);
+//		}
+//		return temp;
+		return messages;
 		// return sortMessages(mChatMessagesMap.get(chatId));
 	}
 
@@ -2225,11 +2299,11 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
-		String public_name = QodemePreferences.getInstance().getPublicName();
-		Uri uri = getContentResolver().insert(
+		// String public_name = QodemePreferences.getInstance().getPublicName();
+		getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
-						replyTo_Id, latitude, longitude, public_name, localUrl));
+						replyTo_Id, latitude, longitude, senderName, localUrl));
 		SyncHelper.requestManualSync();
 		// Long rawContactId = ContentUris.parseId(uri);
 		// String carId = uri.getPathSegments().get(1);
@@ -2306,16 +2380,19 @@ public class MainActivity extends BaseActivity implements
 					}
 				}
 				long[] ids = Longs.toArray(idList);
-				ContentProviderOperation.Builder builder = ContentProviderOperation
-						.newUpdate(QodemeContract.Messages.CONTENT_URI);
-				builder.withValue(QodemeContract.SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
-				builder.withValue(QodemeContract.Messages.MESSAGE_STATE,
-						QodemeContract.Messages.State.READ_LOCAL);
-				builder.withSelection(DbUtils.getWhereClauseForIds(ids),
-						DbUtils.getWhereArgsForIds(ids));
-				batch.add(builder.build());
-				QodemeContract.applyBatch(getContext(), batch);
-				SyncHelper.requestManualSync();
+				if (ids.length > 0) {
+					ContentProviderOperation.Builder builder = ContentProviderOperation
+							.newUpdate(QodemeContract.Messages.CONTENT_URI);
+					builder.withValue(QodemeContract.SyncColumns.UPDATED,
+							QodemeContract.Sync.UPDATED);
+					builder.withValue(QodemeContract.Messages.MESSAGE_STATE,
+							QodemeContract.Messages.State.READ_LOCAL);
+					builder.withSelection(DbUtils.getWhereClauseForIds(ids),
+							DbUtils.getWhereArgsForIds(ids));
+					batch.add(builder.build());
+					QodemeContract.applyBatch(getContext(), batch);
+					SyncHelper.requestManualSync();
+				}
 			}
 		}
 	}
@@ -2625,7 +2702,7 @@ public class MainActivity extends BaseActivity implements
 		isAddMemberOnExistingChat = false;
 		Log.d("contact add in public", contactsList.get(0).title + "");
 
-		final ChatLoad chatload = getChatLoad(currentChatId);
+		// final ChatLoad chatload = getChatLoad(currentChatId);
 		for (Contact contact : contactsList) {
 			RestAsyncHelper.getInstance().chatAddMember(currentChatId, contact.qrCode,
 					new RestListener<ChatAddMemberResponse>() {
@@ -2643,8 +2720,9 @@ public class MainActivity extends BaseActivity implements
 						}
 					});
 		}
-//		setChatInfo(currentChatId, null, chatload.color, chatload.tag, chatload.description,
-//				chatload.status, chatload.is_locked, chatload.title);
+		// setChatInfo(currentChatId, null, chatload.color, chatload.tag,
+		// chatload.description,
+		// chatload.status, chatload.is_locked, chatload.title);
 
 	}
 
@@ -2687,9 +2765,11 @@ public class MainActivity extends BaseActivity implements
 	public ChatLoad getChatLoad(long chatId) {
 		List<ChatLoad> chatLoads = getChatList(chatType);
 
-		for (ChatLoad chatLoad : chatLoads)
-			if (chatLoad.chatId == chatId)
-				return chatLoad;
+		if (chatLoads != null) {
+			for (ChatLoad chatLoad : chatLoads)
+				if (chatLoad.chatId == chatId)
+					return chatLoad;
+		}
 		return null;
 
 	}

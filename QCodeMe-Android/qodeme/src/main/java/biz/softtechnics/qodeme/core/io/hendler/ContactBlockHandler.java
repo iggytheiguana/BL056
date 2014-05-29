@@ -42,7 +42,7 @@ public class ContactBlockHandler extends BaseResponseHandler<VoidResponse> {
         ContentProviderOperation.Builder builder = ContentProviderOperation
                 .newUpdate(addCallerIsSyncAdapterParameter(Contacts.CONTENT_URI));
         builder.withValue(Contacts.UPDATED, Contacts.Sync.DONE);
-        //builder.withValue(Contacts.CONTACT_STATE, Contacts.State.BLOCKED);
+        builder.withValue(Contacts.CONTACT_STATE, Contacts.State.BLOCKED);
         builder.withSelection(DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(mId));
         batch.add(builder.build());
     }

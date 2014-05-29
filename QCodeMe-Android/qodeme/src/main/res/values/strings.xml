@@ -101,5 +101,10 @@
     <string name="enter_password">Enter password</string>
     <string name="welcome">Welcome to Thred.</string>
     <string name="welcome_desc">To get started,you\'ll need to create a password to receive your unique code.</string>
- <string name="album_name">CameraSample</string>
+    <string name="album_name">CameraSample</string>
+    <string name="login_text">Enter your password and scan your QR Code to log in.</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="block">Block</string>
+    <string name="flag_comment">Flag Comment</string>
+
 </resources>

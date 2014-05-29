@@ -25,7 +25,9 @@ public enum RequestType{
     SET_USER_SETTINGS("set_user_settings"),
     GET_USER_SETTINGS("get_user_settings"),
     MESSAGE_READ("messageRead"),
-    UPLOAD_IMAGE("uploadImage");
+    UPLOAD_IMAGE("uploadImage"),
+    SET_FLAGGED("setFlagged"),
+    SET_FAVORITE("setFavorite");
     
 
 

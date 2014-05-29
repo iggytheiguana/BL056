@@ -13,6 +13,7 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -101,6 +102,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private ChatLoad mChatLoad;
 	private ImageButton shareChatBtn;
 	private EditText editTextTitle;
+	private RelativeLayout mChatItem;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -345,7 +347,6 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return name = name != null ? name : (TextView) findViewById(R.id.name);
 	}
 
-	
 	public TextView getDate() {
 		return date = date != null ? date : (TextView) findViewById(R.id.date);
 	}
@@ -390,7 +391,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return shareChatBtn = shareChatBtn != null ? shareChatBtn
 				: (ImageButton) findViewById(R.id.btn_share);
 	}
-
+	public RelativeLayout getChatItem() {
+		return mChatItem = mChatItem != null ? mChatItem
+				: (RelativeLayout) findViewById(R.id.relative_chatItem);
+	}
 	// sendImgMessageBtn
 
 	// public View getCornerTop() {
@@ -469,11 +473,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 			public void afterTextChanged(Editable s) {
 				ChatFocusSaver.setCurrentMessage(mChatLoad.chatId, s.toString());
 
-//				if (s.length() > 0) {
-//					getSendMessage().setVisibility(View.VISIBLE);
-//				} else {
-//					getSendMessage().setVisibility(View.GONE);
-//				}
+				// if (s.length() > 0) {
+				// getSendMessage().setVisibility(View.VISIBLE);
+				// } else {
+				// getSendMessage().setVisibility(View.GONE);
+				// }
 
 			}
 		});
@@ -605,12 +609,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId) {
 			getTitleEditText().setVisibility(VISIBLE);
-				getTitleEditText().setText(mChatLoad.title);
-				getName().setVisibility(GONE);
-				getSendMessage().setVisibility(View.VISIBLE);
-				getMessageEdit().setVisibility(VISIBLE);
-				if (mChatLoad.title.trim().length() > 0) {
-				} else {
+			getTitleEditText().setText(mChatLoad.title);
+			getName().setVisibility(GONE);
+			getSendMessage().setVisibility(View.VISIBLE);
+			getMessageEdit().setVisibility(VISIBLE);
+			if (mChatLoad.title.trim().length() > 0) {
+			} else {
 				getTitleEditText().setFocusable(true);
 				getTitleEditText().requestFocus();
 				// InputMethodManager
@@ -690,15 +694,19 @@ public class ChatListGroupItem extends RelativeLayout implements
 		List<Message> listForAdapter = Lists.newArrayList();
 		List<Message> listData = mCallback.getMessages(mChatLoad.chatId);
 		listData = sortMessages(listData);
-
+		boolean isContainUnread = false;
 		if (listData != null) {
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
 			tempMessage.addAll(listData);
+			
 			for (Message message : tempMessage) {
 				if (message.replyTo_id > 0) {
 					replyMessage.add(message);
 					listData.remove(message);
+				}
+				if(message.state == 3){
+					isContainUnread = true;
 				}
 			}
 
@@ -797,12 +805,25 @@ public class ChatListGroupItem extends RelativeLayout implements
 					}
 				}, callbackChatListInsideFragmentCallback);
 
+		if(isContainUnread)
+			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
+		else{
+			getChatItem().setBackgroundResource(R.drawable.bg_box);
+		}
 		if (listData != null)
 			listAdapter.addAll(listData);
 		getList().setAdapter(listAdapter);
 		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		getList().setStackFromBottom(true);
-		getList().setDisabled(true);
+		// getList().setDisabled(true);
+		getList().setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				return gestureDetector.onTouchEvent(event);
+			}
+		});
 
 		height = mCallback.getChatHeight(mChatLoad.chatId);
 		ListView.LayoutParams lParams = new ListView.LayoutParams(

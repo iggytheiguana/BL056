@@ -55,13 +55,13 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 				getContext().getContentResolver().insert(
 						QodemeContract.Chats.CONTENT_URI,
 						QodemeContract.Chats.addNewChatValues(mChatLoad.chatId, mChatLoad.type,
-								mChatLoad.qrcode, ""));
+								mChatLoad.qrcode, "",0,0));
 			}
 		} else {
 			getContext().getContentResolver().insert(
 					QodemeContract.Chats.CONTENT_URI,
 					QodemeContract.Chats.addNewChatValues(mChatLoad.chatId, mChatLoad.type,
-							mChatLoad.qrcode, ""));
+							mChatLoad.qrcode, "",0,0));
 		}
 
 		// getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,

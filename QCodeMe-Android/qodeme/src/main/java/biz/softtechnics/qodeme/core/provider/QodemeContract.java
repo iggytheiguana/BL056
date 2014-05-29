@@ -130,8 +130,12 @@ public class QodemeContract {
 		String MESSAGE_LONGITUDE = "message_longitude";
 		/** Message sendername */
 		String MESSAGE_SENDERNAME = "message_sender_name";
-		/** Message photo url local*/
+		/** Message photo url local */
 		String MESSAGE_PHOTO_URL_LOCAL = "message_phot_url_local";
+		/** Message IS FLAGGED local */
+		String MESSAGE_HAS_FLAGGED = "message_has_flagged";
+		/** Message IS DELTED local */
+		String MESSAGE_HAS_DELETED = "message_has_deleted";
 	}
 
 	interface ChatSettingColumns {
@@ -236,9 +240,11 @@ public class QodemeContract {
 			String location = "";
 			// if (QodemePreferences.getInstance().isSaveLocationDateChecked()){
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
-			if (latLonCity != null && latLonCity.getCity() != null)
+			String latitude = "0";
+			String longitude = "0";
+			if (latLonCity != null && latLonCity.getCity() != null){
 				location = latLonCity.getCity();
-			// }
+			 }
 			contentValues.put(CONTACT_LOCATION, location);
 
 			String message = "";
@@ -315,7 +321,7 @@ public class QodemeContract {
 			String[] PROJECTION = { Contacts._ID, Contacts.UPDATED, Contacts.CONTACT_ID,
 					Contacts.CONTACT_TITLE, Contacts.CONTACT_QRCODE, Contacts.CONTACT_COLOR,
 					Contacts.CONTACT_CHAT_ID, Contacts.CONTACT_STATE, Contacts.CONTACT_PUBLIC_NAME,
-					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME};
+					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -406,7 +412,8 @@ public class QodemeContract {
 			int CHAT_ADMIN = 15;
 		}
 
-		public static ContentValues addNewChatValues(long chatId, int type, String qrCode, String admin) {
+		public static ContentValues addNewChatValues(long chatId, int type, String qrCode,
+				String admin, double latitude, double longitude) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
 			contentValues.put(Chats.CHAT_ID, chatId);
@@ -423,15 +430,16 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_TITLE, "");
 			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
 			// String location = "";
-			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
-			if (latLonCity != null) {// && latLonCity.getCity() != null) {
-				// location = latLonCity.getCity();
-				contentValues.put(Chats.CHAT_LATITUDE, latLonCity.getLat());
-				contentValues.put(Chats.CHAT_LONGITUDE, latLonCity.getLon());
-			} else {
-				contentValues.put(Chats.CHAT_LATITUDE, "");
-				contentValues.put(Chats.CHAT_LONGITUDE, "");
-			}
+			// LatLonCity latLonCity =
+			// QodemePreferences.getInstance().getLastLocation();
+			// if (latLonCity != null) {// && latLonCity.getCity() != null) {
+			// // location = latLonCity.getCity();
+			// contentValues.put(Chats.CHAT_LATITUDE, latLonCity.getLat());
+			// contentValues.put(Chats.CHAT_LONGITUDE, latLonCity.getLon());
+			// } else {
+			contentValues.put(Chats.CHAT_LATITUDE, "" + latitude);
+			contentValues.put(Chats.CHAT_LONGITUDE, "" + longitude);
+			// }
 			return contentValues;
 		}
 
@@ -467,15 +475,17 @@ public class QodemeContract {
 
 		public static ContentValues updateChatInfoValuesAll(String title, Integer color,
 				String description, int is_locked, String status, String tags,
-				int number_of_flagged, int number_of_member) {
+				int number_of_flagged, int number_of_member, String lat, String lng) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(CHAT_TITLE, title);
 			contentValues.put(CHAT_DESCRIPTION, description);
 			contentValues.put(CHAT_IS_LOCKED, is_locked);
 			contentValues.put(CHAT_STATUS, status);
 			contentValues.put(CHAT_TAGS, tags);
-			contentValues.put(CHAT_NUMBER_OF_FLAGGED, "");
-			contentValues.put(CHAT_NUMBER_OF_MEMBER, "");
+			contentValues.put(CHAT_NUMBER_OF_FLAGGED, number_of_flagged);
+			contentValues.put(CHAT_NUMBER_OF_MEMBER, number_of_member);
+			contentValues.put(CHAT_LATITUDE, lat);
+			contentValues.put(CHAT_LONGITUDE, lng);
 			return contentValues;
 		}
 	}
@@ -581,6 +591,9 @@ public class QodemeContract {
 			c.put(MESSAGE_LONGITUDE, String.valueOf(longitude));
 			c.put(MESSAGE_SENDERNAME, senderName);
 			c.put(MESSAGE_PHOTO_URL_LOCAL, localUrl);
+			c.put(MESSAGE_HAS_FLAGGED, 0);
+			c.put(MESSAGE_HAS_DELETED, 0);
+
 			return c;
 		}
 
@@ -599,7 +612,9 @@ public class QodemeContract {
 			c.put(MESSAGE_LATITUDE, mMessage.latitude);
 			c.put(MESSAGE_LONGITUDE, mMessage.longitude);
 			c.put(MESSAGE_SENDERNAME, mMessage.senderName);
-			
+			c.put(MESSAGE_HAS_FLAGGED, 0);
+			c.put(MESSAGE_HAS_DELETED, 0);
+
 			return c;
 		}
 
@@ -614,10 +629,40 @@ public class QodemeContract {
 			c.put(MESSAGE_STATE, State.READ_LOCAL);
 			return c;
 		}
-		
+
 		public static ContentValues updateMessageImageUrl(String url) {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_PHOTO_URL, url);
+			return c;
+		}
+		public static ContentValues updateMessageFlagged() {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_HAS_FLAGGED, 1);
+			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
+			return c;
+		}
+		public static ContentValues updateMessageUnFlagged() {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_HAS_FLAGGED, 0);
+			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
+			return c;
+		}
+		public static ContentValues updatePushMessageFlagged() {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_HAS_FLAGGED, 1);
+			c.put(SyncColumns.UPDATED, QodemeContract.Sync.DONE);
+			return c;
+		}
+		public static ContentValues updatePushMessageUnFlagged() {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_HAS_FLAGGED, 0);
+			c.put(SyncColumns.UPDATED, QodemeContract.Sync.DONE);
+			return c;
+		}
+		public static ContentValues deleteMessage() {
+			ContentValues c = new ContentValues();
+			c.put(MESSAGE_HAS_DELETED, 1);
+			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
 			return c;
 		}
 
@@ -627,7 +672,7 @@ public class QodemeContract {
 					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE, Messages.MESSAGE_PHOTO_URL,
 					Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID,
 					Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE,
-					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL };
+					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL,Messages.MESSAGE_HAS_FLAGGED , Messages.MESSAGE_HAS_DELETED};
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -644,6 +689,8 @@ public class QodemeContract {
 			int MESSAGE_LONGITUDE = 12;
 			int MESSAGE_SENDERNAME = 13;
 			int MESSAGE_PHOTO_URL_LOCAL = 14;
+			int MESSAGE_HAS_FLAGGED = 15;
+			int MESSAGE_IS_DELETED = 16;
 		}
 	}
 

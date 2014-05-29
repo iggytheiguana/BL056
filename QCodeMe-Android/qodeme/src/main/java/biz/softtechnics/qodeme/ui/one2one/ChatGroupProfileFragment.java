@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import android.R.mipmap;
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -130,8 +131,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mBtnEditDesc.setOnClickListener(this);
 		mBtnSetDesc.setOnClickListener(this);
 		mImgBtnShare.setOnClickListener(this);
+		mImgBtnLocked.setOnClickListener(this);
 
-		String mQrCodeText = chatload != null?chatload.qrcode:"";
+		String mQrCodeText = chatload != null ? chatload.qrcode : "";
 		mImgQr.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
 				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + mQrCodeText), 500, 500,
 				getResources().getColor(R.color.login_qrcode), Color.TRANSPARENT));
@@ -247,6 +249,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		setData();
 	}
 
+	@SuppressWarnings("static-access")
 	public void setData() {
 
 		try {
@@ -264,6 +267,12 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			// mTextViewDate.setText(dateStr1);
 
 			if (getChatload() != null) {
+				if (getChatload().is_locked == 1) {
+					mImgBtnLocked.setImageBitmap(new BitmapFactory().decodeResource(getResources(),
+							R.drawable.ic_lock_close));
+				} else
+					mImgBtnLocked.setImageBitmap(new BitmapFactory().decodeResource(getResources(),
+							R.drawable.ic_lock_open));
 				mTextViewStatus.setText(getChatload().status);
 				mTextViewGroupDesc.setText(getChatload().description);
 				mTextViewGroupTitle.setText(getChatload().title);
@@ -311,6 +320,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						mImgBtnShare.setVisibility(View.GONE);
 					}
 				}
+
 			} else {
 				mBtnDelete.setVisibility(View.GONE);
 				mBtnEditDesc.setVisibility(View.GONE);
@@ -330,7 +340,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 	private void callColorPicker() {
 		MainActivity activity = (MainActivity) getActivity();
-		activity.callColorPicker(getChatload(),1);
+		activity.callColorPicker(getChatload(), 1);
 		// Intent i = new Intent((MainActivity)getActivity(),
 		// ContactDetailsActivity.class);
 		// i.putExtra(QodemeContract.Contacts._ID,
@@ -401,6 +411,22 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		case R.id.btnShare:
 			MainActivity activity = (MainActivity) getActivity();
 			activity.addMemberInExistingChat();
+			break;
+		case R.id.btnLock:
+			if (getChatload().is_locked != 1)
+				getChatload().is_locked = 1;
+			else
+				getChatload().is_locked = 0;
+
+			getActivity().getContentResolver().update(
+					QodemeContract.Chats.CONTENT_URI,
+					QodemeContract.Chats.updateChatInfoValues("", -1, "", getChatload().is_locked, "", "",
+							QodemeContract.Sync.DONE, 3), QodemeContract.Chats.CHAT_ID + "=?",
+					DbUtils.getWhereArgsForId(getChatload().chatId));
+
+			setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+					getChatload().description, getChatload().status, getChatload().is_locked,
+					getChatload().title);
 			break;
 		default:
 			break;

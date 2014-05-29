@@ -168,13 +168,13 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 
 		if (mOrientation == HORIZONTAL) {
 			container = mInflater
-					.inflate(R.layout.action_item_horizontal, null);
+					.inflate(R.layout.action_item_vertical, null);
 		} else {
-			container = mInflater.inflate(R.layout.action_item_horizontal, null);
+			container = mInflater.inflate(R.layout.action_item_vertical, null);
 		}
 
 //		ImageView img = (ImageView) container.findViewById(R.id.iv_icon);
-//		TextView text = (TextView) container.findViewById(R.id.tv_title);
+		TextView text = (TextView) container.findViewById(R.id.menu_title);
 
 //		if (icon != null) {
 //			img.setImageDrawable(icon);
@@ -182,11 +182,11 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 //			img.setVisibility(View.GONE);
 //		}
 //
-//		if (title != null) {
-//			text.setText(title);
-//		} else {
-//			text.setVisibility(View.GONE);
-//		}
+		if (title != null) {
+			text.setText(title);
+		} else {
+			text.setVisibility(View.GONE);
+		}
 
 		final int pos = mChildPos;
 		final int actionId = action.getActionId();

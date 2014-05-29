@@ -145,9 +145,8 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mTextViewStatus.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mEditTextStatus.setVisibility(View.GONE);
-					
-					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status,
-							0, "");
+
+					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "");
 					// }
 					// mEditTextStatus.setVisibility(View.GONE);
 					// mTextViewStatus.setVisibility(View.VISIBLE);
@@ -183,37 +182,43 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	}
 
 	public void setData() {
-		// if (callback != null) {
-		// try {
-		// MainActivity activity = (MainActivity) callback;
-		// ChatLoad chatLoad = activity.getChatLoad(contact.chatId);
-		mTextViewStatus.setText(QodemePreferences.getInstance().getStatus());
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
-		mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
-		customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
-		customDotView.invalidate();
+		try {
+			// if (callback != null) {
+			// try {
+			// MainActivity activity = (MainActivity) callback;
+			// ChatLoad chatLoad = activity.getChatLoad(contact.chatId);
+			mTextViewStatus.setText(QodemePreferences.getInstance().getStatus());
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+			// }
+			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
+			mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
+			customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
+			customDotView.invalidate();
 
-		SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-		// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
-		String dateStr = fmtOut.format(new Date(Converter
-				.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
-		mTextViewLocation.setText(contact.location + "");
-		mTextViewDatelocation.setText(dateStr + ", " + contact.location != null?contact.location:"");
+			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+			String dateStr = fmtOut.format(new Date(Converter
+					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
+			mTextViewLocation.setText(contact.location + "");
+			mTextViewDatelocation
+					.setText(dateStr + ", " + contact.location != null ? contact.location : "");
 
-		SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMMM dd,yyyy, h:mm a", Locale.US);
-		String dateStr1 = fmtOut1.format(new Date(Converter
-				.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
-		mTextViewDate.setText(dateStr1);
+			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMMM dd,yyyy, h:mm a", Locale.US);
+			String dateStr1 = fmtOut1.format(new Date(Converter
+					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
+			mTextViewDate.setText(dateStr1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	private void callColorPicker(int type) {
 		MainActivity activity = (MainActivity) getActivity();
-		activity.callColorPicker(contact,type);
+		activity.setCurrentChatId(contact.chatId);
+		activity.callColorPicker(contact, type);
 		// Intent i = new Intent((MainActivity)getActivity(),
 		// ContactDetailsActivity.class);
 		// i.putExtra(QodemeContract.Contacts._ID,
@@ -239,7 +244,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			mTextViewStatus.setVisibility(View.GONE);
 			mBtnEditStatus.setVisibility(View.GONE);
 			mEditTextStatus.setVisibility(View.VISIBLE);
-//			mBtnSetStatus.setVisibility(View.VISIBLE);
+			// mBtnSetStatus.setVisibility(View.VISIBLE);
 			break;
 		case R.id.btnEdit:
 			mRelativeLayoutName.setVisibility(View.GONE);

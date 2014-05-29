@@ -473,5 +473,27 @@ public class RestAsyncHelper implements RestClient {
 		params.put(RestKeyMap.PUSH_TOKEN, gcmToken);
 		post(RequestType.REGISTER_TOKEN, params, callback);
 	}
+	
+	/**
+	 * toggle the flagged message
+	 */
+	public void setFlagged(long message_id, int is_flagged, long chat_id, RestListener callback){
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(message_id));
+		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_flagged));
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		post(RequestType.SET_FLAGGED, params, callback);
+	}
+	
+	/**
+	 * toggle the FAVORITE message
+	 */
+	public void setFavorite(String date, long chat_id, RestListener callback){
+		RequestParams params = new RequestParams();
+//		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_favorite));
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		params.put("date_time", date);
+		post(RequestType.SET_FAVORITE, params, callback);
+	}
 
 }

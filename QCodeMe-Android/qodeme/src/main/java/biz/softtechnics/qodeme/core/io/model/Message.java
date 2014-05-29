@@ -29,10 +29,11 @@ public class Message {
 	public String longitude;
 	@SerializedName("sendername")
 	public String senderName;
-	public String is_flagged;
+	public int is_flagged;
 	public String localImgPath;
 	
 	public boolean isFirst = false;
 	public boolean isLast = false;
+	public int is_deleted;
 	
 }

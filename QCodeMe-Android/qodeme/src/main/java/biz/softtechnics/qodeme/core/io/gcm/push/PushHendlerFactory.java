@@ -18,6 +18,8 @@ public class PushHendlerFactory {
     private static final String PUSH_MESSAGE_WAS_READ = "Message was read";
     private static final String PUSH_CHAT_UPDATE = "Chat updated";
     private static final String PUSH_CHAT_MEMBER_ADD = "Chat add member";
+    private static final String PUSH_MESSAGE_SET_FLAGGED = "Set flagged";
+    
 //    
 
 
@@ -44,6 +46,8 @@ public class PushHendlerFactory {
         	 instance = new ChatUpdatePushHandler(context);
         } else if(bundle.getString(TYPE).equals(PUSH_CHAT_MEMBER_ADD)){
         	 instance = new ChatAddMemberPushHandler(context);
+        } else if(bundle.getString(TYPE).equals(PUSH_MESSAGE_SET_FLAGGED)){
+        	 instance = new MessageFlaggedPushHandler(context);
         }
 
         if (instance != null)

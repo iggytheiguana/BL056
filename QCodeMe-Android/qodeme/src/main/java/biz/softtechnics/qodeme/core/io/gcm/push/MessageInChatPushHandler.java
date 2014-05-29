@@ -31,7 +31,8 @@ public class MessageInChatPushHandler extends BasePushHandler {
 		mMessage.created = bundle.getString("created");
 		mMessage.qrcode = bundle.getString("from_qrcode");
 		mMessage.hasPhoto = Integer.parseInt(bundle.getString("has_photo"));
-		mMessage.is_flagged = bundle.getString("is_flagged");
+		// mMessage.is_flagged =
+		// Integer.parseInt(bundle.getString("is_flagged"));
 		mMessage.latitude = bundle.getString("latitude");
 		mMessage.longitude = bundle.getString("longitude");
 		mMessage.photoUrl = bundle.getString("photourl");

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <style name="AppBaseTheme" parent="@style/Theme.AppCompat" >
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat">
     </style>
-
-
-
 
     <style name="AppBaseTheme.NoTitle">
         <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">
-
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingLeft">14dp</item>
         <item name="android:paddingRight">14dp</item>
@@ -35,13 +31,11 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-
     <style name="TextView" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/text_message_not_read</item>
     </style>
-
 
     <style name="TextView.Chat"></style>
 
@@ -61,15 +55,12 @@
         <item name="android:singleLine">true</item>
     </style>
 
-
     <style name="TextView.Message">
         <item name="android:textSize">14sp</item>
-
     </style>
 
     <style name="TextView.Message.Text">
         <item name="android:textColor">@color/text_message_text</item>
-
     </style>
 
     <style name="TextView.Message.Date">
@@ -77,10 +68,10 @@
         <item name="android:singleLine">true</item>
         <item name="android:textSize">10sp</item>
     </style>
-    <!---->
-    <!--<style name="TextView.Message.Date.White">-->
-    <!--<item name="android:textColor">@color/text_message_sent</item>-->
-    <!--</style>-->
+    <!--  -->
+    <!-- <style name="TextView.Message.Date.White"> -->
+    <!-- <item name="android:textColor">@color/text_message_sent</item> -->
+    <!-- </style> -->
 
     <style name="LayoutIntroduction">
         <item name="android:layout_width">fill_parent</item>
@@ -100,6 +91,5 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
-
 
 </resources>

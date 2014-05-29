@@ -20,6 +20,8 @@ import biz.softtechnics.qodeme.core.io.responses.AccountLoginResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatLoadResponse;
 import biz.softtechnics.qodeme.core.io.responses.ChatMessageResponse;
 import biz.softtechnics.qodeme.core.io.responses.ContactAddResponse;
+import biz.softtechnics.qodeme.core.io.responses.SetFavoriteResponse;
+import biz.softtechnics.qodeme.core.io.responses.SetFlaggedResponse;
 import biz.softtechnics.qodeme.core.io.responses.UploadImageResponse1;
 import biz.softtechnics.qodeme.core.io.responses.UserSettingsResponse;
 import biz.softtechnics.qodeme.core.io.responses.VoidResponse;
@@ -28,6 +30,7 @@ import biz.softtechnics.qodeme.core.io.utils.RequestType;
 import biz.softtechnics.qodeme.core.io.utils.RestError;
 import biz.softtechnics.qodeme.core.io.utils.RestErrorType;
 import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
+import biz.softtechnics.qodeme.core.io.utils.RestListener;
 import biz.softtechnics.qodeme.utils.Converter;
 import biz.softtechnics.qodeme.utils.RestUtils;
 
@@ -112,12 +115,12 @@ public class RestSyncHelper {
 
 	public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp,
 			String photoUrl, int hashPhoto, long replyTo_Id, String latitude, String longitude,
-			String senderName, String dateString) throws InterruptedException, ExecutionException, JSONException,
-			RestError {
+			String senderName, String dateString) throws InterruptedException, ExecutionException,
+			JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chatId));
-//		params.put(RestKeyMap.DATETIME, String.valueOf(unixTimeStamp));
+		// params.put(RestKeyMap.DATETIME, String.valueOf(unixTimeStamp));
 		params.put(RestKeyMap.DATETIME, dateString);
 		params.put(RestKeyMap.PHOTURL, photoUrl);
 		params.put(RestKeyMap.HAS_PHOTO, String.valueOf(hashPhoto));
@@ -128,8 +131,9 @@ public class RestSyncHelper {
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_MESSAGE, params);
 		return new ChatMessageResponse().parse(jsonObject);
 	}
-	public UploadImageResponse1 chatImage(long messageId, String imageString) throws InterruptedException, ExecutionException, JSONException,
-			RestError {
+
+	public UploadImageResponse1 chatImage(long messageId, String imageString)
+			throws InterruptedException, ExecutionException, JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.IMAGE, imageString);
 		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
@@ -242,7 +246,33 @@ public class RestSyncHelper {
 		newSyncJsonObjectRequest(RequestType.MESSAGE_READ, params);
 		return new VoidResponse();
 	}
-	
+
+	/**
+	 * toggle the Flagged message
+	 */
+	public SetFlaggedResponse setFlagged(long message_id, int is_flagged, long chat_id)
+			throws InterruptedException, ExecutionException, JSONException, RestError {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(message_id));
+		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_flagged));
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		// post(RequestType.SET_FLAGGED, params, callback);
+		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_FLAGGED, params);
+		return new SetFlaggedResponse().parse(jsonObject);
+	}
+
+	/**
+	 * toggle the Favorite message
+	 */
+	public SetFavoriteResponse setFavorite(String date, long chat_id)
+			throws InterruptedException, ExecutionException, JSONException, RestError {
+		RequestParams params = new RequestParams();
+		// params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_favorite));
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		params.put("date_time", date);
+		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_FLAGGED, params);
+		return new SetFavoriteResponse().parse(jsonObject);
+	}
 
 	/**
 	 * Synchronous volley request
@@ -260,7 +290,7 @@ public class RestSyncHelper {
 		int method = Request.Method.POST;
 		RequestFuture<String> future = RequestFuture.newFuture();
 		String absoluteUrl = RestUtils.getAbsoluteUrl(requestType);
-		Log.d("Image Url", RestUtils.getAbsoluteUrl(requestType)+"");
+		Log.d("Image Url", RestUtils.getAbsoluteUrl(requestType) + "");
 
 		StringRequest request = new StringRequest(method, absoluteUrl, future, future) {
 			@Override

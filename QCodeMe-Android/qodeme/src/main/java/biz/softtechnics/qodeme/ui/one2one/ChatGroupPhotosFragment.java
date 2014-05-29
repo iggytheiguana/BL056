@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import biz.softtechnics.qodeme.R;
@@ -44,6 +45,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	private static final String CHAT_COLOR = "chat_color";
 	private static final String CHAT_NAME = "chat_name";
 	private static final String QRCODE = "contact_qr";
+	private static final String CHAT_STATUS = "chat_status";
 	private static final String LOCATION = "location";
 	private static final String DATE = "date";
 	private static final String FIRST_UPDATE = "first_update";
@@ -52,6 +54,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 	SeparatedListAdapter mListAdapter;
 	ListView mListViewPhotos;
 	public ChatLoad chatLoad;
+	private ImageButton mBtnImageSend;
 	private TextView mName, mStatus;
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
@@ -79,6 +82,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 		args.putInt(CHAT_COLOR, c.color);
 		args.putString(CHAT_NAME, c.title);
 		args.putString(QRCODE, c.qrcode);
+		args.putString(CHAT_STATUS, c.status);
 		// args.putString(LOCATION, c.location);
 		// args.putString(DATE, c.date);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
@@ -129,13 +133,24 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-//		mListAdapter = new SeparatedListAdapter(getActivity());
+		// mListAdapter = new SeparatedListAdapter(getActivity());
 
 		mName = (TextView) getView().findViewById(R.id.name);
-		mStatus= (TextView) getView().findViewById(R.id.textView_status);
-		
+		mStatus = (TextView) getView().findViewById(R.id.textView_status);
+		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
+		mBtnImageSend.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				MainActivity activity = (MainActivity) getActivity();
+				activity.setCurrentChatId(getArguments().getLong(CHAT_ID));
+				activity.takePhoto();
+			}
+		});
+
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
-		
+
 		isViewCreated = true;
 		updateUi();
 	}
@@ -154,40 +169,49 @@ public class ChatGroupPhotosFragment extends Fragment {
 		String date;
 		ArrayList<Message> arrayList = new ArrayList<Message>();
 	}
-	
-public void setArgument(ChatLoad c){
-		
-//		Bundle args = new Bundle();
-//		args.putLong(CHAT_ID, c.chatId);
-//		args.putInt(CHAT_COLOR, c.color);
-//		// args.putString(CHAT_NAME, c.title);
-//		args.putString(QRCODE, c.qrcode);
-////		args.putString(STATUS, c.status);
-//		// args.putString(LOCATION, c.location);
-//		// args.putString(DATE, c.date);
-//		args.putBoolean(FIRST_UPDATE, getFirstUpdate());
-//		
-//		setArguments(args);
+
+	public void setArgument(ChatLoad c) {
+
+		// Bundle args = new Bundle();
+		// args.putLong(CHAT_ID, c.chatId);
+		// args.putInt(CHAT_COLOR, c.color);
+		// // args.putString(CHAT_NAME, c.title);
+		// args.putString(QRCODE, c.qrcode);
+		// // args.putString(STATUS, c.status);
+		// // args.putString(LOCATION, c.location);
+		// // args.putString(DATE, c.date);
+		// args.putBoolean(FIRST_UPDATE, getFirstUpdate());
+		//
+		// setArguments(args);
 		this.chatLoad = c;
 	}
-//private boolean getFirstUpdate() {
-//	boolean result = getArguments().getBoolean(FIRST_UPDATE) & mFirstUpdate;
-//	mFirstUpdate = false;
-//	return result;
-//}
+
+	// private boolean getFirstUpdate() {
+	// boolean result = getArguments().getBoolean(FIRST_UPDATE) & mFirstUpdate;
+	// mFirstUpdate = false;
+	// return result;
+	// }
 	public void updateUi() {
 		if (isViewCreated && callback != null) {
+
+			if (chatLoad != null && chatLoad.is_locked == 1
+					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
+				mBtnImageSend.setVisibility(View.GONE);
+			} else {
+				mBtnImageSend.setVisibility(View.VISIBLE);
+			}
 			// mListAdapter.clear();
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
-			
-//			mListAdapter.clearData();
-//			mListAdapter.notifyDataSetChanged();
-			mListAdapter = new SeparatedListAdapter((MainActivity)callback);
+
+			// mListAdapter.clearData();
+			// mListAdapter.notifyDataSetChanged();
+			mListAdapter = new SeparatedListAdapter((MainActivity) callback);
 			List<Message> messages = callback.getChatMessages(getChatId());
 
-			mName.setText(chatLoad.title);
-			mStatus.setText(chatLoad.status);
-			
+			mName.setText(chatLoad != null ? chatLoad.title : getArguments().getString(CHAT_NAME));
+			mStatus.setText(chatLoad != null ? chatLoad.status : getArguments().getString(
+					CHAT_STATUS));
+
 			if (messages != null) {
 				Message previousMessage = null;
 				List<Message> temp = new ArrayList<Message>();
@@ -234,7 +258,7 @@ public void setArgument(ChatLoad c){
 								photoMessage.date = SIMPLE_DATE_FORMAT_HEADER.format(dateTemp);
 								photoMessage.arrayList.add(me);
 								arrayListMessage.add(photoMessage);
-							}  else {
+							} else {
 								if (arrayListMessage.size() > 0) {
 									PhotoMessage message = arrayListMessage.get(arrayListMessage
 											.size() - 1);
@@ -286,7 +310,7 @@ public void setArgument(ChatLoad c){
 						isOdd = true;
 					}
 
-					Log.d("photo size", photoMessage.arrayList.size()+"");
+					Log.d("photo size", photoMessage.arrayList.size() + "");
 					int j = 0;
 					for (int i = 0; i < count; i++) {
 						HashMap<String, Message> mHashMapLeft = new HashMap<String, Message>();
@@ -298,23 +322,23 @@ public void setArgument(ChatLoad c){
 						// }
 						// if(isOdd && i == count-1){}
 						// else
-						try{
-							mHashMapLeft.put("1", photoMessage.arrayList.get(j +1));
-						}catch (Exception e) {
+						try {
+							mHashMapLeft.put("1", photoMessage.arrayList.get(j + 1));
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
-							
+
 						mMapList.add(mHashMapLeft);
 						j = j + 2;
 					}
 					mListAdapter.addSection(photoMessage.date, new GridAdapter(getActivity(),
 							mMapList, mImageFetcher));
 				}
-				
+
 			}
 			mListViewPhotos.setAdapter(mListAdapter);
 		}
-//		mListAdapter.notifyDataSetChanged();
+		// mListAdapter.notifyDataSetChanged();
 		// mName.setText(getChatName());
 		// mName.setTextColor(getChatColor());
 		// if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {

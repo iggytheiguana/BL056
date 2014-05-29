@@ -1,46 +1,70 @@
 package biz.softtechnics.qodeme.ui.one2one;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import com.google.android.gms.internal.cu;
+
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
+import android.text.Html.ImageGetter;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
+import biz.softtechnics.qodeme.core.provider.QodemeContract.Contacts.Sync;
+import biz.softtechnics.qodeme.core.sync.SyncHelper;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
 import biz.softtechnics.qodeme.images.utils.ImageResizer;
 import biz.softtechnics.qodeme.ui.common.CustomDotView;
 import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExtendedAdapterBasedView;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
+import biz.softtechnics.qodeme.ui.quickaction.ActionItem;
+import biz.softtechnics.qodeme.ui.quickaction.QuickAction;
 import biz.softtechnics.qodeme.utils.Converter;
+import biz.softtechnics.qodeme.utils.DbUtils;
 import biz.softtechnics.qodeme.utils.Helper;
 
 /**
@@ -138,7 +162,35 @@ public class ChatListSubItem extends RelativeLayout implements
 	}
 
 	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return super.onTouchEvent(event);
+	}
+
+	public ImageGetter getImageHTML() {
+		ImageGetter imageGetter = new ImageGetter() {
+			public Drawable getDrawable(String source) {
+				Drawable drawable = getResources().getDrawable(R.drawable.ic_flagged_gray);
+				drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+						drawable.getIntrinsicHeight());
+				return drawable;
+			}
+		};
+		return imageGetter;
+	}
+
+	public CharSequence addSmileySpans(CharSequence text) {
+
+		Drawable bm = getResources().getDrawable(R.drawable.ic_flagged_gray);
+		bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
+		SpannableStringBuilder builder = new SpannableStringBuilder(text);
+		ImageSpan is = new ImageSpan(bm);
+		builder.setSpan(is, 1, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+		return builder;
+	}
+
+	@Override
 	public void fill(Message me) {
+		final Message msg = me;
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 1) {
@@ -169,6 +221,15 @@ public class ChatListSubItem extends RelativeLayout implements
 			// getImageMessage().setImageBitmap(bitmap);
 			getImageMessage().setVisibility(View.VISIBLE);
 			getImageLayout().setVisibility(View.VISIBLE);
+
+			getImageMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					showPopupMenu(getMessage(), msg);
+					return true;
+				}
+			});
 		} else {
 			getImageMessage().setImageBitmap(null);
 			getImageMessage().setVisibility(View.GONE);
@@ -214,22 +275,35 @@ public class ChatListSubItem extends RelativeLayout implements
 		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
 		// "</font>";
 		String str = getMessage().getText().toString();
-		String mainString = str + dateString;
+		String mainString = str + dateString+" ";
+		String flag = "f";
+		if (me.is_flagged == 1) {
+			mainString = mainString + flag;
+		}
+
 		// Create our span sections, and assign a format to each.
 		SpannableString ss1 = new SpannableString(mainString);
 		ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
 																						// size
 		ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
 																								// size
+		if (me.is_flagged == 1) {
+			Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
+			bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
+			ImageSpan is = new ImageSpan(bm,ImageSpan.ALIGN_BASELINE);
+			ss1.setSpan(is, mainString.length()- flag.length(),mainString.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+		}
 		getMessage().setText(ss1);
+
 		if (me.replyTo_id > 0) {
 			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
 					.getLayoutParams();
 			param.width = (int) getDate().convertDpToPixel(70, getContext());
-			if (previousMessage != null){
-				if(previousMessage.replyTo_id>0){
+			if (previousMessage != null) {
+				if (previousMessage.replyTo_id > 0) {
 					param.topMargin = 0;
-					getDate().setCircleTopMargine((int)getDate().convertDpToPixel(2, getContext()));
+					getDate()
+							.setCircleTopMargine((int) getDate().convertDpToPixel(2, getContext()));
 				}
 			}
 			getDate().setLayoutParams(param);
@@ -241,6 +315,21 @@ public class ChatListSubItem extends RelativeLayout implements
 			getDate().setSecondVerticalLine2(me.isLast);
 			getDate().invalidate();
 			getMessage().setClickable(false);
+			getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// Toast.makeText(getContext(), "Text on long press",
+					// Toast.LENGTH_LONG).show();
+					// QuickAction action = new QuickAction(getContext());
+					// action.addActionItem(new ActionItem(0, "Hi"));
+					// action.addActionItem(new ActionItem(1, "Hii"));
+					// action.addActionItem(new ActionItem(2, "Hiii"));
+					// action.show(v);
+					showPopupMenu(v, msg);
+					return true;
+				}
+			});
 		} else {
 
 			getMessage().setOnClickListener(new OnClickListener() {
@@ -250,6 +339,22 @@ public class ChatListSubItem extends RelativeLayout implements
 					initSendMessage();
 				}
 			});
+			getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// Toast.makeText(getContext(), "Text on long press",
+					// Toast.LENGTH_LONG).show();
+					// QuickAction action = new QuickAction(getContext());
+					// action.addActionItem(new ActionItem(0, "Hi"));
+					// action.addActionItem(new ActionItem(1, "Hii"));
+					// action.addActionItem(new ActionItem(2, "Hiii"));
+					// action.show(v);
+					showPopupMenu(v, msg);
+					return true;
+				}
+			});
+			// getMessage().seton
 			getDate().setSecondVerticalLine(me.isFirst);
 			getDate().setSecondVerticalLine2(me.isLast);
 			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
@@ -348,14 +453,14 @@ public class ChatListSubItem extends RelativeLayout implements
 				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
 					if (previousMessage.replyTo_id > 0) {
 						// getDate().setVisibility(View.INVISIBLE);
-						if (chatType == 1) 
+						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
 						getDate().setCircle(false);
 					} else if (me.replyTo_id > 0) {
 						getDate().setCircle(true);
 						getDate().setVisibility(View.VISIBLE);
 					} else {
-						if (chatType == 1) 
+						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
 						getDate().setCircle(false);
 						getDate().setVisibility(View.VISIBLE);
@@ -371,6 +476,85 @@ public class ChatListSubItem extends RelativeLayout implements
 			}
 		}
 
+	}
+
+	@SuppressWarnings("deprecation")
+	private void showPopupMenu(View v, final Message message) {
+		boolean isContactAvail = false;
+		if (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
+			isContactAvail = true;
+		else {
+			Cursor cursor = getContext().getContentResolver().query(
+					QodemeContract.Contacts.CONTENT_URI,
+					QodemeContract.Contacts.ContactQuery.PROJECTION,
+					QodemeContract.Contacts.CONTACT_QRCODE + " = '" + message.qrcode + "'", null,
+					null);
+			if (cursor != null) {
+				if (cursor.getCount() > 0) {
+					isContactAvail = true;
+				}
+			}
+		}
+		// if (!isContactAvail) {
+		// if
+		// (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
+		// isContactAvail = true;
+		// }
+		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+		View view = inflater.inflate(R.layout.context_menu_layout, null);
+
+		final PopupWindow popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
+
+		if (isContactAvail) {
+			view.findViewById(R.id.textView_addContact).setVisibility(GONE);
+			view.findViewById(R.id.view_divider1).setVisibility(GONE);
+		}
+		if (QodemePreferences.getInstance().getQrcode().equals(message.qrcode)) {
+			view.findViewById(R.id.textView_block).setVisibility(GONE);
+			view.findViewById(R.id.view_divider2).setVisibility(GONE);
+		}
+		view.findViewById(R.id.textView_addContact).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getContext().getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
+						QodemeContract.Contacts.addNewContactValues(message.qrcode));
+				SyncHelper.requestManualSync();
+				popupWindow.dismiss();
+			}
+		});
+		view.findViewById(R.id.textView_block).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getContext().getContentResolver()
+						.update(QodemeContract.Contacts.CONTENT_URI,
+								QodemeContract.Contacts.blockContactValues(Sync.STATE_UPDATED),
+								QodemeContract.Contacts.CONTACT_QRCODE + "= '" + message.qrcode
+										+ "'", null);
+				SyncHelper.requestManualSync();
+				popupWindow.dismiss();
+
+			}
+		});
+		view.findViewById(R.id.textView_flagged).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getContext().getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+						QodemeContract.Messages.updateMessageFlagged(),
+						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(message._id));
+				SyncHelper.requestManualSync();
+				popupWindow.dismiss();
+			}
+		});
+
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+		popupWindow.setContentView(view);
+		popupWindow.setOutsideTouchable(true);
+		popupWindow.showAsDropDown(v);
 	}
 
 	private ImageButton getSendButton() {

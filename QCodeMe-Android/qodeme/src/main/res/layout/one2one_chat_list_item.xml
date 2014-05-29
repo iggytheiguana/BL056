@@ -166,6 +166,7 @@
             android:layout_above="@+id/layout_message"
             android:layout_below="@+id/top_line"
             android:divider="@null"
+            android:listSelector="@color/transparent"
             android:fadingEdge="none"
             android:visibility="visible" />
         
