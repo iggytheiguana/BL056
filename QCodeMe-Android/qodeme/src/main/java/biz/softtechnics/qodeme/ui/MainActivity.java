@@ -438,10 +438,9 @@ public class MainActivity extends BaseActivity implements
 		mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
 		mViewPager.setAdapter(mPagerAdapter);
 		// }
-		// final FrameLayout expandedImageView = (FrameLayout)
-		// findViewById(R.id.expanded_chatView);
-		// expandedImageView.setVisibility(View.VISIBLE);
-		zoomImageFromThumb(v, 0);
+		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
+		expandedImageView.setVisibility(View.VISIBLE);
+		// zoomImageFromThumb(v, 0);
 		// ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
 		// Animation.RELATIVE_TO_SELF,
 		// (float) 0.5, Animation.RELATIVE_TO_SELF, (float) 0.5);
@@ -490,11 +489,10 @@ public class MainActivity extends BaseActivity implements
 			mPagerAdapter = null;
 		mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
 		mViewPager.setAdapter(mPagerAdapter);
-		// final FrameLayout expandedImageView = (FrameLayout)
-		// findViewById(R.id.expanded_chatView);
-		// expandedImageView.setVisibility(View.VISIBLE);
-		// mViewPager.setVisibility(View.GONE);
-		zoomImageFromThumb(view, 0);
+		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
+		expandedImageView.setVisibility(View.VISIBLE);
+		//mViewPager.setVisibility(View.GONE);
+		// zoomImageFromThumb(view, 0);
 		Helper.hideKeyboard(MainActivity.this);
 	}
 
