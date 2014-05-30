@@ -442,6 +442,36 @@ public class QodemeContract {
 			// }
 			return contentValues;
 		}
+		public static ContentValues addNewPushChatValues(long chatId, int type, String qrCode,
+				String admin, String latitude, String longitude, String desc, String status, int no_flagged, int no_member, String title, String tag, int is_locked) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
+			contentValues.put(Chats.CHAT_ID, chatId);
+			contentValues.put(Chats.CHAT_QRCODE, qrCode);
+			contentValues.put(Chats.CHAT_TYPE, type);
+			contentValues.put(Chats.CHAT_COLOR, RandomColorGenerator.getInstance().nextColor());
+			contentValues.put(Chats.CHAT_DESCRIPTION, desc);
+			contentValues.put(Chats.CHAT_IS_LOCKED, is_locked);
+
+			contentValues.put(Chats.CHAT_NUMBER_OF_FLAGGED, no_flagged);
+			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, no_member);
+			contentValues.put(Chats.CHAT_STATUS, status);
+			contentValues.put(Chats.CHAT_TAGS, tag);
+			contentValues.put(Chats.CHAT_TITLE, title);
+			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
+			// String location = "";
+			// LatLonCity latLonCity =
+			// QodemePreferences.getInstance().getLastLocation();
+			// if (latLonCity != null) {// && latLonCity.getCity() != null) {
+			// // location = latLonCity.getCity();
+			// contentValues.put(Chats.CHAT_LATITUDE, latLonCity.getLat());
+			// contentValues.put(Chats.CHAT_LONGITUDE, latLonCity.getLon());
+			// } else {
+			contentValues.put(Chats.CHAT_LATITUDE, "" + latitude);
+			contentValues.put(Chats.CHAT_LONGITUDE, "" + longitude);
+			// }
+			return contentValues;
+		}
 
 		public static ContentValues updateChatInfoValues(String title, int color,
 				String description, int is_locked, String status, String tags, int updated,

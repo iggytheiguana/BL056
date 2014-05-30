@@ -207,7 +207,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 						InputMethodManager imm = (InputMethodManager) getActivity()
 								.getSystemService(Activity.INPUT_METHOD_SERVICE);
 						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-						callback.showChat(c, true);
+						callback.showChat(c, true,view);
 					}
 
 					public int getChatHeight(long chatId) {
@@ -279,7 +279,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 						InputMethodManager imm = (InputMethodManager) getActivity()
 								.getSystemService(Activity.INPUT_METHOD_SERVICE);
 						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-						callback.showChat(c, true);
+						callback.showChat(c, true,view);
 
 					}
 
@@ -296,14 +296,17 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 					@Override
 					public ImageFetcher getImageFetcher() {
-						// TODO Auto-generated method stub
 						return callback.getImageFetcher();
 					}
 
 					@Override
 					public int getChatType(long chatId) {
-						// TODO Auto-generated method stub
 						return callback.getChatType(chatId);
+					}
+
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						return callback.getChatLoad(chatId);
 					}
 				});
 		mListView.setAdapter(mListAdapter);

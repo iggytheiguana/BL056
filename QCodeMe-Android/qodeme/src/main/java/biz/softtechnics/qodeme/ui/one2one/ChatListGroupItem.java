@@ -391,10 +391,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return shareChatBtn = shareChatBtn != null ? shareChatBtn
 				: (ImageButton) findViewById(R.id.btn_share);
 	}
+
 	public RelativeLayout getChatItem() {
 		return mChatItem = mChatItem != null ? mChatItem
 				: (RelativeLayout) findViewById(R.id.relative_chatItem);
 	}
+
 	// sendImgMessageBtn
 
 	// public View getCornerTop() {
@@ -438,7 +440,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
-			showMessage();
+			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
+
+			if (chatLoad.is_locked != 1)
+				showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mChatLoad);
 			messageRead();
@@ -699,13 +704,13 @@ public class ChatListGroupItem extends RelativeLayout implements
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
 			tempMessage.addAll(listData);
-			
+
 			for (Message message : tempMessage) {
 				if (message.replyTo_id > 0) {
 					replyMessage.add(message);
 					listData.remove(message);
 				}
-				if(message.state == 3){
+				if (message.state == 3) {
 					isContainUnread = true;
 				}
 			}
@@ -803,11 +808,16 @@ public class ChatListGroupItem extends RelativeLayout implements
 					public Contact getContact(String senderQrcode) {
 						return mCallback.getContact(senderQrcode);
 					}
+
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						return mCallback.getChatLoad(chatId);
+					}
 				}, callbackChatListInsideFragmentCallback);
 
-		if(isContainUnread)
+		if (isContainUnread)
 			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
-		else{
+		else {
 			getChatItem().setBackgroundResource(R.drawable.bg_box);
 		}
 		if (listData != null)
@@ -888,6 +898,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 				sendMessage();
 			}
 		});
+
+		ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
+
+		if (chatLoad != null && chatLoad.is_locked == 1)
+			getSendImage().setVisibility(View.GONE);
 
 		getSendImage().setOnClickListener(new OnClickListener() {
 

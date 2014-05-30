@@ -18,8 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_message"
-        android:divider="@null"
         android:animateLayoutChanges="true"
+        android:divider="@null"
         android:orientation="vertical"
         android:visibility="gone" />
     <!-- <com.jake.quiltview.QuiltView -->
@@ -41,8 +41,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
         android:visibility="gone" >
 
         <ImageButton
@@ -50,6 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:background="@null"
+            android:padding="10dp"
             android:src="@drawable/ic_menu_send" />
 
         <EditText
@@ -60,7 +62,7 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/button_message"
             android:hint="Type message"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine|textNoSuggestions" />
     </RelativeLayout>
 
 </RelativeLayout>

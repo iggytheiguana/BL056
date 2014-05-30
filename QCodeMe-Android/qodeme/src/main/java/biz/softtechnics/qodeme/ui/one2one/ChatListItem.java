@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.images.utils.ImageFetcher;
@@ -131,13 +132,13 @@ public class ChatListItem extends RelativeLayout implements
 			List<Message> replyMessage = new ArrayList<Message>();
 			final List<Message> tempMessage = new ArrayList<Message>();
 			tempMessage.addAll(listData);
-			
+
 			for (Message message : tempMessage) {
 				if (message.replyTo_id > 0) {
 					replyMessage.add(message);
 					listData.remove(message);
 				}
-				if(message.state == 3){
+				if (message.state == 3) {
 					isContainUnread = true;
 				}
 			}
@@ -227,31 +228,37 @@ public class ChatListItem extends RelativeLayout implements
 						// TODO Auto-generated method stub
 						return mCallback.getContact(senderQrcode);
 					}
+
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						// TODO Auto-generated method stub
+						return mCallback.getChatLoad(chatId);
+					}
 				}, callbackChatListInsideFragmentCallback);
 
 		if (listData != null) {
-//			if(listData.size()>15){
-//				for(int i=0; i<listData.size() - 15; i++){
-//					listData.remove(i);
-//				}
-//			}
+			// if(listData.size()>15){
+			// for(int i=0; i<listData.size() - 15; i++){
+			// listData.remove(i);
+			// }
+			// }
 			listAdapter.addAll(listData);
 
 		}
-		if(isContainUnread)
+		if (isContainUnread)
 			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
-		else{
+		else {
 			getChatItem().setBackgroundResource(R.drawable.bg_box);
 		}
 		getList().setAdapter(listAdapter);
 		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		getList().setStackFromBottom(true);
-//		getList().setDisabled(true);
+		// getList().setDisabled(true);
 		getList().setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				 
+
 				return gestureDetector.onTouchEvent(event);
 			}
 		});
@@ -323,6 +330,10 @@ public class ChatListItem extends RelativeLayout implements
 			}
 		});
 
+		ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
+
+		if (chatLoad != null && chatLoad.is_locked == 1)
+			getSendImage().setVisibility(View.GONE);
 		getSendImage().setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -395,11 +406,11 @@ public class ChatListItem extends RelativeLayout implements
 		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
 				: (ImageButton) findViewById(R.id.btn_camera);
 	}
+
 	public RelativeLayout getChatItem() {
 		return mChatItem = mChatItem != null ? mChatItem
 				: (RelativeLayout) findViewById(R.id.relative_chatItem);
 	}
-	
 
 	// sendImgMessageBtn
 
@@ -426,7 +437,7 @@ public class ChatListItem extends RelativeLayout implements
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		return super.onTouchEvent(e) ? true : gestureDetector.onTouchEvent(e);
-//		return true;
+		// return true;
 	}
 
 	@Override
@@ -446,7 +457,10 @@ public class ChatListItem extends RelativeLayout implements
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
-			showMessage();
+			ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
+
+			if (chatLoad != null && chatLoad.is_locked != 1)
+				showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mContact);
 			// messageRead();
@@ -456,16 +470,20 @@ public class ChatListItem extends RelativeLayout implements
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			// Helper.hideKeyboard(getContext(), getMessageEdit());
+			Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mContact);
 			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
 		}
+
 		@Override
 		public void onLongPress(MotionEvent e) {
 			super.onLongPress(e);
+			Toast.makeText(getContext(), "Long Press", Toast.LENGTH_LONG).show();
+			
 		}
+		
 	}
 
 	public void showMessage() {

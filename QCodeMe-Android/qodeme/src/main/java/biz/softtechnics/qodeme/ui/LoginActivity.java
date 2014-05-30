@@ -46,7 +46,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private static final int REQUEST_ACTIVITY_SCAN_QR_CODE = 2;
 
 	private ImageButton mQrCode;
-	private Button mSignin;
+	private Button mSignin, mBtnSignUp;
 	private EditText mPassword;
 	private String mQrCodeText;
 	private TextView mTextViewNotYou, mTextViewClear, mTextViewEmptyQR;
@@ -62,6 +62,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_login);
 		mQrCode = (ImageButton) findViewById(R.id.qr_code);
 		mSignin = (Button) findViewById(R.id.signin);
+		mBtnSignUp = (Button) findViewById(R.id.sign_up);
 		mPassword = (EditText) findViewById(R.id.password);
 		mQrCodeText = QodemePreferences.getInstance().getQrcode();
 		mTextViewNotYou = (TextView) findViewById(R.id.textView_not_you);
@@ -71,29 +72,28 @@ public class LoginActivity extends Activity implements OnClickListener {
 		mTextViewNotYou.setOnClickListener(this);
 
 		mPassword.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if(mPassword.getText().toString().trim().length()>0)
+				if (mPassword.getText().toString().trim().length() > 0)
 					mSignin.setEnabled(true);
 				else
 					mSignin.setEnabled(false);
 			}
-			
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				
+
 			}
-			
+
 			@Override
 			public void afterTextChanged(Editable s) {
-				
+
 			}
 		});
-		
+
 		refreshQrCode();
-		
-		
+
 		mQrCode.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -111,7 +111,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 				return true;
 			}
 		});
+		mBtnSignUp.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				startActivityForResult(new Intent(LoginActivity.this, RegistrationActivity.class),
+						REQUEST_ACTIVITY_REGISTRATION);
+			}
+		});
 		mSignin.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -171,7 +178,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				mQrCodeText = data.getStringExtra(IntentKey.QR_CODE);
 				refreshQrCode();
 			}
-			
+
 		}
 	}
 
@@ -192,13 +199,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 		mQrCode.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
 				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + mQrCodeText), 500, 500,
 				getResources().getColor(R.color.login_qrcode), Color.TRANSPARENT));
-		
-		if(mQrCodeText == null || mQrCodeText.trim().equals("")){
-			mQrCode.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo_with_qr));
+
+		if (mQrCodeText == null || mQrCodeText.trim().equals("")) {
+			mQrCode.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+					R.drawable.ic_logo_with_qr));
 			mTextViewEmptyQR.setVisibility(View.VISIBLE);
 			mTextViewClear.setVisibility(View.GONE);
 			mTextViewNotYou.setVisibility(View.GONE);
-		}else{
+		} else {
 			mTextViewEmptyQR.setVisibility(View.GONE);
 			mTextViewClear.setVisibility(View.VISIBLE);
 			mTextViewNotYou.setVisibility(View.VISIBLE);
@@ -223,7 +231,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		QodemePreferences.getInstance().setQrcode(null);
-		mQrCode.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo_with_qr));
+		mQrCode.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+				R.drawable.ic_logo_with_qr));
 		mTextViewEmptyQR.setVisibility(View.VISIBLE);
 		mTextViewClear.setVisibility(View.GONE);
 		mTextViewNotYou.setVisibility(View.GONE);

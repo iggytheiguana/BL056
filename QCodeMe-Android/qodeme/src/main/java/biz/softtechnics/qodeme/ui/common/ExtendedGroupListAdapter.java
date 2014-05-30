@@ -32,7 +32,13 @@ public class ExtendedGroupListAdapter<T extends ExtendedGroupAdapterBasedView<E,
         view = (T) convertView;
         E e = (E) getItem(position);
         E previous = position > 0 ? (E) getItem(position - 1) : null;
-        view.fill(e, callback, position, previous, callback2);
+        E next;
+		try {
+			next = (E) getItem(position + 1);
+		} catch (Exception ex) {
+			next = null;
+		}
+        view.fill(e, callback, position, previous,next, callback2);
         viewMap.put(position, view);
 
         return convertView;

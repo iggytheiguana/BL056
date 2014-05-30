@@ -45,6 +45,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import biz.softtechnics.qodeme.Application;
 import biz.softtechnics.qodeme.R;
 import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
+import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.model.Message;
 import biz.softtechnics.qodeme.core.provider.QodemeContract;
@@ -57,6 +58,7 @@ import biz.softtechnics.qodeme.ui.common.CustomEdit;
 import biz.softtechnics.qodeme.ui.common.ExtendedGroupAdapterBasedView;
 import biz.softtechnics.qodeme.ui.one2one.ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback;
 import biz.softtechnics.qodeme.utils.Converter;
+import biz.softtechnics.qodeme.utils.DbUtils;
 import biz.softtechnics.qodeme.utils.Helper;
 
 /**
@@ -77,6 +79,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	private int position;
 	private Message previousMessage;
+	private Message nextMessage;
 	private Message currentMessage;
 	private CustomDotView date;
 	private TextView dateHeader;
@@ -87,6 +90,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
 	private ProgressBar mProgressBar;
+	private View viewUserSpace;
 
 	public ChatListGroupSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -114,6 +118,10 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	// return line ;//= line != null ? line : (CustomDotView)
 	// findViewById(R.id.custom_line);
 	// }
+	public View getUserSpace() {
+		return viewUserSpace = viewUserSpace != null ? viewUserSpace
+				: (View) findViewById(R.id.view_space);
+	}
 
 	public TextView getDateHeader() {
 		return dateHeader = dateHeader != null ? dateHeader
@@ -149,10 +157,12 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	@Override
 	public void fill(Message me, ChatListSubAdapterCallback callback, int position,
-			Message previousMessage, One2OneChatListInsideFragmentCallback callback2) {
+			Message previousMessage, Message nextMessage,
+			One2OneChatListInsideFragmentCallback callback2) {
 		this.callback = callback;
 		this.position = position;
 		this.previousMessage = previousMessage;
+		this.nextMessage = nextMessage;
 		this.currentMessage = me;
 		this.callback2 = callback2;
 		fill(me);
@@ -266,7 +276,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
 		// "</font>";
 		String str = getMessage().getText().toString();
-		String mainString = str + dateString+" ";
+		String mainString = str + dateString + " ";
 		String flag = "f";
 		if (me.is_flagged == 1) {
 			mainString = mainString + flag;
@@ -281,7 +291,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		if (me.is_flagged == 1) {
 			Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
 			bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
-			ImageSpan is = new ImageSpan(bm,ImageSpan.ALIGN_BASELINE);
+			ImageSpan is = new ImageSpan(bm, ImageSpan.ALIGN_BASELINE);
 			ss1.setSpan(is, mainString.length() - flag.length(), mainString.length(),
 					Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 		}
@@ -309,13 +319,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 				@Override
 				public boolean onLongClick(View v) {
-					// Toast.makeText(getContext(), "Text on long press",
-					// Toast.LENGTH_LONG).show();
-					// QuickAction action = new QuickAction(getContext());
-					// action.addActionItem(new ActionItem(0, "Hi"));
-					// action.addActionItem(new ActionItem(1, "Hii"));
-					// action.addActionItem(new ActionItem(2, "Hiii"));
-					// action.show(v);
 					showPopupMenu(v, msg);
 					return true;
 				}
@@ -326,20 +329,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 				@Override
 				public void onClick(View v) {
-					initSendMessage();
+					ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+
+					if (chatLoad != null && chatLoad.is_locked != 1)
+						initSendMessage();
 				}
 			});
 			getMessage().setOnLongClickListener(new OnLongClickListener() {
 
 				@Override
 				public boolean onLongClick(View v) {
-					// Toast.makeText(getContext(), "Text on long press",
-					// Toast.LENGTH_LONG).show();
-					// QuickAction action = new QuickAction(getContext());
-					// action.addActionItem(new ActionItem(0, "Hi"));
-					// action.addActionItem(new ActionItem(1, "Hii"));
-					// action.addActionItem(new ActionItem(2, "Hiii"));
-					// action.show(v);
 					showPopupMenu(v, msg);
 					return true;
 				}
@@ -391,9 +390,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			}
 			getDate().invalidate();
 		}
-
+		getUserSpace().setVisibility(GONE);
 		getHeaderContainer().setVisibility(View.GONE);
 		getOpponentSeparator().setVisibility(View.GONE);
+		if (nextMessage != null) {
+			if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
+				getUserSpace().setVisibility(GONE);
+			} else {
+				getUserSpace().setVisibility(VISIBLE);
+			}
+		}
 		if (previousMessage != null /*
 									 * &&
 									 * !TextUtils.isEmpty(previousMessage.created
@@ -442,10 +448,14 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
 
-						getDate().setCircle(false);
+						if (me.replyTo_id > 0)
+							getDate().setCircle(false);
+						else {
+							getDate().setCircle(true);
+						}
 					} else if (me.replyTo_id > 0) {
 						getDate().setCircle(true);
-						getDate().setVisibility(View.VISIBLE);
+
 					} else {
 						if (chatType == 1)
 							getMessagerName().setVisibility(View.GONE);
@@ -454,6 +464,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					}
 				} else {
 					getDate().setCircle(true);
+					// getUserSpace().setVisibility(VISIBLE);
 					getDate().setVisibility(View.VISIBLE);
 				}
 
@@ -530,6 +541,10 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 			@Override
 			public void onClick(View v) {
+				getContext().getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+						QodemeContract.Messages.updateMessageFlagged(),
+						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(message._id));
+				SyncHelper.requestManualSync();
 				popupWindow.dismiss();
 			}
 		});

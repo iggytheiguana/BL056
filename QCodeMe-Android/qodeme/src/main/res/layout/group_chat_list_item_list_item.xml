@@ -5,27 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-<RelativeLayout
+    <RelativeLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-         >
+        android:layout_marginLeft="10dp" >
 
         <biz.softtechnics.qodeme.ui.common.TextViewRegular
             android:id="@+id/date_header"
+            style="@style/TextView.Message.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextView.Message.Text"
+            android:background="@android:color/white"
             android:paddingBottom="2dp"
             android:paddingRight="10dp"
             android:paddingTop="2dp"
             android:text="jul 10th 2014"
-            android:background="@android:color/white"
             android:textColor="@color/text_message_not_read"
             android:textSize="18sp" />
     </RelativeLayout>
+
     <View
         android:id="@+id/opponent_separator"
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                 android:layout_marginTop="2dp"
                 tools:padding="5dp"
                 tools:text_size="18sp" />
-            
+
             <!-- style="@style/TextView.Message.Date" -->
 
             <LinearLayout
@@ -78,15 +78,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
+                    android:layout_marginTop="0dp"
                     android:paddingBottom="0dp"
-                    android:paddingLeft="5dp"
+                    android:paddingLeft="1dp"
                     android:paddingRight="5dp"
                     android:paddingTop="0dp"
-                    android:layout_marginTop="0dp"
                     android:text="Item"
-                    android:visibility="gone"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:visibility="gone" />
 
                 <biz.softtechnics.qodeme.ui.common.TextViewRegular
                     android:id="@+id/message"
@@ -95,13 +95,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="5dp"
+                    android:paddingBottom="0dp"
+                    android:paddingLeft="1dp"
                     android:paddingRight="5dp"
                     android:paddingTop="0dp"
                     android:text="Item"
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
+
+                <View
+                    android:id="@+id/view_space"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_alignParentTop="true"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
@@ -119,7 +126,7 @@
                 tools:text_size="18sp" />
 
             <FrameLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
                 <ProgressBar
@@ -168,7 +175,7 @@
             android:background="@null"
             android:padding="4dp"
             android:src="@drawable/ic_menu_send"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <!-- <EditText -->
         <!-- android:id="@+id/edit_message" -->
@@ -196,7 +203,7 @@
             android:layout_toRightOf="@id/imageButton_imgMessage"
             android:focusable="true"
             android:hint="@string/message"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textNoSuggestions"
             android:maxHeight="50dp"
             android:visibility="visible" >
 

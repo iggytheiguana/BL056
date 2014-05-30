@@ -55,6 +55,7 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Messages.MESSAGE_LATITUDE, m.latitude);
 		builder.withValue(Messages.MESSAGE_LONGITUDE, m.longitude);
 		builder.withValue(Messages.MESSAGE_SENDERNAME, m.senderName);
+		builder.withValue(Messages.MESSAGE_HAS_FLAGGED, m.is_flagged);
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());
@@ -74,6 +75,8 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Chats.CHAT_TYPE, chatLoad.type);
 		builder.withValue(Chats.CHAT_ADMIN_QRCODE, chatLoad.user_qrcode);
 		builder.withValue(Chats.CHAT_TITLE, chatLoad.title);
+		builder.withValue(Chats.CHAT_IS_LOCKED, chatLoad.is_locked);
+//		builder.withValue(Chats.chat_, arg1)
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());
@@ -85,8 +88,6 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 //		builder1.withSelection(Contacts.CONTACT_CHAT_ID+"=?", new String[]{chatLoad.chatId+""});
 //		batch.add(builder1.build());
 	}
-	private static void parseChat1(ChatLoad chatLoad, ArrayList<ContentProviderOperation> batch) {
-		
-	}
+	
 
 }

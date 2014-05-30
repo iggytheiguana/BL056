@@ -7,6 +7,7 @@ import com.google.android.gms.internal.bu;
 import com.google.gson.Gson;
 
 import biz.softtechnics.qodeme.Application;
+import biz.softtechnics.qodeme.core.data.preference.QodemePreferences;
 import biz.softtechnics.qodeme.core.io.model.ChatLoad;
 import biz.softtechnics.qodeme.core.io.model.Contact;
 import biz.softtechnics.qodeme.core.io.utils.RestKeyMap;
@@ -73,6 +74,7 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 						mChatLoad.description, mChatLoad.is_locked, mChatLoad.status,
 						mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members, mChatLoad.latitude, mChatLoad.longitude),
 				QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
+		QodemePreferences.getInstance().set(""+mChatLoad.chatId, mChatLoad.status);
 
 		// SyncHelper.requestManualSync();
 	}

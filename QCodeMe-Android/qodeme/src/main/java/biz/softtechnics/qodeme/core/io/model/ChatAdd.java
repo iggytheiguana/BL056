@@ -27,4 +27,6 @@ public class ChatAdd {
     public int number_of_members;
     public int number_of_dislikes;
     public String title;
+    
+    public String created;
 }

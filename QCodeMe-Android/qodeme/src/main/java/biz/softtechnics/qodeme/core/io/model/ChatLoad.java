@@ -30,4 +30,5 @@ public class ChatLoad {
     @SerializedName("chat_title")
     public String title;
     public String user_qrcode;
+    public String created;
 }

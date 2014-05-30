@@ -36,4 +36,5 @@ public class Message {
 	public boolean isLast = false;
 	public int is_deleted;
 	
+	
 }

@@ -35,4 +35,5 @@ public interface ChatListAdapterCallback extends ExAdapterCallback {
     Contact getContact(String qrCode);
     ImageFetcher getImageFetcher();
     int getChatType(long chatId);
+    ChatLoad getChatLoad(long chatId);
 }

@@ -120,6 +120,8 @@ public class ChatInsideFragment extends Fragment {
 
 		Contact getContact(String qrCode);
 
+		ChatLoad getChatLoad(long chatId);
+
 	}
 
 	/**
@@ -177,7 +179,14 @@ public class ChatInsideFragment extends Fragment {
 		initSendMessage();
 		mName = (TextView) getView().findViewById(R.id.name);
 		mStatus = (TextView) getView().findViewById(R.id.textView_status);
-		updateUi();
+//		new Handler().postDelayed(new Runnable() {
+//
+//			@Override
+//			public void run() {
+
+				updateUi();
+//			}
+//		}, 500);
 
 	}
 
@@ -306,12 +315,13 @@ public class ChatInsideFragment extends Fragment {
 			JSONObject messageJson = new JSONObject(message);
 			long chatId = messageJson.getLong("chatId");
 			int event = messageJson.getInt("event");
-//			String token = messageJson.getString("event1");
+			// String token = messageJson.getString("event1");
 
 			Log.d(TAG, activityName + "Received event: " + event + " in chat: " + chatId);
 			if (event == GetEventForUserStartedTypingMessage()) {
-				//if (QodemePreferences.getInstance().getRestToken().equals(token))
-					receiveOtherUserStartedTypingEvent(chatId);
+				// if
+				// (QodemePreferences.getInstance().getRestToken().equals(token))
+				receiveOtherUserStartedTypingEvent(chatId);
 			} else if (event == GetEventForUserStoppedTypingMessage()) {
 				receiveOtherUserStoppedTypingEvent(chatId);
 			}
@@ -353,7 +363,7 @@ public class ChatInsideFragment extends Fragment {
 				json.put("chatId", chatId);
 				json.put("authToken", authToken);
 				json.put("event", event);
-//				json.put("event1", authToken);
+				// json.put("event1", authToken);
 
 				// now we send the message
 				mConnection.sendTextMessage(json.toString());
@@ -545,6 +555,11 @@ public class ChatInsideFragment extends Fragment {
 						return callback.getContact(senderQrcode);
 					}
 
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						return callback.getChatLoad(chatId);
+					}
+
 				}, chatListInsideFragmentCallback);
 
 		mListView.addFooterView(footerView);
@@ -590,7 +605,7 @@ public class ChatInsideFragment extends Fragment {
 			mListAdapter.clear();
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			mName.setText(getChatName());
-			
+
 			MainActivity activity = (MainActivity) callback;
 			ChatLoad chatLoad = activity.getChatLoad(getChatId());
 			if (chatLoad != null)

@@ -19,7 +19,7 @@ public abstract class CommonPreferences {
 
     protected abstract String getName();
 	
-	protected String get( String key, String defValue ) {
+	public String get( String key, String defValue ) {
 		return sp.getString(key, defValue);
 	}
 	
@@ -39,7 +39,7 @@ public abstract class CommonPreferences {
 		return sp.getFloat(key, defValue);
 	}
 	
-	protected void set( String key, String value ) {
+	public void set( String key, String value ) {
 		SharedPreferences.Editor ed = sp.edit();
 		ed.putString(key, value);
 		ed.commit();

@@ -63,9 +63,9 @@ public class ChatListFragment extends Fragment {
 
 		void setChatHeight(long chatId, int height);
 
-		void showChat(Contact c, boolean firstUpdate);
+		void showChat(Contact c, boolean firstUpdate,View view);
 		
-		void showChat(ChatLoad c, boolean firstUpdate);
+		void showChat(ChatLoad c, boolean firstUpdate,View view);
 
 		Typeface getFont(Fonts font);
 
@@ -77,6 +77,7 @@ public class ChatListFragment extends Fragment {
 		
 		ImageFetcher getImageFetcher();
 		int getChatType(long chatId);
+		ChatLoad getChatLoad(long chatId);
 	}
 
 	@Override
@@ -200,7 +201,7 @@ public class ChatListFragment extends Fragment {
 						InputMethodManager imm = (InputMethodManager) getActivity()
 								.getSystemService(Activity.INPUT_METHOD_SERVICE);
 						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-						callback.showChat(c, true);
+						callback.showChat(c, true, view);
 					}
 
 					public int getChatHeight(long chatId) {
@@ -292,6 +293,12 @@ public class ChatListFragment extends Fragment {
 					public int getChatType(long chatId) {
 						// TODO Auto-generated method stub
 						return callback.getChatType(chatId);
+					}
+
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						// TODO Auto-generated method stub
+						return callback.getChatLoad(chatId);
 					}
 				});
 		mListView.setAdapter(mListAdapter);

@@ -10,33 +10,39 @@ import java.util.List;
 /**
  * Created by Alex on 10/24/13.
  */
-public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C extends ExAdapterCallback> extends ListAdapter<T, E> {
+public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C extends ExAdapterCallback>
+		extends ListAdapter<T, E> {
 
+	private final C callback;
+	private final One2OneChatListInsideFragmentCallback callback2;
 
-    private final C callback;
-    private final One2OneChatListInsideFragmentCallback callback2;
+	public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback,
+			One2OneChatListInsideFragmentCallback callback2) {
+		super(context, layoutResId, list);
+		this.callback = callback;
+		this.callback2 = callback2;
+	}
 
-    public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback, One2OneChatListInsideFragmentCallback callback2) {
-        super(context, layoutResId, list);
-        this.callback = callback;
-        this.callback2 = callback2;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			convertView = layoutInflater.inflate(layoutResId, null);
+		}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = layoutInflater.inflate(layoutResId, null);
-        }
+		view = (T) convertView;
+		E e = (E) getItem(position);
+		E previous = position > 0 ? (E) getItem(position - 1) : null;
+		E next;
+		try {
+			next = (E) getItem(position + 1);
+		} catch (Exception ex) {
+			next = null;
+		}
+		view.fill(e, callback, position, previous, next, callback2);
+		viewMap.put(position, view);
 
-        view = (T) convertView;
-        E e = (E) getItem(position);
-        E previous = position > 0 ? (E) getItem(position - 1) : null;
-        view.fill(e, callback, position, previous, callback2);
-        viewMap.put(position, view);
-
-        return convertView;
-    }
-
+		return convertView;
+	}
 
 }

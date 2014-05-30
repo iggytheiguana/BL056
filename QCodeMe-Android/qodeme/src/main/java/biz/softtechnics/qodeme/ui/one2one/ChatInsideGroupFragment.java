@@ -546,6 +546,12 @@ public class ChatInsideGroupFragment extends Fragment {
 						return callback.getContact(senderQrcode);
 					}
 
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						// TODO Auto-generated method stub
+						return callback.getChatLoad(chatId);
+					}
+
 				}, chatListInsideFragmentCallback);
 
 		mListView.addFooterView(footerView);

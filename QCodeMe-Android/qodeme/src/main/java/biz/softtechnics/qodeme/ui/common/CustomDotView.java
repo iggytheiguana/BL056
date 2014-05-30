@@ -131,11 +131,11 @@ public class CustomDotView extends TextView {
 			if (isCircle) {
 				mPaintCircle.setColor(dotColor);
 				canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2)+circleTopMargine,
-						(textSize / 2) - 2, mPaintCircle);// RADIUS = 7
+						(textSize / 2) - 3, mPaintCircle);// RADIUS = 7
 				if (isOutLine()) {
 					mPaintCircle.setColor(Color.WHITE);
 					canvas.drawCircle(getWidth() - (textSize / 2) - 5,
-							(textSize / 2)+circleTopMargine, ((textSize / 2) - 2) - 1, mPaintCircle);
+							(textSize / 2)+circleTopMargine, ((textSize / 2) - 3) - 1, mPaintCircle);
 				}
 			}
 			// canvas.drawLine(10, padding+2+(textSize/2), getWidth() - 15,
@@ -147,11 +147,11 @@ public class CustomDotView extends TextView {
 			if (isCircle) {
 				mPaintCircle.setColor(dotColor);
 				canvas.drawCircle((textSize / 2) + 2,  (textSize / 2),
-						(textSize / 2) - 2, mPaintCircle);
+						(textSize / 2) - 3, mPaintCircle);
 				if (isOutLine()) {
 					mPaintCircle.setColor(Color.WHITE);
 					canvas.drawCircle((textSize / 2) + 2, (textSize / 2),
-							((textSize / 2) - 2) - 1, mPaintCircle);
+							((textSize / 2) - 3) - 1, mPaintCircle);
 				}
 			}
 			// canvas.drawBitmap(circle, 0,0,new Paint());

@@ -76,15 +76,15 @@ public class ChatListGroupFragment extends Fragment {
 	//
 	// void messageRead(long chatId);
 	// }
-	
-	public ChatListGroupFragment()
-	{
+
+	public ChatListGroupFragment() {
 		super();
 	}
 
 	public ChatListGroupFragment(int chatType) {
 		this.chatType = chatType;
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -205,7 +205,7 @@ public class ChatListGroupFragment extends Fragment {
 						InputMethodManager imm = (InputMethodManager) getActivity()
 								.getSystemService(Activity.INPUT_METHOD_SERVICE);
 						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-						callback.showChat(c, true);
+						callback.showChat(c, true,view);
 					}
 
 					public int getChatHeight(long chatId) {
@@ -252,7 +252,7 @@ public class ChatListGroupFragment extends Fragment {
 					@Override
 					public void sendMessage(Contact c, String message, String photoUrl,
 							int hashPhoto, long replyTo_Id, double latitude, double longitude,
-							String senderName,String localUrl) {
+							String senderName, String localUrl) {
 						callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
 								latitude, longitude, senderName, localUrl);
 
@@ -265,10 +265,11 @@ public class ChatListGroupFragment extends Fragment {
 
 					@Override
 					public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
-							long replyTo_Id, double latitude, double longitude, String senderName,String localUrl) {
+							long replyTo_Id, double latitude, double longitude, String senderName,
+							String localUrl) {
 						// TODO Auto-generated method stub
 						callback.sendMessage(c, message, photoUrl, hashPhoto, replyTo_Id, latitude,
-								longitude, senderName,localUrl);
+								longitude, senderName, localUrl);
 					}
 
 					@Override
@@ -276,32 +277,33 @@ public class ChatListGroupFragment extends Fragment {
 						InputMethodManager imm = (InputMethodManager) getActivity()
 								.getSystemService(Activity.INPUT_METHOD_SERVICE);
 						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-						callback.showChat(c, true);
+						callback.showChat(c, true,view);
 
 					}
 
 					@Override
 					public void onSingleTap(View view, int position, ChatLoad c) {
-						// TODO Auto-generated method stub
 
 					}
 
 					@Override
 					public Contact getContact(String qrCode) {
-						// TODO Auto-generated method stub
 						return callback.getContact(qrCode);
 					}
 
 					@Override
 					public ImageFetcher getImageFetcher() {
-						// TODO Auto-generated method stub
 						return callback.getImageFetcher();
 					}
 
 					@Override
 					public int getChatType(long chatId) {
-						// TODO Auto-generated method stub
 						return callback.getChatType(chatId);
+					}
+
+					@Override
+					public ChatLoad getChatLoad(long chatId) {
+						return callback.getChatLoad(chatId);
 					}
 				});
 		mListView.setAdapter(mListAdapter);
@@ -330,11 +332,11 @@ public class ChatListGroupFragment extends Fragment {
 			if (callback.getChatList(chatType) != null) {
 				mListAdapter.clear();
 				mListAdapter.addAll(callback.getChatList(chatType));
-				
-				for(ChatLoad chatLoad: callback.getChatList(chatType)){
-					
+
+				for (ChatLoad chatLoad : callback.getChatList(chatType)) {
+
 				}
-				
+
 				long focusedChat = ChatFocusSaver.getFocusedChatId();
 				selectChat(focusedChat);
 			}
