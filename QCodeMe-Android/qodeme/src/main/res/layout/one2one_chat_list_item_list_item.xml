@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<biz.softtechnics.qodeme.ui.one2one.ChatListSubItem xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+<com.blulabellabs.code.ui.one2one.ChatListSubItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -12,7 +12,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp" >
 
-        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+        <com.blulabellabs.code.ui.common.TextViewRegular
             android:id="@+id/date_header"
             style="@style/TextView.Message.Text"
             android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <biz.softtechnics.qodeme.ui.common.CustomDotView
+            <com.blulabellabs.code.ui.common.CustomDotView
                 android:id="@+id/date"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/textView_messagerName"
                     style="@style/TextView.Message.Text"
                     android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
                     android:textSize="18sp"
                     android:visibility="gone" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/message"
                     style="@style/TextView.Message.Text"
                     android:layout_width="wrap_content"
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <biz.softtechnics.qodeme.ui.common.CustomDotView
+            <com.blulabellabs.code.ui.common.CustomDotView
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:visibility="invisible"
@@ -194,7 +194,7 @@
 
         <!-- </EditText> -->
 
-        <biz.softtechnics.qodeme.ui.common.CustomEdit
+        <com.blulabellabs.code.ui.common.CustomEdit
             android:id="@+id/edit_message"
             style="@style/EditText"
             android:layout_width="match_parent"
@@ -209,7 +209,7 @@
             android:visibility="visible" >
 
             <requestFocus />
-        </biz.softtechnics.qodeme.ui.common.CustomEdit>
+        </com.blulabellabs.code.ui.common.CustomEdit>
     </RelativeLayout>
 
-</biz.softtechnics.qodeme.ui.one2one.ChatListSubItem>
+</com.blulabellabs.code.ui.one2one.ChatListSubItem>

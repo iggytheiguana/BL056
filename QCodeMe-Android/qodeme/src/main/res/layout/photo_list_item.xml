@@ -7,7 +7,7 @@
     android:paddingRight="10dp"
     >
 
-    <biz.softtechnics.qodeme.ui.common.CustomImageView android:id="@+id/img1"
+    <com.blulabellabs.code.ui.common.CustomImageView android:id="@+id/img1"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         android:scaleType="centerCrop"
         />
  
-    <biz.softtechnics.qodeme.ui.common.CustomImageView android:id="@+id/img2"
+    <com.blulabellabs.code.ui.common.CustomImageView android:id="@+id/img2"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<biz.softtechnics.qodeme.ui.one2one.ChatListGroupItem xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+<com.blulabellabs.code.ui.one2one.ChatListGroupItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="match_parent"
     android:layout_height="360dp" >
 
@@ -65,7 +65,7 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/name"
                     style="@style/TextView.Chat.Name"
                     android:layout_width="wrap_content"
@@ -188,7 +188,7 @@
                     android:src="@drawable/ic_menu_send"
                     android:visibility="gone" />
 
-                <biz.softtechnics.qodeme.ui.common.CustomEdit
+                <com.blulabellabs.code.ui.common.CustomEdit
                     android:id="@+id/edit_message"
                     style="@style/EditText"
                     android:layout_width="match_parent"
@@ -209,7 +209,7 @@
                 android:layout_below="@+id/header"
                 android:background="@drawable/line_horizontal" />
 
-            <biz.softtechnics.qodeme.ui.common.CustomLineView
+            <com.blulabellabs.code.ui.common.CustomLineView
                 style="@style/TextView.Message.Date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -219,7 +219,7 @@
                 tools:padding="5dp"
                 tools:text_size="18sp" />
 
-            <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
+            <com.blulabellabs.code.ui.common.ScrollDisabledListView
                 android:id="@+id/subList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,12 +244,13 @@
 
         <LinearLayout
             android:id="@+id/drag"
-            android:layout_width="match_parent"
+            android:layout_width="50dp"
             android:layout_height="18dp"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:gravity="right"
             android:orientation="horizontal" >
         </LinearLayout>
     </RelativeLayout>
 
-</biz.softtechnics.qodeme.ui.one2one.ChatListGroupItem>
+</com.blulabellabs.code.ui.one2one.ChatListGroupItem>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/white" >
@@ -87,8 +87,8 @@
 
                     <RelativeLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
 
                         <ImageButton
                             android:id="@+id/imgBtn_colorWheelBig"
@@ -116,7 +116,7 @@
                 <!-- android:orientation="vertical" > -->
 
 
-                <!-- <biz.softtechnics.qodeme.ui.common.TextViewMedium -->
+                <!-- <com.blulabellabs.code.ui.common.TextViewMedium -->
                 <!-- style="@style/TextView.Message.Date" -->
                 <!-- android:layout_width="wrap_content" -->
                 <!-- android:layout_height="wrap_content" -->
@@ -125,7 +125,7 @@
                 <!-- android:textSize="14sp" /> -->
 
 
-                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- <com.blulabellabs.code.ui.common.TextViewRegular -->
                 <!-- android:id="@+id/textView_createdDate" -->
                 <!-- style="@style/TextView.Message.Date" -->
                 <!-- android:layout_width="wrap_content" -->
@@ -141,7 +141,7 @@
                 <!-- android:orientation="horizontal" > -->
 
 
-                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- <com.blulabellabs.code.ui.common.TextViewRegular -->
                 <!-- android:id="@+id/textView_location" -->
                 <!-- style="@style/TextView.Message.Date" -->
                 <!-- android:layout_width="wrap_content" -->
@@ -151,7 +151,7 @@
                 <!-- android:textSize="14sp" /> -->
 
 
-                <!-- <biz.softtechnics.qodeme.ui.common.TextViewRegular -->
+                <!-- <com.blulabellabs.code.ui.common.TextViewRegular -->
                 <!-- style="@style/TextView.Message.Date" -->
                 <!-- android:layout_width="wrap_content" -->
                 <!-- android:layout_height="wrap_content" -->
@@ -172,7 +172,7 @@
             android:layout_marginTop="15dp"
             android:orientation="vertical" >
 
-            <biz.softtechnics.qodeme.ui.common.TextViewMedium
+            <com.blulabellabs.code.ui.common.TextViewMedium
                 style="@style/TextView.Message.Date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                 android:textColor="@color/text_message_not_read"
                 android:textSize="14sp" />
 
-            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            <com.blulabellabs.code.ui.common.TextViewRegular
                 android:id="@+id/textView_createdDate"
                 style="@style/TextView.Message.Date"
                 android:layout_width="wrap_content"
@@ -194,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/textView_location"
                     style="@style/TextView.Message.Date"
                     android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
                     android:textColor="@color/text_message_not_read"
                     android:textSize="14sp" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     style="@style/TextView.Message.Date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" >
 
-            <biz.softtechnics.qodeme.ui.common.TextViewMedium
+            <com.blulabellabs.code.ui.common.TextViewMedium
                 android:id="@+id/textView_status"
                 style="@style/TextView.Chat.Name"
                 android:layout_width="wrap_content"
@@ -267,7 +267,7 @@
                 android:src="@drawable/ic_edit"
                 android:visibility="visible" />
 
-            <biz.softtechnics.qodeme.ui.common.ButtonRegular
+            <com.blulabellabs.code.ui.common.ButtonRegular
                 android:id="@+id/btnSetStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -304,7 +304,7 @@
                 android:layout_marginRight="10dp"
                 android:visibility="gone" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                <com.blulabellabs.code.ui.common.TextViewMedium
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -356,16 +356,26 @@
                 android:layout_marginRight="10dp"
                 android:visibility="visible" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewMedium
-                    android:id="@+id/textView_groupTitle"
+                <com.blulabellabs.code.ui.common.TextViewMedium
+                    android:id="@+id/textView_groupTag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginTop="10dp"
                     android:layout_toLeftOf="@+id/btnEditDesc"
+                    android:text="#HasTags"
+                    android:textColor="@color/text_message_not_read" />
+
+                <com.blulabellabs.code.ui.common.TextViewMedium
+                    android:id="@+id/textView_groupTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/textView_groupTag"
+                    android:layout_marginTop="10dp"
+                    android:layout_toLeftOf="@+id/btnEditDesc"
                     android:text="Title of Conversation"
-                    android:textColor="@color/text_message_not_read"
-                     />
+                    android:textColor="@color/text_message_not_read" />
 
                 <ImageButton
                     android:id="@+id/btnEditDesc"
@@ -377,7 +387,7 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_edit" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/textView_groupDesc"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -385,7 +395,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@id/btnEditDesc"
                     android:text="Description"
-                    android:textColor="@color/text_message_not_read"/>
+                    android:textColor="@color/text_message_not_read" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -397,17 +407,29 @@
                 android:visibility="gone" >
 
                 <EditText
+                    android:id="@+id/editText_GroupTags"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/btnSetDesc"
+                    android:hint="@string/add_tag_hint"
+                    android:imeOptions="actionDone|actionGo"
+                    android:textColor="@android:color/black"
+                    android:visibility="visible" />
+
+                <EditText
                     android:id="@+id/editText_GroupTitle"
                     style="@style/EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/editText_GroupTags"
                     android:layout_toLeftOf="@+id/btnSetDesc"
                     android:hint="@string/add_title_hint"
                     android:imeOptions="actionDone|actionGo"
                     android:textColor="@android:color/black"
                     android:visibility="visible" />
 
-                <biz.softtechnics.qodeme.ui.common.ButtonRegular
+                <com.blulabellabs.code.ui.common.ButtonRegular
                     android:id="@+id/btnSetDesc"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -440,7 +462,7 @@
                 android:layout_marginRight="10dp"
                 android:visibility="gone" >
 
-                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                <com.blulabellabs.code.ui.common.TextViewMedium
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -479,7 +501,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal" >
 
-            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            <com.blulabellabs.code.ui.common.TextViewRegular
                 android:id="@+id/textView_member"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -497,7 +519,7 @@
                 android:background="#E4E7EC"
                 android:visibility="visible" />
 
-            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            <com.blulabellabs.code.ui.common.TextViewRegular
                 android:id="@+id/textView_totalMessages"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -514,7 +536,7 @@
                 android:layout_marginLeft="10dp"
                 android:background="#E4E7EC" />
 
-            <biz.softtechnics.qodeme.ui.common.TextViewRegular
+            <com.blulabellabs.code.ui.common.TextViewRegular
                 android:id="@+id/textView_totalPhoto"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -531,6 +553,47 @@
             android:layout_height="1px"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <LinearLayout android:id="@+id/linear_memberlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:orientation="horizontal" >
+
+            <com.blulabellabs.code.ui.common.TextViewMedium
+                android:id="@+id/textView_memberLable"
+                style="@style/TextView.Chat.Name"
+                android:layout_marginLeft="10dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/member"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="visible" />
+
+            <com.blulabellabs.code.ui.common.TextViewRegular
+                android:id="@+id/textView_memberList"
+                style="@style/TextView.Chat.Name"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:singleLine="true"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="16sp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <View android:id="@+id/view_memberListBottomLine"
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
             android:background="@drawable/line_horizontal" />
 
         <RelativeLayout
@@ -555,7 +618,7 @@
                     android:background="@null"
                     android:src="@drawable/bg_add_color" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewRegular
+                <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/textView_private_thread"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

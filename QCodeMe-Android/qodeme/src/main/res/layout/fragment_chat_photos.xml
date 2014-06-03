@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white" >
@@ -33,7 +33,7 @@
                     android:layout_marginTop="5dp"
                     android:visibility="gone" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                <com.blulabellabs.code.ui.common.TextViewMedium
                     android:id="@+id/name"
                     style="@style/TextView.Chat.Name"
                     android:layout_gravity="center_vertical"
@@ -106,7 +106,7 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/line_horizontal" />
 
-        <biz.softtechnics.qodeme.ui.common.TextViewMedium
+        <com.blulabellabs.code.ui.common.TextViewMedium
             android:id="@+id/textView_status"
             style="@style/TextView.Chat.Name"
             android:layout_below="@id/img_nameline"
@@ -128,7 +128,7 @@
         <!-- android:layout_marginLeft="10dp" -->
         <!-- android:orientation="horizontal" > -->
 
-<!--         <biz.softtechnics.qodeme.ui.common.CustomLineView -->
+<!--         <com.blulabellabs.code.ui.common.CustomLineView -->
 <!--             style="@style/TextView.Message.Date" -->
 <!--             android:layout_width="match_parent" -->
 <!--             android:layout_height="match_parent" -->

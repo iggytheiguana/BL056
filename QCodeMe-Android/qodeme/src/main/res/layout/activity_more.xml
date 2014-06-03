@@ -5,7 +5,7 @@
     android:background="#1a1a1a"
     android:orientation="vertical" >
 
-    <biz.softtechnics.qodeme.ui.common.TextViewRegular
+    <com.blulabellabs.code.ui.common.TextViewRegular
         android:id="@+id/textView_share"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:layout_height="1px"
         android:background="@drawable/line_horizontal" />
 
-    <biz.softtechnics.qodeme.ui.common.TextViewRegular
+    <com.blulabellabs.code.ui.common.TextViewRegular
         android:id="@+id/textView_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

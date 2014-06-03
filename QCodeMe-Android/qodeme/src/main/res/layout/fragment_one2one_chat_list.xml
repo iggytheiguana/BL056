@@ -1,15 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_solid"
     android:orientation="vertical" >
 
-    <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
+    <LinearLayout
+        android:id="@+id/linearLayout_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/bg_box_search"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/editText_Search"
+            style="@style/EditText"
+            android:layout_width="0dp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_search_gray" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:src="@drawable/ic_location_gray" />
+    </LinearLayout>
+
+    <com.blulabellabs.code.ui.common.ScrollDisabledListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_message"
+        android:layout_below="@+id/linearLayout_search"
         android:divider="@null"
         android:visibility="visible" />
 
@@ -65,4 +101,4 @@
             android:inputType="textMultiLine|textNoSuggestions" />
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

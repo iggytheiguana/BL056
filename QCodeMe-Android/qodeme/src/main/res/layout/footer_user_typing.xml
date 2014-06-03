@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <biz.softtechnics.qodeme.ui.common.CustomLineView
+            <com.blulabellabs.code.ui.common.CustomLineView
                 style="@style/TextView.Message.Date"
                 android:layout_width="20dp"
                 android:layout_height="0dp"
@@ -24,7 +24,7 @@
                 tools:padding="5dp"
                 tools:text_size="18sp" />
 
-            <biz.softtechnics.qodeme.ui.common.CustomLineView
+            <com.blulabellabs.code.ui.common.CustomLineView
                 style="@style/TextView.Message.Date"
                 android:layout_width="20dp"
                 android:layout_height="0dp"
@@ -34,7 +34,7 @@
                 tools:text_size="18sp" />
         </LinearLayout>
 
-        <biz.softtechnics.qodeme.ui.common.CustomDotView
+        <com.blulabellabs.code.ui.common.CustomDotView
             android:id="@+id/dotView_userTyping"
             android:layout_width="20dp"
             android:layout_height="match_parent"
@@ -44,7 +44,7 @@
         <!-- style="@style/TextView.Message.Date" -->
     </FrameLayout>
 
-    <biz.softtechnics.qodeme.ui.common.TextViewRegular
+    <com.blulabellabs.code.ui.common.TextViewRegular
         style="@style/TextView.Message.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

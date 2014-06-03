@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<biz.softtechnics.qodeme.ui.contacts.ContactListItem xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+<com.blulabellabs.code.ui.contacts.ContactListItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selectable_background_actionbar"
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp" >
 
-            <biz.softtechnics.qodeme.ui.common.CustomDotView
+            <com.blulabellabs.code.ui.common.CustomDotView
                 android:id="@+id/textView_dot"
                 style="@style/TextView.Chat.Name"
                 android:layout_width="25dp"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <biz.softtechnics.qodeme.ui.common.CustomDotView
+            <com.blulabellabs.code.ui.common.CustomDotView
                 style="@style/TextView.Chat.Name"
                 android:layout_width="25dp"
                 android:layout_height="match_parent"
@@ -73,4 +73,4 @@
     <!-- android:layout_height="1dip" -->
     <!-- android:background="@color/divider_color" /> -->
 
-</biz.softtechnics.qodeme.ui.contacts.ContactListItem>
+</com.blulabellabs.code.ui.contacts.ContactListItem>

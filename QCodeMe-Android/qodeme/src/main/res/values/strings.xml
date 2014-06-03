@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">QODEME</string>
+    <string name="app_name">Code!</string>
     <string name="activity_login_title">Login</string>
     <string name="activity_registration_title">Registration</string>
     <string name="activity_tutorial_title">Tutorial</string>
@@ -9,7 +9,7 @@
 
     <!-- Drower -->
     <string name="drawer_open">Contacts</string>
-    <string name="drawer_close">QODEME</string>
+    <string name="drawer_close">Code!</string>
 
     <!-- Contact item -->
     <string name="accept">Accept</string>
@@ -92,6 +92,7 @@
     <string name="status_hint">Add Status Message Here</string>
     <string name="add_descrioption_hint">Add Description</string>
     <string name="add_title_hint">Add Title</string>
+    <string name="add_tag_hint">Add HashTags</string>
     <string name="more">More</string>
     <string name="no_network_connection_toast">No network connection found</string>
     <string name="re_enter_password">Re-enter password</string>
@@ -106,5 +107,7 @@
     <string name="add_contact">Add Contact</string>
     <string name="block">Block</string>
     <string name="flag_comment">Flag Comment</string>
+    <string name="status_update">Status update </string>
+    <string name="member">Members: </string>
 
 </resources>

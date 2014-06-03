@@ -47,7 +47,7 @@
 <!--                  /> -->
 <!--         </FrameLayout> -->
 
-        <biz.softtechnics.qodeme.ui.common.TextViewMedium
+        <com.blulabellabs.code.ui.common.TextViewMedium
             android:id="@+id/textView_welcome"
             style="@style/TextView.Message.Text"
             android:layout_width="match_parent"
@@ -64,7 +64,7 @@
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
-        <biz.softtechnics.qodeme.ui.common.TextViewRegular
+        <com.blulabellabs.code.ui.common.TextViewRegular
             android:id="@+id/textView_welcome_desc"
             style="@style/TextView.Message.Text"
             android:layout_width="match_parent"
@@ -101,7 +101,7 @@
             android:hint="@string/re_enter_password"
             android:inputType="textPassword" />
 
-        <biz.softtechnics.qodeme.ui.common.TextViewItalic
+        <com.blulabellabs.code.ui.common.TextViewItalic
             android:id="@+id/textView_errorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

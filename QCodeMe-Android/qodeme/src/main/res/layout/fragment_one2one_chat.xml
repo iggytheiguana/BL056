@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/biz.softtechnics.qodeme"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white" >
@@ -33,14 +33,13 @@
                     android:layout_marginTop="5dp"
                     android:visibility="gone" />
 
-                <biz.softtechnics.qodeme.ui.common.TextViewMedium
+                <com.blulabellabs.code.ui.common.TextViewMedium
                     android:id="@+id/name"
                     style="@style/TextView.Chat.Name"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="10dp"
-                    android:textColor="@color/text_message_not_read"
                     android:paddingTop="10dp"
-                     />
+                    android:textColor="@color/text_message_not_read" />
             </LinearLayout>
 
             <LinearLayout
@@ -107,21 +106,54 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/line_horizontal" />
 
-        <biz.softtechnics.qodeme.ui.common.TextViewMedium
+        <com.blulabellabs.code.ui.common.TextViewMedium
             android:id="@+id/textView_status"
             style="@style/TextView.Chat.Name"
             android:layout_below="@id/img_nameline"
             android:layout_marginLeft="10dp"
+            android:hint="@string/status_hint"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:textColor="@color/text_message_not_read"
-            android:hint="@string/status_hint" />
+            android:textColor="@color/text_message_not_read" />
 
         <ImageView
             android:id="@+id/img_statusline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView_status"
+            android:background="@drawable/line_horizontal" />
+
+        <com.blulabellabs.code.ui.common.TextViewMedium
+            android:id="@+id/textView_member"
+            style="@style/TextView.Chat.Name"
+            android:layout_below="@id/img_statusline"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/member"
+            android:visibility="gone"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            android:id="@+id/textView_member1"
+            style="@style/TextView.Chat.Name"
+            android:layout_below="@id/img_statusline"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/textView_member"
+            android:ellipsize="end"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:visibility="gone"
+            android:singleLine="true"
+            android:textColor="@color/text_message_not_read"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/img_memberline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView_member"
             android:background="@drawable/line_horizontal" />
         <!-- <LinearLayout -->
         <!-- android:id="@+id/linear_message" -->
@@ -130,25 +162,54 @@
         <!-- android:layout_marginLeft="10dp" -->
         <!-- android:orientation="horizontal" > -->
 
-        <biz.softtechnics.qodeme.ui.common.CustomLineView
+        <com.blulabellabs.code.ui.common.CustomLineView
             style="@style/TextView.Message.Date"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/layout_message"
-            android:layout_below="@+id/img_statusline"
+            android:layout_above="@+id/linear_status_update"
+            android:layout_below="@+id/img_memberline"
             android:layout_marginLeft="10dp"
             tools:padding="5dp"
             tools:text_size="18sp" />
 
-        <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
+        <com.blulabellabs.code.ui.common.ScrollDisabledListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/img_bottomline"
-            android:layout_below="@+id/img_statusline"
+            android:layout_above="@+id/linear_status_update"
+            android:layout_below="@+id/img_memberline"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@null"
             android:listSelector="@android:color/transparent" />
+
+        <LinearLayout
+            android:id="@+id/linear_status_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/img_bottomline"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <com.blulabellabs.code.ui.common.TextViewBold
+                style="@style/TextView.Message.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/status_update"
+                android:textColor="#ff0000"
+                android:textSize="18sp" />
+
+            <com.blulabellabs.code.ui.common.TextViewMedium
+                android:id="@+id/textView_status_update"
+                style="@style/TextView.Message.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/img_bottomline"
@@ -198,6 +259,7 @@
                 android:hint="@string/message"
                 android:inputType="textMultiLine|textNoSuggestions"
                 android:padding="5dp" >
+
                 <requestFocus />
             </EditText>
         </RelativeLayout>
