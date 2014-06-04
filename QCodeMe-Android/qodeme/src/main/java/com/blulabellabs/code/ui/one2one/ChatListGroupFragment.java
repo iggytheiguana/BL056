@@ -196,6 +196,9 @@ public class ChatListGroupFragment extends Fragment {
 
 	private void initListView() {
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		View headerSearchView = getLayoutInflater(getArguments()).inflate(R.layout.linear_search_header, null);
+		mListView.addHeaderView(headerSearchView);
+		
 		List<ChatLoad> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
 

@@ -1,7 +1,11 @@
 package com.blulabellabs.code.ui.one2one;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
@@ -615,6 +619,73 @@ public class ChatInsideGroupFragment extends Fragment {
 			}
 
 			mListAdapter.clear();
+
+//			List<Message> listData = callback.getChatMessages(getChatId());
+//			listData = sortMessages(listData);
+//			boolean isContainUnread = false;
+//			if (listData != null) {
+//				List<Message> replyMessage = new ArrayList<Message>();
+//				final List<Message> tempMessage = new ArrayList<Message>();
+//				tempMessage.addAll(listData);
+//
+//				for (Message message : tempMessage) {
+//					if (message.replyTo_id > 0) {
+//						replyMessage.add(message);
+//						listData.remove(message);
+//					}
+//					if (message.state == 3) {
+//						isContainUnread = true;
+//					}
+//				}
+//
+//				HashMap<Long, List<Message>> map = new HashMap<Long, List<Message>>();
+//				ArrayList<Long> chatId = new ArrayList<Long>();
+//				for (Message m : listData) {
+//
+//					List<Message> arrayList = new ArrayList<Message>();
+//					for (Message message : replyMessage) {
+//						if (message.replyTo_id == m.messageId) {
+//							arrayList.add(message);
+//						}
+//					}
+//					arrayList = sortMessages(arrayList);
+//					if (arrayList.size() > 0) {
+//						if (arrayList.size() > 1) {
+//							int i = 0;
+//							for (Message me : arrayList) {
+//								if (i == 0)
+//									me.isLast = true;
+//								else if (i == arrayList.size() - 1)
+//									me.isFirst = true;
+//								else {
+//									me.isFirst = true;
+//									me.isLast = true;
+//								}
+//								i++;
+//							}
+//						}
+//
+//						map.put(m.messageId, arrayList);
+//						chatId.add(m.messageId);
+//					}
+//
+//				}
+//				for (Long id : chatId) {
+//					int i = 0;
+//					for (Message m : listData) {
+//						if (m.messageId == id) {
+//							if (i < listData.size()) {
+//								listData.addAll(i + 1, map.get(id));
+//							} else {
+//								listData.addAll(map.get(id));
+//								// break;
+//							}
+//							break;
+//						}
+//						i++;
+//					}
+//				}
+//			}
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			if (mListAdapter.getCount() > 0)
 				mListView.setSelection(mListAdapter.getCount() - 1);
@@ -694,16 +765,37 @@ public class ChatInsideGroupFragment extends Fragment {
 					mTextViewMembers.setVisibility(View.VISIBLE);
 					mTextViewMembersLabel.setVisibility(View.VISIBLE);
 					String memberNames = "";
-					if (getChatLoad().members != null){
-						int i=0;
+					if (getChatLoad().members != null) {
+						int i = 0;
+						ArrayList<String> nameList = new ArrayList<String>();
 						for (String memberQr : getChatLoad().members) {
-							Contact c = callback.getContact(memberQr);
-							if(c != null){
-								if(i==0)
-									memberNames += c.title+"";
-								else
-									memberNames += ", "+c.title+"";
+							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+								Contact c = callback.getContact(memberQr);
+								if (c != null) {
+									nameList.add(c.title);
+									// if (i == 0)
+									// memberNames += c.title + "";
+									// else
+									// memberNames += ", " + c.title + "";
+								} else {
+									nameList.add("User");
+								}
 							}
+							// i++;
+						}
+						Collections.sort(nameList);
+						for (String memberQr : nameList) {
+							// Contact c = callback.getContact(memberQr);
+							// if (c != null) {
+							if (i > 5) {
+								memberNames += "...";
+								break;
+							}
+							if (i == 0)
+								memberNames += memberQr + "";
+							else
+								memberNames += ", " + memberQr + "";
+							// }
 							i++;
 						}
 					}
@@ -715,6 +807,19 @@ public class ChatInsideGroupFragment extends Fragment {
 				}
 			}
 		}
+	}
+
+	private List<Message> sortMessages(List<Message> messages) {
+
+		if (messages != null) {
+			Collections.sort(messages, new Comparator<Message>() {
+				@Override
+				public int compare(Message u1, Message u2) {
+					return u1.timeStamp.compareTo(u2.timeStamp);
+				}
+			});
+		}
+		return messages;
 	}
 
 	private class GestureListener extends GestureDetector.SimpleOnGestureListener {

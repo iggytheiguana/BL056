@@ -1,38 +1,17 @@
 package com.blulabellabs.code.ui.one2one;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import com.blulabellabs.code.ApplicationConstants;
-import com.blulabellabs.code.R;
-import com.blulabellabs.code.core.data.preference.QodemePreferences;
-import com.blulabellabs.code.core.io.RestAsyncHelper;
-import com.blulabellabs.code.core.io.model.ChatLoad;
-import com.blulabellabs.code.core.io.model.Contact;
-import com.blulabellabs.code.core.io.model.Message;
-import com.blulabellabs.code.core.io.responses.VoidResponse;
-import com.blulabellabs.code.core.io.utils.RestError;
-import com.blulabellabs.code.core.io.utils.RestListener;
-import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.sync.SyncHelper;
-import com.blulabellabs.code.ui.MainActivity;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
-import com.blulabellabs.code.utils.DbUtils;
-import com.blulabellabs.code.utils.QrUtils;
-import com.google.android.gms.internal.co;
-import com.google.common.collect.Lists;
-
-import android.R.mipmap;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -51,6 +30,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
+import com.blulabellabs.code.ApplicationConstants;
+import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
+import com.blulabellabs.code.core.io.RestAsyncHelper;
+import com.blulabellabs.code.core.io.model.ChatLoad;
+import com.blulabellabs.code.core.io.model.Contact;
+import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.VoidResponse;
+import com.blulabellabs.code.core.io.utils.RestError;
+import com.blulabellabs.code.core.io.utils.RestListener;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.ui.MainActivity;
+import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
+import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.QrUtils;
+import com.google.common.collect.Lists;
 
 public class ChatGroupProfileFragment extends Fragment implements OnClickListener {
 
@@ -127,7 +123,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.btnSearch);
 		mImgBtnShare = (ImageButton) getView().findViewById(R.id.btnShare);
 		mTextViewTags = (TextView) getView().findViewById(R.id.textView_groupTag);
-		mTextViewMemberList= (TextView) getView().findViewById(R.id.textView_memberList);
+		mTextViewMemberList = (TextView) getView().findViewById(R.id.textView_memberList);
 
 		mEditTextTags = (EditText) getView().findViewById(R.id.editText_GroupTags);
 		mEditTextTitle = (EditText) getView().findViewById(R.id.editText_GroupTitle);
@@ -295,23 +291,30 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 						mRelativeLayoutSetDesc.setVisibility(View.GONE);
 
-						setChips();
-						String tags = v.getText().toString().trim();
+						if (v.getText().toString().trim().length() > 0) {
+							setChips();
+							String tags = v.getText().toString().trim();
+							if (tags.endsWith(",")) {
+								tags = tags.substring(0, tags.length() - 1);
+							}
 
-						mTextViewTags.setText(tags);
+							mTextViewTags.setText(tags);
 
-						int updated = getChatload().updated;
-						getActivity().getContentResolver().update(
-								QodemeContract.Chats.CONTENT_URI,
-								QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, "", tags,
-										updated, 5), QodemeContract.Chats.CHAT_ID + "=?",
-								DbUtils.getWhereArgsForId(getChatload().chatId));
-						// setChatInfo(chatload.chatId, title, null, null, null,
-						// null, null);
-						getChatload().tag = tags;
-						setChatInfo(getChatload().chatId, null, getChatload().color,
-								getChatload().tag, getChatload().description, getChatload().status,
-								getChatload().is_locked, getChatload().title);
+							int updated = getChatload().updated;
+							getActivity().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, "",
+											tags, updated, 5), QodemeContract.Chats.CHAT_ID + "=?",
+									DbUtils.getWhereArgsForId(getChatload().chatId));
+							// setChatInfo(chatload.chatId, title, null, null,
+							// null,
+							// null, null);
+							getChatload().tag = tags;
+							setChatInfo(getChatload().chatId, null, getChatload().color,
+									getChatload().tag, getChatload().description,
+									getChatload().status, getChatload().is_locked,
+									getChatload().title);
+						}
 						return true;
 					}
 
@@ -323,62 +326,34 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	}
 
 	public void setChips() {
-		if (mEditTextTags.getText().toString().contains(",")) // check comman in
-																// string
-		{
+		// if (mEditTextTags.getText().toString().contains(",")) // check comman
+		// in
+		// // string
+		// {
 
-			// SpannableStringBuilder ssb = new
-			// SpannableStringBuilder(mEditTextTags.getText()
-			// .toString());
-			StringBuilder stringBuilder = new StringBuilder();
-			// split string wich comma
-			String chips[] = mEditTextTags.getText().toString().trim().split(",");
-			int x = 0;
-			// loop will generate ImageSpan for every country name separated by
-			// comma
-			for (String c : chips) {
-				c = c.replace("#", "");
-				c = "#" + c + ",";
-				// inflate chips_edittext layout
-				// LayoutInflater lf = (LayoutInflater)
-				// getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-				// TextView textView = (TextView)
-				// lf.inflate(R.layout.edittext_item, null);
-				// textView.setText(c); // set text
-				// setFlags(textView, c); // set flag image
-				// capture bitmapt of genreated textview
-				// int spec = MeasureSpec.makeMeasureSpec(0,
-				// MeasureSpec.UNSPECIFIED);
-				// textView.measure(spec, spec);
-				// textView.layout(0, 0, textView.getMeasuredWidth(),
-				// textView.getMeasuredHeight());
-				// Bitmap b = Bitmap.createBitmap(textView.getWidth(),
-				// textView.getHeight(),Bitmap.Config.ARGB_8888);
-				// Canvas canvas = new Canvas(b);
-				// canvas.translate(-textView.getScrollX(),
-				// -textView.getScrollY());
-				// textView.draw(canvas);
-				// textView.setDrawingCacheEnabled(true);
-				// Bitmap cacheBmp = textView.getDrawingCache();
-				// Bitmap viewBmp = cacheBmp.copy(Bitmap.Config.ARGB_8888,
-				// true);
-				// textView.destroyDrawingCache(); // destory drawable
-				// create bitmap drawable for imagespan
-				// BitmapDrawable bmpDrawable = new BitmapDrawable(viewBmp);
-				// bmpDrawable.setBounds(0,
-				// 0,bmpDrawable.getIntrinsicWidth(),bmpDrawable.getIntrinsicHeight());
-				// create and set imagespan
-				// ssb.setSpan(new SpannableString(c), x, x + c.length(),
-				// Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				stringBuilder.append(c);
-				x = x + c.length() + 1;
-			}
-			// set chips span
-			// if (isChangeByUser)
-			mEditTextTags.setText(stringBuilder);
-			// move cursor to last
-			mEditTextTags.setSelection(mEditTextTags.getText().toString().length());
+		// SpannableStringBuilder ssb = new
+		// SpannableStringBuilder(mEditTextTags.getText()
+		// .toString());
+		StringBuilder stringBuilder = new StringBuilder();
+		// split string wich comma
+		String chips[] = mEditTextTags.getText().toString().trim().split(",");
+		int x = 0;
+		// loop will generate ImageSpan for every country name separated by
+		// comma
+		int i = 0;
+		for (String c : chips) {
+			c = c.replace("#", "");
+			c = "#" + c + ",";
+			stringBuilder.append(c);
+			x = x + c.length() + 1;
+			i++;
 		}
+		// set chips span
+		// if (isChangeByUser)
+		mEditTextTags.setText(stringBuilder);
+		// move cursor to last
+		mEditTextTags.setSelection(mEditTextTags.getText().toString().length());
+		// }
 
 	}
 
@@ -431,25 +406,50 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						mTextViewTotalPhoto.setText(temp.size() + " photos");
 					}
 				}
-				if(chatload.type == 1){
-					((LinearLayout) getView().findViewById(R.id.linear_memberlist)).setVisibility(View.VISIBLE);
+				if (chatload.type == 1) {
+					((LinearLayout) getView().findViewById(R.id.linear_memberlist))
+							.setVisibility(View.VISIBLE);
+					((View) getView().findViewById(R.id.view_memberListBottomLine))
+							.setVisibility(View.VISIBLE);
 					String memberNames = "";
-					if (chatload.members != null){
-						int i=0;
+					if (chatload.members != null) {
+						int i = 0;
+						ArrayList<String> nameList = new ArrayList<String>();
 						for (String memberQr : chatload.members) {
-							Contact c = callback.getContact(memberQr);
-							if(c != null){
-								if(i==0)
-									memberNames += c.title+"";
-								else
-									memberNames += ", "+c.title+"";
+							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+								Contact c = callback.getContact(memberQr);
+								if (c != null) {
+									nameList.add(c.title);
+									// if (i == 0)
+									// memberNames += c.title + "";
+									// else
+									// memberNames += ", " + c.title + "";
+								} else {
+									nameList.add("User");
+								}
 							}
+							// i++;
+						}
+						Collections.sort(nameList);
+						for (String memberQr : nameList) {
+							// Contact c = callback.getContact(memberQr);
+							// if (c != null) {
+							if (i > 5){
+								memberNames+= "...";
+								break;
+							}
+							if (i == 0)
+								memberNames += memberQr + "";
+							else
+								memberNames += ", " + memberQr + "";
+							// }
 							i++;
 						}
 					}
 					mTextViewMemberList.setText(memberNames);
-				}else{
-					((LinearLayout) getView().findViewById(R.id.linear_memberlist)).setVisibility(View.GONE);
+				} else {
+					((LinearLayout) getView().findViewById(R.id.linear_memberlist))
+							.setVisibility(View.GONE);
 				}
 				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
 					if (chatload.type == 2) {

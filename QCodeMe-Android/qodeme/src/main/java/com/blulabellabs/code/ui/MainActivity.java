@@ -97,6 +97,7 @@ import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.accounts.GenericAccountService;
 import com.blulabellabs.code.core.data.IntentKey;
 import com.blulabellabs.code.core.data.entities.ChatType;
+import com.blulabellabs.code.core.data.entities.LookupChatEntity;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
@@ -106,6 +107,7 @@ import com.blulabellabs.code.core.io.model.ModelHelper;
 import com.blulabellabs.code.core.io.responses.BaseResponse;
 import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.ChatCreateResponse;
+import com.blulabellabs.code.core.io.responses.LookupResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestErrorType;
@@ -202,7 +204,9 @@ public class MainActivity extends BaseActivity implements
 	private List<Contact> mContacts;
 	private List<Contact> mApprovedContacts;
 	private List<Contact> mBlockContacts;
+	private List<Contact> mBlockedContacts;
 	private List<ChatLoad> mChatList;
+	private List<ChatLoad> mChatListSearchPublic = Lists.newArrayList();
 	private Map<Long, Integer> mChatNewMessagesMap;
 
 	private ContactListLoader mContactListLoader;
@@ -214,6 +218,7 @@ public class MainActivity extends BaseActivity implements
 	private String mSearchFilter;
 	private boolean mKeyboardActive;
 	private boolean isAddContact = false;
+	private boolean isPublicSearch = false;
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -1362,14 +1367,12 @@ public class MainActivity extends BaseActivity implements
 					} else {
 						ce = ((ContactListItemInvited) view).getContact();
 					}
-					if(ce.state ==QodemeContract.Contacts.State.APPRUVED && ce.isArchive ==1 ){
-						getContentResolver().update(
-								QodemeContract.Contacts.CONTENT_URI,
-								QodemeContract.Contacts.isArchiveValues(0), DbUtils.getWhereClauseForId(),
-								DbUtils.getWhereArgsForId(ce._id));
+					if (ce.state == QodemeContract.Contacts.State.APPRUVED && ce.isArchive == 1) {
+						getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+								QodemeContract.Contacts.isArchiveValues(0),
+								DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(ce._id));
 						mDrawerLayout.closeDrawer(mContactListView);
-					}
-					else if (ce.state == QodemeContract.Contacts.State.APPRUVED
+					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED
 							|| ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
 						Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 						i.putExtra(QodemeContract.Contacts._ID, ce._id);
@@ -1457,6 +1460,9 @@ public class MainActivity extends BaseActivity implements
 						break;
 					case QodemeContract.Contacts.State.INVITATION_SENT:
 						tvHeader.setText("Invited");
+						break;
+					case QodemeContract.Contacts.State.BLOCKED:
+						tvHeader.setVisibility(View.GONE);
 						break;
 					case QodemeContract.Contacts.State.APPRUVED:
 						btnMore.setVisibility(View.GONE);
@@ -1711,11 +1717,12 @@ public class MainActivity extends BaseActivity implements
 		public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 			return new CursorLoader(getActivity(), QodemeContract.Contacts.CONTENT_URI,
 					QodemeContract.Contacts.ContactQuery.PROJECTION, String.format(
-							"%s IN (%d, %d, %d, %d)", QodemeContract.Contacts.CONTACT_STATE,
+							"%s IN (%d, %d, %d, %d, %d)", QodemeContract.Contacts.CONTACT_STATE,
 							QodemeContract.Contacts.State.APPRUVED,
 							QodemeContract.Contacts.State.INVITATION_SENT,
 							QodemeContract.Contacts.State.INVITED,
-							QodemeContract.Contacts.State.BLOCKED_BY), null,
+							QodemeContract.Contacts.State.BLOCKED_BY,
+							QodemeContract.Contacts.State.BLOCKED), null,
 					QodemeContract.Contacts.CONTACT_LIST_SORT);
 		}
 
@@ -1748,19 +1755,12 @@ public class MainActivity extends BaseActivity implements
 		@Override
 		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 			mChatList = ModelHelper.getChatList(cursor);
-			// Log.d("Chatlist", "size " + mChatList.size() + " ");
-			// refreshContactList();
-
-			// if (mSearchView != null) {
-			// initializeSearchView();
-			// }
 			refreshOne2OneList();
 			mHandler.sendEmptyMessage(2);
 		}
 
 		@Override
 		public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
 		}
 
 	}
@@ -1830,8 +1830,10 @@ public class MainActivity extends BaseActivity implements
 					return 1;
 				case QodemeContract.Contacts.State.APPRUVED:
 					return 2;
-				case QodemeContract.Contacts.State.BLOCKED_BY:
+				case QodemeContract.Contacts.State.BLOCKED:
 					return 3;
+				case QodemeContract.Contacts.State.BLOCKED_BY:
+					return 4;
 				}
 				return -1;
 			}
@@ -1847,7 +1849,8 @@ public class MainActivity extends BaseActivity implements
 		}
 		for (Contact c : filtredContacts) {
 			if (contactListItems.get(contactListItems.size() - 1).getState() != c.state) {
-				contactListItems.add(new ContactListItemEntity(true, c.state, null));
+				if (c.state != QodemeContract.Contacts.State.BLOCKED)
+					contactListItems.add(new ContactListItemEntity(true, c.state, null));
 			}
 			contactListItems.add(new ContactListItemEntity(false, c.state, c));
 		}
@@ -1875,6 +1878,15 @@ public class MainActivity extends BaseActivity implements
 						return contact.state == QodemeContract.Contacts.State.BLOCKED_BY;
 					}
 				}));
+		mBlockedContacts = Lists.newArrayList(Iterables.filter(filtredContacts,
+				new Predicate<Contact>() {
+					@Override
+					public boolean apply(Contact contact) {
+						return contact.state == QodemeContract.Contacts.State.BLOCKED;
+					}
+				}));
+		// if (mBlockedContacts != null)
+		// mApprovedContacts.addAll(mBlockedContacts);
 		// mChatList
 		mContactInfoUpdated = true;
 
@@ -1911,6 +1923,7 @@ public class MainActivity extends BaseActivity implements
 			 */
 
 			getSupportLoaderManager().restartLoader(1, null, mContactListLoader);
+			getSupportLoaderManager().restartLoader(2, null, mMessageListLoader);
 		}
 	};
 
@@ -2250,11 +2263,22 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public List<Contact> getContactList() {
-		return mApprovedContacts;
+		List<Contact> contacts = Lists.newArrayList();
+		if (mApprovedContacts != null)
+			contacts.addAll(mApprovedContacts);
+		if (mBlockedContacts != null)
+			contacts.addAll(mBlockedContacts);
+		return contacts;
+		// return mApprovedContacts;
 	}
 
 	@Override
 	public List<ChatLoad> getChatList(int chatType) {
+		if (chatType == 2) {
+			if (isPublicSearch()) {
+				return mChatListSearchPublic;
+			}
+		}
 		List<ChatLoad> tempList = Lists.newArrayList();
 		if (mChatList != null) {
 			for (ChatLoad chatLoad : mChatList) {
@@ -2270,23 +2294,37 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public List<Message> getChatMessages(long chatId) {
 		List<Message> messages = mChatMessagesMap.get(chatId);
+		if (messages != null) {
+			List<Message> temp = Lists.newArrayList();
+			for (Message msg : messages) {
+				for (Contact contact : mBlockContacts) {
+					if (msg.qrcode.trim().equals(contact.qrCode.trim()))
+						temp.add(msg);
+				}
+			}
+			messages.removeAll(temp);
+		}
 		// List<Message> temp = Lists.newArrayList();
 		// if (messages != null) {
-		// if (mBlockContacts != null && mBlockContacts.size()>0) {
-		//
-		// for (Contact contact : mBlockContacts) {
+		// if (mBlockContacts != null && mBlockContacts.size() > 0) {
+		// //
 		// for (Message msg : messages) {
-		// if (!msg.qrcode.trim().equals(contact.qrCode.trim())) {
+		// boolean isBlock = false;
+		// for (Contact contact : mBlockContacts) {
+		// if (msg.qrcode.trim().equals(contact.qrCode.trim())) {
+		// isBlock = true;
+		// break;
+		// }
+		// }
+		// if (!isBlock)
 		// temp.add(msg);
 		// }
+		// } else {
+		// temp.addAll(messages);
+		// return temp;
 		// }
-		// }
-		// }else{
-		// //temp.addAll(messages);
-		// return messages;
-		// }
-		// // if (temp.size() > 0)
-		// // messages.removeAll(temp);
+		// // // if (temp.size() > 0)
+		// // // messages.removeAll(temp);
 		// }
 		// return temp;
 		return messages;
@@ -2849,12 +2887,21 @@ public class MainActivity extends BaseActivity implements
 	public Contact getContact(String qrString) {
 		// int color = getResources().getColor(R.color.text_message_not_read);
 		Contact contact = null;
-		for (Contact c : getContactList()) {
-			if (c.qrCode.equals(qrString)) {
-				contact = c;
-				break;
+		if (getContactList() != null)
+			for (Contact c : getContactList()) {
+				if (c.qrCode.equals(qrString)) {
+					contact = c;
+					break;
+				}
 			}
-		}
+		if (contact == null && mBlockContacts != null)
+			for (Contact c : mBlockContacts) {
+				if (c.qrCode.equals(qrString)) {
+					contact = c;
+					break;
+				}
+			}
+
 		return contact;
 	}
 
@@ -2950,8 +2997,8 @@ public class MainActivity extends BaseActivity implements
 	@SuppressLint("NewApi")
 	public void fullImageView(View v, Message msg) {
 		final Intent i = new Intent(getActivity(), ImageDetailActivity.class);
-		 i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
-		 i.putExtra("flag", msg.is_flagged);
+		i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
+		i.putExtra("flag", msg.is_flagged);
 		if (Utils.hasJellyBean()) {
 			// makeThumbnailScaleUpAnimation() looks kind of ugly here as the
 			// loading spinner may
@@ -2963,5 +3010,47 @@ public class MainActivity extends BaseActivity implements
 		} else {
 			startActivity(i);
 		}
+	}
+
+	public void searchChats(String searchString, final int type) {
+		setPublicSearch(true);
+		RestAsyncHelper.getInstance().lookup(searchString, new RestListener<LookupResponse>() {
+
+			@Override
+			public void onResponse(LookupResponse response) {
+				if (response.getChatList() != null) {
+					if (type == 2) {
+						mChatListSearchPublic = Lists.newArrayList();
+						for (LookupChatEntity entity : response.getChatList()) {
+							Log.d("lookup", entity.getTitle() + " " + entity.getTags() + " "
+									+ entity.getId());
+							ChatLoad chatLoad = new ChatLoad();
+							chatLoad.title = entity.getTitle();
+							chatLoad.chatId = entity.getId();
+							chatLoad.qrcode = entity.getQrcode();
+							chatLoad.tag = entity.getTags();
+							mChatListSearchPublic.add(chatLoad);
+
+						}
+						refreshOne2OneList();
+					}
+				} else {
+					Log.d("lookup", "null response");
+				}
+			}
+
+			@Override
+			public void onServiceError(RestError error) {
+				Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	public void setPublicSearch(boolean isPublicSearch) {
+		this.isPublicSearch = isPublicSearch;
+	}
+
+	public boolean isPublicSearch() {
+		return isPublicSearch;
 	}
 }

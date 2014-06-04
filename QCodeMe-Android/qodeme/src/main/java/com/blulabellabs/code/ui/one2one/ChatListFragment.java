@@ -197,6 +197,10 @@ public class ChatListFragment extends Fragment {
 
 	private void initListView() {
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		
+		View headerSearchView = getLayoutInflater(getArguments()).inflate(R.layout.linear_search_header, null);
+		mListView.addHeaderView(headerSearchView);
+		
 		List<Contact> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
 

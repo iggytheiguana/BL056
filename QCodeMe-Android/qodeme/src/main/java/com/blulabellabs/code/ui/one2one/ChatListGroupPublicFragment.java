@@ -14,28 +14,40 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.entities.LookupChatEntity;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
+import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.LookupResponse;
+import com.blulabellabs.code.core.io.utils.RestError;
+import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.images.utils.ImageFetcher;
+import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.ExGroupListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragmentCallback;
 import com.blulabellabs.code.utils.Fonts;
+import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
 import de.tavendo.autobahn.WebSocketConnection;
@@ -53,9 +65,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear;
 	private EditText mMessageEdit;
 	private int chatType;
+	private EditText mEditTextSearch;
 	private LinearLayout mLinearLayoutSearch;
 	int lastFirstvisibleItem = 0;
 
@@ -128,6 +141,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 		mMessageButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mMessageEdit = (EditText) getView().findViewById(R.id.edit_message);
 		mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
+		mImgBtnSearch   = (ImageButton) getView().findViewById(R.id.imgBtn_search);
+		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
 		initListView();
 		isViewCreated = true;
 		updateUi();
@@ -148,6 +163,69 @@ public class ChatListGroupPublicFragment extends Fragment {
 			@Override
 			public void afterTextChanged(Editable editable) {
 				Log.d(TAG, "afterTextChanged");
+			}
+		});
+		
+		mImgBtnClear.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity activity = (MainActivity) callback;
+				activity.setPublicSearch(false);
+				mImgBtnClear.setVisibility(View.GONE);
+				mImgBtnSearch.setVisibility(View.VISIBLE);	
+				updateUi();
+			}
+		});
+		MainActivity activity = (MainActivity) callback;
+		if(activity.isPublicSearch()){
+			mImgBtnClear.setVisibility(View.VISIBLE);
+			mImgBtnSearch.setVisibility(View.GONE);	
+		}else{
+			mImgBtnClear.setVisibility(View.GONE);
+			mImgBtnSearch.setVisibility(View.VISIBLE);	
+		}
+		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH
+						|| actionId == EditorInfo.IME_ACTION_GO
+						|| actionId == EditorInfo.IME_ACTION_DONE
+						|| event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+					String data = v.getText().toString();
+					MainActivity activity = (MainActivity) callback;
+					activity.setPublicSearch(true);
+					activity.searchChats(data, 2);
+//					RestAsyncHelper.getInstance().lookup(data, new RestListener<LookupResponse>() {
+//
+//						@Override
+//						public void onResponse(LookupResponse response) {
+//							if (response.getChatList() != null)
+//								for (LookupChatEntity entity : response.getChatList()) {
+//									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
+//											+ " " + entity.getId());
+//								}
+//							else {
+//								Log.d("lookup", "null response");
+//							}
+//						}
+//
+//						@Override
+//						public void onServiceError(RestError error) {
+//							Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT)
+//									.show();
+//						}
+//					});
+					
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					mImgBtnSearch.setVisibility(View.GONE);
+					return true;
+				}
+				return false;
 			}
 		});
 	}
@@ -198,6 +276,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 	private void initListView() {
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		View headerSearchView = getLayoutInflater(getArguments()).inflate(
+				R.layout.linear_search_header, null);
+		mListView.addHeaderView(headerSearchView);
+
 		List<ChatLoad> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
 
@@ -206,7 +288,6 @@ public class ChatListGroupPublicFragment extends Fragment {
 				new ChatListAdapterCallback() {
 
 					public void onSingleTap(View view, int position, Contact ce) {
-						// TODO
 					}
 
 					public void onDoubleTap(View view, int position, Contact c) {
@@ -225,7 +306,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 					}
 
 					public void setDragModeEnabled(boolean value) {
-						 mListView.setDragMode(value);
+						mListView.setDragMode(value);
 					}
 
 					// public void sendMessage(Contact c, String message) {
@@ -514,30 +595,27 @@ public class ChatListGroupPublicFragment extends Fragment {
 		//
 		// }
 		if (isViewCreated && callback.getChatList(chatType) != null) {
-			Log.d("Chatlist", "size " + callback.getChatList(chatType).size() + " ");
-			if (callback.getChatList(chatType) != null) {
-				mListAdapter.clear();
-				List<ChatLoad> chatLoads = callback.getChatList(chatType);
-				if (chatLoads != null
-						&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
-					ChatLoad newChatLoad = null;
-					for (ChatLoad c : chatLoads) {
-						if (QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId) {
-							newChatLoad = c;
-							break;
-						}
+			mListAdapter.clear();
+			List<ChatLoad> chatLoads = callback.getChatList(chatType);
+			if (chatLoads != null
+					&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
+				ChatLoad newChatLoad = null;
+				for (ChatLoad c : chatLoads) {
+					if (QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId) {
+						newChatLoad = c;
+						break;
 					}
-					chatLoads.remove(newChatLoad);
-					chatLoads.add(0, newChatLoad);
-					mListAdapter.addAll(chatLoads);
-					mListView.setSelection(0);
-				} else {
-					mListAdapter.addAll(chatLoads);
 				}
-
-				// long focusedChat = ChatFocusSaver.getFocusedChatId();
-				// selectChat(focusedChat);
+				chatLoads.remove(newChatLoad);
+				chatLoads.add(0, newChatLoad);
+				mListAdapter.addAll(chatLoads);
+				mListView.setSelection(0);
+			} else {
+				mListAdapter.addAll(chatLoads);
 			}
+
+			// long focusedChat = ChatFocusSaver.getFocusedChatId();
+			// selectChat(focusedChat);
 		}
 	}
 

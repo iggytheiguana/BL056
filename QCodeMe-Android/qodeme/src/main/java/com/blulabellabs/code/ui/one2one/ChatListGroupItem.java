@@ -62,7 +62,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
  * Created by Alex on 10/23/13.
  */
@@ -83,17 +82,17 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private final Context context;
 	private TextView name;
 	private TextView date;
-	private TextView location;
+	private TextView location, mTextViewMembers;
 	private ScrollDisabledListView subList;
-	private LinearLayout dragView;
+	private LinearLayout dragView, mLinearMemberList;
 	private CustomEdit edit;
-	private ImageView dragImage;
+	private ImageView dragImage, memberListBottomLine;
 	private ImageButton sendMessageBtn;
 	private ImageButton sendImgMessageBtn;
-	private View cornerTop;
-	private View cornerBottom;
-	private View cornerLeft;
-	private View cornerRight;
+	// private View cornerTop;
+	// private View cornerBottom;
+	// private View cornerLeft;
+	// private View cornerRight;
 
 	private GestureDetector gestureDetector;
 	private ChatListAdapterCallback mCallback;
@@ -112,214 +111,6 @@ public class ChatListGroupItem extends RelativeLayout implements
 		gestureDetector = new GestureDetector(context, new GestureListener());
 
 	}
-
-	// public void fill(Contact ce) {
-	//
-	// mContact = ce;
-	//
-	// final String oponentQr = mContact.qrCode;
-	// final int oponentColor = mContact.color == 0 ? Color.GRAY :
-	// mContact.color;
-	// final int myColor =
-	// context.getResources().getColor(R.color.text_chat_name);
-	// getName().setText(mContact.title != null ? mContact.title : "User");
-	// getName().setTextColor(oponentColor);
-	// setCornerColor(mCallback.getNewMessagesCount(mContact.chatId),
-	// oponentColor);
-	// // getName().setTypeface(mCallback.getFont(Fonts.ROBOTO_BOLD));
-	// if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
-	// if (ce.date != null) {
-	// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm a");
-	// String dateStr = fmtOut.format(new Date(Converter
-	// .getCrurentTimeFromTimestamp(ce.date)));
-	// getDate().setText(dateStr + ",");
-	// } else
-	// getDate().setText("");
-	// getLocation().setText(ce.location);
-	// } else {
-	// getDate().setText("");
-	// getLocation().setText("");
-	// }
-	//
-	// // List preparation
-	// List<Message> listForAdapter = Lists.newArrayList();
-	// List<Message> listData = mCallback.getMessages(mContact);
-	// listData = sortMessages(listData);
-	// if (listData != null) {
-	// List<Message> replyMessage = new ArrayList<Message>();
-	// final List<Message> tempMessage = new ArrayList<Message>();
-	// tempMessage.addAll(listData);
-	// for (Message message : tempMessage) {
-	// if (message.replyTo_id > 0) {
-	// replyMessage.add(message);
-	// listData.remove(message);
-	// }
-	// }
-	//
-	// HashMap<Long, List<Message>> map = new HashMap<Long, List<Message>>();
-	// ArrayList<Long> chatId = new ArrayList<Long>();
-	// for (Message m : listData) {
-	//
-	// List<Message> arrayList = new ArrayList<Message>();
-	// for (Message message : replyMessage) {
-	// if (message.replyTo_id == m.messageId) {
-	// arrayList.add(message);
-	// }
-	// }
-	// arrayList = sortMessages(arrayList);
-	// if (arrayList.size() > 0) {
-	// if (arrayList.size() > 1) {
-	// int i = 0;
-	// for (Message me : arrayList) {
-	// if (i == 0)
-	// me.isLast = true;
-	// else if (i == arrayList.size() - 1)
-	// me.isFirst = true;
-	// else {
-	// me.isFirst = true;
-	// me.isLast = true;
-	// }
-	// i++;
-	// }
-	// }
-	//
-	// map.put(m.messageId, arrayList);
-	// chatId.add(m.messageId);
-	// }
-	//
-	// }
-	// for (Long id : chatId) {
-	// int i = 0;
-	// for (Message m : listData) {
-	// if (m.messageId == id) {
-	// if (i < listData.size()) {
-	// listData.addAll(i + 1, map.get(id));
-	// } else {
-	// listData.addAll(map.get(id));
-	// // break;
-	// }
-	// break;
-	// }
-	// i++;
-	// }
-	// }
-	// // for (Message message : replyMessage) {
-	// // int i = 0;
-	// // for (Message m : listData) {
-	// // if (message.replyTo_id == m.messageId) {
-	// // if (i != listData.size() - 1) {
-	// // if (listData.get(i + 1).replyTo_id > 0
-	// // && listData.get(i + 1).replyTo_id == message.replyTo_id) {
-	// // } else
-	// // listData.add(i + 1, message);
-	// // } else
-	// // listData.add(message);
-	// // break;
-	// // }
-	// // i++;
-	// // }
-	// // }
-	// }
-	// ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem,
-	// Message, ChatListSubAdapterCallback>(
-	// context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
-	// new ChatListSubAdapterCallback() {
-	// @Override
-	// public int getColor(String senderQrcode) {
-	// if (TextUtils.equals(oponentQr, senderQrcode))
-	// return oponentColor;
-	// else
-	// return myColor;
-	// }
-	//
-	// @Override
-	// public Typeface getFont(Fonts font) {
-	// return mCallback.getFont(font);
-	// }
-	// }, callbackChatListInsideFragmentCallback);
-	//
-	// if (listData != null)
-	// listAdapter.addAll(listData);
-	// getList().setAdapter(listAdapter);
-	// getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-	// getList().setStackFromBottom(true);
-	// getList().setDisabled(true);
-	//
-	// height = mCallback.getChatHeight(mContact.chatId);
-	// ListView.LayoutParams lParams = new ListView.LayoutParams(
-	// ListView.LayoutParams.MATCH_PARENT, height);
-	// setLayoutParams(lParams);
-	// getDragView().setOnTouchListener(new OnTouchListener() {
-	//
-	// @Override
-	// public boolean onTouch(View v, MotionEvent event) {
-	// final int Y = (int) event.getRawY();
-	// switch (event.getAction() & MotionEvent.ACTION_MASK) {
-	// case MotionEvent.ACTION_DOWN: {
-	// ListView.LayoutParams lParams = getLayoutParams();
-	// _yDelta = Y;
-	// _startY = lParams.height;
-	// mCallback.setDragModeEnabled(true);
-	// getDragImage().setImageResource(R.drawable.chat_panel_resizer_pressed);
-	// return true;
-	// }
-	// case MotionEvent.ACTION_MOVE: {
-	// ListView.LayoutParams lParams = getLayoutParams();
-	// int delta = _startY + Y - _yDelta;
-	// lParams.height = delta < minContentSizePx ? minContentSizePx
-	// : delta > maxContentSizePx ? maxContentSizePx : delta;
-	// getView().setLayoutParams(lParams);
-	// getView().invalidate();
-	// return true;
-	// }
-	// case MotionEvent.ACTION_CANCEL:
-	// cancelMotion();
-	// break;
-	// case MotionEvent.ACTION_UP:
-	// cancelMotion();
-	// break;
-	//
-	// case MotionEvent.ACTION_OUTSIDE:
-	// cancelMotion();
-	// break;
-	// }
-	// return false;
-	// }
-	//
-	// private void cancelMotion() {
-	// mCallback.setChatHeight(mContact.chatId, getLayoutParams().height);
-	// mCallback.setDragModeEnabled(false);
-	// getDragImage().setImageResource(R.drawable.chat_panel_resizer);
-	// }
-	//
-	// private ListView.LayoutParams getLayoutParams() {
-	// return (ListView.LayoutParams) getView().getLayoutParams();
-	// }
-	//
-	// });
-	//
-	// if (ChatFocusSaver.getFocusedChatId() == mContact.chatId) {
-	// showMessage();
-	// }
-	//
-	// getSendMessage().setOnClickListener(new OnClickListener() {
-	// @Override
-	// public void onClick(View v) {
-	// sendMessage();
-	// }
-	// });
-	//
-	// getSendImage().setOnClickListener(new OnClickListener() {
-	//
-	// @Override
-	// public void onClick(View v) {
-	// MainActivity activity = (MainActivity) v.getContext();
-	// activity.setCurrentChatId(mContact.chatId);
-	// activity.takePhotoFromGallery();
-	// }
-	// });
-	//
-	// }
 
 	private List<Message> sortMessages(List<Message> messages) {
 
@@ -351,6 +142,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return date = date != null ? date : (TextView) findViewById(R.id.date);
 	}
 
+	public TextView getMembersTextView() {
+		return mTextViewMembers = mTextViewMembers != null ? mTextViewMembers
+				: (TextView) findViewById(R.id.textView_memberList);
+	}
+
 	public TextView getLocation() {
 		return location = location != null ? location : (TextView) findViewById(R.id.location);
 	}
@@ -358,6 +154,16 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public ScrollDisabledListView getList() {
 		return subList = subList != null ? subList
 				: (ScrollDisabledListView) findViewById(R.id.subList);
+	}
+
+	public LinearLayout getMemberListView() {
+		return mLinearMemberList = mLinearMemberList != null ? mLinearMemberList
+				: (LinearLayout) findViewById(R.id.linear_memberlist);
+	}
+
+	public ImageView getMemberListBottomLine() {
+		return memberListBottomLine = memberListBottomLine != null ? memberListBottomLine
+				: (ImageView) findViewById(R.id.member_line);
 	}
 
 	public LinearLayout getDragView() {
@@ -612,6 +418,47 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		mChatLoad = t;
 
+		if (t.type == 1) {
+			getMemberListView().setVisibility(VISIBLE);
+			getMemberListBottomLine().setVisibility(VISIBLE);
+
+			String memberNames = "";
+			if (t.members != null) {
+				int i = 0;
+				ArrayList<String> nameList = new ArrayList<String>();
+				for (String memberQr : t.members) {
+					if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+						Contact c = mCallback.getContact(memberQr);
+						if (c != null) {
+							nameList.add(c.title);
+							// if (i == 0)
+							// memberNames += c.title + "";
+							// else
+							// memberNames += ", " + c.title + "";
+						} else {
+							nameList.add("User");
+						}
+					}
+					// i++;
+				}
+				Collections.sort(nameList);
+				for (String memberQr : nameList) {
+					// Contact c = callback.getContact(memberQr);
+					// if (c != null) {
+					if (i > 5) {
+						memberNames += "...";
+						break;
+					}
+					if (i == 0)
+						memberNames += memberQr + "";
+					else
+						memberNames += ", " + memberQr + "";
+					// }
+					i++;
+				}
+			}
+			getMembersTextView().setText(memberNames);
+		}
 		if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId) {
 			getTitleEditText().setVisibility(VISIBLE);
 			getTitleEditText().setText(mChatLoad.title);
@@ -711,7 +558,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 					listData.remove(message);
 				}
 				if (message.state == 3) {
-					isContainUnread = true;
+					Contact contact = mCallback.getContact(message.qrcode);
+					if (contact != null
+							&& contact.state != QodemeContract.Contacts.State.BLOCKED_BY)
+						isContainUnread = true;
 				}
 			}
 

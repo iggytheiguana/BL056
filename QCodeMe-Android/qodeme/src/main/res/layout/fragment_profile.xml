@@ -48,7 +48,7 @@
                         android:id="@+id/btnFavorite"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_profile_favorite" />
 
@@ -56,7 +56,7 @@
                         android:id="@+id/btnArchive"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_archive" />
 
@@ -64,7 +64,7 @@
                         android:id="@+id/btnShare"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_share_dark"
                         android:visibility="gone" />
@@ -73,7 +73,7 @@
                         android:id="@+id/btnDelete"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_delete" />
                 </LinearLayout>

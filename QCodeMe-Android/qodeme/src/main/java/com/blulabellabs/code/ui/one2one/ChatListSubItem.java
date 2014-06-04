@@ -286,6 +286,10 @@ public class ChatListSubItem extends RelativeLayout implements
 			getMessagerName().setVisibility(View.GONE);
 		}
 
+		if (contact != null)
+			if (contact.state == QodemeContract.Contacts.State.BLOCKED_BY)
+				this.setVisibility(GONE);
+			 
 		// getMessage().setTextColor(color);
 		// getMessage().setTypeface(callback.getFont(Fonts.ROBOTO_LIGHT));
 

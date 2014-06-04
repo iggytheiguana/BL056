@@ -47,7 +47,7 @@
                         android:id="@+id/btnDelete"
                         android:layout_width="35dp"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="5dp"
                         android:src="@drawable/ic_delete" />
 
@@ -55,7 +55,7 @@
                         android:id="@+id/btnFavorite"
                         android:layout_width="35dp"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="5dp"
                         android:src="@drawable/ic_profile_favorite" />
 
@@ -63,7 +63,7 @@
                         android:id="@+id/btnSearch"
                         android:layout_width="35dp"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="5dp"
                         android:src="@drawable/ic_search_blue" />
 
@@ -71,7 +71,7 @@
                         android:id="@+id/btnShare"
                         android:layout_width="35dp"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="5dp"
                         android:src="@drawable/ic_share_dark"
                         android:visibility="visible" />
@@ -80,7 +80,7 @@
                         android:id="@+id/btnLock"
                         android:layout_width="35dp"
                         android:layout_height="match_parent"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="5dp"
                         android:src="@drawable/ic_lock_close"
                         android:visibility="visible" />
@@ -95,7 +95,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_alignParentRight="true"
-                            android:background="@null"
+                            android:background="@drawable/selectable_background_actionbar"
                             android:scaleType="fitXY"
                             android:src="@drawable/bg_add_color" />
                     </RelativeLayout>
@@ -364,7 +364,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_toLeftOf="@+id/btnEditDesc"
                     android:text="#HasTags"
-                    android:textColor="@color/text_message_not_read" />
+                    android:textColor="#059BE9" />
 
                 <com.blulabellabs.code.ui.common.TextViewMedium
                     android:id="@+id/textView_groupTitle"

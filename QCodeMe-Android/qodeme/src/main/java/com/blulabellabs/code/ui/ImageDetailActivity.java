@@ -72,7 +72,7 @@ public class ImageDetailActivity extends FragmentActivity {
 		// we shouldn't divide by 2, but this will use more memory and require a
 		// larger memory
 		// cache.
-		final int longest = (height > width ? height : width) / 2;
+		final int longest = (height > width ? height : width);
 
 		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this,
 				IMAGE_CACHE_DIR);

@@ -243,6 +243,14 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		Contact contact = callback.getContact(me.qrcode);
 		if (contact != null) {
 			color = contact.color;
+			if(contact.state == QodemeContract.Contacts.State.BLOCKED_BY){
+				getMessage().setVisibility(GONE);
+				getImageMessage().setVisibility(View.GONE);
+				getImageLayout().setVisibility(View.GONE);
+				getSendMessageLayout().setVisibility(GONE);
+				this.setVisibility(GONE);
+				
+			}
 		} else {
 			color = Color.GRAY;
 		}

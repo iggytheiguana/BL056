@@ -266,6 +266,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			getActivity().getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
 					QodemeContract.Contacts.isArchiveValues(1), DbUtils.getWhereClauseForId(),
 					DbUtils.getWhereArgsForId(contact._id));
+			getActivity().onBackPressed();
 			break;
 		default:
 			break;
