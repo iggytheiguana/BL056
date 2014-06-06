@@ -1,6 +1,7 @@
 package com.blulabellabs.code.core.io.gcm.push;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.blulabellabs.code.Application;
@@ -12,7 +13,6 @@ import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.core.sync.SyncHelper;
 import com.google.android.gms.internal.bu;
 import com.google.gson.Gson;
-
 
 import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_CONTACT;
 import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
@@ -68,13 +68,29 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 		// mChatLoad.tag, mChatLoad.number_of_flagged,
 		// mChatLoad.number_of_members),
 		// QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
+		Cursor cursor = getContext().getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
+				QodemeContract.Chats.ChatQuery.PROJECTION,
+				QodemeContract.Chats.CHAT_ID + "=" + mChatLoad.chatId, null, null);
+		if (cursor != null)
+			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+				String status = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
+				if(!status.equals(mChatLoad.status)){
+					QodemePreferences.getInstance().set("" + mChatLoad.chatId, mChatLoad.status);
+//					String msg = "A new contact was added";
+//					sendNotification(msg, getContext(),
+//							 NOTIFICATION_REQUEST_NEW_CONTACT);
+							 
+				}
+			}
 		getContext().getContentResolver().update(
 				QodemeContract.Chats.CONTENT_URI,
 				QodemeContract.Chats.updateChatInfoValuesAll(mChatLoad.title, mChatLoad.color,
 						mChatLoad.description, mChatLoad.is_locked, mChatLoad.status,
-						mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members, mChatLoad.latitude, mChatLoad.longitude),
+						mChatLoad.tag, mChatLoad.number_of_flagged, mChatLoad.number_of_members,
+						mChatLoad.latitude, mChatLoad.longitude),
 				QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
-		QodemePreferences.getInstance().set(""+mChatLoad.chatId, mChatLoad.status);
+
+		
 
 		// SyncHelper.requestManualSync();
 	}

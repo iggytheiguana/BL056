@@ -245,6 +245,7 @@ public class ChatListSubItem extends RelativeLayout implements
 					final Intent i = new Intent(getContext(), ImageDetailActivity.class);
 					i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
 					i.putExtra("flag", msg.is_flagged);
+					i.putExtra("message_id", msg.messageId);
 					if (Utils.hasJellyBean()) {
 						ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0,
 								v.getWidth(), v.getHeight());

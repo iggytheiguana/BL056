@@ -49,6 +49,7 @@ import com.blulabellabs.code.core.data.entities.ChatEntity;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestSyncHelper;
 import com.blulabellabs.code.core.io.hendler.AccountContactsHandler;
+import com.blulabellabs.code.core.io.hendler.ChatFavoriteHandler;
 import com.blulabellabs.code.core.io.hendler.ChatImageUploadHandler;
 import com.blulabellabs.code.core.io.hendler.ChatLoadAddMemberHandler;
 import com.blulabellabs.code.core.io.hendler.ChatLoadHandler;
@@ -65,6 +66,7 @@ import com.blulabellabs.code.core.io.responses.AccountContactsResponse;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.ChatMessageResponse;
 import com.blulabellabs.code.core.io.responses.ContactAddResponse;
+import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetFlaggedResponse;
 import com.blulabellabs.code.core.io.responses.UploadImageResponse1;
 import com.blulabellabs.code.core.io.responses.UserSettingsResponse;
@@ -431,6 +433,49 @@ public class SyncHelper {
 		// QodemeContract.applyBatch(context, batch);
 	}
 
+	public static void doChatFavoriteSync(Context context, ContentResolver contentResolver) {
+		LOGI(TAG, "Chat sync");
+//		ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+		RestSyncHelper rest = RestSyncHelper.getInstance(context);
+		// Cursor cursor =
+		// contentResolver.query(QodemeContract.Contacts.CONTENT_URI,
+		// QodemeContract.Contacts.ContactQuery.PROJECTION,
+		// QodemeContract.Contacts.UPDATED
+		// + " != " + QodemeContract.Contacts.Sync.DONE, null, null);
+		Cursor cursorChat = contentResolver.query(QodemeContract.Chats.CONTENT_URI,
+				QodemeContract.Chats.ChatQuery.PROJECTION, QodemeContract.Chats.CHAT_IS_FAVORITE
+						+ " != 0", null, null);
+
+		if (cursorChat.moveToFirst())
+			do {
+				try {
+
+					long _id = cursorChat.getLong(QodemeContract.Chats.ChatQuery._ID);
+					long chatId = cursorChat.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
+					int is_favorite = cursorChat
+							.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
+
+					String date = Converter.getCurrentGtmTimestampString();
+					SetFavoriteResponse favoriteResponse = rest.setFavorite(date, chatId);
+
+					new ChatFavoriteHandler(context, _id, is_favorite)
+							.parseAndApply(favoriteResponse);
+				} catch (RestError e) {
+					BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
+					LOGE(TAG, e.toString(context), e);
+				} catch (InterruptedException e) {
+					LOGE(TAG, "doInitialSync", e);
+				} catch (ExecutionException e) {
+					LOGE(TAG, "doInitialSync", e);
+				} catch (JSONException e) {
+					LOGE(TAG, "doInitialSync", e);
+				}
+
+			} while (cursorChat.moveToNext());
+
+		// QodemeContract.applyBatch(context, batch);
+	}
+
 	public static void doSettingsSync(Context context) {
 		LOGI(TAG, "User settings sync");
 		QodemePreferences pref = QodemePreferences.getInstance();
@@ -473,6 +518,8 @@ public class SyncHelper {
 						long created = (long) (Converter.getCrurentTimeFromTimestamp(cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED)) / 1E3);
 
+						int is_search = cursor.getInt(QodemeContract.Messages.Query.MESSAGE_IS_SEARCH);
+						
 						String dateString = cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED);
 
@@ -528,7 +575,7 @@ public class SyncHelper {
 										.parseAndApply(imageResponse);
 								ChatMessageResponse response = rest.chatMessage(chatId, message,
 										created, imageResponse.getUrl(), hashPhoto, replyTo_id,
-										latitude, longitude, senderName, dateString);
+										latitude, longitude, senderName, dateString,is_search);
 								new ChatMessageHandler(context, id).parseAndApply(response);
 							}
 							// Intent intent = new Intent(context,
@@ -541,7 +588,7 @@ public class SyncHelper {
 						} else {
 							ChatMessageResponse response = rest.chatMessage(chatId, message,
 									created, photoUrl, hashPhoto, replyTo_id, latitude, longitude,
-									senderName, dateString);
+									senderName, dateString,is_search);
 							new ChatMessageHandler(context, id).parseAndApply(response);
 						}
 					} catch (RestError e) {

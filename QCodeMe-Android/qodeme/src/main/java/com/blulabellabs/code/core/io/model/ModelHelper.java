@@ -1,5 +1,9 @@
 package com.blulabellabs.code.core.io.model;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.text.TextUtils;
@@ -7,13 +11,8 @@ import android.text.TextUtils;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.NullHelper;
-import com.google.android.gms.internal.cu;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alex on 11/27/13.
@@ -69,6 +68,10 @@ public class ModelHelper {
 						.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_FLAGGED);
 				c.number_of_members = cursor
 						.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
+				c.number_of_likes = cursor
+						.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_FAVORITE);
+				c.is_favorite = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
+				//c.created = cursor.getString(QodemeContract.Chats.ChatQuery.chat_)
 
 				String memQr = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
 
@@ -176,6 +179,7 @@ public class ModelHelper {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	@SuppressLint("NewApi")
 	private static void removeTimeMarkerFoeMessage(List<Message> messages, Message mL) {
 		for (int i = messages.size() - 1; i >= 0; i--) {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.images.utils.ImageCache;
@@ -28,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class ChatPhotosFragment extends Fragment {
 
@@ -52,6 +54,8 @@ public class ChatPhotosFragment extends Fragment {
 	private boolean isViewCreated;
 	SeparatedListAdapter mListAdapter;
 	ListView mListViewPhotos;
+	
+	private TextView mTextViewProfileName, mTextViewStatus;
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
@@ -118,6 +122,9 @@ public class ChatPhotosFragment extends Fragment {
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
+		
+		mTextViewProfileName = (TextView) getView().findViewById(R.id.name);
+		mTextViewStatus = (TextView) getView().findViewById(R.id.textView_status);
 		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
 
 		// SeparatedListAdapter adapter = new
@@ -154,7 +161,14 @@ public class ChatPhotosFragment extends Fragment {
 //			mListAdapter.clearData();
 //			mListAdapter.notifyDataSetChanged();
 			List<Message> messages = callback.getChatMessages(getChatId());
-
+			
+			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
+			MainActivity activity = (MainActivity) callback;
+			ChatLoad chatLoad = activity.getChatLoad(getChatId());
+			if (chatLoad != null)
+				mTextViewStatus.setText(chatLoad.status);
+			
+//			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
 			if (messages != null) {
 				Message previousMessage = null;
 				List<Message> temp = new ArrayList<Message>();

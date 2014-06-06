@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <com.blulabellabs.code.ui.common.TextViewMedium
+        android:id="@+id/textView_name"
+        style="@style/TextView.Chat.Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/linear_btn"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:text="User"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/text_message_not_read"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <com.blulabellabs.code.ui.common.TextViewMedium
+        android:id="@+id/textView_location"
+        style="@style/TextView.Chat.Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView_name"
+        android:layout_marginBottom="10dp"
+        android:layout_toLeftOf="@+id/linear_btn"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Location"
+        android:textColor="@color/block_user_btn"
+        android:textSize="14sp"
+        android:visibility="visible" />
+
+    <LinearLayout android:id="@+id/linear_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="UnBlock"
+            android:textSize="14dp"
+             android:textColor="@color/block_user_btn"
+            android:background="@drawable/bg_block" />
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="30dp" 
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textSize="14dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_block_h"
+            android:text="Block"/>
+    </LinearLayout>
+
+</RelativeLayout>

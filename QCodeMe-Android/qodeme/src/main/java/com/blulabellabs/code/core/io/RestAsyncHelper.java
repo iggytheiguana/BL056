@@ -339,6 +339,8 @@ public class RestAsyncHelper implements RestClient {
 			params.put("chat_color", String.valueOf(color));
 		if(chat_title != null)
 			params.put("chat_title", chat_title);
+		params.put(RestKeyMap.LATITUDE, "0");
+		params.put(RestKeyMap.LONGITUDE, "0");
 			
 			
 
@@ -456,9 +458,11 @@ public class RestAsyncHelper implements RestClient {
 	 *            - by title and hash tags
 	 * @param callback
 	 */
-	public void lookup(String searchQuery, RestListener callback) {
+	public void lookup(String searchQuery, int type, int pageNo, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.SEARCH_QUERY, searchQuery);
+		params.put("chat_type", String.valueOf(type));
+		params.put("page_no", String.valueOf(pageNo));
 		post(RequestType.LOOKUP, params, callback);
 	}
 
@@ -494,6 +498,16 @@ public class RestAsyncHelper implements RestClient {
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
 		params.put("date_time", date);
 		post(RequestType.SET_FAVORITE, params, callback);
+	}
+	
+	/**
+	 * clear the chatid from chat table so don't receive push notification after search clear
+	 * @param type
+	 */
+	public void clearSearchChats(int type, RestListener callback){
+		RequestParams params = new RequestParams();
+		params.put("chat_type", String.valueOf(type));
+		post(RequestType.CLEAR_SEARCH, params, callback);
 	}
 
 }

@@ -61,6 +61,12 @@ public class ResponseFactory {
                 return new VoidResponse();
             case UPLOAD_IMAGE:
                 return new UploadImageResponse1().parse(getResult(jsonObject));
+            case SET_FLAGGED:
+                return new SetFlaggedResponse().parse(getResult(jsonObject));
+            case SET_FAVORITE:
+                return new SetFavoriteResponse().parse(getResult(jsonObject));
+            case CLEAR_SEARCH:
+                return new ClearSearchResponse().parse(jsonObject);
             default:
                 throw new ResponseTypeError();
         }

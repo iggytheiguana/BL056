@@ -41,10 +41,12 @@ import android.view.WindowManager.LayoutParams;
 public class ImageDetailActivity extends FragmentActivity {
 	private static final String IMAGE_CACHE_DIR = "images_large";
 	public static final String EXTRA_IMAGE = "extra_image";
+	public static final String MESSAGE_ID = "message_id";
 
 	private ImagePagerAdapter mAdapter;
 	private ImageFetcher mImageFetcher;
 	private ViewPager mPager;
+	private long message_id;
 
 	@TargetApi(VERSION_CODES.HONEYCOMB)
 	@Override
@@ -86,6 +88,7 @@ public class ImageDetailActivity extends FragmentActivity {
 		mImageFetcher.setImageFadeIn(false);
 
 		String url = getIntent().getStringExtra(EXTRA_IMAGE);
+		 setMessage_id(getIntent().getLongExtra(MESSAGE_ID, -1));
 		
 		int isflag = getIntent().getIntExtra("flag",0);
 		ArrayList<String> arrayList = new ArrayList<String>();
@@ -152,6 +155,14 @@ public class ImageDetailActivity extends FragmentActivity {
 	 */
 	public ImageFetcher getImageFetcher() {
 		return mImageFetcher;
+	}
+
+	public void setMessage_id(long message_id) {
+		this.message_id = message_id;
+	}
+
+	public long getMessage_id() {
+		return message_id;
 	}
 
 	/**

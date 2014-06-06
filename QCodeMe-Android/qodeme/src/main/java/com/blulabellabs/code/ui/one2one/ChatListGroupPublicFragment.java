@@ -6,6 +6,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,11 +39,13 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.ClearSearchResponse;
 import com.blulabellabs.code.core.io.responses.LookupResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
+import com.blulabellabs.code.ui.MainActivity.LoadMoreChatListener;
 import com.blulabellabs.code.ui.common.ExGroupListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragmentCallback;
@@ -71,6 +74,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 	private EditText mEditTextSearch;
 	private LinearLayout mLinearLayoutSearch;
 	int lastFirstvisibleItem = 0;
+	int pageNo = 1;
+	boolean isMoreData = true;
+	private boolean isThreadRunning;
+	private LinearLayout mFooterLayout;
+	private String searchString = "";
 
 	private static final String TAG = "ChatListGroupFragment";
 	private final WebSocketConnection mConnection = new WebSocketConnection();
@@ -135,14 +143,23 @@ public class ChatListGroupPublicFragment extends Fragment {
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mMessageLayout = getView().findViewById(R.id.layout_message);
 		mMessageButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mMessageEdit = (EditText) getView().findViewById(R.id.edit_message);
 		mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
-		mImgBtnSearch   = (ImageButton) getView().findViewById(R.id.imgBtn_search);
+		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
 		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
+
+		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+
 		initListView();
 		isViewCreated = true;
 		updateUi();
@@ -165,27 +182,48 @@ public class ChatListGroupPublicFragment extends Fragment {
 				Log.d(TAG, "afterTextChanged");
 			}
 		});
-		
+
 		mImgBtnClear.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				MainActivity activity = (MainActivity) callback;
 				activity.setPublicSearch(false);
+				activity.setPublicSearchString("");
 				mImgBtnClear.setVisibility(View.GONE);
-				mImgBtnSearch.setVisibility(View.VISIBLE);	
+				mImgBtnSearch.setVisibility(View.VISIBLE);
+				mEditTextSearch.setEnabled(true);
+				mEditTextSearch.setText("");
+				searchString = "";
+				pageNo = 1;
 				updateUi();
+
+				RestAsyncHelper.getInstance().clearSearchChats(2,
+						new RestListener<ClearSearchResponse>() {
+
+							@Override
+							public void onResponse(ClearSearchResponse response) {
+								Log.d("clearSearch", "Ok");
+							}
+
+							@Override
+							public void onServiceError(RestError error) {
+								Log.d("clearSearch", "Error " + error.getMessage());
+							}
+
+						});
 			}
 		});
 		MainActivity activity = (MainActivity) callback;
-		if(activity.isPublicSearch()){
+		if (activity.isPublicSearch()) {
+			searchString = activity.getPublicSearchString();
+			mEditTextSearch.setText(searchString);
 			mImgBtnClear.setVisibility(View.VISIBLE);
-			mImgBtnSearch.setVisibility(View.GONE);	
-		}else{
+			mImgBtnSearch.setVisibility(View.GONE);
+		} else {
 			mImgBtnClear.setVisibility(View.GONE);
-			mImgBtnSearch.setVisibility(View.VISIBLE);	
+			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
-		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -197,30 +235,37 @@ public class ChatListGroupPublicFragment extends Fragment {
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
 					String data = v.getText().toString();
+					searchString = data;
 					MainActivity activity = (MainActivity) callback;
 					activity.setPublicSearch(true);
-					activity.searchChats(data, 2);
-//					RestAsyncHelper.getInstance().lookup(data, new RestListener<LookupResponse>() {
-//
-//						@Override
-//						public void onResponse(LookupResponse response) {
-//							if (response.getChatList() != null)
-//								for (LookupChatEntity entity : response.getChatList()) {
-//									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
-//											+ " " + entity.getId());
-//								}
-//							else {
-//								Log.d("lookup", "null response");
-//							}
-//						}
-//
-//						@Override
-//						public void onServiceError(RestError error) {
-//							Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT)
-//									.show();
-//						}
-//					});
-					
+					activity.setPublicSearchString(data);
+					activity.searchChats(data, 2, pageNo, chatListener);
+					mEditTextSearch.setEnabled(false);
+					isMoreData = true;
+					// RestAsyncHelper.getInstance().lookup(data, new
+					// RestListener<LookupResponse>() {
+					//
+					// @Override
+					// public void onResponse(LookupResponse response) {
+					// if (response.getChatList() != null)
+					// for (LookupChatEntity entity : response.getChatList()) {
+					// Log.d("lookup", entity.getTitle() + " " +
+					// entity.getTags()
+					// + " " + entity.getId());
+					// }
+					// else {
+					// Log.d("lookup", "null response");
+					// }
+					// }
+					//
+					// @Override
+					// public void onServiceError(RestError error) {
+					// Toast.makeText(getActivity(), error.getMessage(),
+					// Toast.LENGTH_SHORT)
+					// .show();
+					// }
+					// });
+					isThreadRunning = true;
 					mImgBtnClear.setVisibility(View.VISIBLE);
 					mImgBtnSearch.setVisibility(View.GONE);
 					return true;
@@ -278,7 +323,12 @@ public class ChatListGroupPublicFragment extends Fragment {
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
 		View headerSearchView = getLayoutInflater(getArguments()).inflate(
 				R.layout.linear_search_header, null);
+
+		View footerView = getLayoutInflater(getArguments()).inflate(R.layout.list_footer_load_more,
+				null);
+		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
 		mListView.addHeaderView(headerSearchView);
+		mListView.addFooterView(footerView);
 
 		List<ChatLoad> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
@@ -470,6 +520,27 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 				}
 				lastFirstvisibleItem = firstVisibleItem;
+
+				// what is the bottom iten that is visible
+				int lastInScreen = firstVisibleItem + visibleItemCount;
+
+				// is the bottom item visible & not loading more already ? Load
+				// more
+				// !
+				if ((lastInScreen == totalItemCount)) {
+					// if ((dataArray.size() - 1) > visibleChildCount) {
+					if (!isThreadRunning && isMoreData) {
+						// String data = mEditTextSearch.getText().toString();
+						if (!searchString.trim().equals("")) {
+							mFooterLayout.setVisibility(View.VISIBLE);
+							isThreadRunning = true;
+							MainActivity activity = (MainActivity) callback;
+							activity.setPublicSearch(true);
+							activity.searchChats(searchString, 2, pageNo, chatListener);
+						}
+					}
+					// }
+				}
 			}
 		});
 
@@ -559,7 +630,6 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 		@Override
 		public void onLongPress(MotionEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -570,13 +640,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 		@Override
 		public void onShowPress(MotionEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent e) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -691,4 +759,18 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 	}
 
+	LoadMoreChatListener chatListener = new LoadMoreChatListener() {
+
+		@Override
+		public void onSearchResult(int count, int responseCode) {
+			mEditTextSearch.setEnabled(true);
+			mFooterLayout.setVisibility(View.GONE);
+			isThreadRunning = false;
+			if (count > 0)
+				pageNo++;
+			else
+				isMoreData = false;
+
+		}
+	};
 }

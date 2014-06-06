@@ -49,10 +49,11 @@ public class MessageInChatPushHandler extends BasePushHandler {
 
 			int type = 0;
 			String userName = "User";
-			if (mMessage.senderName == null || mMessage.senderName.trim().equals(""))
-				userName = "User";
-			else
-				userName = mMessage.senderName;
+			// if (mMessage.senderName == null ||
+			// mMessage.senderName.trim().equals(""))
+			// userName = "User";
+			// else
+			// userName = mMessage.senderName;
 			try {
 				Cursor cursorChat = getContext().getContentResolver().query(
 						QodemeContract.Chats.CONTENT_URI,
@@ -64,25 +65,51 @@ public class MessageInChatPushHandler extends BasePushHandler {
 					if (cursorChat.moveToFirst()) {
 						do {
 							type = cursorChat.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
+							userName = cursorChat
+									.getString(QodemeContract.Chats.ChatQuery.CHAT_TITLE);
 						} while (cursorChat.moveToNext());
 					}
 				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			String msg = "New message from ";
 			if (type == 0) {
+				try {
+					Cursor contactCursor = getContext().getContentResolver()
+							.query(QodemeContract.Contacts.CONTENT_URI,
+									QodemeContract.Contacts.ContactQuery.PROJECTION,
+									QodemeContract.Contacts.CONTACT_QRCODE + " = '"
+											+ mMessage.qrcode + "'", null, null);
+					if (contactCursor != null && contactCursor.getCount() > 0) {
+						if (contactCursor.moveToFirst()) {
+							do {
+								userName = contactCursor
+										.getString(QodemeContract.Contacts.ContactQuery.CONTACT_TITLE);
+							} while (contactCursor.moveToNext());
+						}
+					}
+				} catch (Exception e) {
+					userName = "User";
+				}
 				msg = "New message from " + userName;
 			} else {
 				msg = "New message in " + userName;
 			}
 			sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
 		}
-		getContext().getContentResolver().insert(QodemeContract.Messages.CONTENT_URI,
-				QodemeContract.Messages.addNewMessagePushValues(mMessage));
-		getContext().getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
-				QodemeContract.Contacts.isArchiveValues(0),
-				QodemeContract.Contacts.CONTACT_CHAT_ID + "=" + mMessage.chatId, null);
+		Cursor cursor = getContext().getContentResolver().query(
+				QodemeContract.Messages.CONTENT_URI, QodemeContract.Messages.Query.PROJECTION,
+				QodemeContract.Messages.MESSAGE_ID + "=" + mMessage.messageId, null, null);
+		if (cursor != null && cursor.getCount() > 0) {
+		} else {
+			getContext().getContentResolver().insert(QodemeContract.Messages.CONTENT_URI,
+					QodemeContract.Messages.addNewMessagePushValues(mMessage));
+			getContext().getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+					QodemeContract.Contacts.isArchiveValues(0),
+					QodemeContract.Contacts.CONTACT_CHAT_ID + "=" + mMessage.chatId, null);
+		}
 	}
 
 }

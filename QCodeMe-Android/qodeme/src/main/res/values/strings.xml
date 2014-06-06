@@ -109,5 +109,6 @@
     <string name="flag_comment">Flag Comment</string>
     <string name="status_update">Status update </string>
     <string name="member">Members: </string>
+    <string name="loading_text">Loading...</string>
 
 </resources>

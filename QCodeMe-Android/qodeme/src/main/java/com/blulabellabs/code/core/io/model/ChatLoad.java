@@ -31,4 +31,5 @@ public class ChatLoad {
     public String title;
     public String user_qrcode;
     public String created;
+    public int is_favorite;
 }

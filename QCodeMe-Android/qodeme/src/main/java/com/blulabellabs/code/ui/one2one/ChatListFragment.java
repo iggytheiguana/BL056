@@ -12,22 +12,29 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.images.utils.ImageFetcher;
+import com.blulabellabs.code.ui.MainActivity;
+import com.blulabellabs.code.ui.MainActivity.LoadMoreChatListener;
 import com.blulabellabs.code.ui.common.ExListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.utils.ChatFocusSaver;
@@ -48,12 +55,19 @@ public class ChatListFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear;;
 	private EditText mMessageEdit;
 	int lastVisibleItem = 0;
 	boolean isScrollingDown = false;
+	private EditText mEditTextSearch;
 	private LinearLayout mLinearLayoutSearch;
 	int lastFirstvisibleItem = 0;
+
+	int pageNo = 1;
+	boolean isMoreData = true;
+	private boolean isThreadRunning;
+	private LinearLayout mFooterLayout;
+	private String searchString = "";
 
 	private static final String TAG = "ChatListFragment";
 	private final WebSocketConnection mConnection = new WebSocketConnection();
@@ -127,6 +141,11 @@ public class ChatListFragment extends Fragment {
 		mMessageButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mMessageEdit = (EditText) getView().findViewById(R.id.edit_message);
 		mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
+		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
+		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
+
+		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+
 		initListView();
 		isViewCreated = true;
 		updateUi();
@@ -147,6 +166,83 @@ public class ChatListFragment extends Fragment {
 			@Override
 			public void afterTextChanged(Editable editable) {
 				Log.d(TAG, "afterTextChanged");
+			}
+		});
+		mImgBtnClear.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				MainActivity activity = (MainActivity) callback;
+				activity.setOneToOneSearch(false);
+				activity.setOneToOneSearchString("");
+				mEditTextSearch.setText("");
+				mImgBtnClear.setVisibility(View.GONE);
+				mImgBtnSearch.setVisibility(View.VISIBLE);
+				mEditTextSearch.setEnabled(true);
+				mEditTextSearch.setText("");
+				pageNo = 1;
+				searchString = "";
+
+				updateUi();
+			}
+		});
+		MainActivity activity = (MainActivity) callback;
+		if (activity.isOneToOneSearch()) {
+			searchString = activity.getOneToOneSearchString();
+			mEditTextSearch.setText(searchString);
+			mImgBtnClear.setVisibility(View.VISIBLE);
+			mImgBtnSearch.setVisibility(View.GONE);
+		} else {
+			mImgBtnClear.setVisibility(View.GONE);
+			mImgBtnSearch.setVisibility(View.VISIBLE);
+		}
+		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH
+						|| actionId == EditorInfo.IME_ACTION_GO
+						|| actionId == EditorInfo.IME_ACTION_DONE
+						|| event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+					String data = v.getText().toString();
+					searchString = data;
+					MainActivity activity = (MainActivity) callback;
+					activity.setOneToOneSearch(true);
+					activity.setOneToOneSearchString(data);
+					activity.searchChats(data, 0, 1, chatListener);
+					mEditTextSearch.setEnabled(false);
+					isMoreData = true;
+					// RestAsyncHelper.getInstance().lookup(data, new
+					// RestListener<LookupResponse>() {
+					//
+					// @Override
+					// public void onResponse(LookupResponse response) {
+					// if (response.getChatList() != null)
+					// for (LookupChatEntity entity : response.getChatList()) {
+					// Log.d("lookup", entity.getTitle() + " " +
+					// entity.getTags()
+					// + " " + entity.getId());
+					// }
+					// else {
+					// Log.d("lookup", "null response");
+					// }
+					// }
+					//
+					// @Override
+					// public void onServiceError(RestError error) {
+					// Toast.makeText(getActivity(), error.getMessage(),
+					// Toast.LENGTH_SHORT)
+					// .show();
+					// }
+					// });
+
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					mImgBtnSearch.setVisibility(View.GONE);
+					return true;
+				}
+				return false;
 			}
 		});
 	}
@@ -197,10 +293,16 @@ public class ChatListFragment extends Fragment {
 
 	private void initListView() {
 		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
-		
-		View headerSearchView = getLayoutInflater(getArguments()).inflate(R.layout.linear_search_header, null);
+
+		View headerSearchView = getLayoutInflater(getArguments()).inflate(
+				R.layout.linear_search_header, null);
+
+		View footerView = getLayoutInflater(getArguments()).inflate(R.layout.list_footer_load_more,
+				null);
+		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
 		mListView.addHeaderView(headerSearchView);
-		
+		mListView.addFooterView(footerView);
+
 		List<Contact> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
 
@@ -360,6 +462,27 @@ public class ChatListFragment extends Fragment {
 
 				}
 				lastFirstvisibleItem = firstVisibleItem;
+
+				// what is the bottom iten that is visible
+				int lastInScreen = firstVisibleItem + visibleItemCount;
+
+				// is the bottom item visible & not loading more already ? Load
+				// more
+				// !
+				if ((lastInScreen == totalItemCount)) {
+					// if ((dataArray.size() - 1) > visibleChildCount) {
+					if (!isThreadRunning && isMoreData) {
+						// String data = mEditTextSearch.getText().toString();
+						if (!searchString.trim().equals("")) {
+							mFooterLayout.setVisibility(View.VISIBLE);
+							isThreadRunning = true;
+							MainActivity activity = (MainActivity) callback;
+							activity.setOneToOneSearch(true);
+							activity.searchChats(searchString, 0, pageNo, chatListener);
+						}
+					}
+					// }
+				}
 			}
 		});
 	}
@@ -455,4 +578,17 @@ public class ChatListFragment extends Fragment {
 
 	}
 
+	LoadMoreChatListener chatListener = new LoadMoreChatListener() {
+
+		@Override
+		public void onSearchResult(int count, int responseCode) {
+			mEditTextSearch.setEnabled(true);
+			mFooterLayout.setVisibility(View.GONE);
+			isThreadRunning = false;
+			if (count > 0)
+				pageNo++;
+			else
+				isMoreData = false;
+		}
+	};
 }

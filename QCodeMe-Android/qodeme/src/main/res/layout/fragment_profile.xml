@@ -294,7 +294,7 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/selector_button_blue"
                     android:text="@string/done"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -335,7 +335,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="1020 messages"
+                android:text="0 messages"
                 android:textColor="@color/text_message_not_read"
                 android:textSize="16sp" />
 
@@ -351,7 +351,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/text_message_not_read"
-                android:text="32 photos"
+                android:text="0 photos"
                 android:textSize="16sp" />
         </LinearLayout>
 

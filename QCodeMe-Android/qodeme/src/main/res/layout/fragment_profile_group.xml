@@ -507,7 +507,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="32 members"
+                android:text="1 members"
                 android:textColor="#059BE9"
                 android:visibility="visible" />
 
@@ -526,7 +526,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="1020 messages"
+                android:text="0 messages"
                 android:textColor="@color/text_message_not_read"
                 android:textSize="16sp" />
 
@@ -543,7 +543,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="32 photos"
+                android:text="0 photos"
                 android:textColor="@color/text_message_not_read"
                 android:textSize="16sp" />
         </LinearLayout>

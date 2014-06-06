@@ -67,7 +67,8 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Contacts.CONTACT_LOCATION + " TEXT,"
                 + Contacts.CONTACT_DATETIME + " TEXT,"
                 + Contacts.CONTACT_CHAT_ID + " INTEGER,"
-                + Contacts.CONTACT_IS_ARCHIVE + " INTEGER)");
+                + Contacts.CONTACT_IS_ARCHIVE + " INTEGER,"
+                + Contacts.CONTACT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0)");
 
         db.execSQL("CREATE TABLE " + Tables.CHATS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -86,7 +87,11 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Chats.CHAT_NUMBER_OF_FLAGGED + " INTEGER NOT NULL DEFAULT 0,"
                 + Chats.CHAT_STATUS + " TEXT,"
                 + Chats.CHAT_ADMIN_QRCODE + " TEXT,"
-                + Chats.CHAT_MEMBER_QRCODES + " TEXT)");
+                + Chats.CHAT_MEMBER_QRCODES + " TEXT,"
+                + Chats.CHAT_NUMBER_OF_FAVORITE + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_IS_FAVORITE + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0)");
+        
         db.execSQL("CREATE TABLE " + Tables.MESSAGES + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + SyncColumns.UPDATED + " INTEGER NOT NULL,"
@@ -104,7 +109,8 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Messages.MESSAGE_SENDERNAME + " TEXT,"
                 + Messages.MESSAGE_PHOTO_URL_LOCAL + " TEXT,"
                 + Messages.MESSAGE_HAS_FLAGGED + " INTEGER,"
-                + Messages.MESSAGE_HAS_DELETED + " INTEGER )");
+                + Messages.MESSAGE_HAS_DELETED + " INTEGER,"
+                + Messages.MESSAGE_IS_SEARCH + " INTEGER NOT NULL DEFAULT 0)");
 
         db.execSQL("CREATE TABLE " + Tables.CHAT_SETTINGS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

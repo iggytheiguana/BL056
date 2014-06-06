@@ -29,5 +29,5 @@
     <color name="text_message_not_read">#404040</color>
     <color name="user_typing">#d4d4d4</color>
      <color name="sign_up">#079de8</color>
-    
+    <color name="block_user_btn">#adadad</color>
 </resources>

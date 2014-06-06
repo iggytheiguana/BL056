@@ -17,9 +17,11 @@
 package com.blulabellabs.code.ui;
 
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.ImageWorker;
 import com.blulabellabs.code.images.utils.Utils;
+import com.google.android.gms.internal.ac;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,89 +31,106 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-
 /**
- * This fragment will populate the children of the ViewPager from {@link ImageDetailActivity}.
+ * This fragment will populate the children of the ViewPager from
+ * {@link ImageDetailActivity}.
  */
 public class ImageDetailFragment extends Fragment {
-    private static final String IMAGE_DATA_EXTRA = "extra_image_data";
-    private String mImageUrl;
-    private ImageView mImageView, mImgFlag;
-    private ImageFetcher mImageFetcher;
-    private int isFlagged = 0;
+	private static final String IMAGE_DATA_EXTRA = "extra_image_data";
+	private String mImageUrl;
+	private ImageView mImageView, mImgFlag;
+	private ImageFetcher mImageFetcher;
+	private int isFlagged = 0;
 
-    /**
-     * Factory method to generate a new instance of the fragment given an image number.
-     *
-     * @param imageUrl The image url to load
-     * @return A new instance of ImageDetailFragment with imageNum extras
-     */
-    public static ImageDetailFragment newInstance(String imageUrl, int isFlag) {
-        final ImageDetailFragment f = new ImageDetailFragment();
+	/**
+	 * Factory method to generate a new instance of the fragment given an image
+	 * number.
+	 * 
+	 * @param imageUrl
+	 *            The image url to load
+	 * @return A new instance of ImageDetailFragment with imageNum extras
+	 */
+	public static ImageDetailFragment newInstance(String imageUrl, int isFlag) {
+		final ImageDetailFragment f = new ImageDetailFragment();
 
-        final Bundle args = new Bundle();
-        args.putString(IMAGE_DATA_EXTRA, imageUrl);
-        args.putInt("flag",isFlag);
-        f.setArguments(args);
+		final Bundle args = new Bundle();
+		args.putString(IMAGE_DATA_EXTRA, imageUrl);
+		args.putInt("flag", isFlag);
+		f.setArguments(args);
 
-        return f;
-    }
+		return f;
+	}
 
-    /**
-     * Empty constructor as per the Fragment documentation
-     */
-    public ImageDetailFragment() {}
+	/**
+	 * Empty constructor as per the Fragment documentation
+	 */
+	public ImageDetailFragment() {
+	}
 
-    /**
-     * Populate image using a url from extras, use the convenience factory method
-     * {@link ImageDetailFragment#newInstance(String)} to create this fragment.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mImageUrl = getArguments() != null ? getArguments().getString(IMAGE_DATA_EXTRA) : null;
-        isFlagged = getArguments() != null ? getArguments().getInt("flag") : 0;
-    }
+	/**
+	 * Populate image using a url from extras, use the convenience factory
+	 * method {@link ImageDetailFragment#newInstance(String)} to create this
+	 * fragment.
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mImageUrl = getArguments() != null ? getArguments().getString(IMAGE_DATA_EXTRA) : null;
+		isFlagged = getArguments() != null ? getArguments().getInt("flag") : 0;
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        // Inflate and locate the main ImageView
-        final View v = inflater.inflate(R.layout.image_detail_fragment, container, false);
-        mImageView = (ImageView) v.findViewById(R.id.imageView);
-        mImgFlag  = (ImageView) v.findViewById(R.id.img_flag);
-        if(isFlagged == 1)
-        	mImgFlag.setVisibility(View.VISIBLE);
-        else
-        	mImgFlag.setVisibility(View.GONE);
-        	
-        return v;
-    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Inflate and locate the main ImageView
+		final View v = inflater.inflate(R.layout.image_detail_fragment, container, false);
+		mImageView = (ImageView) v.findViewById(R.id.imageView);
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+		// if(isFlagged == 1)
+		// mImgFlag.setVisibility(View.VISIBLE);
+		// else
+		// mImgFlag.setVisibility(View.GONE);
 
-        // Use the parent activity to load the image asynchronously into the ImageView (so a single
-        // cache can be used over all pages in the ViewPager
-        if (ImageDetailActivity.class.isInstance(getActivity())) {
-            mImageFetcher = ((ImageDetailActivity) getActivity()).getImageFetcher();
-            mImageFetcher.loadImage(mImageUrl, mImageView, null);
-        }
+		return v;
+	}
 
-        // Pass clicks on the ImageView to the parent activity to handle
-        if (OnClickListener.class.isInstance(getActivity()) && Utils.hasHoneycomb()) {
-            mImageView.setOnClickListener((OnClickListener) getActivity());
-        }
-    }
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mImageView != null) {
-            // Cancel any pending image work
-            ImageWorker.cancelWork(mImageView);
-            mImageView.setImageDrawable(null);
-        }
-    }
+		// Use the parent activity to load the image asynchronously into the
+		// ImageView (so a single
+		// cache can be used over all pages in the ViewPager
+		if (ImageDetailActivity.class.isInstance(getActivity())) {
+			mImageFetcher = ((ImageDetailActivity) getActivity()).getImageFetcher();
+			mImageFetcher.loadImage(mImageUrl, mImageView, null);
+		}
+
+		// Pass clicks on the ImageView to the parent activity to handle
+		if (OnClickListener.class.isInstance(getActivity()) && Utils.hasHoneycomb()) {
+			mImageView.setOnClickListener((OnClickListener) getActivity());
+		}
+		mImgFlag = (ImageView) getView().findViewById(R.id.img_flag);
+		mImgFlag.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ImageDetailActivity activity = (ImageDetailActivity) getActivity();
+				long messageId = activity.getMessage_id();
+				activity.getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+						QodemeContract.Messages.updateMessageFlagged(),
+						QodemeContract.Messages.MESSAGE_ID + "=" + messageId, null);
+			}
+		});
+
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mImageView != null) {
+			// Cancel any pending image work
+			ImageWorker.cancelWork(mImageView);
+			mImageView.setImageDrawable(null);
+		}
+	}
 }

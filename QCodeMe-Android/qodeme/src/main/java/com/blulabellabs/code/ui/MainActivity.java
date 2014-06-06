@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,10 +25,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
@@ -57,7 +55,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
@@ -68,24 +65,17 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -119,7 +109,6 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.Utils;
 import com.blulabellabs.code.ui.common.FullChatListAdapter;
 import com.blulabellabs.code.ui.common.MenuListAdapter;
-import com.blulabellabs.code.ui.common.MenuListAddToChatAdapter;
 import com.blulabellabs.code.ui.contacts.ContactDetailsActivity;
 import com.blulabellabs.code.ui.contacts.ContactListItem;
 import com.blulabellabs.code.ui.contacts.ContactListItemEntity;
@@ -131,26 +120,24 @@ import com.blulabellabs.code.ui.one2one.ChatInsideGroupFragment;
 import com.blulabellabs.code.ui.one2one.ChatListFragment;
 import com.blulabellabs.code.ui.one2one.ChatListGroupFragment;
 import com.blulabellabs.code.ui.one2one.ChatListGroupPublicFragment;
+import com.blulabellabs.code.ui.one2one.ChatPhotosFragment;
 import com.blulabellabs.code.ui.one2one.ChatProfileFragment;
 import com.blulabellabs.code.ui.preferences.SettingsActivity;
 import com.blulabellabs.code.ui.qr.QrCodeCaptureActivity;
 import com.blulabellabs.code.ui.qr.QrCodeShowActivity;
-import com.blulabellabs.code.ui.tutorial.TutorialActivity;
 import com.blulabellabs.code.utils.AnalyticsHelper;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
-import com.blulabellabs.code.utils.LocationUtils;
 import com.blulabellabs.code.utils.MyLocation;
-import com.blulabellabs.code.utils.NullHelper;
 import com.blulabellabs.code.utils.MyLocation.LocationResult;
-import com.flurry.sdk.ch;
-import com.flurry.sdk.en;
+import com.blulabellabs.code.utils.NullHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.internal.cn;
+import com.google.android.gms.internal.co;
+import com.google.android.gms.internal.cu;
 import com.google.android.gms.location.LocationClient;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -158,6 +145,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
 
+@SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
+@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 public class MainActivity extends BaseActivity implements
 		ChatListFragment.One2OneChatListFragmentCallback,
 		ChatInsideFragment.One2OneChatInsideFragmentCallback,
@@ -173,6 +162,7 @@ public class MainActivity extends BaseActivity implements
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
 	private static final String CHAT_LIST_PRIVATE_FRAGMENT = "chat_list_private_fragment";
 	private static final String CHAT_LIST_PUBLIC_FRAGMENT = "chat_list_public_fragment";
+
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
 	private static final int DEFAULT_HEIGHT_DP = 200;
 
@@ -207,6 +197,8 @@ public class MainActivity extends BaseActivity implements
 	private List<Contact> mBlockedContacts;
 	private List<ChatLoad> mChatList;
 	private List<ChatLoad> mChatListSearchPublic = Lists.newArrayList();
+	private List<ChatLoad> mChatListSearchPrivate = Lists.newArrayList();
+	private List<Contact> mChatListSearchOneToOne = Lists.newArrayList();
 	private Map<Long, Integer> mChatNewMessagesMap;
 
 	private ContactListLoader mContactListLoader;
@@ -219,6 +211,11 @@ public class MainActivity extends BaseActivity implements
 	private boolean mKeyboardActive;
 	private boolean isAddContact = false;
 	private boolean isPublicSearch = false;
+	private boolean isPrivateSearch = false;
+	private boolean isOneToOneSearch = false;
+	private String publicSearchString = "";
+	private String privateSearchString = "";
+	private String oneToOneSearchString = "";
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -1680,6 +1677,29 @@ public class MainActivity extends BaseActivity implements
 												.getQrcode(), lat, lng));
 
 						for (Contact contact : contactsList) {
+							final long chatid = response.getChat().getId();
+							final String qr = contact.qrCode;
+							Cursor cursor = getContentResolver().query(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.ChatQuery.PROJECTION,
+									QodemeContract.Chats.CHAT_ID + "=" + chatid, null, null);
+							String memberString = "";
+							if (cursor != null && cursor.moveToFirst()) {
+								memberString = cursor
+										.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+							}
+							if (memberString == null || memberString.equals(""))
+								memberString = qr;
+							else {
+								memberString += "," + qr;
+							}
+							ContentValues contentValues = new ContentValues();
+							contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES,
+									memberString);
+							getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+									contentValues, QodemeContract.Chats.CHAT_ID + "=" + chatid,
+									null);
+
 							RestAsyncHelper.getInstance().chatAddMember(response.getChat().getId(),
 									contact.qrCode, new RestListener<ChatAddMemberResponse>() {
 
@@ -1687,6 +1707,7 @@ public class MainActivity extends BaseActivity implements
 										public void onResponse(ChatAddMemberResponse response) {
 											Log.d("Chat add ", "Chat add mem "
 													+ response.getChat().getId());
+
 										}
 
 										@Override
@@ -2034,8 +2055,12 @@ public class MainActivity extends BaseActivity implements
 
 		if (chatType == 0) {
 			ChatInsideFragment one2OneChatInsideFragment = null;
+			ChatProfileFragment chatProfileFragment = null;
+			ChatPhotosFragment chatPhotosFragment = null;
 			if (mPagerAdapter != null && !getActionBar().isShowing()) {
 				one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
+				chatProfileFragment = (ChatProfileFragment) mPagerAdapter.getItem(1);
+				chatPhotosFragment = (ChatPhotosFragment) mPagerAdapter.getItem(2);
 			}
 			if (one2OneChatInsideFragment != null) {
 				if (mContactInfoUpdated) {
@@ -2055,6 +2080,11 @@ public class MainActivity extends BaseActivity implements
 
 				}
 				one2OneChatInsideFragment.updateUi();
+				// Contact c = findContactEntityByChatId(currentChatId);
+				// if (c != null)
+				// chatProfileFragment.setContact(c);
+				chatProfileFragment.setData();
+				chatPhotosFragment.updateUi();
 				mViewPager.setCurrentItem(fullChatIndex);
 
 			}
@@ -2175,6 +2205,7 @@ public class MainActivity extends BaseActivity implements
 					chatId = chatInsideGroupFragment.getChatId();
 				}
 				if (chatId != null) {
+					QodemePreferences.getInstance().set("" + chatId, null);
 					List<Message> messages = getChatMessages(chatId);
 					if (messages != null)
 						for (Message message : messages) {
@@ -2191,78 +2222,14 @@ public class MainActivity extends BaseActivity implements
 			}
 			return;
 		}
-		// else {
-		// new AlertDialog.Builder(this).setTitle(R.string.app_name)
-		// .setMessage("Are you want to logout?")
-		// .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(DialogInterface dialog, int which) {
-		// // TODO Auto-generated method stub
-		// RestAsyncHelper.getInstance().registerToken("", new RestListener() {
-		//
-		// @Override
-		// public void onResponse(BaseResponse response) {
-		// RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-		// @Override
-		// public void onResponse(BaseResponse response) {
-		// logoutHandler();
-		// }
-		//
-		// @Override
-		// public void onServiceError(RestError error) {
-		// showMessage(RestErrorType.getMessage(getContext(),
-		// error.getErrorType()) + error.getServerMsg());
-		// }
-		//
-		// @Override
-		// public void onNetworkError(VolleyError error) {
-		// super.onNetworkError(error);
-		// showMessage(error.getMessage());
-		// }
-		// });
-		// }
-		//
-		// @Override
-		// public void onServiceError(RestError error) {
-		// showMessage(RestErrorType.getMessage(getContext(),
-		// error.getErrorType())
-		// + error.getServerMsg());
-		// }
-		//
-		// @Override
-		// public void onNetworkError(VolleyError error) {
-		// super.onNetworkError(error);
-		// showMessage("No internet connection!");
-		// }
-		//
-		// private void logoutHandler() {
-		// clearActivityCache();
-		// QodemePreferences.getInstance().setLogged(false);
-		// QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-		// startActivity(new Intent(getApplicationContext(),
-		// LoginActivity.class));
-		// finish();
-		//
-		// }
-		// });
-		//
-		// }
-		// }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(DialogInterface dialog, int which) {
-		// // TODO Auto-generated method stub
-		// finish();
-		// }
-		// }).create().show();
-		// }
 
 		super.onBackPressed();
 	}
 
 	@Override
 	public List<Contact> getContactList() {
+		if (chatType == 0 && isOneToOneSearch())
+			return mChatListSearchOneToOne;
 		List<Contact> contacts = Lists.newArrayList();
 		if (mApprovedContacts != null)
 			contacts.addAll(mApprovedContacts);
@@ -2278,7 +2245,16 @@ public class MainActivity extends BaseActivity implements
 			if (isPublicSearch()) {
 				return mChatListSearchPublic;
 			}
+		} else if (chatType == 1) {
+			if (isPrivateSearch()) {
+				return mChatListSearchPrivate;
+			}
 		}
+		// else if(chatType == 0){
+		// if(isOneToOneSearch()){
+		// return mChatListSearchOneToOne;
+		// }
+		// }
 		List<ChatLoad> tempList = Lists.newArrayList();
 		if (mChatList != null) {
 			for (ChatLoad chatLoad : mChatList) {
@@ -2358,31 +2334,25 @@ public class MainActivity extends BaseActivity implements
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
 		// String public_name = QodemePreferences.getInstance().getPublicName();
+		ChatLoad chatLoad = null;// getChatLoad(chatId);
+		if (mChatList != null) {
+			for (ChatLoad chat : mChatList)
+				if (chat.chatId == chatId)
+					// return chatLoad;
+					chatLoad = chat;
+		}
+
+		int is_search = 0;
+		if (chatLoad == null) {
+			is_search = 1;
+		} else {
+			is_search = 0;
+		}
 		getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
-						replyTo_Id, latitude, longitude, senderName, localUrl));
+						replyTo_Id, latitude, longitude, senderName, localUrl, is_search));
 		SyncHelper.requestManualSync();
-		// Long rawContactId = ContentUris.parseId(uri);
-		// String carId = uri.getPathSegments().get(1);
-
-		// Log.d("insert", "Content inserted at: " + uri);
-		// Log.d("insert", "Car_id: " + carId);
-		//
-		// Log.d("insert", uri + "");
-		/*
-		 * RestAsyncHelper.getInstance().chatMessage(chatId, message,
-		 * unixTimeStamp, new RestListener() {
-		 * 
-		 * @Override public void onResponse(BaseResponse response) {
-		 * refreshContactList(); }
-		 * 
-		 * @Override public void onServiceError(RestError error) {
-		 * showMessage(error.getServerMsg()); }
-		 * 
-		 * @Override public void onNetworkError(VolleyError error) {
-		 * showMessage(error.getMessage()); } });
-		 */
 
 	}
 
@@ -2887,21 +2857,29 @@ public class MainActivity extends BaseActivity implements
 	public Contact getContact(String qrString) {
 		// int color = getResources().getColor(R.color.text_message_not_read);
 		Contact contact = null;
-		if (getContactList() != null)
-			for (Contact c : getContactList()) {
-				if (c.qrCode.equals(qrString)) {
-					contact = c;
-					break;
+		if (qrString != null) {
+			//
+			List<Contact> contacts = Lists.newArrayList();
+			if (mApprovedContacts != null)
+				contacts.addAll(mApprovedContacts);
+			if (mBlockedContacts != null)
+				contacts.addAll(mBlockedContacts);
+			//
+			if (contacts != null)// if (getContactList() != null)
+				for (Contact c : contacts) {
+					if (c.qrCode.equals(qrString)) {
+						contact = c;
+						break;
+					}
 				}
-			}
-		if (contact == null && mBlockContacts != null)
-			for (Contact c : mBlockContacts) {
-				if (c.qrCode.equals(qrString)) {
-					contact = c;
-					break;
+			if (contact == null && mBlockContacts != null)
+				for (Contact c : mBlockContacts) {
+					if (c.qrCode.equals(qrString)) {
+						contact = c;
+						break;
+					}
 				}
-			}
-
+		}
 		return contact;
 	}
 
@@ -2923,6 +2901,23 @@ public class MainActivity extends BaseActivity implements
 
 		// final ChatLoad chatload = getChatLoad(currentChatId);
 		for (Contact contact : contactsList) {
+			final String qr = contact.qrCode;
+			Cursor cursor = getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
+					QodemeContract.Chats.ChatQuery.PROJECTION,
+					QodemeContract.Chats.CHAT_ID + "=" + currentChatId, null, null);
+			String memberString = "";
+			if (cursor != null && cursor.moveToFirst()) {
+				memberString = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+			}
+			if (memberString == null || memberString.equals(""))
+				memberString = qr;
+			else {
+				memberString += "," + qr;
+			}
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES, memberString);
+			getContentResolver().update(QodemeContract.Chats.CONTENT_URI, contentValues,
+					QodemeContract.Chats.CHAT_ID + "=" + currentChatId, null);
 			RestAsyncHelper.getInstance().chatAddMember(currentChatId, contact.qrCode,
 					new RestListener<ChatAddMemberResponse>() {
 
@@ -2930,7 +2925,6 @@ public class MainActivity extends BaseActivity implements
 						public void onResponse(ChatAddMemberResponse response) {
 							Log.d("Chat add in public ", "Chat add mem "
 									+ response.getChat().getId());
-
 						}
 
 						@Override
@@ -2999,6 +2993,7 @@ public class MainActivity extends BaseActivity implements
 		final Intent i = new Intent(getActivity(), ImageDetailActivity.class);
 		i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
 		i.putExtra("flag", msg.is_flagged);
+		i.putExtra("message_id", msg.messageId);
 		if (Utils.hasJellyBean()) {
 			// makeThumbnailScaleUpAnimation() looks kind of ugly here as the
 			// loading spinner may
@@ -3008,42 +3003,108 @@ public class MainActivity extends BaseActivity implements
 					v.getHeight());
 			getActivity().startActivity(i, options.toBundle());
 		} else {
+//			android.support.v4.app.ActivityOptionsCompat activityOptionsCompat = android.support.v4.app.ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(),
+//					v.getHeight());
+//			getActivity().startActivity(i, activityOptionsCompat.toBundle());
 			startActivity(i);
 		}
 	}
 
-	public void searchChats(String searchString, final int type) {
-		setPublicSearch(true);
-		RestAsyncHelper.getInstance().lookup(searchString, new RestListener<LookupResponse>() {
+	public void searchChats(String searchString, final int type, final int pageNo,
+			final LoadMoreChatListener chatListener) {
+		if (type == 2) {
+			setPublicSearch(true);
+		} else if (type == 1) {
+			setPrivateSearch(true);
+		} else if (type == 0) {
+			setOneToOneSearch(true);
+		}
+		RestAsyncHelper.getInstance().lookup(searchString, type, pageNo,
+				new RestListener<LookupResponse>() {
 
-			@Override
-			public void onResponse(LookupResponse response) {
-				if (response.getChatList() != null) {
-					if (type == 2) {
-						mChatListSearchPublic = Lists.newArrayList();
-						for (LookupChatEntity entity : response.getChatList()) {
-							Log.d("lookup", entity.getTitle() + " " + entity.getTags() + " "
-									+ entity.getId());
-							ChatLoad chatLoad = new ChatLoad();
-							chatLoad.title = entity.getTitle();
-							chatLoad.chatId = entity.getId();
-							chatLoad.qrcode = entity.getQrcode();
-							chatLoad.tag = entity.getTags();
-							mChatListSearchPublic.add(chatLoad);
+					@Override
+					public void onResponse(LookupResponse response) {
+						if (response.getChatList() != null) {
+							if (type == 2) {
+								if (mChatListSearchPublic == null || pageNo == 1)
+									mChatListSearchPublic = Lists.newArrayList();
+								for (LookupChatEntity entity : response.getChatList()) {
+									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
+											+ " " + entity.getId());
+									ChatLoad chatLoad = new ChatLoad();
+									chatLoad.title = entity.getTitle();
+									chatLoad.chatId = entity.getId();
+									chatLoad.qrcode = entity.getQrcode();
+									chatLoad.tag = entity.getTags();
+									chatLoad.status = entity.getStatus();
+									chatLoad.description = entity.getDescription();
+									chatLoad.number_of_likes = entity.getNumber_of_likes();
+									chatLoad.number_of_members = entity.getNumber_of_member();
+									chatLoad.latitude = entity.getLatitude();
+									chatLoad.longitude = entity.getLongitude();
+									chatLoad.type = 2;
+									mChatListSearchPublic.add(chatLoad);
 
+								}
+								chatListener.onSearchResult(response.getChatList().size(), 1);
+								refreshOne2OneList();
+							} else if (type == 1) {
+								if (mChatListSearchPrivate == null || pageNo == 1)
+									mChatListSearchPrivate = Lists.newArrayList();
+								for (LookupChatEntity entity : response.getChatList()) {
+									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
+											+ " " + entity.getId());
+									ChatLoad chatLoad = new ChatLoad();
+									chatLoad.title = entity.getTitle();
+									chatLoad.chatId = entity.getId();
+									chatLoad.qrcode = entity.getQrcode();
+									chatLoad.tag = entity.getTags();
+									chatLoad.status = entity.getStatus();
+									chatLoad.description = entity.getDescription();
+									chatLoad.number_of_likes = entity.getNumber_of_likes();
+									chatLoad.number_of_members = entity.getNumber_of_member();
+									chatLoad.latitude = entity.getLatitude();
+									chatLoad.longitude = entity.getLongitude();
+									chatLoad.type = 1;
+									mChatListSearchPrivate.add(chatLoad);
+
+								}
+								chatListener.onSearchResult(response.getChatList().size(), 1);
+								refreshOne2OneList();
+							} else if (type == 0) {
+								if (mChatListSearchOneToOne == null || pageNo == 1)
+									mChatListSearchOneToOne = Lists.newArrayList();
+								for (LookupChatEntity entity : response.getChatList()) {
+									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
+											+ " " + entity.getId());
+									Contact chatLoad = new Contact();
+									chatLoad.title = entity.getTitle();
+									chatLoad.chatId = entity.getId();
+									// chatLoad.qrcode = entity.getQrcode();
+									// chatLoad.tag = entity.getTags();
+									mChatListSearchOneToOne.add(chatLoad);
+
+								}
+								// chatListener.onSearchResult("", 1);
+								chatListener.onSearchResult(response.getChatList().size(), 1);
+								refreshOne2OneList();
+							}
+						} else {
+							chatListener.onSearchResult(0, 2);
+							Log.d("lookup", "null response");
+							Toast.makeText(MainActivity.this,
+									getString(R.string.no_network_connection_toast),
+									Toast.LENGTH_SHORT).show();
 						}
-						refreshOne2OneList();
 					}
-				} else {
-					Log.d("lookup", "null response");
-				}
-			}
 
-			@Override
-			public void onServiceError(RestError error) {
-				Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-			}
-		});
+					@Override
+					public void onServiceError(RestError error) {
+						chatListener.onSearchResult(0, 2);
+						Toast.makeText(getActivity(), error.getServerMsg(), Toast.LENGTH_SHORT)
+								.show();
+					}
+				});
 	}
 
 	public void setPublicSearch(boolean isPublicSearch) {
@@ -3052,5 +3113,49 @@ public class MainActivity extends BaseActivity implements
 
 	public boolean isPublicSearch() {
 		return isPublicSearch;
+	}
+
+	public void setPrivateSearch(boolean isPrivateSearch) {
+		this.isPrivateSearch = isPrivateSearch;
+	}
+
+	public boolean isPrivateSearch() {
+		return isPrivateSearch;
+	}
+
+	public void setOneToOneSearch(boolean isOneToOneSearch) {
+		this.isOneToOneSearch = isOneToOneSearch;
+	}
+
+	public boolean isOneToOneSearch() {
+		return isOneToOneSearch;
+	}
+
+	public void setPublicSearchString(String publicSearchString) {
+		this.publicSearchString = publicSearchString;
+	}
+
+	public String getPublicSearchString() {
+		return publicSearchString;
+	}
+
+	public void setPrivateSearchString(String privateSearchString) {
+		this.privateSearchString = privateSearchString;
+	}
+
+	public String getPrivateSearchString() {
+		return privateSearchString;
+	}
+
+	public void setOneToOneSearchString(String oneToOneSearchString) {
+		this.oneToOneSearchString = oneToOneSearchString;
+	}
+
+	public String getOneToOneSearchString() {
+		return oneToOneSearchString;
+	}
+
+	public interface LoadMoreChatListener {
+		public void onSearchResult(int count, int responseCode);
 	}
 }

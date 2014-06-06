@@ -115,7 +115,7 @@ public class RestSyncHelper {
 
 	public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp,
 			String photoUrl, int hashPhoto, long replyTo_Id, String latitude, String longitude,
-			String senderName, String dateString) throws InterruptedException, ExecutionException,
+			String senderName, String dateString, int is_search) throws InterruptedException, ExecutionException,
 			JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
@@ -128,6 +128,7 @@ public class RestSyncHelper {
 		params.put(RestKeyMap.LATITUDE, latitude);
 		params.put(RestKeyMap.LONGITUDE, longitude);
 		params.put(RestKeyMap.SENDER_NAME, senderName);
+		params.put("is_search", String.valueOf(is_search));
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_MESSAGE, params);
 		return new ChatMessageResponse().parse(jsonObject);
 	}

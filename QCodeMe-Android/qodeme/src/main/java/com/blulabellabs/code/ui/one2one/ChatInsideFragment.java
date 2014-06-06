@@ -615,8 +615,8 @@ public class ChatInsideFragment extends Fragment {
 			} else {
 				mLinearLayStatusUpdte.setVisibility(View.VISIBLE);
 				mStatusUpdate.setText(statusUpdate);
-				QodemePreferences.getInstance().set(
-						"" + getArguments().getLong(CHAT_ID), "");
+//				QodemePreferences.getInstance().set(
+//						"" + getArguments().getLong(CHAT_ID), "");
 			}
 			
 			mListAdapter.clear();

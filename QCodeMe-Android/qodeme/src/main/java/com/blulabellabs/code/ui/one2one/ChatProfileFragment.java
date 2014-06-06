@@ -2,6 +2,7 @@ package com.blulabellabs.code.ui.one2one;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.android.volley.VolleyError;
@@ -10,6 +11,7 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
+import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.responses.AccountLoginResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
@@ -26,6 +28,7 @@ import com.blulabellabs.code.utils.DbUtils;
 import com.google.android.gms.internal.ac;
 import com.google.android.gms.internal.co;
 import com.google.android.gms.internal.cu;
+import com.google.common.collect.Lists;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -130,6 +133,40 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mBtnSetStatus.setOnClickListener(this);
 		mBtnArchive.setOnClickListener(this);
 
+		
+		mEdittextName.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH
+						|| actionId == EditorInfo.IME_ACTION_GO
+						|| actionId == EditorInfo.IME_ACTION_DONE
+						|| event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+					String name = mEdittextName.getText().toString();
+
+					mTextViewProfileName.setText(name);
+					mTextViewProfileName.setVisibility(View.VISIBLE);
+					mBtnEditName.setVisibility(View.VISIBLE);
+					mEdittextName.setVisibility(View.GONE);
+					mRelativeLayoutName.setVisibility(View.VISIBLE);
+					mRelativeLayoutSetName.setVisibility(View.GONE);
+					
+					int updated = contact.updated;
+					getActivity().getContentResolver().update(
+							QodemeContract.Contacts.CONTENT_URI,
+							QodemeContract.Contacts.updateContactInfoValues(name, contact.color,
+									updated), DbUtils.getWhereClauseForId(),
+							DbUtils.getWhereArgsForId(contact._id));
+					SyncHelper.requestManualSync();
+					
+					return true;
+				}
+
+				return false;
+			}
+		});
 		mEditTextStatus.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -147,6 +184,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mEditTextStatus.setVisibility(View.GONE);
 
+					QodemePreferences.getInstance().setStatus(status);
 					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "");
 					return true;
 				}
@@ -165,15 +203,31 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			// MainActivity activity = (MainActivity) callback;
 			// ChatLoad chatLoad = activity.getChatLoad(contact.chatId);
 			mTextViewStatus.setText(QodemePreferences.getInstance().getStatus());
+			mEditTextStatus.setText(QodemePreferences.getInstance().getStatus());
 			// } catch (Exception e) {
 			// e.printStackTrace();
 			// }
 			// }
 			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
 			mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
+			mEdittextName.setText(getArguments().getString(CHAT_NAME));
 			customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
 			customDotView.invalidate();
+			if(callback != null){
+				List<Message> messages = callback.getChatMessages(getArguments().getLong(CHAT_ID));
+				mTextViewTotalMessages.setText((messages != null ? messages.size() : 0)
+						+ " messages");
+				if (messages != null) {
+					List<Message> temp = Lists.newArrayList();
 
+					for (Message message : messages) {
+						if (message.hasPhoto == 1)
+							temp.add(message);
+					}
+					mTextViewTotalPhoto.setText(temp.size() + " photos");
+				}
+			}
+			
 			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
 			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
 			String dateStr = fmtOut.format(new Date(Converter
@@ -196,16 +250,6 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		MainActivity activity = (MainActivity) getActivity();
 		activity.setCurrentChatId(contact.chatId);
 		activity.callColorPicker(contact, type);
-		// Intent i = new Intent((MainActivity)getActivity(),
-		// ContactDetailsActivity.class);
-		// i.putExtra(QodemeContract.Contacts._ID,
-		// getArguments().getLong(CHAT_ID));
-		// i.putExtra(QodemeContract.Contacts.CONTACT_TITLE,
-		// getArguments().getString(CHAT_NAME));
-		// i.putExtra(QodemeContract.Contacts.CONTACT_COLOR,
-		// getArguments().getInt(CHAT_COLOR));
-		// i.putExtra(QodemeContract.Contacts.UPDATED, contact.updated);
-		// startActivityForResult(i, REQUEST_ACTIVITY_CONTACT_DETAILS);
 	}
 
 	@Override

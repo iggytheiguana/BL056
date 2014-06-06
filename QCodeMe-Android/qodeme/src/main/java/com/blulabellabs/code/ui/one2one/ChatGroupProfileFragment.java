@@ -1,5 +1,6 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,12 +40,15 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.ui.GroupMemberListActivity;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
+import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.QrUtils;
 import com.google.common.collect.Lists;
@@ -62,7 +67,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			mTextViewTotalPhoto, mTextViewTotalMember, mTextViewGroupTitle, mTextViewGroupDesc,
 			mTextViewTags;
 	private ImageButton mImgBtnColorWheel, mImgBtnLocked, mImgBtnSearch, mImgBtnShare;
-	private ImageButton mBtnEditStatus, mBtnDelete, mBtnEditDesc;
+	private ImageButton mBtnEditStatus, mBtnDelete, mBtnEditDesc, mImgFavorite;
 	private Button mBtnSetStatus, mBtnSetDesc;
 	private ImageView mImgQr;
 	private EditText mEditTextStatus, mEditTextTitle, mEditTextDesc, mEditTextTags;
@@ -125,6 +130,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mTextViewTags = (TextView) getView().findViewById(R.id.textView_groupTag);
 		mTextViewMemberList = (TextView) getView().findViewById(R.id.textView_memberList);
 
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+
 		mEditTextTags = (EditText) getView().findViewById(R.id.editText_GroupTags);
 		mEditTextTitle = (EditText) getView().findViewById(R.id.editText_GroupTitle);
 		mEditTextDesc = (EditText) getView().findViewById(R.id.editText_Desc);
@@ -141,6 +148,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mBtnSetDesc.setOnClickListener(this);
 		mImgBtnShare.setOnClickListener(this);
 		mImgBtnLocked.setOnClickListener(this);
+		mImgFavorite.setOnClickListener(this);
+		mTextViewTotalMember.setOnClickListener(this);
 
 		String mQrCodeText = chatload != null ? chatload.qrcode : "";
 		mImgQr.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
@@ -262,7 +271,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
 					if (count >= 1)
 						if (isChangeByUser)
-							if (s.charAt(start) == ',')
+							if (s.charAt(start) == ',' || s.charAt(start) == ' ')
 								setChips();
 
 				}
@@ -337,16 +346,43 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		StringBuilder stringBuilder = new StringBuilder();
 		// split string wich comma
 		String chips[] = mEditTextTags.getText().toString().trim().split(",");
-		int x = 0;
+		// int x = 0;
 		// loop will generate ImageSpan for every country name separated by
 		// comma
-		int i = 0;
+		// int i = 0;
 		for (String c : chips) {
-			c = c.replace("#", "");
-			c = "#" + c + ",";
-			stringBuilder.append(c);
-			x = x + c.length() + 1;
-			i++;
+
+			BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
+			//
+			// Set the text string to be scanned.
+			//
+			bi.setText(c);
+			//
+			// Iterates the boundary / breaks
+			//
+			// System.out.println("Iterates each word: ");
+			// int count = 0;
+			int lastIndex = bi.first();
+			while (lastIndex != BreakIterator.DONE) {
+				int firstIndex = lastIndex;
+				lastIndex = bi.next();
+
+				if (lastIndex != BreakIterator.DONE
+						&& Character.isLetterOrDigit(c.charAt(firstIndex))) {
+					String word = c.substring(firstIndex, lastIndex);
+					word = "#" + word + ",";
+					stringBuilder.append(word);
+					// System.out.println("'" + word + "' found at (" +
+					// firstIndex + ", " + lastIndex + ")");
+
+				}
+			}
+
+			// c = c.replace("#", "");
+			// c = "#" + c + ",";
+			// stringBuilder.append(c);
+			// x = x + c.length() + 1;
+			// i++;
 		}
 		// set chips span
 		// if (isChangeByUser)
@@ -434,8 +470,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						for (String memberQr : nameList) {
 							// Contact c = callback.getContact(memberQr);
 							// if (c != null) {
-							if (i > 5){
-								memberNames+= "...";
+							if (i > 5) {
+								memberNames += "...";
 								break;
 							}
 							if (i == 0)
@@ -586,9 +622,36 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					getChatload().description, getChatload().status, getChatload().is_locked,
 					getChatload().title);
 			break;
+		case R.id.btnFavorite:
+
+			setFavorite();
+			break;
+		case R.id.textView_member:
+			Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
+			getActivity().startActivity(intent);
+
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void setFavorite() {
+		String date = Converter.getCurrentGtmTimestampString();
+		RestAsyncHelper.getInstance().setFavorite(date, getChatload().chatId,
+				new RestListener<SetFavoriteResponse>() {
+
+					@Override
+					public void onResponse(SetFavoriteResponse response) {
+						Log.d("favorite", "successfull");
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("favorite", "Error" + error.getMessage());
+					}
+				});
+
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,

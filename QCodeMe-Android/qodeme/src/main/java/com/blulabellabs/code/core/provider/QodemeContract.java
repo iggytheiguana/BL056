@@ -79,6 +79,7 @@ public class QodemeContract {
 		String CONTACT_MESSAGE = "message";
 		
 		String CONTACT_IS_ARCHIVE = "contact_is_archive";
+		String CONTACT_IS_DELETED = "contact_is_deleted";
 	}
 
 	interface ChatColumns {
@@ -106,6 +107,10 @@ public class QodemeContract {
 		String CHAT_STATUS = "chat_status";
 		String CHAT_ADMIN_QRCODE = "chat_admin";
 		String CHAT_MEMBER_QRCODES = "chat_member_qrcode";
+		String CHAT_NUMBER_OF_FAVORITE = "chat_number_of_favorite";
+		String CHAT_IS_FAVORITE = "chat_is_favorite";
+		String CHAT_IS_DELETED = "chat_is_deleted";
+		
 	}
 
 	interface MessagesColumns {
@@ -139,6 +144,7 @@ public class QodemeContract {
 		String MESSAGE_HAS_FLAGGED = "message_has_flagged";
 		/** Message IS DELTED local */
 		String MESSAGE_HAS_DELETED = "message_has_deleted";
+		String MESSAGE_IS_SEARCH = "message_is_search";
 	}
 
 	interface ChatSettingColumns {
@@ -329,7 +335,8 @@ public class QodemeContract {
 			String[] PROJECTION = { Contacts._ID, Contacts.UPDATED, Contacts.CONTACT_ID,
 					Contacts.CONTACT_TITLE, Contacts.CONTACT_QRCODE, Contacts.CONTACT_COLOR,
 					Contacts.CONTACT_CHAT_ID, Contacts.CONTACT_STATE, Contacts.CONTACT_PUBLIC_NAME,
-					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME,Contacts.CONTACT_IS_ARCHIVE };
+					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME,
+					Contacts.CONTACT_IS_ARCHIVE, Contacts.CONTACT_IS_DELETED };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -344,6 +351,7 @@ public class QodemeContract {
 			int CONTACT_LOCATION = 10;
 			int CONTACT_DATETIME = 11;
 			int CONTACT_IS_ARCHIVE = 12;
+			int CONTACT_IS_DELETED = 13;
 
 		}
 	}
@@ -401,7 +409,9 @@ public class QodemeContract {
 					Chats.CHAT_DESCRIPTION, Chats.CHAT_COLOR, Chats.CHAT_IS_LOCKED,
 					Chats.CHAT_LATITUDE, Chats.CHAT_LONGITUDE, Chats.CHAT_NUMBER_OF_FLAGGED,
 					Chats.CHAT_NUMBER_OF_MEMBER, Chats.CHAT_QRCODE, Chats.CHAT_STATUS,
-					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE, Chats.CHAT_ADMIN_QRCODE, Chats.CHAT_MEMBER_QRCODES };
+					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE, Chats.CHAT_ADMIN_QRCODE,
+					Chats.CHAT_MEMBER_QRCODES, Chats.CHAT_NUMBER_OF_FAVORITE, Chats.CHAT_IS_FAVORITE, 
+					Chats.CHAT_IS_DELETED};
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -420,6 +430,9 @@ public class QodemeContract {
 			int CHAT_TYPE = 14;
 			int CHAT_ADMIN = 15;
 			int CHAT_MEMBER_QRCODES = 16;
+			int CHAT_NUMBER_OF_FAVORITE = 17;
+			int CHAT_IS_FAVORITE = 18;
+			int CHAT_IS_DELETED = 19;
 		}
 
 		public static ContentValues addNewChatValues(long chatId, int type, String qrCode,
@@ -453,7 +466,8 @@ public class QodemeContract {
 			return contentValues;
 		}
 		public static ContentValues addNewPushChatValues(long chatId, int type, String qrCode,
-				String admin, String latitude, String longitude, String desc, String status, int no_flagged, int no_member, String title, String tag, int is_locked) {
+				String admin, String latitude, String longitude, String desc, String status, 
+				int no_flagged, int no_member, String title, String tag, int is_locked) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
 			contentValues.put(Chats.CHAT_ID, chatId);
@@ -616,7 +630,7 @@ public class QodemeContract {
 
 		public static ContentValues addNewMessageValues(long chatId, String message,
 				String photoUrl, int hashPhoto, long replyTo_Id, double latitude, double longitude,
-				String senderName, String localUrl) {
+				String senderName, String localUrl, int isSearch) {
 			ContentValues c = new ContentValues();
 			c.put(SyncColumns.UPDATED, Sync.NEW);
 			c.put(MESSAGE_STATE, State.LOCAL);
@@ -633,7 +647,7 @@ public class QodemeContract {
 			c.put(MESSAGE_PHOTO_URL_LOCAL, localUrl);
 			c.put(MESSAGE_HAS_FLAGGED, 0);
 			c.put(MESSAGE_HAS_DELETED, 0);
-
+			c.put(MESSAGE_IS_SEARCH, isSearch);
 			return c;
 		}
 
@@ -712,7 +726,8 @@ public class QodemeContract {
 					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE, Messages.MESSAGE_PHOTO_URL,
 					Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID,
 					Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE,
-					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL,Messages.MESSAGE_HAS_FLAGGED , Messages.MESSAGE_HAS_DELETED};
+					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL, Messages.MESSAGE_HAS_FLAGGED, 
+					Messages.MESSAGE_HAS_DELETED, Messages.MESSAGE_IS_SEARCH};
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -731,6 +746,7 @@ public class QodemeContract {
 			int MESSAGE_PHOTO_URL_LOCAL = 14;
 			int MESSAGE_HAS_FLAGGED = 15;
 			int MESSAGE_IS_DELETED = 16;
+			int MESSAGE_IS_SEARCH = 17;
 		}
 	}
 

@@ -36,7 +36,8 @@
         android:id="@+id/img_flag"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
-        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@drawable/selectable_background_actionbar"
         android:src="@drawable/ic_flagged_gray"/>
 
 </FrameLayout>

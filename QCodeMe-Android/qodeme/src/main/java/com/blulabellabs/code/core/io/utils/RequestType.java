@@ -27,7 +27,8 @@ public enum RequestType{
     MESSAGE_READ("messageRead"),
     UPLOAD_IMAGE("uploadImage"),
     SET_FLAGGED("setFlagged"),
-    SET_FAVORITE("setFavorite");
+    SET_FAVORITE("setFavorite"),
+    CLEAR_SEARCH("clear_search");
     
 
 
