@@ -258,6 +258,7 @@ public class QodemePreferences extends CommonPreferences {
         ed.putBoolean(PREF_CHECKBOX_SAVE_LOCATION_DATE, us.seveTimeLocation == 1);
         ed.putBoolean(PREF_CHECKBOX_AUTO_ACCEPT, us.withAutoAccept == 1);
         ed.putBoolean(PREF_USER_SETTINGS_UPTODATE, true);
+        ed.putString(PREF_EDIT_STATUS, us.status);
         commit(ed);
     }
 

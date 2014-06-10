@@ -68,20 +68,26 @@ public class ChatUpdatePushHandler extends BasePushHandler {
 		// mChatLoad.tag, mChatLoad.number_of_flagged,
 		// mChatLoad.number_of_members),
 		// QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
-		Cursor cursor = getContext().getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
-				QodemeContract.Chats.ChatQuery.PROJECTION,
-				QodemeContract.Chats.CHAT_ID + "=" + mChatLoad.chatId, null, null);
-		if (cursor != null)
-			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
-				String status = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
-				if(!status.equals(mChatLoad.status)){
-					QodemePreferences.getInstance().set("" + mChatLoad.chatId, mChatLoad.status);
-//					String msg = "A new contact was added";
-//					sendNotification(msg, getContext(),
-//							 NOTIFICATION_REQUEST_NEW_CONTACT);
-							 
-				}
-			}
+		
+		
+		
+//		Cursor cursor = getContext().getContentResolver().query(QodemeContract.Chats.CONTENT_URI,
+//				QodemeContract.Chats.ChatQuery.PROJECTION,
+//				QodemeContract.Chats.CHAT_ID + "=" + mChatLoad.chatId, null, null);
+//		if (cursor != null)
+//			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+//				String status = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
+//				if(!status.equals(mChatLoad.status)){
+//					QodemePreferences.getInstance().set("" + mChatLoad.chatId, mChatLoad.status);
+////					String msg = "A new contact was added";
+////					sendNotification(msg, getContext(),
+////							 NOTIFICATION_REQUEST_NEW_CONTACT);
+//							 
+//				}
+//			}
+		
+		
+		
 		getContext().getContentResolver().update(
 				QodemeContract.Chats.CONTENT_URI,
 				QodemeContract.Chats.updateChatInfoValuesAll(mChatLoad.title, mChatLoad.color,

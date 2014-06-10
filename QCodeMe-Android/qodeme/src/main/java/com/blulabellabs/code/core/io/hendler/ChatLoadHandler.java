@@ -94,6 +94,7 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Chats.CHAT_NUMBER_OF_FLAGGED, chatLoad.number_of_flagged);
 		builder.withValue(Chats.CHAT_NUMBER_OF_MEMBER, chatLoad.number_of_members);
 		builder.withValue(Chats.CHAT_MEMBER_QRCODES, memberQR);
+		builder.withValue(Chats.CHAT_CREATED_DATE, chatLoad.created);
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());

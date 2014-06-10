@@ -40,6 +40,7 @@ import com.blulabellabs.code.core.io.utils.RestErrorType;
 import com.blulabellabs.code.core.io.utils.RestKeyMap;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.utils.Converter;
+import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.RestUtils;
 
 /**
@@ -115,8 +116,8 @@ public class RestSyncHelper {
 
 	public ChatMessageResponse chatMessage(long chatId, String message, long unixTimeStamp,
 			String photoUrl, int hashPhoto, long replyTo_Id, String latitude, String longitude,
-			String senderName, String dateString, int is_search) throws InterruptedException, ExecutionException,
-			JSONException, RestError {
+			String senderName, String dateString, int is_search) throws InterruptedException,
+			ExecutionException, JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chatId));
@@ -184,7 +185,7 @@ public class RestSyncHelper {
 
 	public VoidResponse setUserSettings(String message, boolean withMessage, String publicName,
 			boolean withPublicName, boolean withAutoAccept, String location, double latitude,
-			double longitude, boolean withSaveDateTime) throws InterruptedException,
+			double longitude, boolean withSaveDateTime, String status) throws InterruptedException,
 			ExecutionException, JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
@@ -196,6 +197,7 @@ public class RestSyncHelper {
 		params.put(RestKeyMap.LATITUDE, String.valueOf(latitude));
 		params.put(RestKeyMap.LONGITUDE, String.valueOf(longitude));
 		params.put(RestKeyMap.SET_TIMELOC, Converter.booleanToIntString(withSaveDateTime));
+		params.put("status", status);
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_USER_SETTINGS, params);
 		return new VoidResponse().parse(jsonObject);
 	}
@@ -210,10 +212,16 @@ public class RestSyncHelper {
 		boolean withAutoAccept = pref.isAutoAcceptChecked();
 		String location = "location";
 		boolean withSaveDateTime = pref.isSaveLocationDateChecked();
-		double latitude = 0;
-		double longitude = 0;
+		LatLonCity latLonCity = pref.getLastLocation();
+
+		double latitude = latLonCity.getLat();
+		double longitude = latLonCity.getLon();
+
+		location = latLonCity.getCity();
+		String status = pref.getStatus();
+
 		return setUserSettings(message, withMessage, publicName, withPublicName, withAutoAccept,
-				location, latitude, longitude, withSaveDateTime);
+				location, latitude, longitude, withSaveDateTime, status);
 	}
 
 	public VoidResponse chatSetInfo(long chatId, String title, Integer color, Integer height,
@@ -265,13 +273,13 @@ public class RestSyncHelper {
 	/**
 	 * toggle the Favorite message
 	 */
-	public SetFavoriteResponse setFavorite(String date, long chat_id)
+	public SetFavoriteResponse setFavorite(String date, int is_favorite, long chat_id)
 			throws InterruptedException, ExecutionException, JSONException, RestError {
 		RequestParams params = new RequestParams();
-		// params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_favorite));
+		params.put("is_favorite", String.valueOf(is_favorite));
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
 		params.put("date_time", date);
-		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_FLAGGED, params);
+		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_FAVORITE, params);
 		return new SetFavoriteResponse().parse(jsonObject);
 	}
 

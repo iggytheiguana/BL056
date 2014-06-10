@@ -90,7 +90,9 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Chats.CHAT_MEMBER_QRCODES + " TEXT,"
                 + Chats.CHAT_NUMBER_OF_FAVORITE + " INTEGER NOT NULL DEFAULT 0,"
                 + Chats.CHAT_IS_FAVORITE + " INTEGER NOT NULL DEFAULT 0,"
-                + Chats.CHAT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0)");
+                + Chats.CHAT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                + Chats.CHAT_CREATED_DATE + " TEXT,"
+                + Chats.CHAT_IS_SEARCHABLE + " INTEGER NOT NULL DEFAULT 1)");
         
         db.execSQL("CREATE TABLE " + Tables.MESSAGES + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

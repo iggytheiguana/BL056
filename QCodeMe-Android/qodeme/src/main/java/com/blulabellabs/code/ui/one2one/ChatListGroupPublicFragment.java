@@ -1,13 +1,15 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -30,17 +32,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.blulabellabs.code.R;
-import com.blulabellabs.code.core.data.entities.LookupChatEntity;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.responses.ClearSearchResponse;
-import com.blulabellabs.code.core.io.responses.LookupResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.images.utils.ImageFetcher;
@@ -50,7 +49,6 @@ import com.blulabellabs.code.ui.common.ExGroupListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragmentCallback;
 import com.blulabellabs.code.utils.Fonts;
-import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
 import de.tavendo.autobahn.WebSocketConnection;
@@ -68,7 +66,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter;
 	private EditText mMessageEdit;
 	private int chatType;
 	private EditText mEditTextSearch;
@@ -157,6 +155,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 		mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
 		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
 		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
+		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
 
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 
@@ -214,6 +213,23 @@ public class ChatListGroupPublicFragment extends Fragment {
 						});
 			}
 		});
+
+		mImgBtnLocationFilter.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// MainActivity activity = (MainActivity) callback;
+				// if (activity.isPrivateSearch()) {
+				if (chatLoads != null) {
+
+					Collections.sort(chatLoads, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(chatLoads);
+				}
+				// }
+			}
+		});
+
 		MainActivity activity = (MainActivity) callback;
 		if (activity.isPublicSearch()) {
 			searchString = activity.getPublicSearchString();
@@ -273,6 +289,75 @@ public class ChatListGroupPublicFragment extends Fragment {
 				return false;
 			}
 		});
+	}
+
+	public class CustomComparator implements Comparator<ChatLoad> {
+
+		@Override
+		public int compare(ChatLoad lhs, ChatLoad rhs) {
+			MainActivity activity = (MainActivity) callback;
+			Location location = activity.getCurrentLocation();
+			Integer leftDistance = 0;
+			Integer rightDistance = 0;
+			if (location != null) {
+				try {
+					double lat = Double.parseDouble(lhs.latitude);
+					double lng = Double.parseDouble(lhs.longitude);
+					leftDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+
+				} catch (Exception e) {
+				}
+				try {
+					double lat = Double.parseDouble(rhs.latitude);
+					double lng = Double.parseDouble(rhs.longitude);
+					rightDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+				} catch (Exception e) {
+				}
+			}
+			return leftDistance.compareTo(rightDistance);
+		}
+
+	}
+
+	/**
+	 * This function is calculate the distance between two Geo Points
+	 * 
+	 * @param lat1
+	 * @param lon1
+	 * @param lat2
+	 * @param lon2
+	 * @param unit
+	 * @return
+	 */
+	private double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+				* Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+		dist = Math.acos(dist);
+		dist = rad2deg(dist);
+		dist = dist * 60 * 1.1515;
+		if (unit == 'K') {
+			dist = dist * 1.609344;
+		} else if (unit == 'N') {
+			dist = dist * 0.8684;
+		}
+		return (dist);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts decimal degrees to radians : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts radians to decimal degrees : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double rad2deg(double rad) {
+		return (rad * 180.0 / Math.PI);
 	}
 
 	private void start() {
@@ -653,6 +738,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 	/**
 	 * Refresh data can be called from activity
 	 */
+	List<ChatLoad> chatLoads = Lists.newArrayList();
+
 	public void updateUi() {
 		// if (isViewCreated && callback.getContactList() != null) {
 		// mListAdapter.clear();
@@ -664,7 +751,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 		// }
 		if (isViewCreated && callback.getChatList(chatType) != null) {
 			mListAdapter.clear();
-			List<ChatLoad> chatLoads = callback.getChatList(chatType);
+			chatLoads = callback.getChatList(chatType);
 			if (chatLoads != null
 					&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
 				ChatLoad newChatLoad = null;

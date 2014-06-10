@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -133,7 +134,6 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mBtnSetStatus.setOnClickListener(this);
 		mBtnArchive.setOnClickListener(this);
 
-		
 		mEdittextName.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -152,7 +152,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mEdittextName.setVisibility(View.GONE);
 					mRelativeLayoutName.setVisibility(View.VISIBLE);
 					mRelativeLayoutSetName.setVisibility(View.GONE);
-					
+
 					int updated = contact.updated;
 					getActivity().getContentResolver().update(
 							QodemeContract.Contacts.CONTENT_URI,
@@ -160,7 +160,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 									updated), DbUtils.getWhereClauseForId(),
 							DbUtils.getWhereArgsForId(contact._id));
 					SyncHelper.requestManualSync();
-					
+
 					return true;
 				}
 
@@ -185,7 +185,9 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mEditTextStatus.setVisibility(View.GONE);
 
 					QodemePreferences.getInstance().setStatus(status);
-					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "");
+					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "",
+							"0", "0");
+					SyncHelper.requestManualSync();
 					return true;
 				}
 
@@ -209,11 +211,17 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			// }
 			// }
 			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
+			// if ((getArguments().getInt(CHAT_COLOR) < 16777215 &&
+			// getArguments().getInt(CHAT_COLOR) > 15132390)
+			// || getArguments().getInt(CHAT_COLOR) == 0) {
+			// mTextViewProfileName.setTextColor(Color.GRAY);
+			// } else
 			mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
+			Log.d("Color", getArguments().getInt(CHAT_COLOR) + "");
 			mEdittextName.setText(getArguments().getString(CHAT_NAME));
 			customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
 			customDotView.invalidate();
-			if(callback != null){
+			if (callback != null) {
 				List<Message> messages = callback.getChatMessages(getArguments().getLong(CHAT_ID));
 				mTextViewTotalMessages.setText((messages != null ? messages.size() : 0)
 						+ " messages");
@@ -227,7 +235,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mTextViewTotalPhoto.setText(temp.size() + " photos");
 				}
 			}
-			
+
 			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
 			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
 			String dateStr = fmtOut.format(new Date(Converter
@@ -283,7 +291,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 				mTextViewStatus.setText(status);
 
 				setChatInfo(getArguments().getLong(CHAT_ID), "", contact.color, "", "", status, 0,
-						"");
+						"", "0", "0");
 			}
 
 			break;
@@ -318,9 +326,9 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
-			String status, Integer isLocked, String chat_title) {
+			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
 		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc, isLocked,
-				status, chat_title, new RestListener<VoidResponse>() {
+				status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {

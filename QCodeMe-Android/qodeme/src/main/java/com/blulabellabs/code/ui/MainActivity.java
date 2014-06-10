@@ -216,6 +216,8 @@ public class MainActivity extends BaseActivity implements
 	private String publicSearchString = "";
 	private String privateSearchString = "";
 	private String oneToOneSearchString = "";
+	private Location currentLocation;
+	
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -288,6 +290,7 @@ public class MainActivity extends BaseActivity implements
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
 		myLocation = new MyLocation();
+		myLocation.getLocation(this, locationResult);
 	}
 
 	private void initImageFetcher() {
@@ -729,9 +732,9 @@ public class MainActivity extends BaseActivity implements
 					ChatLoad chatLoad = getChatLoad(currentChatId);
 					if (chatLoad != null)
 						setChatInfo(currentChatId, null, color, chatLoad.tag, chatLoad.description,
-								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title);
+								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title, chatLoad.latitude, chatLoad.longitude);
 					else
-						setChatInfo(currentChatId, null, color, null, null, null, null, null);
+						setChatInfo(currentChatId, null, color, null, null, null, null, null,"0","0");
 				}
 				mViewPager.setCurrentItem(1);
 				break;
@@ -1145,7 +1148,10 @@ public class MainActivity extends BaseActivity implements
 
 		@Override
 		public void gotLocation(Location location) {
-			getMyLocation(location);
+			if (location != null) {
+				getMyLocation(location);
+				setCurrentLocation(location);
+			}
 		}
 	};
 
@@ -1650,11 +1656,15 @@ public class MainActivity extends BaseActivity implements
 			mChatType = ChatType.PRIVATE_GROUP;
 		}
 		Location location = mLocationClient.getLastLocation();
+
 		double latitude = 0;
 		double longitude = 0;
 		if (location != null) {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
+		} else if (getCurrentLocation() != null) {
+			latitude = getCurrentLocation().getLatitude();
+			longitude = getCurrentLocation().getLongitude();
 		}
 		final double lat = latitude;
 		final double lng = longitude;
@@ -1684,18 +1694,28 @@ public class MainActivity extends BaseActivity implements
 									QodemeContract.Chats.ChatQuery.PROJECTION,
 									QodemeContract.Chats.CHAT_ID + "=" + chatid, null, null);
 							String memberString = "";
+							int numberOfMember = 1;
 							if (cursor != null && cursor.moveToFirst()) {
 								memberString = cursor
 										.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+								numberOfMember = cursor
+										.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
 							}
 							if (memberString == null || memberString.equals(""))
 								memberString = qr;
 							else {
 								memberString += "," + qr;
 							}
+							if (numberOfMember == 0) {
+								numberOfMember = 2;
+							} else {
+								numberOfMember++;
+							}
 							ContentValues contentValues = new ContentValues();
 							contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES,
 									memberString);
+							contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
+									numberOfMember);
 							getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
 									contentValues, QodemeContract.Chats.CHAT_ID + "=" + chatid,
 									null);
@@ -2228,8 +2248,8 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public List<Contact> getContactList() {
-		if (chatType == 0 && isOneToOneSearch())
-			return mChatListSearchOneToOne;
+		// if (chatType == 0 && isOneToOneSearch())
+		// return mChatListSearchOneToOne;
 		List<Contact> contacts = Lists.newArrayList();
 		if (mApprovedContacts != null)
 			contacts.addAll(mApprovedContacts);
@@ -2245,11 +2265,12 @@ public class MainActivity extends BaseActivity implements
 			if (isPublicSearch()) {
 				return mChatListSearchPublic;
 			}
-		} else if (chatType == 1) {
-			if (isPrivateSearch()) {
-				return mChatListSearchPrivate;
-			}
 		}
+		// else if (chatType == 1) {
+		// if (isPrivateSearch()) {
+		// return mChatListSearchPrivate;
+		// }
+		// }
 		// else if(chatType == 0){
 		// if(isOneToOneSearch()){
 		// return mChatListSearchOneToOne;
@@ -2906,16 +2927,25 @@ public class MainActivity extends BaseActivity implements
 					QodemeContract.Chats.ChatQuery.PROJECTION,
 					QodemeContract.Chats.CHAT_ID + "=" + currentChatId, null, null);
 			String memberString = "";
+			int numberOfMember = 1;
 			if (cursor != null && cursor.moveToFirst()) {
 				memberString = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+				numberOfMember = cursor
+						.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
 			}
 			if (memberString == null || memberString.equals(""))
 				memberString = qr;
 			else {
 				memberString += "," + qr;
 			}
+			if (numberOfMember == 0) {
+				numberOfMember = 2;
+			} else {
+				numberOfMember++;
+			}
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES, memberString);
+			contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER, numberOfMember);
 			getContentResolver().update(QodemeContract.Chats.CONTENT_URI, contentValues,
 					QodemeContract.Chats.CHAT_ID + "=" + currentChatId, null);
 			RestAsyncHelper.getInstance().chatAddMember(currentChatId, contact.qrCode,
@@ -2940,9 +2970,9 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
-			String status, Integer isLocked, String chat_title) {
+			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
 		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc, isLocked,
-				status, chat_title, new RestListener<VoidResponse>() {
+				status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {
@@ -3003,9 +3033,12 @@ public class MainActivity extends BaseActivity implements
 					v.getHeight());
 			getActivity().startActivity(i, options.toBundle());
 		} else {
-//			android.support.v4.app.ActivityOptionsCompat activityOptionsCompat = android.support.v4.app.ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(),
-//					v.getHeight());
-//			getActivity().startActivity(i, activityOptionsCompat.toBundle());
+			// android.support.v4.app.ActivityOptionsCompat
+			// activityOptionsCompat =
+			// android.support.v4.app.ActivityOptionsCompat.makeScaleUpAnimation(v,
+			// 0, 0, v.getWidth(),
+			// v.getHeight());
+			// getActivity().startActivity(i, activityOptionsCompat.toBundle());
 			startActivity(i);
 		}
 	}
@@ -3016,8 +3049,31 @@ public class MainActivity extends BaseActivity implements
 			setPublicSearch(true);
 		} else if (type == 1) {
 			setPrivateSearch(true);
+			if (mChatListSearchPrivate == null || pageNo == 1)
+				mChatListSearchPrivate = Lists.newArrayList();
+			if (mChatList != null) {
+				for (ChatLoad chatLoad : mChatList) {
+					if (chatLoad.title.contains(searchString)) {
+						mChatListSearchPrivate.add(chatLoad);
+					}
+				}
+				refreshOne2OneList();
+			}
+			return;
 		} else if (type == 0) {
 			setOneToOneSearch(true);
+			if (mChatListSearchOneToOne == null || pageNo == 1)
+				mChatListSearchOneToOne = Lists.newArrayList();
+
+			if (mApprovedContacts != null) {
+				for (Contact c : mApprovedContacts) {
+					if (c.title.contains(searchString)) {
+						mChatListSearchOneToOne.add(c);
+					}
+				}
+				refreshOne2OneList();
+			}
+			return;
 		}
 		RestAsyncHelper.getInstance().lookup(searchString, type, pageNo,
 				new RestListener<LookupResponse>() {
@@ -3048,47 +3104,58 @@ public class MainActivity extends BaseActivity implements
 								}
 								chatListener.onSearchResult(response.getChatList().size(), 1);
 								refreshOne2OneList();
-							} else if (type == 1) {
-								if (mChatListSearchPrivate == null || pageNo == 1)
-									mChatListSearchPrivate = Lists.newArrayList();
-								for (LookupChatEntity entity : response.getChatList()) {
-									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
-											+ " " + entity.getId());
-									ChatLoad chatLoad = new ChatLoad();
-									chatLoad.title = entity.getTitle();
-									chatLoad.chatId = entity.getId();
-									chatLoad.qrcode = entity.getQrcode();
-									chatLoad.tag = entity.getTags();
-									chatLoad.status = entity.getStatus();
-									chatLoad.description = entity.getDescription();
-									chatLoad.number_of_likes = entity.getNumber_of_likes();
-									chatLoad.number_of_members = entity.getNumber_of_member();
-									chatLoad.latitude = entity.getLatitude();
-									chatLoad.longitude = entity.getLongitude();
-									chatLoad.type = 1;
-									mChatListSearchPrivate.add(chatLoad);
-
-								}
-								chatListener.onSearchResult(response.getChatList().size(), 1);
-								refreshOne2OneList();
-							} else if (type == 0) {
-								if (mChatListSearchOneToOne == null || pageNo == 1)
-									mChatListSearchOneToOne = Lists.newArrayList();
-								for (LookupChatEntity entity : response.getChatList()) {
-									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
-											+ " " + entity.getId());
-									Contact chatLoad = new Contact();
-									chatLoad.title = entity.getTitle();
-									chatLoad.chatId = entity.getId();
-									// chatLoad.qrcode = entity.getQrcode();
-									// chatLoad.tag = entity.getTags();
-									mChatListSearchOneToOne.add(chatLoad);
-
-								}
-								// chatListener.onSearchResult("", 1);
-								chatListener.onSearchResult(response.getChatList().size(), 1);
-								refreshOne2OneList();
 							}
+							// else if (type == 1) {
+							// if (mChatListSearchPrivate == null || pageNo ==
+							// 1)
+							// mChatListSearchPrivate = Lists.newArrayList();
+							// for (LookupChatEntity entity :
+							// response.getChatList()) {
+							// Log.d("lookup", entity.getTitle() + " " +
+							// entity.getTags()
+							// + " " + entity.getId());
+							// ChatLoad chatLoad = new ChatLoad();
+							// chatLoad.title = entity.getTitle();
+							// chatLoad.chatId = entity.getId();
+							// chatLoad.qrcode = entity.getQrcode();
+							// chatLoad.tag = entity.getTags();
+							// chatLoad.status = entity.getStatus();
+							// chatLoad.description = entity.getDescription();
+							// chatLoad.number_of_likes =
+							// entity.getNumber_of_likes();
+							// chatLoad.number_of_members =
+							// entity.getNumber_of_member();
+							// chatLoad.latitude = entity.getLatitude();
+							// chatLoad.longitude = entity.getLongitude();
+							// chatLoad.type = 1;
+							// mChatListSearchPrivate.add(chatLoad);
+							//
+							// }
+							// chatListener.onSearchResult(response.getChatList().size(),
+							// 1);
+							// refreshOne2OneList();
+							// } else if (type == 0) {
+							// if (mChatListSearchOneToOne == null || pageNo ==
+							// 1)
+							// mChatListSearchOneToOne = Lists.newArrayList();
+							// for (LookupChatEntity entity :
+							// response.getChatList()) {
+							// Log.d("lookup", entity.getTitle() + " " +
+							// entity.getTags()
+							// + " " + entity.getId());
+							// Contact chatLoad = new Contact();
+							// chatLoad.title = entity.getTitle();
+							// chatLoad.chatId = entity.getId();
+							// // chatLoad.qrcode = entity.getQrcode();
+							// // chatLoad.tag = entity.getTags();
+							// mChatListSearchOneToOne.add(chatLoad);
+							//
+							// }
+							// // chatListener.onSearchResult("", 1);
+							// chatListener.onSearchResult(response.getChatList().size(),
+							// 1);
+							// refreshOne2OneList();
+							// }
 						} else {
 							chatListener.onSearchResult(0, 2);
 							Log.d("lookup", "null response");
@@ -3153,6 +3220,14 @@ public class MainActivity extends BaseActivity implements
 
 	public String getOneToOneSearchString() {
 		return oneToOneSearchString;
+	}
+
+	public void setCurrentLocation(Location currentLocation) {
+		this.currentLocation = currentLocation;
+	}
+
+	public Location getCurrentLocation() {
+		return currentLocation;
 	}
 
 	public interface LoadMoreChatListener {

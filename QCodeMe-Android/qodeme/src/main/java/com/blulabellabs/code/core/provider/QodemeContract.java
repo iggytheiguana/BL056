@@ -22,7 +22,6 @@ import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.RandomColorGenerator;
 
-
 import static com.blulabellabs.code.utils.LogUtils.LOGE;
 import static com.blulabellabs.code.utils.LogUtils.makeLogTag;
 
@@ -77,7 +76,7 @@ public class QodemeContract {
 		String CONTACT_LOCATION = "location";
 		/** Message */
 		String CONTACT_MESSAGE = "message";
-		
+
 		String CONTACT_IS_ARCHIVE = "contact_is_archive";
 		String CONTACT_IS_DELETED = "contact_is_deleted";
 	}
@@ -110,7 +109,9 @@ public class QodemeContract {
 		String CHAT_NUMBER_OF_FAVORITE = "chat_number_of_favorite";
 		String CHAT_IS_FAVORITE = "chat_is_favorite";
 		String CHAT_IS_DELETED = "chat_is_deleted";
-		
+		String CHAT_CREATED_DATE = "chat_created_date";
+		String CHAT_IS_SEARCHABLE = "chat_is_searchable";
+
 	}
 
 	interface MessagesColumns {
@@ -251,9 +252,9 @@ public class QodemeContract {
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
 			String latitude = "0";
 			String longitude = "0";
-			if (latLonCity != null && latLonCity.getCity() != null){
+			if (latLonCity != null && latLonCity.getCity() != null) {
 				location = latLonCity.getCity();
-			 }
+			}
 			contentValues.put(CONTACT_LOCATION, location);
 
 			String message = "";
@@ -325,6 +326,7 @@ public class QodemeContract {
 			contentValues.put(CONTACT_STATE, State.BLOCKED);
 			return contentValues;
 		}
+
 		public static ContentValues isArchiveValues(int isArchive) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(CONTACT_IS_ARCHIVE, isArchive);
@@ -410,8 +412,9 @@ public class QodemeContract {
 					Chats.CHAT_LATITUDE, Chats.CHAT_LONGITUDE, Chats.CHAT_NUMBER_OF_FLAGGED,
 					Chats.CHAT_NUMBER_OF_MEMBER, Chats.CHAT_QRCODE, Chats.CHAT_STATUS,
 					Chats.CHAT_TAGS, Chats.CHAT_TITLE, Chats.CHAT_TYPE, Chats.CHAT_ADMIN_QRCODE,
-					Chats.CHAT_MEMBER_QRCODES, Chats.CHAT_NUMBER_OF_FAVORITE, Chats.CHAT_IS_FAVORITE, 
-					Chats.CHAT_IS_DELETED};
+					Chats.CHAT_MEMBER_QRCODES, Chats.CHAT_NUMBER_OF_FAVORITE,
+					Chats.CHAT_IS_FAVORITE, Chats.CHAT_IS_DELETED, Chats.CHAT_CREATED_DATE,
+					Chats.CHAT_IS_SEARCHABLE };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -433,6 +436,8 @@ public class QodemeContract {
 			int CHAT_NUMBER_OF_FAVORITE = 17;
 			int CHAT_IS_FAVORITE = 18;
 			int CHAT_IS_DELETED = 19;
+			int CHAT_CREATED_DATE = 20;
+			int CHAT_IS_SEARCHABLE = 21;
 		}
 
 		public static ContentValues addNewChatValues(long chatId, int type, String qrCode,
@@ -447,11 +452,12 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_IS_LOCKED, 0);
 
 			contentValues.put(Chats.CHAT_NUMBER_OF_FLAGGED, 0);
-			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, 0);
+			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, 1);
 			contentValues.put(Chats.CHAT_STATUS, "");
 			contentValues.put(Chats.CHAT_TAGS, "");
 			contentValues.put(Chats.CHAT_TITLE, "");
 			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
+			contentValues.put(Chats.CHAT_CREATED_DATE, Converter.getCurrentGtmTimestampString());
 			// String location = "";
 			// LatLonCity latLonCity =
 			// QodemePreferences.getInstance().getLastLocation();
@@ -465,9 +471,11 @@ public class QodemeContract {
 			// }
 			return contentValues;
 		}
+
 		public static ContentValues addNewPushChatValues(long chatId, int type, String qrCode,
-				String admin, String latitude, String longitude, String desc, String status, 
-				int no_flagged, int no_member, String title, String tag, int is_locked) {
+				String admin, String latitude, String longitude, String desc, String status,
+				int no_flagged, int no_member, String title, String tag, int is_locked,
+				String createdDate) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
 			contentValues.put(Chats.CHAT_ID, chatId);
@@ -483,6 +491,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_TAGS, tag);
 			contentValues.put(Chats.CHAT_TITLE, title);
 			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
+			contentValues.put(Chats.CHAT_CREATED_DATE, createdDate);
 			// String location = "";
 			// LatLonCity latLonCity =
 			// QodemePreferences.getInstance().getLastLocation();
@@ -494,6 +503,20 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_LATITUDE, "" + latitude);
 			contentValues.put(Chats.CHAT_LONGITUDE, "" + longitude);
 			// }
+			return contentValues;
+		}
+
+		public static ContentValues updateFavorite(int is_favorite) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(CHAT_IS_FAVORITE, is_favorite);
+
+			return contentValues;
+		}
+
+		public static ContentValues updateSearchabel(int is_searchable) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(CHAT_IS_SEARCHABLE, is_searchable);
+
 			return contentValues;
 		}
 
@@ -689,30 +712,35 @@ public class QodemeContract {
 			c.put(MESSAGE_PHOTO_URL, url);
 			return c;
 		}
+
 		public static ContentValues updateMessageFlagged() {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_HAS_FLAGGED, 1);
 			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
 			return c;
 		}
+
 		public static ContentValues updateMessageUnFlagged() {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_HAS_FLAGGED, 0);
 			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
 			return c;
 		}
+
 		public static ContentValues updatePushMessageFlagged() {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_HAS_FLAGGED, 1);
 			c.put(SyncColumns.UPDATED, QodemeContract.Sync.DONE);
 			return c;
 		}
+
 		public static ContentValues updatePushMessageUnFlagged() {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_HAS_FLAGGED, 0);
 			c.put(SyncColumns.UPDATED, QodemeContract.Sync.DONE);
 			return c;
 		}
+
 		public static ContentValues deleteMessage() {
 			ContentValues c = new ContentValues();
 			c.put(MESSAGE_HAS_DELETED, 1);
@@ -726,8 +754,9 @@ public class QodemeContract {
 					Messages.MESSAGE_CREATED, Messages.MESSAGE_STATE, Messages.MESSAGE_PHOTO_URL,
 					Messages.MESSAGE_HASH_PHOTO, Messages.MESSAGE_REPLY_TO_ID,
 					Messages.MESSAGE_LATITUDE, Messages.MESSAGE_LONGITUDE,
-					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL, Messages.MESSAGE_HAS_FLAGGED, 
-					Messages.MESSAGE_HAS_DELETED, Messages.MESSAGE_IS_SEARCH};
+					Messages.MESSAGE_SENDERNAME, Messages.MESSAGE_PHOTO_URL_LOCAL,
+					Messages.MESSAGE_HAS_FLAGGED, Messages.MESSAGE_HAS_DELETED,
+					Messages.MESSAGE_IS_SEARCH };
 
 			int _ID = 0;
 			int UPDATED = 1;

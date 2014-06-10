@@ -26,4 +26,5 @@ public class UserSettings {
     /** Set the app to not store date/time/location info of your connections on/off */
     @SerializedName("set_timeloc")
     public Integer seveTimeLocation;
+    public String status;
 }

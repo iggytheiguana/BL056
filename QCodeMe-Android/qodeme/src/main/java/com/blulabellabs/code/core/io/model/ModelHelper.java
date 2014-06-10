@@ -71,7 +71,8 @@ public class ModelHelper {
 				c.number_of_likes = cursor
 						.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_FAVORITE);
 				c.is_favorite = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
-				//c.created = cursor.getString(QodemeContract.Chats.ChatQuery.chat_)
+				c.created = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_CREATED_DATE);
+				c.is_searchable = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_SEARCHABLE);
 
 				String memQr = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
 

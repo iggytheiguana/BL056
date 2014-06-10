@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import com.blulabellabs.code.Application;
 import com.blulabellabs.code.R;
@@ -19,6 +20,7 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.ImageResizer;
 import com.blulabellabs.code.images.utils.Utils;
 import com.blulabellabs.code.ui.ImageDetailActivity;
+import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
 import com.blulabellabs.code.ui.common.ExtendedGroupAdapterBasedView;
@@ -87,9 +89,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private Message nextMessage;
 	private Message currentMessage;
 	private CustomDotView date;
-	private TextView dateHeader;
+	private TextView dateHeader, mTextViewStatus;
 	private RelativeLayout headerContainer;
-	private LinearLayout mLinearLayout;
+	private LinearLayout mLinearLayout, mLinearLayoutStatus, mLinearLayoutMessage;
 	private View opponentSeparator;
 	private ImageButton mSendButton;
 	private CustomEdit mMessageField;
@@ -104,6 +106,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	public TextView getMessage() {
 		return message = message != null ? message : (TextView) findViewById(R.id.message);
+	}
+
+	public TextView getStatus() {
+		return mTextViewStatus = mTextViewStatus != null ? mTextViewStatus
+				: (TextView) findViewById(R.id.textView_status_update);
 	}
 
 	public TextView getMessagerName() {
@@ -148,6 +155,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				: (LinearLayout) findViewById(R.id.linearLayout_img);
 	}
 
+	public LinearLayout getStatusLayout() {
+		return mLinearLayoutStatus = mLinearLayoutStatus != null ? mLinearLayoutStatus
+				: (LinearLayout) findViewById(R.id.linear_status_update);
+	}
+
+	public LinearLayout getMessageLayout() {
+		return mLinearLayoutMessage = mLinearLayoutMessage != null ? mLinearLayoutMessage
+				: (LinearLayout) findViewById(R.id.linear_dot);
+	}
+
 	public RelativeLayout getHeaderContainer() {
 		return headerContainer = headerContainer != null ? headerContainer
 				: (RelativeLayout) findViewById(R.id.header_container);
@@ -178,333 +195,382 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	public void fill(Message me) {
 		final Message msg = me;
 		getMessage().setText(me.message);
-
-		if (me.hasPhoto == 1) {
-			// String sss = me.photoUrl;
-			// byte data[] = Base64.decode(sss, Base64.NO_WRAP);
-			// Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
-			// data.length);
-			// getImageMessage().setImageBitmap(bitmap);
-			if (me.localImgPath != null && !me.localImgPath.trim().equals("")) {
-				int size = 200;
-				ImageFetcher fetcher = callback2.getImageFetcher();
-				if (fetcher != null)
-					size = fetcher.getRequiredSize();
-
-				Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size,
-						size, null);
-				// getImageMessage().setImageURI(Uri.parse(me.localImgPath));
-				getImageMessage().setImageBitmap(bitmap);
-				getImageProgress().setVisibility(View.GONE);
-			} else {
-				Log.d("imgUrl", me.photoUrl + "");
-				ImageFetcher fetcher = callback2.getImageFetcher();
-				if (fetcher != null)
-					fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
-			}
-			// ImageFetcher fetcher = callback2.getImageFetcher();
-			// if (fetcher != null)
-			// fetcher.loadImage(me.photoUrl, getImageMessage(),
-			// getImageProgress());
-			getImageMessage().setVisibility(View.VISIBLE);
-			getImageLayout().setVisibility(View.VISIBLE);
-			getImageMessage().setOnClickListener(new OnClickListener() {
-
-				@SuppressLint("NewApi")
-				@Override
-				public void onClick(View v) {
-					final Intent i = new Intent(getContext(), ImageDetailActivity.class);
-					i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
-					i.putExtra("flag", msg.is_flagged);
-					i.putExtra("message_id", msg.messageId);
-					if (Utils.hasJellyBean()) {
-						ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0,
-								v.getWidth(), v.getHeight());
-						getContext().startActivity(i, options.toBundle());
-					} else {
-						getContext().startActivity(i);
-					}
-				}
-			});
-			getImageMessage().setOnLongClickListener(new OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(View v) {
-					showPopupMenu(getMessage(), msg);
-					return true;
-				}
-			});
-		} else {
-			getImageMessage().setImageBitmap(null);
+		if (me.hasPhoto == 2) {
+			getUserSpace().setVisibility(VISIBLE);
+			getStatusLayout().setVisibility(VISIBLE);
+			getMessageLayout().setVisibility(GONE);
+			getHeaderContainer().setVisibility(GONE);
 			getImageMessage().setVisibility(View.GONE);
 			getImageLayout().setVisibility(View.GONE);
-		}
 
-		int color;// = callback.getColor(me.qrcode);
-		Contact contact = callback.getContact(me.qrcode);
-		if (contact != null) {
-			color = contact.color;
-			if(contact.state == QodemeContract.Contacts.State.BLOCKED_BY){
-				getMessage().setVisibility(GONE);
+			String createdDate = me.created;
+			// Log.d("me.Date", createdDate + "");
+			String dateString = "";
+			try {
+				dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+				dateString = " " + dateString;
+			} catch (Exception e) {
+				Log.d("timeError", e + "");
+				dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+				dateString = " " + dateString;
+			}
+
+			String str = getMessage().getText().toString();
+			String mainString = str + dateString + " ";
+
+			// Create our span sections, and assign a format to each.
+			SpannableString ss1 = new SpannableString(mainString);
+			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
+																							// size
+			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
+																									// size
+			getStatus().setText(ss1);
+
+		} else {
+			getStatusLayout().setVisibility(GONE);
+			getMessageLayout().setVisibility(VISIBLE);
+
+			if (me.hasPhoto == 1) {
+				// String sss = me.photoUrl;
+				// byte data[] = Base64.decode(sss, Base64.NO_WRAP);
+				// Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
+				// data.length);
+				// getImageMessage().setImageBitmap(bitmap);
+				if (me.localImgPath != null && !me.localImgPath.trim().equals("")) {
+					int size = 200;
+					ImageFetcher fetcher = callback2.getImageFetcher();
+					if (fetcher != null)
+						size = fetcher.getRequiredSize();
+
+					Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size,
+							size, null);
+					// getImageMessage().setImageURI(Uri.parse(me.localImgPath));
+					getImageMessage().setImageBitmap(bitmap);
+					getImageProgress().setVisibility(View.GONE);
+				} else {
+					Log.d("imgUrl", me.photoUrl + "");
+					ImageFetcher fetcher = callback2.getImageFetcher();
+					if (fetcher != null)
+						fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
+				}
+				// ImageFetcher fetcher = callback2.getImageFetcher();
+				// if (fetcher != null)
+				// fetcher.loadImage(me.photoUrl, getImageMessage(),
+				// getImageProgress());
+				getImageMessage().setVisibility(View.VISIBLE);
+				getImageLayout().setVisibility(View.VISIBLE);
+				getImageMessage().setOnClickListener(new OnClickListener() {
+
+					@SuppressLint("NewApi")
+					@Override
+					public void onClick(View v) {
+						final Intent i = new Intent(getContext(), ImageDetailActivity.class);
+						i.putExtra(ImageDetailActivity.EXTRA_IMAGE, msg.photoUrl);
+						i.putExtra("flag", msg.is_flagged);
+						i.putExtra("message_id", msg.messageId);
+						if (Utils.hasJellyBean()) {
+							ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0,
+									v.getWidth(), v.getHeight());
+							getContext().startActivity(i, options.toBundle());
+						} else {
+							getContext().startActivity(i);
+						}
+					}
+				});
+				getImageMessage().setOnLongClickListener(new OnLongClickListener() {
+
+					@Override
+					public boolean onLongClick(View v) {
+						showPopupMenu(getMessage(), msg);
+						return true;
+					}
+				});
+			} else {
+				getImageMessage().setImageBitmap(null);
 				getImageMessage().setVisibility(View.GONE);
 				getImageLayout().setVisibility(View.GONE);
-				getSendMessageLayout().setVisibility(GONE);
-				this.setVisibility(GONE);
-				
 			}
-		} else {
-			color = Color.GRAY;
-		}
-		getDate().invalidate();
 
-		Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setColor(color);
-
-		Canvas c = new Canvas(bmp);
-		c.drawCircle(20, 20, 20, paint);
-
-		BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
-
-		// getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable,
-		// null, null, null);
-
-		int chatType = callback2.getChatType(me.chatId);
-		if (chatType == 1) {
-			getMessagerName().setVisibility(View.VISIBLE);
-
+			int color;// = callback.getColor(me.qrcode);
+			Contact contact = callback.getContact(me.qrcode);
 			if (contact != null) {
-				getMessagerName().setText(contact.title);
-				getMessagerName().setBackgroundColor(color);
-			} else {
-				getMessagerName().setText("User");
-				getMessagerName().setBackgroundColor(color);
-			}
-		} else {
-			getMessagerName().setVisibility(View.GONE);
-		}
-		// getMessage().setTextColor(color);
-		// getMessage().setTypeface(callback.getFont(Fonts.ROBOTO_LIGHT));
+				color = contact.color;
+				if (contact.state == QodemeContract.Contacts.State.BLOCKED_BY) {
+					getMessage().setVisibility(GONE);
+					getImageMessage().setVisibility(View.GONE);
+					getImageLayout().setVisibility(View.GONE);
+					getSendMessageLayout().setVisibility(GONE);
+					this.setVisibility(GONE);
 
-		// convert 24 hour date formate to 12 hours format
-		// getDate().setText(Helper.getTime24(Converter.getCrurentTimeFromTimestamp(me.created)));
-		// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
-		String createdDate = me.created;
-		// Log.d("me.Date", createdDate + "");
-		// String dateString =
-		// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-		String dateString = "";
-		try {
-			dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-			dateString = " " + dateString;
-		} catch (Exception e) {
-			Log.d("timeError", e + "");
-			dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-			dateString = " " + dateString;
-		}
-		// dateString = " " + dateString;
-		// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString +
-		// "</font>";
-		String str = getMessage().getText().toString();
-		String mainString = str + dateString + " ";
-		String flag = "f";
-		if (me.is_flagged == 1) {
-			mainString = mainString + flag;
-		}
-
-		// Create our span sections, and assign a format to each.
-		SpannableString ss1 = new SpannableString(mainString);
-		ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
-																						// size
-		ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
-																								// size
-		if (me.is_flagged == 1) {
-			Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
-			bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
-			ImageSpan is = new ImageSpan(bm, ImageSpan.ALIGN_BASELINE);
-			ss1.setSpan(is, mainString.length() - flag.length(), mainString.length(),
-					Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-		}
-		getMessage().setText(ss1);
-		if (me.replyTo_id > 0) {
-			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
-					.getLayoutParams();
-			param.width = (int) getDate().convertDpToPixel(70, getContext());
-			if (previousMessage != null) {
-				if (previousMessage.replyTo_id > 0) {
-					param.topMargin = 0;
 				}
+			} else {
+				color = Color.GRAY;
 			}
-			getDate().setLayoutParams(param);
-			getDate().setReply(true);
-			// if (previousMessage != null && previousMessage.replyTo_id > 0) {
-			// getDate().setSecondVerticalLine(true);
-			// }
-			getDate().setSecondVerticalLine(me.isFirst);
-			getDate().setSecondVerticalLine2(me.isLast);
 			getDate().invalidate();
 
-			getMessage().setClickable(false);
-			getMessage().setOnLongClickListener(new OnLongClickListener() {
+			Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
+			Paint paint = new Paint();
+			paint.setAntiAlias(true);
+			paint.setColor(color);
 
-				@Override
-				public boolean onLongClick(View v) {
-					showPopupMenu(v, msg);
-					return true;
-				}
-			});
-		} else {
+			Canvas c = new Canvas(bmp);
+			c.drawCircle(20, 20, 20, paint);
 
-			getMessage().setOnClickListener(new OnClickListener() {
+			BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
 
-				@Override
-				public void onClick(View v) {
-					ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+			// getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable,
+			// null, null, null);
 
-					if (chatLoad != null && chatLoad.is_locked != 1)
-						initSendMessage();
-				}
-			});
-			getMessage().setOnLongClickListener(new OnLongClickListener() {
+			int chatType = callback2.getChatType(me.chatId);
+			if (chatType == 1 && !QodemePreferences.getInstance().getQrcode().equals(msg.qrcode)) {
 
-				@Override
-				public boolean onLongClick(View v) {
-					showPopupMenu(v, msg);
-					return true;
-				}
-			});
-			getDate().setSecondVerticalLine(me.isFirst);
-			getDate().setSecondVerticalLine2(me.isLast);
-			android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
-					.getLayoutParams();
-			param.width = (int) getDate().convertDpToPixel(20, getContext());
-			getDate().setLayoutParams(param);
-			getDate().setReply(false);
-			getDate().invalidate();
-		}
-		// Log.d("me.Datetime", dateString + " ");
-		// getMessage().setText(Html.fromHtml(getMessage().getText() + " " +
-		// dateString));
-		// changes
-		getMessage().setTypeface(Application.typefaceRegular);
-		getMessage().setTextColor(Color.BLACK);
-		if (isMyMessage(me.qrcode)) {
-			switch (me.state) {
-			case QodemeContract.Messages.State.LOCAL:
-				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
-				getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
-				getMessage().setTextColor(getResources().getColor(R.color.user_typing));
-				getDate().invalidate();
-				break;
-			case QodemeContract.Messages.State.SENT:
-				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
-				getDate().setDotColor(context.getResources().getColor(R.color.text_message_sent));
-				break;
-			case QodemeContract.Messages.State.READ:
-			case QodemeContract.Messages.State.NOT_READ:
-			case QodemeContract.Messages.State.READ_LOCAL:
-			case QodemeContract.Messages.State.WAS_READ:
-				// getDate().setTextColor(context.getResources().getColor(R.color.text_message_reed));
-				getDate().setDotColor(
-						context.getResources().getColor(R.color.text_message_not_read));
-				break;
-			}
-		} else {
-			// getDate().setTextColor(color);
-			getDate().setDotColor(color);
-			if (QodemeContract.Messages.State.NOT_READ == me.state) {
-				getDate().setOutLine(true);
-				getMessage().setTypeface(Application.typefaceBold);
-			} else {
+				getMessagerName().setVisibility(View.VISIBLE);
 
-			}
-			getDate().invalidate();
-		}
-		getUserSpace().setVisibility(GONE);
-		getHeaderContainer().setVisibility(View.GONE);
-		getOpponentSeparator().setVisibility(View.GONE);
-		if (nextMessage != null) {
-			if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
-				getUserSpace().setVisibility(GONE);
-			} else {
-				getUserSpace().setVisibility(VISIBLE);
-			}
-		}
-		if (previousMessage != null /*
-									 * &&
-									 * !TextUtils.isEmpty(previousMessage.created
-									 * )
-									 */) {
-			try {
-				Calendar currentDate = Calendar.getInstance();
-				String date = me.created;
-				if (me.created != null && !(me.created.contains(".")))
-					date += ".000";
-				currentDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(date));
-
-				Calendar previousDate = Calendar.getInstance();
-				String preDate = previousMessage.created;
-				// Log.d("preDate", preDate);
-				if (previousMessage.created != null && (!previousMessage.created.contains(".")))
-					preDate = preDate + ".000";
-				// Log.d("preDate", preDate);
-				previousDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(preDate));
-
-				if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
-					Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
-					// Converter.getCrurentTimeFromTimestamp(me.created)
-					getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
-					getHeaderContainer().setVisibility(View.VISIBLE);
-				} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
-					getOpponentSeparator().setVisibility(View.VISIBLE);
-				}
-
-				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)
-						&& currentDate.get(Calendar.MINUTE) == previousDate.get(Calendar.MINUTE)
-						&& currentDate.get(Calendar.HOUR_OF_DAY) == previousDate
-								.get(Calendar.HOUR_OF_DAY)) {
-
-					// getDate().setVisibility(View.INVISIBLE);
-					getDate().setVisibility(View.VISIBLE);
+				if (contact != null) {
+					getMessagerName().setText(contact.title);
+					getMessagerName().setBackgroundColor(color);
 				} else {
-					getDate().setVisibility(View.VISIBLE);
+					getMessagerName().setText("User");
+					getMessagerName().setBackgroundColor(color);
 				}
-				/**
-				 * Grouped Same user message
-				 */
-				if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
+			} else {
+				getMessagerName().setVisibility(View.GONE);
+			}
+			// getMessage().setTextColor(color);
+			// getMessage().setTypeface(callback.getFont(Fonts.ROBOTO_LIGHT));
+
+			// convert 24 hour date formate to 12 hours format
+			// getDate().setText(Helper.getTime24(Converter.getCrurentTimeFromTimestamp(me.created)));
+			// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
+			String createdDate = me.created;
+			// Log.d("me.Date", createdDate + "");
+			// String dateString =
+			// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+			String dateString = "";
+			try {
+				dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+				dateString = " " + dateString;
+			} catch (Exception e) {
+				Log.d("timeError", e + "");
+				dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+				dateString = " " + dateString;
+			}
+			// dateString = " " + dateString;
+			// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString
+			// +
+			// "</font>";
+			String str = getMessage().getText().toString();
+			String mainString = str + dateString + " ";
+			String flag = "f";
+			if (me.is_flagged == 1) {
+				mainString = mainString + flag;
+			}
+
+			// Create our span sections, and assign a format to each.
+			SpannableString ss1 = new SpannableString(mainString);
+			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
+																							// size
+			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
+																									// size
+			if (me.is_flagged == 1) {
+				Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
+				bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
+				ImageSpan is = new ImageSpan(bm, ImageSpan.ALIGN_BASELINE);
+				ss1.setSpan(is, mainString.length() - flag.length(), mainString.length(),
+						Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+			}
+			getMessage().setText(ss1);
+			if (me.replyTo_id > 0) {
+				android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
+						.getLayoutParams();
+				param.width = (int) getDate().convertDpToPixel(70, getContext());
+				if (previousMessage != null) {
 					if (previousMessage.replyTo_id > 0) {
+						param.topMargin = 0;
+					}
+				}
+				getDate().setLayoutParams(param);
+				getDate().setReply(true);
+				// if (previousMessage != null && previousMessage.replyTo_id >
+				// 0) {
+				// getDate().setSecondVerticalLine(true);
+				// }
+				getDate().setSecondVerticalLine(me.isFirst);
+				getDate().setSecondVerticalLine2(me.isLast);
+				getDate().invalidate();
+
+				getMessage().setClickable(false);
+				getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+					@Override
+					public boolean onLongClick(View v) {
+						showPopupMenu(v, msg);
+						return true;
+					}
+				});
+			} else {
+
+				getMessage().setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+
+						if (chatLoad != null && chatLoad.is_locked != 1)
+							initSendMessage();
+					}
+				});
+				getMessage().setOnLongClickListener(new OnLongClickListener() {
+
+					@Override
+					public boolean onLongClick(View v) {
+						showPopupMenu(v, msg);
+						return true;
+					}
+				});
+				getDate().setSecondVerticalLine(me.isFirst);
+				getDate().setSecondVerticalLine2(me.isLast);
+				android.widget.LinearLayout.LayoutParams param = (android.widget.LinearLayout.LayoutParams) getDate()
+						.getLayoutParams();
+				param.width = (int) getDate().convertDpToPixel(20, getContext());
+				getDate().setLayoutParams(param);
+				getDate().setReply(false);
+				getDate().invalidate();
+			}
+			// Log.d("me.Datetime", dateString + " ");
+			// getMessage().setText(Html.fromHtml(getMessage().getText() + " " +
+			// dateString));
+			// changes
+			getMessage().setTypeface(Application.typefaceRegular);
+			getMessage().setTextColor(Color.BLACK);
+			if (isMyMessage(me.qrcode)) {
+				switch (me.state) {
+				case QodemeContract.Messages.State.LOCAL:
+					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
+					getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
+					getMessage().setTextColor(getResources().getColor(R.color.user_typing));
+					getDate().invalidate();
+					break;
+				case QodemeContract.Messages.State.SENT:
+					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
+					getDate().setDotColor(
+							context.getResources().getColor(R.color.text_message_sent));
+					break;
+				case QodemeContract.Messages.State.READ:
+				case QodemeContract.Messages.State.NOT_READ:
+				case QodemeContract.Messages.State.READ_LOCAL:
+				case QodemeContract.Messages.State.WAS_READ:
+					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_reed));
+					getDate().setDotColor(
+							context.getResources().getColor(R.color.text_message_not_read));
+					break;
+				}
+			} else {
+				// getDate().setTextColor(color);
+				getDate().setDotColor(color);
+				if (QodemeContract.Messages.State.NOT_READ == me.state) {
+					getDate().setOutLine(true);
+					getMessage().setTypeface(Application.typefaceBold);
+				} else {
+
+				}
+				getDate().invalidate();
+			}
+			getUserSpace().setVisibility(GONE);
+			getHeaderContainer().setVisibility(View.GONE);
+			getOpponentSeparator().setVisibility(View.GONE);
+			if (nextMessage != null) {
+				if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
+					getUserSpace().setVisibility(GONE);
+				} else {
+					getUserSpace().setVisibility(VISIBLE);
+				}
+			}
+			/*
+			 * && !TextUtils.isEmpty(previousMessage. created )
+			 */
+			if (previousMessage != null && previousMessage.hasPhoto != 2) {
+				try {
+					Calendar currentDate = Calendar.getInstance();
+					String date = me.created;
+					if (me.created != null && !(me.created.contains(".")))
+						date += ".000";
+					currentDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(date));
+
+					Calendar previousDate = Calendar.getInstance();
+					String preDate = previousMessage.created;
+					// Log.d("preDate", preDate);
+					if (previousMessage.created != null && (!previousMessage.created.contains(".")))
+						preDate = preDate + ".000";
+					// Log.d("preDate", preDate);
+					previousDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(preDate));
+
+					if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
+						Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
+						// Converter.getCrurentTimeFromTimestamp(me.created)
+						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						getHeaderContainer().setVisibility(View.VISIBLE);
+					} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
+						getOpponentSeparator().setVisibility(View.VISIBLE);
+					}
+
+					if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)
+							&& currentDate.get(Calendar.MINUTE) == previousDate
+									.get(Calendar.MINUTE)
+							&& currentDate.get(Calendar.HOUR_OF_DAY) == previousDate
+									.get(Calendar.HOUR_OF_DAY)) {
+
 						// getDate().setVisibility(View.INVISIBLE);
-						if (chatType == 1)
-							getMessagerName().setVisibility(View.GONE);
-
-						if (me.replyTo_id > 0)
-							getDate().setCircle(false);
-						else {
-							getDate().setCircle(true);
-						}
-					} else if (me.replyTo_id > 0) {
-						getDate().setCircle(true);
-
+						getDate().setVisibility(View.VISIBLE);
 					} else {
-						if (chatType == 1)
-							getMessagerName().setVisibility(View.GONE);
-						getDate().setCircle(false);
 						getDate().setVisibility(View.VISIBLE);
 					}
-				} else {
-					getDate().setCircle(true);
-					// getUserSpace().setVisibility(VISIBLE);
-					getDate().setVisibility(View.VISIBLE);
-				}
+					/**
+					 * Grouped Same user message
+					 */
+					if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
 
-				getDate().invalidate();
-			} catch (ParseException e) {
-				e.printStackTrace();
+						long diffInMs = currentDate.getTimeInMillis()
+								- previousDate.getTimeInMillis();
+
+						long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+						// Log.d("timeDef", diffInSec+"");
+						if (diffInSec < 60) {
+							if (previousMessage.replyTo_id > 0) {
+								// getDate().setVisibility(View.INVISIBLE);
+								if (chatType == 1)
+									getMessagerName().setVisibility(View.GONE);
+
+								if (me.replyTo_id > 0)
+									getDate().setCircle(false);
+								else {
+									getDate().setCircle(true);
+								}
+							} else if (me.replyTo_id > 0) {
+								getDate().setCircle(true);
+
+							} else {
+								if (chatType == 1)
+									getMessagerName().setVisibility(View.GONE);
+								getDate().setCircle(false);
+								getDate().setVisibility(View.VISIBLE);
+							}
+						} else {
+							getDate().setCircle(true);
+							getDate().setVisibility(View.VISIBLE);
+						}
+					} else {
+						getDate().setCircle(true);
+						// getUserSpace().setVisibility(VISIBLE);
+						getDate().setVisibility(View.VISIBLE);
+					}
+
+					getDate().invalidate();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -691,7 +757,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				}
 			}
 		});
-
+		Helper.showKeyboard(getContext(), mMessageField);
 	}
 
 	private boolean isMyMessage(String qr) {

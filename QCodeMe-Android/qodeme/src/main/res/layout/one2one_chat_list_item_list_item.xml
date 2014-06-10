@@ -50,7 +50,7 @@
         android:layout_marginLeft="10dp"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <LinearLayout android:id="@+id/linear_dot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
@@ -104,12 +104,12 @@
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
 
-                <View
-                    android:id="@+id/view_space"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_alignParentTop="true"
-                    android:visibility="gone" />
+<!--                 <View -->
+<!--                     android:id="@+id/view_space" -->
+<!--                     android:layout_width="match_parent" -->
+<!--                     android:layout_height="10dp" -->
+<!--                     android:layout_alignParentTop="true" -->
+<!--                     android:visibility="gone" /> -->
             </LinearLayout>
         </LinearLayout>
 
@@ -147,6 +147,41 @@
                     android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_status_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:visibility="gone" >
+
+            <com.blulabellabs.code.ui.common.TextViewBold
+                style="@style/TextView.Message.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:paddingBottom="0dp"
+                android:text="@string/status_update"
+                android:textColor="#ff0000"
+                android:textSize="18sp" />
+
+            <com.blulabellabs.code.ui.common.TextViewMedium
+                android:id="@+id/textView_status_update"
+                style="@style/TextView.Message.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:paddingBottom="0dp"
+                android:textColor="@color/text_message_not_read"
+                android:textSize="18sp" />
+        </LinearLayout>
+       <View
+                    android:id="@+id/view_space"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_alignParentTop="true"
+                    android:visibility="gone" />
     </LinearLayout>
 
     <RelativeLayout

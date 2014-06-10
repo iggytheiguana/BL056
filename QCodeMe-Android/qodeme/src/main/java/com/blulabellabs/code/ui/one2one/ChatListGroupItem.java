@@ -504,7 +504,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 							mChatLoad.title = title;
 							setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
 									mChatLoad.description, mChatLoad.status, mChatLoad.is_locked,
-									mChatLoad.title);
+									mChatLoad.title, mChatLoad.latitude, mChatLoad.longitude);
 
 							Helper.hideKeyboard(getContext(), getTitleEditText());
 							// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
@@ -776,9 +776,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
-			String status, Integer isLocked, String chat_title) {
+			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
 		RestAsyncHelper.getInstance().chatSetInfo(mChatLoad.chatId, title, color, tag, desc,
-				isLocked, status, chat_title, new RestListener<VoidResponse>() {
+				isLocked, status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {

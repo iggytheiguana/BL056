@@ -110,5 +110,6 @@
     <string name="status_update">Status update </string>
     <string name="member">Members: </string>
     <string name="loading_text">Loading...</string>
+    <string name="this_is_public_thread">This is a public thread.</string>
 
 </resources>

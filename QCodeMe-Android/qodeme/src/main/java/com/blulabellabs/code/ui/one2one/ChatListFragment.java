@@ -48,6 +48,7 @@ import de.tavendo.autobahn.WebSocketHandler;
 /**
  * Created by Alex on 10/7/13.
  */
+@SuppressLint("DefaultLocale")
 public class ChatListFragment extends Fragment {
 
 	private One2OneChatListFragmentCallback callback;
@@ -55,7 +56,7 @@ public class ChatListFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear;;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear,mImgBtnLocationFilter;
 	private EditText mMessageEdit;
 	int lastVisibleItem = 0;
 	boolean isScrollingDown = false;
@@ -143,12 +144,13 @@ public class ChatListFragment extends Fragment {
 		mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
 		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
 		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
+		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
 
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 
 		initListView();
 		isViewCreated = true;
-		updateUi();
+		
 
 		// we add a listener to the image button so we can track when a person
 		// stops/starts typing
@@ -196,6 +198,9 @@ public class ChatListFragment extends Fragment {
 			mImgBtnClear.setVisibility(View.GONE);
 			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
+		
+		updateUi();
+		
 		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -211,9 +216,14 @@ public class ChatListFragment extends Fragment {
 					MainActivity activity = (MainActivity) callback;
 					activity.setOneToOneSearch(true);
 					activity.setOneToOneSearchString(data);
-					activity.searchChats(data, 0, 1, chatListener);
-					mEditTextSearch.setEnabled(false);
-					isMoreData = true;
+//					activity.searchChats(data, 0, 1, chatListener);
+//					mEditTextSearch.setEnabled(false);
+//					isMoreData = true;
+					
+					List<Contact> temp = searchContact(searchString);
+					mListAdapter.clear();
+					mListAdapter.addAll(temp);
+					
 					// RestAsyncHelper.getInstance().lookup(data, new
 					// RestListener<LookupResponse>() {
 					//
@@ -301,7 +311,7 @@ public class ChatListFragment extends Fragment {
 				null);
 		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
 		mListView.addHeaderView(headerSearchView);
-		mListView.addFooterView(footerView);
+		//mListView.addFooterView(footerView);
 
 		List<Contact> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
@@ -463,26 +473,27 @@ public class ChatListFragment extends Fragment {
 				}
 				lastFirstvisibleItem = firstVisibleItem;
 
-				// what is the bottom iten that is visible
-				int lastInScreen = firstVisibleItem + visibleItemCount;
-
-				// is the bottom item visible & not loading more already ? Load
-				// more
-				// !
-				if ((lastInScreen == totalItemCount)) {
-					// if ((dataArray.size() - 1) > visibleChildCount) {
-					if (!isThreadRunning && isMoreData) {
-						// String data = mEditTextSearch.getText().toString();
-						if (!searchString.trim().equals("")) {
-							mFooterLayout.setVisibility(View.VISIBLE);
-							isThreadRunning = true;
-							MainActivity activity = (MainActivity) callback;
-							activity.setOneToOneSearch(true);
-							activity.searchChats(searchString, 0, pageNo, chatListener);
-						}
-					}
-					// }
-				}
+				// // what is the bottom iten that is visible
+				// int lastInScreen = firstVisibleItem + visibleItemCount;
+				//
+				// // is the bottom item visible & not loading more already ?
+				// Load
+				// // more
+				// // !
+				// if ((lastInScreen == totalItemCount)) {
+				// // if ((dataArray.size() - 1) > visibleChildCount) {
+				// if (!isThreadRunning && isMoreData) {
+				// // String data = mEditTextSearch.getText().toString();
+				// if (!searchString.trim().equals("")) {
+				// mFooterLayout.setVisibility(View.VISIBLE);
+				// isThreadRunning = true;
+				// MainActivity activity = (MainActivity) callback;
+				// activity.setOneToOneSearch(true);
+				// activity.searchChats(searchString, 0, pageNo, chatListener);
+				// }
+				// }
+				// // }
+				// }
 			}
 		});
 	}
@@ -490,20 +501,39 @@ public class ChatListFragment extends Fragment {
 	/**
 	 * Refresh data can be called from activity
 	 */
+	List<Contact> contacts = Lists.newArrayList();
+
 	public void updateUi() {
 		if (isViewCreated && callback.getContactList() != null) {
 			mListAdapter.clear();
-			List<Contact> contacts = Lists.newArrayList();
+			// List<Contact> 
+			contacts.clear();
+			contacts = Lists.newArrayList();
 			for (Contact c : callback.getContactList()) {
 				if (c.isArchive != 1)
 					contacts.add(c);
 			}
-			mListAdapter.addAll(contacts);
+
+			mListAdapter.addAll(searchContact(searchString));
 			// addTestData();
 			long focusedChat = ChatFocusSaver.getFocusedChatId();
 			selectChat(focusedChat);
 
 		}
+	}
+
+	private List<Contact> searchContact(String searchString) {
+		if (searchString.trim().equals("")) {
+			return contacts;
+		}
+		List<Contact> temp = Lists.newArrayList();
+		
+		for (Contact c : contacts) {
+			if (c.title != null && c.title.toLowerCase().contains(searchString.toLowerCase())) {
+				temp.add(c);
+			}
+		}
+		return temp;
 	}
 
 	private void addTestData() {

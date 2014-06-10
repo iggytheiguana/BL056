@@ -456,7 +456,10 @@ public class SyncHelper {
 							.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
 
 					String date = Converter.getCurrentGtmTimestampString();
-					SetFavoriteResponse favoriteResponse = rest.setFavorite(date, chatId);
+					
+					if(is_favorite == 2)
+						is_favorite = 0;
+					SetFavoriteResponse favoriteResponse = rest.setFavorite(date,is_favorite,chatId);
 
 					new ChatFavoriteHandler(context, _id, is_favorite)
 							.parseAndApply(favoriteResponse);

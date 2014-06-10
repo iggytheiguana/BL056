@@ -555,14 +555,15 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/line_horizontal" />
 
-        <LinearLayout android:id="@+id/linear_memberlist"
+        <LinearLayout
+            android:id="@+id/linear_memberlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
-            android:visibility="gone"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone" >
 
             <com.blulabellabs.code.ui.common.TextViewMedium
                 android:id="@+id/textView_memberLable"
@@ -588,13 +589,14 @@
                 android:visibility="visible" />
         </LinearLayout>
 
-        <View android:id="@+id/view_memberListBottomLine"
+        <View
+            android:id="@+id/view_memberListBottomLine"
             android:layout_width="fill_parent"
             android:layout_height="1px"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:visibility="gone"
-            android:background="@drawable/line_horizontal" />
+            android:background="@drawable/line_horizontal"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -631,18 +633,20 @@
 
             <LinearLayout
                 android:id="@+id/linear_flagged"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
-                <TextView
+                <com.blulabellabs.code.ui.common.TextViewRegular
+                    android:id="@+id/textView_totolFlagged"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="6 Messages"
+                    android:text="0 Messages"
+                    android:textSize="18sp"
                     android:textColor="#059BE9"
                     android:textStyle="bold" />
 
@@ -653,6 +657,16 @@
                     android:src="@drawable/ic_flag_blue" />
             </LinearLayout>
         </RelativeLayout>
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            android:id="@+id/textView_public_lable_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="@string/this_is_public_thread"
+            android:textColor="@color/text_message_not_read"
+            android:textSize="14sp"
+            android:visibility="gone" />
     </LinearLayout>
 
 </ScrollView>

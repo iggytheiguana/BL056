@@ -4,11 +4,14 @@ import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +45,12 @@ import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
+import com.blulabellabs.code.core.io.responses.SetSearchableResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.ui.GroupMemberListActivity;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
@@ -73,8 +79,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	private EditText mEditTextStatus, mEditTextTitle, mEditTextDesc, mEditTextTags;
 	private RelativeLayout mRelativeLayoutDesc, mRelativeLayoutSetDesc;
 	private ChatLoad chatload;
-	private TextView mTextViewMemberList;
+	private TextView mTextViewMemberList, mTextViewPublicThreadLable, mTextViewTotalFlagged;
 	boolean isChangeByUser = false;
+	private LinearLayout mLinearLayFlag;
 
 	private One2OneChatInsideFragmentCallback callback;
 
@@ -88,7 +95,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		args.putString(CHAT_NAME, c.title);
 		args.putString(QRCODE, c.qrcode);
 		// args.putString(LOCATION, c.location);
-		// args.putString(DATE, c.date);
+		args.putString(DATE, c.created);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
 		f.setChatload(c);
 		f.setArguments(args);
@@ -129,14 +136,17 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mImgBtnShare = (ImageButton) getView().findViewById(R.id.btnShare);
 		mTextViewTags = (TextView) getView().findViewById(R.id.textView_groupTag);
 		mTextViewMemberList = (TextView) getView().findViewById(R.id.textView_memberList);
-
+		mTextViewPublicThreadLable = (TextView) getView().findViewById(
+				R.id.textView_public_lable_bottom);
 		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
 
 		mEditTextTags = (EditText) getView().findViewById(R.id.editText_GroupTags);
 		mEditTextTitle = (EditText) getView().findViewById(R.id.editText_GroupTitle);
 		mEditTextDesc = (EditText) getView().findViewById(R.id.editText_Desc);
 		mImgQr = (ImageView) getView().findViewById(R.id.img_qr);
+		mTextViewTotalFlagged = (TextView) getView().findViewById(R.id.textView_totolFlagged);
 
+		mLinearLayFlag = (LinearLayout) getView().findViewById(R.id.linear_flagged);
 		mRelativeLayoutDesc = (RelativeLayout) getView().findViewById(R.id.relative_desc);
 		mRelativeLayoutSetDesc = (RelativeLayout) getView().findViewById(R.id.relative_editDesc);
 
@@ -149,6 +159,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mImgBtnShare.setOnClickListener(this);
 		mImgBtnLocked.setOnClickListener(this);
 		mImgFavorite.setOnClickListener(this);
+		mImgBtnSearch.setOnClickListener(this);
 		mTextViewTotalMember.setOnClickListener(this);
 
 		String mQrCodeText = chatload != null ? chatload.qrcode : "";
@@ -172,6 +183,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					String status = v.getText().toString().trim();
 
 					mTextViewStatus.setText(status);
+
+					callback.sendMessage(getChatload().chatId, status, "", 2, -1, 0, 0,
+							QodemePreferences.getInstance().getPublicName(), "");
 
 					int updated = getChatload().updated;
 					getActivity().getContentResolver().update(
@@ -262,7 +276,16 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		if (getChatload().type == 1) {
 			mTextViewTags.setVisibility(View.GONE);
 			mEditTextTags.setVisibility(View.GONE);
+			mImgQr.setVisibility(View.GONE);
 		} else {
+			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
+				mTextViewPublicThreadLable.setVisibility(View.GONE);
+				mLinearLayFlag.setVisibility(View.VISIBLE);
+			} else {
+				mLinearLayFlag.setVisibility(View.GONE);
+				mTextViewPublicThreadLable.setVisibility(View.VISIBLE);
+			}
+
 			mTextViewTags.setVisibility(View.VISIBLE);
 			mEditTextTags.setVisibility(View.VISIBLE);
 			mEditTextTags.addTextChangedListener(new TextWatcher() {
@@ -393,22 +416,29 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	@SuppressWarnings("static-access")
 	public void setData() {
 
 		try {
-			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
-			// String dateStr = fmtOut.format(new Date(Converter
-			// .getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
-			// mTextViewLocation.setText(chatload.location + "");
-			// mTextViewDatelocation.setText(dateStr + ", " +
-			// chatload.location);
+			try {
+				// SimpleDateFormat fmtOut = new
+				// SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+				// SimpleDateFormat fmtOut = new
+				// SimpleDateFormat("MM/dd/yy HH:mm");
+				// String dateStr = fmtOut.format(new Date(Converter
+				// .getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
+				// mTextViewLocation.setText(chatload.location + "");
+				// mTextViewDatelocation.setText(dateStr + ", " +
+				// chatload.location);
 
-			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMMM dd,yyyy, h:mm a", Locale.US);
-			// String dateStr1 = fmtOut1.format(new Date(Converter
-			// .getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
-			// mTextViewDate.setText(dateStr1);
+				SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMM dd,yyyy, HH:mm");
+				String dateStr1 = fmtOut1.format(new Date(Converter
+						.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
+				mTextViewDate.setText(dateStr1);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			if (getChatload() != null) {
 				if (getChatload().is_locked == 1) {
@@ -427,6 +457,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				mEditTextTags.setText(getChatload().tag);
 
 				mTextViewTotalMember.setText(getChatload().number_of_members + " members");
+
 				if (callback != null) {
 					List<Message> messages = callback.getChatMessages(getChatload().chatId);
 
@@ -491,6 +522,30 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					if (chatload.type == 2) {
 						mImgBtnSearch.setVisibility(View.VISIBLE);
 						mImgBtnShare.setVisibility(View.VISIBLE);
+
+						if (getChatload().is_searchable == 1) {
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_search_blue);
+							mImgBtnSearch.setImageBitmap(bm);
+						} else {
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_search_gray);
+							mImgBtnSearch.setImageBitmap(bm);
+						}
+
+						List<Message> messages = callback.getChatMessages(getChatload().chatId);
+						int totalFlagged = 0;
+						if (messages != null) {
+
+							for (Message msg : messages) {
+								if (msg.is_flagged == 1)
+									totalFlagged++;
+							}
+						}
+						if (totalFlagged <= 1)
+							mTextViewTotalFlagged.setText(totalFlagged + " Message");
+						else
+							mTextViewTotalFlagged.setText(totalFlagged + " Messages");
 					} else {
 						mImgBtnSearch.setVisibility(View.GONE);
 						mImgBtnShare.setVisibility(View.GONE);
@@ -623,22 +678,69 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					getChatload().title);
 			break;
 		case R.id.btnFavorite:
-
-			setFavorite();
+			int is_favorite = 1;
+			if (getChatload().is_favorite == 1)
+				is_favorite = 2;
+			else {
+				is_favorite = 1;
+			}
+			getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+					QodemeContract.Chats.updateFavorite(is_favorite),
+					QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
+			SyncHelper.requestManualSync();
+			// setFavorite();
 			break;
 		case R.id.textView_member:
 			Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
 			getActivity().startActivity(intent);
 
 			break;
+		case R.id.btnSearch:
+			if (getChatload().is_searchable == 1)
+				setSearchable(0);
+			else
+				setSearchable(1);
+			break;
 		default:
 			break;
 		}
 	}
 
+	private void setSearchable(final int is_searchable) {
+		RestAsyncHelper.getInstance().setSearchable(is_searchable, getChatload().chatId,
+				new RestListener<SetSearchableResponse>() {
+
+					@Override
+					public void onResponse(SetSearchableResponse response) {
+						// Log.d("searchabel", "successfull");
+						try {
+							getActivity().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateSearchabel(is_searchable),
+									QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId,
+									null);
+						} catch (Exception e) {
+						}
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						// Log.d("searchabel", "Error");
+						try {
+							Toast toast = new Toast(getActivity());
+							toast.setGravity(Gravity.TOP, 0, 50);
+							toast.setText("Nerwork Problem, Check your Internet connection.");
+							toast.setDuration(Toast.LENGTH_SHORT);
+							toast.show();
+						} catch (Exception e) {
+						}
+					}
+				});
+	}
+
 	private void setFavorite() {
 		String date = Converter.getCurrentGtmTimestampString();
-		RestAsyncHelper.getInstance().setFavorite(date, getChatload().chatId,
+		RestAsyncHelper.getInstance().setFavorite(date, 1, getChatload().chatId,
 				new RestListener<SetFavoriteResponse>() {
 
 					@Override
@@ -657,7 +759,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
 			String status, Integer isLocked, String chat_title) {
 		RestAsyncHelper.getInstance().chatSetInfo(getChatload().chatId, title, color, tag, desc,
-				isLocked, status, chat_title, new RestListener<VoidResponse>() {
+				isLocked, status, chat_title,getChatload().latitude, getChatload().longitude, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {

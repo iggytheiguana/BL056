@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
@@ -13,7 +12,6 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,11 +25,13 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,13 +39,19 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.blulabellabs.code.ApplicationConstants;
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
+import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.VoidResponse;
+import com.blulabellabs.code.core.io.utils.RestError;
+import com.blulabellabs.code.core.io.utils.RestListener;
+import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
@@ -54,6 +60,7 @@ import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Converter;
+import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
@@ -88,7 +95,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
 	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
-	private EditText mMessageField;
+	private EditText mMessageField, mStatusField;
 	private TextView mName, mStatus, mStatusUpdate;
 	private TextView mDate;
 	private TextView mLocation;
@@ -189,14 +196,78 @@ public class ChatInsideGroupFragment extends Fragment {
 		mStatus = (TextView) getView().findViewById(R.id.textView_status);
 		mStatusUpdate = (TextView) getView().findViewById(R.id.textView_status_update);
 		mLinearLayStatusUpdte = (LinearLayout) getView().findViewById(R.id.linear_status_update);
+		mStatusField = (EditText) getView().findViewById(R.id.edit_status);
 
 		mTextViewMembers = (TextView) getView().findViewById(R.id.textView_member1);
 		mImgMemberBottomLine = (ImageView) getView().findViewById(R.id.img_memberline);
 		mTextViewMembersLabel = (TextView) getView().findViewById(R.id.textView_member);
 		updateUi();
 
-	}
+		if (QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
+			mStatus.setOnClickListener(new OnClickListener() {
 
+				@Override
+				public void onClick(View v) {
+					mStatusField.setVisibility(View.VISIBLE);
+					mStatusField.setText(mStatus.getText());
+					v.setVisibility(View.GONE);
+				}
+			});
+			mStatusField.setOnEditorActionListener(new OnEditorActionListener() {
+
+				@Override
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					if (actionId == EditorInfo.IME_ACTION_SEARCH
+							|| actionId == EditorInfo.IME_ACTION_DONE
+							|| event.getAction() == KeyEvent.ACTION_DOWN
+							&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+						mStatusField.setVisibility(View.GONE);
+						mStatus.setVisibility(View.VISIBLE);
+
+						String status = v.getText().toString().trim();
+
+						mStatus.setText(status);
+
+						int updated = chatLoad.updated;
+						getActivity().getContentResolver().update(
+								QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, status, "",
+										updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+								DbUtils.getWhereArgsForId(chatLoad.chatId));
+						// setChatInfo(chatload.chatId, null, null, null, null,
+						// status, null);
+						chatLoad.status = status;
+						setChatInfo(chatLoad.chatId, null, chatLoad.color, chatLoad.tag,
+								chatLoad.description, status, chatLoad.is_locked,
+								chatLoad.title, chatLoad.latitude, chatLoad.longitude);
+						
+						return true;
+					}
+					return false;
+				}
+			});
+
+		}
+
+	}
+	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
+			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
+		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc,
+				isLocked, status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
+
+					@Override
+					public void onResponse(VoidResponse response) {
+						Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+						Log.d("Error", error.getMessage() + "");
+						Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_LONG).show();
+					}
+				});
+	}
 	private void initSendMessage() {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
@@ -615,77 +686,79 @@ public class ChatInsideGroupFragment extends Fragment {
 			} else {
 				mLinearLayStatusUpdte.setVisibility(View.VISIBLE);
 				mStatusUpdate.setText(statusUpdate);
-				//QodemePreferences.getInstance().set("" + getArguments().getLong(CHAT_ID), null);
+				// QodemePreferences.getInstance().set("" +
+				// getArguments().getLong(CHAT_ID), null);
 			}
 
 			mListAdapter.clear();
 
-//			List<Message> listData = callback.getChatMessages(getChatId());
-//			listData = sortMessages(listData);
-//			boolean isContainUnread = false;
-//			if (listData != null) {
-//				List<Message> replyMessage = new ArrayList<Message>();
-//				final List<Message> tempMessage = new ArrayList<Message>();
-//				tempMessage.addAll(listData);
-//
-//				for (Message message : tempMessage) {
-//					if (message.replyTo_id > 0) {
-//						replyMessage.add(message);
-//						listData.remove(message);
-//					}
-//					if (message.state == 3) {
-//						isContainUnread = true;
-//					}
-//				}
-//
-//				HashMap<Long, List<Message>> map = new HashMap<Long, List<Message>>();
-//				ArrayList<Long> chatId = new ArrayList<Long>();
-//				for (Message m : listData) {
-//
-//					List<Message> arrayList = new ArrayList<Message>();
-//					for (Message message : replyMessage) {
-//						if (message.replyTo_id == m.messageId) {
-//							arrayList.add(message);
-//						}
-//					}
-//					arrayList = sortMessages(arrayList);
-//					if (arrayList.size() > 0) {
-//						if (arrayList.size() > 1) {
-//							int i = 0;
-//							for (Message me : arrayList) {
-//								if (i == 0)
-//									me.isLast = true;
-//								else if (i == arrayList.size() - 1)
-//									me.isFirst = true;
-//								else {
-//									me.isFirst = true;
-//									me.isLast = true;
-//								}
-//								i++;
-//							}
-//						}
-//
-//						map.put(m.messageId, arrayList);
-//						chatId.add(m.messageId);
-//					}
-//
-//				}
-//				for (Long id : chatId) {
-//					int i = 0;
-//					for (Message m : listData) {
-//						if (m.messageId == id) {
-//							if (i < listData.size()) {
-//								listData.addAll(i + 1, map.get(id));
-//							} else {
-//								listData.addAll(map.get(id));
-//								// break;
-//							}
-//							break;
-//						}
-//						i++;
-//					}
-//				}
-//			}
+			// List<Message> listData = callback.getChatMessages(getChatId());
+			// listData = sortMessages(listData);
+			// boolean isContainUnread = false;
+			// if (listData != null) {
+			// List<Message> replyMessage = new ArrayList<Message>();
+			// final List<Message> tempMessage = new ArrayList<Message>();
+			// tempMessage.addAll(listData);
+			//
+			// for (Message message : tempMessage) {
+			// if (message.replyTo_id > 0) {
+			// replyMessage.add(message);
+			// listData.remove(message);
+			// }
+			// if (message.state == 3) {
+			// isContainUnread = true;
+			// }
+			// }
+			//
+			// HashMap<Long, List<Message>> map = new HashMap<Long,
+			// List<Message>>();
+			// ArrayList<Long> chatId = new ArrayList<Long>();
+			// for (Message m : listData) {
+			//
+			// List<Message> arrayList = new ArrayList<Message>();
+			// for (Message message : replyMessage) {
+			// if (message.replyTo_id == m.messageId) {
+			// arrayList.add(message);
+			// }
+			// }
+			// arrayList = sortMessages(arrayList);
+			// if (arrayList.size() > 0) {
+			// if (arrayList.size() > 1) {
+			// int i = 0;
+			// for (Message me : arrayList) {
+			// if (i == 0)
+			// me.isLast = true;
+			// else if (i == arrayList.size() - 1)
+			// me.isFirst = true;
+			// else {
+			// me.isFirst = true;
+			// me.isLast = true;
+			// }
+			// i++;
+			// }
+			// }
+			//
+			// map.put(m.messageId, arrayList);
+			// chatId.add(m.messageId);
+			// }
+			//
+			// }
+			// for (Long id : chatId) {
+			// int i = 0;
+			// for (Message m : listData) {
+			// if (m.messageId == id) {
+			// if (i < listData.size()) {
+			// listData.addAll(i + 1, map.get(id));
+			// } else {
+			// listData.addAll(map.get(id));
+			// // break;
+			// }
+			// break;
+			// }
+			// i++;
+			// }
+			// }
+			// }
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			if (mListAdapter.getCount() > 0)
 				mListView.setSelection(mListAdapter.getCount() - 1);

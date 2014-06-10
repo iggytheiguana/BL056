@@ -51,16 +51,16 @@
                 android:id="@+id/imgBtn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@null"
+                android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:src="@drawable/ic_action_close"
                 android:visibility="gone" />
 
-            <ImageButton
+            <ImageButton android:id="@+id/imgBtn_locationFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@null"
+                android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:src="@drawable/ic_location_gray" />
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@null"
+            android:background="@drawable/selectable_background_actionbar"
             android:padding="10dp"
             android:src="@drawable/ic_menu_send" />
 

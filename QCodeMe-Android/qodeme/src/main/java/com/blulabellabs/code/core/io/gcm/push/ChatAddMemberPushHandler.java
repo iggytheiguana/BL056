@@ -80,7 +80,7 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 								mChatLoad.qrcode, "", mChatLoad.latitude, mChatLoad.longitude,
 								mChatLoad.description, mChatLoad.status,
 								mChatLoad.number_of_flagged, mChatLoad.number_of_members,
-								mChatLoad.title, mChatLoad.tag, mChatLoad.is_locked));
+								mChatLoad.title, mChatLoad.tag, mChatLoad.is_locked, mChatLoad.created));
 			}
 		} else {
 			getContext().getContentResolver().insert(
@@ -89,7 +89,7 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 							mChatLoad.qrcode, "", mChatLoad.latitude, mChatLoad.longitude,
 							mChatLoad.description, mChatLoad.status, mChatLoad.number_of_flagged,
 							mChatLoad.number_of_members, mChatLoad.title, mChatLoad.tag,
-							mChatLoad.is_locked));
+							mChatLoad.is_locked,mChatLoad.created));
 		}
 		String id = QodemePreferences.getInstance().get("AddMemberId", "");
 		if(id.trim().equals(""))

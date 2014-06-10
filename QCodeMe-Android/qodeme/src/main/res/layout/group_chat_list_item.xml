@@ -174,8 +174,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_above="@+id/drag_image"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingRight="0dp"
                 android:visibility="visible" >
 
                 <ImageButton
@@ -183,8 +184,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:background="@null"
-                    android:padding="4dp"
+                    android:background="@drawable/selectable_background_actionbar"
+                    android:padding="10dp"
                     android:src="@drawable/ic_menu_send"
                     android:visibility="gone" />
 
@@ -288,7 +289,7 @@
         <LinearLayout
             android:id="@+id/drag"
             android:layout_width="50dp"
-            android:layout_height="18dp"
+            android:layout_height="10dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:gravity="right"

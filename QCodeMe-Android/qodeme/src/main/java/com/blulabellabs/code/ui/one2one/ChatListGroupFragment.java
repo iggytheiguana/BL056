@@ -1,5 +1,8 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.animation.Animator;
@@ -7,6 +10,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -41,6 +45,7 @@ import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragmentCallback;
 import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Fonts;
+import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
 import de.tavendo.autobahn.WebSocketConnection;
@@ -50,7 +55,7 @@ import de.tavendo.autobahn.WebSocketHandler;
 /**
  * Created by Alex on 10/7/13.
  */
-@SuppressLint("ValidFragment")
+@SuppressLint({ "ValidFragment", "DefaultLocale" })
 public class ChatListGroupFragment extends Fragment {
 
 	private One2OneChatListFragmentCallback callback;
@@ -58,7 +63,7 @@ public class ChatListGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter;
 	private EditText mMessageEdit;
 	private int chatType;
 	int lastFirstvisibleItem = 0;
@@ -143,10 +148,10 @@ public class ChatListGroupFragment extends Fragment {
 		mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
 		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
 
 		initListView();
 		isViewCreated = true;
-		updateUi();
 
 		// we add a listener to the image button so we can track when a person
 		// stops/starts typing
@@ -183,6 +188,21 @@ public class ChatListGroupFragment extends Fragment {
 				updateUi();
 			}
 		});
+		mImgBtnLocationFilter.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// MainActivity activity = (MainActivity) callback;
+				// if (activity.isPrivateSearch()) {
+				if (chatLoads != null) {
+					Collections.sort(chatLoads, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(chatLoads);
+				}
+				// }
+			}
+		});
+
 		MainActivity activity = (MainActivity) callback;
 		if (activity.isPrivateSearch()) {
 			searchString = activity.getPrivateSearchString();
@@ -193,7 +213,8 @@ public class ChatListGroupFragment extends Fragment {
 			mImgBtnClear.setVisibility(View.GONE);
 			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
-		
+
+		updateUi();
 		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -209,9 +230,12 @@ public class ChatListGroupFragment extends Fragment {
 					MainActivity activity = (MainActivity) callback;
 					activity.setPrivateSearch(true);
 					activity.setPrivateSearchString(data);
-					activity.searchChats(data, 1, 1, chatListener);
-					mEditTextSearch.setEnabled(false);
-					isMoreData = true;
+					chatLoads = searchChats(data);
+					mListAdapter.clear();
+					mListAdapter.addAll(chatLoads);
+					// activity.searchChats(data, 1, 1, chatListener);
+					// mEditTextSearch.setEnabled(false);
+					// isMoreData = true;
 					// RestAsyncHelper.getInstance().lookup(data, new
 					// RestListener<LookupResponse>() {
 					//
@@ -243,6 +267,75 @@ public class ChatListGroupFragment extends Fragment {
 				return false;
 			}
 		});
+	}
+
+	public class CustomComparator implements Comparator<ChatLoad> {
+
+		@Override
+		public int compare(ChatLoad lhs, ChatLoad rhs) {
+			MainActivity activity = (MainActivity) callback;
+			Location location = activity.getCurrentLocation();
+			Integer leftDistance = 0;
+			Integer rightDistance = 0;
+			if (location != null) {
+				try {
+					double lat = Double.parseDouble(lhs.latitude);
+					double lng = Double.parseDouble(lhs.longitude);
+					leftDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+
+				} catch (Exception e) {
+				}
+				try {
+					double lat = Double.parseDouble(rhs.latitude);
+					double lng = Double.parseDouble(rhs.longitude);
+					rightDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+				} catch (Exception e) {
+				}
+			}
+			return leftDistance.compareTo(rightDistance);
+		}
+
+	}
+
+	/**
+	 * This function is calculate the distance between two Geo Points
+	 * 
+	 * @param lat1
+	 * @param lon1
+	 * @param lat2
+	 * @param lon2
+	 * @param unit
+	 * @return
+	 */
+	private double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+				* Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+		dist = Math.acos(dist);
+		dist = rad2deg(dist);
+		dist = dist * 60 * 1.1515;
+		if (unit == 'K') {
+			dist = dist * 1.609344;
+		} else if (unit == 'N') {
+			dist = dist * 0.8684;
+		}
+		return (dist);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts decimal degrees to radians : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts radians to decimal degrees : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double rad2deg(double rad) {
+		return (rad * 180.0 / Math.PI);
 	}
 
 	private void start() {
@@ -298,7 +391,7 @@ public class ChatListGroupFragment extends Fragment {
 				null);
 		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
 		mListView.addHeaderView(headerSearchView);
-		mListView.addFooterView(footerView);
+		// mListView.addFooterView(footerView);
 
 		List<ChatLoad> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
@@ -459,26 +552,27 @@ public class ChatListGroupFragment extends Fragment {
 				}
 				lastFirstvisibleItem = firstVisibleItem;
 
-				// what is the bottom iten that is visible
-				int lastInScreen = firstVisibleItem + visibleItemCount;
-
-				// is the bottom item visible & not loading more already ? Load
-				// more
-				// !
-				if ((lastInScreen == totalItemCount)) {
-					// if ((dataArray.size() - 1) > visibleChildCount) {
-					if (!isThreadRunning && isMoreData) {
-						// String data = mEditTextSearch.getText().toString();
-						if (!searchString.trim().equals("")) {
-							mFooterLayout.setVisibility(View.VISIBLE);
-							isThreadRunning = true;
-							MainActivity activity = (MainActivity) callback;
-							activity.setPrivateSearch(true);
-							activity.searchChats(searchString, 1, pageNo, chatListener);
-						}
-					}
-					// }
-				}
+				// // what is the bottom iten that is visible
+				// int lastInScreen = firstVisibleItem + visibleItemCount;
+				//
+				// // is the bottom item visible & not loading more already ?
+				// Load
+				// // more
+				// // !
+				// if ((lastInScreen == totalItemCount)) {
+				// // if ((dataArray.size() - 1) > visibleChildCount) {
+				// if (!isThreadRunning && isMoreData) {
+				// // String data = mEditTextSearch.getText().toString();
+				// if (!searchString.trim().equals("")) {
+				// mFooterLayout.setVisibility(View.VISIBLE);
+				// isThreadRunning = true;
+				// MainActivity activity = (MainActivity) callback;
+				// activity.setPrivateSearch(true);
+				// activity.searchChats(searchString, 1, pageNo, chatListener);
+				// }
+				// }
+				// // }
+				// }
 			}
 		});
 	}
@@ -486,6 +580,8 @@ public class ChatListGroupFragment extends Fragment {
 	/**
 	 * Refresh data can be called from activity
 	 */
+	private List<ChatLoad> chatLoads = Lists.newArrayList();
+
 	public void updateUi() {
 		// if (isViewCreated && callback.getContactList() != null) {
 		// mListAdapter.clear();
@@ -499,16 +595,31 @@ public class ChatListGroupFragment extends Fragment {
 			Log.d("Chatlist", "size " + callback.getChatList(chatType).size() + " ");
 			if (callback.getChatList(chatType) != null) {
 				mListAdapter.clear();
-				mListAdapter.addAll(callback.getChatList(chatType));
+				chatLoads.clear();
+				chatLoads = Lists.newArrayList();
 
-				for (ChatLoad chatLoad : callback.getChatList(chatType)) {
+				chatLoads = callback.getChatList(chatType);
 
-				}
+				mListAdapter.addAll(searchChats(searchString));
 
 				long focusedChat = ChatFocusSaver.getFocusedChatId();
 				selectChat(focusedChat);
 			}
 		}
+	}
+
+	private List<ChatLoad> searchChats(String searchString) {
+		if (searchString.trim().equals("")) {
+			return chatLoads;
+		}
+		List<ChatLoad> temp = Lists.newArrayList();
+		for (ChatLoad c : chatLoads) {
+
+			if (c.title != null && c.title.toLowerCase().contains(searchString.toLowerCase())) {
+				temp.add(c);
+			}
+		}
+		return temp;
 	}
 
 	private void addTestData() {

@@ -67,6 +67,8 @@ public class ResponseFactory {
                 return new SetFavoriteResponse().parse(getResult(jsonObject));
             case CLEAR_SEARCH:
                 return new ClearSearchResponse().parse(jsonObject);
+            case SET_SEARCHABLE:
+            	return new SetSearchableResponse().parse(jsonObject);
             default:
                 throw new ResponseTypeError();
         }

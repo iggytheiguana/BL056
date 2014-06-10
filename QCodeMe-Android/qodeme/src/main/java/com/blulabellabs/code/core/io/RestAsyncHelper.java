@@ -306,7 +306,8 @@ public class RestAsyncHelper implements RestClient {
 	 * @param callback
 	 */
 	public void chatSetInfo(long chatId, String title, Integer color, String tag,
-			String description, Integer is_locked, String status, String chat_title, RestListener callback) {
+			String description, Integer is_locked, String status, String chat_title, String latitude, String longitude,
+			RestListener callback) {
 		RequestParams params = new RequestParams();
 		// params.put(RestKeyMap.ID, String.valueOf(chatId));
 		// params.put(RestKeyMap.TITLE, title);
@@ -337,12 +338,10 @@ public class RestAsyncHelper implements RestClient {
 			params.put(RestKeyMap.TAGS, tag);
 		if (color != null)
 			params.put("chat_color", String.valueOf(color));
-		if(chat_title != null)
+		if (chat_title != null)
 			params.put("chat_title", chat_title);
-		params.put(RestKeyMap.LATITUDE, "0");
-		params.put(RestKeyMap.LONGITUDE, "0");
-			
-			
+		params.put(RestKeyMap.LATITUDE, latitude);
+		params.put(RestKeyMap.LONGITUDE, longitude);
 
 		post(RequestType.CHAT_SET_INFO, params, callback);
 	}
@@ -477,37 +476,48 @@ public class RestAsyncHelper implements RestClient {
 		params.put(RestKeyMap.PUSH_TOKEN, gcmToken);
 		post(RequestType.REGISTER_TOKEN, params, callback);
 	}
-	
+
 	/**
 	 * toggle the flagged message
 	 */
-	public void setFlagged(long message_id, int is_flagged, long chat_id, RestListener callback){
+	public void setFlagged(long message_id, int is_flagged, long chat_id, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(message_id));
 		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_flagged));
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
 		post(RequestType.SET_FLAGGED, params, callback);
 	}
-	
+
 	/**
 	 * toggle the FAVORITE message
 	 */
-	public void setFavorite(String date, long chat_id, RestListener callback){
+	public void setFavorite(String date, int is_favorite, long chat_id, RestListener callback) {
 		RequestParams params = new RequestParams();
-//		params.put(RestKeyMap.IS_FLAGGED, String.valueOf(is_favorite));
+		params.put("is_favorite", String.valueOf(is_favorite));
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
 		params.put("date_time", date);
 		post(RequestType.SET_FAVORITE, params, callback);
 	}
-	
+
 	/**
-	 * clear the chatid from chat table so don't receive push notification after search clear
+	 * clear the chatid from chat table so don't receive push notification after
+	 * search clear
+	 * 
 	 * @param type
 	 */
-	public void clearSearchChats(int type, RestListener callback){
+	public void clearSearchChats(int type, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put("chat_type", String.valueOf(type));
 		post(RequestType.CLEAR_SEARCH, params, callback);
 	}
 
+	/**
+	 * toggle the FAVORITE message
+	 */
+	public void setSearchable(int is_searchable, long chat_id, RestListener callback) {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		params.put("is_searchable", String.valueOf(is_searchable));
+		post(RequestType.SET_SEARCHABLE, params, callback);
+	}
 }

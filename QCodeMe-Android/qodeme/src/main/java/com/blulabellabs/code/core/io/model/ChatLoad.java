@@ -32,4 +32,5 @@ public class ChatLoad {
     public String user_qrcode;
     public String created;
     public int is_favorite;
+    public int is_searchable;
 }

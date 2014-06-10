@@ -28,7 +28,8 @@ public enum RequestType{
     UPLOAD_IMAGE("uploadImage"),
     SET_FLAGGED("setFlagged"),
     SET_FAVORITE("setFavorite"),
-    CLEAR_SEARCH("clear_search");
+    CLEAR_SEARCH("clear_search"),
+    SET_SEARCHABLE("set_searchable");
     
 
 

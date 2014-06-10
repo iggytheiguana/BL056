@@ -7,18 +7,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginRight="6dp" 
-        android:layout_marginLeft="6dp">
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp" >
 
         <RelativeLayout
             android:id="@+id/relative_chatItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_marginTop="6dp"
-        android:layout_marginRight="6dp" 
-        android:layout_marginLeft="6dp"
-            android:background="@drawable/bg_box" >
+            android:background="@drawable/bg_box"
+             >
 
             <!-- <ImageView -->
             <!-- android:layout_width="match_parent" android:id="@+id/imageView_chatItem" -->
@@ -113,7 +114,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingRight="0dp"
+                android:layout_above="@+id/drag_image"
                 android:visibility="visible" >
 
                 <ImageButton
@@ -121,8 +123,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:background="@null"
-                    android:padding="4dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/selectable_background_actionbar"
+                    android:padding="10dp"
                     android:src="@drawable/ic_menu_send"
                     android:visibility="gone" />
 
@@ -136,7 +139,6 @@
                     android:layout_toLeftOf="@id/button_message"
                     android:hint="@string/message"
                     android:inputType="textMultiLine|textNoSuggestions"
-                    android:maxHeight="50dp"
                     android:visibility="gone" />
             </RelativeLayout>
 
@@ -171,7 +173,7 @@
             <ImageView
                 android:id="@+id/drag_image"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="10dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:paddingLeft="4dp"
@@ -183,9 +185,9 @@
         <LinearLayout
             android:id="@+id/drag"
             android:layout_width="50dp"
-            android:layout_height="18dp"
-            android:layout_alignParentRight="true"
+            android:layout_height="10dp"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:gravity="right"
             android:orientation="horizontal" >
         </LinearLayout>
