@@ -225,36 +225,47 @@ public class ChatListSubItem extends RelativeLayout implements
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 2) {
-			getUserSpace().setVisibility(VISIBLE);
-			getStatusLayout().setVisibility(VISIBLE);
-			getMessageLayout().setVisibility(GONE);
-			getHeaderContainer().setVisibility(GONE);
-			getImageMessage().setVisibility(View.GONE);
-			getImageLayout().setVisibility(View.GONE);
+			if (QodemePreferences.getInstance().getQrcode().equals(me.qrcode)) {
+				this.setVisibility(GONE);
+				getUserSpace().setVisibility(GONE);
+				getStatusLayout().setVisibility(GONE);
+				getMessageLayout().setVisibility(GONE);
+				getHeaderContainer().setVisibility(GONE);
+				getImageMessage().setVisibility(View.GONE);
+				getImageLayout().setVisibility(View.GONE);
+			} else {
+				getUserSpace().setVisibility(VISIBLE);
+				getStatusLayout().setVisibility(VISIBLE);
+				getMessageLayout().setVisibility(GONE);
+				getHeaderContainer().setVisibility(GONE);
+				getImageMessage().setVisibility(View.GONE);
+				getImageLayout().setVisibility(View.GONE);
 
-			String createdDate = me.created;
-			// Log.d("me.Date", createdDate + "");
-			String dateString = "";
-			try {
-				dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-				dateString = " " + dateString;
-			} catch (Exception e) {
-				Log.d("timeError", e + "");
-				dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-				dateString = " " + dateString;
+				String createdDate = me.created;
+				// Log.d("me.Date", createdDate + "");
+				String dateString = "";
+				try {
+					dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+					dateString = " " + dateString;
+				} catch (Exception e) {
+					Log.d("timeError", e + "");
+					dateString = Helper.getTimeAMPM(Converter
+							.getCrurentTimeFromTimestamp(createdDate));
+					dateString = " " + dateString;
+				}
+
+				String str = getMessage().getText().toString();
+				String mainString = str + dateString + " ";
+
+				// Create our span sections, and assign a format to each.
+				SpannableString ss1 = new SpannableString(mainString);
+				ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
+																								// size
+				ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(),
+						0); // set
+							// size
+				getStatus().setText(ss1);
 			}
-
-			String str = getMessage().getText().toString();
-			String mainString = str + dateString + " ";
-
-			// Create our span sections, and assign a format to each.
-			SpannableString ss1 = new SpannableString(mainString);
-			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
-																							// size
-			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
-																									// size
-			getStatus().setText(ss1);
-
 		} else {
 			getStatusLayout().setVisibility(GONE);
 			getMessageLayout().setVisibility(VISIBLE);

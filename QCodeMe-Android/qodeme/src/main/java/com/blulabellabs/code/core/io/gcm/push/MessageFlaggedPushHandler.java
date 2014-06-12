@@ -24,6 +24,7 @@ public class MessageFlaggedPushHandler extends BasePushHandler {
 		try {
 			is_flagged = Integer.parseInt(bundle.getString("is_flagged"));
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		// numberOfFlagged =
 		// Integer.parseInt(bundle.getString("number_of_flagged"));
@@ -32,9 +33,14 @@ public class MessageFlaggedPushHandler extends BasePushHandler {
 
 	@Override
 	public void handle() {
+		if(is_flagged == 1)
 		getContext().getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.updatePushMessageFlagged(),
 				QodemeContract.Messages.MESSAGE_ID + "=" + String.valueOf(mMessageId), null);
+		else
+			getContext().getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+					QodemeContract.Messages.updatePushMessageUnFlagged(),
+					QodemeContract.Messages.MESSAGE_ID + "=" + String.valueOf(mMessageId), null);
 	}
 
 }

@@ -1,12 +1,17 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -16,16 +21,16 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.blulabellabs.code.R;
@@ -56,7 +61,7 @@ public class ChatListFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear,mImgBtnLocationFilter;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter, mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
 	int lastVisibleItem = 0;
 	boolean isScrollingDown = false;
@@ -72,6 +77,8 @@ public class ChatListFragment extends Fragment {
 
 	private static final String TAG = "ChatListFragment";
 	private final WebSocketConnection mConnection = new WebSocketConnection();
+	protected boolean isLocationFilter = false;
+	protected boolean isFavoriteFilter = false;
 
 	public interface One2OneChatListFragmentCallback {
 		List<Contact> getContactList();
@@ -147,10 +154,10 @@ public class ChatListFragment extends Fragment {
 		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
 
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+		mImgBtnFavoriteFilter = (ImageButton) getView().findViewById(R.id.imgBtn_favoriteFilter);
 
 		initListView();
 		isViewCreated = true;
-		
 
 		// we add a listener to the image button so we can track when a person
 		// stops/starts typing
@@ -198,9 +205,126 @@ public class ChatListFragment extends Fragment {
 			mImgBtnClear.setVisibility(View.GONE);
 			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
+
+		mImgBtnLocationFilter.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if(isFavoriteFilter){
+					isFavoriteFilter =false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				}
+				
+				if (isLocationFilter) {
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+					updateUi();
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_blue_big);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+					isLocationFilter = true;
+					List<Contact> temp = Lists.newArrayList();
+					List<Contact> searchList = searchContact(searchString);
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.latitude != null
+								&& chatLoad.longitude != null && !chatLoad.latitude.equals("")
+								&& !chatLoad.longitude.equals("") && !chatLoad.latitude.equals("0")
+								&& !chatLoad.latitude.equals("0.0")
+								&& !chatLoad.latitude.equals("-1")
+								&& !chatLoad.longitude.equals("0")
+								&& !chatLoad.longitude.equals("0.0")
+								&& !chatLoad.longitude.equals("-1")) {
+							Log.d("latLong", chatLoad.latitude + " " + chatLoad.longitude);
+							Log.d("latLong", c.latitude + " " + c.longitude);
+							temp.add(c);
+						}
+					}
+
+					Collections.sort(temp, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(temp);
+				}
+			}
+		});
 		
+		mImgBtnFavoriteFilter.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(isLocationFilter){
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				}
+				if (isFavoriteFilter) {
+					isFavoriteFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+					updateUi();
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite_h);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+					isFavoriteFilter = true;
+					List<Contact> temp = Lists.newArrayList();
+					List<Contact> searchList = searchContact(searchString);
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.is_favorite == 1) {
+							temp.add(c);
+						}
+					}
+
+					//Collections.sort(temp, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(temp);
+				}
+			}
+		});
+
 		updateUi();
-		
+
+		mImgBtnSearch.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if(isLocationFilter){
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				}
+				if(isFavoriteFilter){
+					isFavoriteFilter =false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				}
+				
+				String data = mEditTextSearch.getText().toString();
+				searchString = data;
+				MainActivity activity = (MainActivity) callback;
+				activity.setOneToOneSearch(true);
+				activity.setOneToOneSearchString(data);
+
+				List<Contact> temp = searchContact(searchString);
+				mListAdapter.clear();
+				mListAdapter.addAll(temp);
+
+				mImgBtnClear.setVisibility(View.VISIBLE);
+				mImgBtnSearch.setVisibility(View.GONE);
+			}
+		});
 		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -216,14 +340,24 @@ public class ChatListFragment extends Fragment {
 					MainActivity activity = (MainActivity) callback;
 					activity.setOneToOneSearch(true);
 					activity.setOneToOneSearchString(data);
-//					activity.searchChats(data, 0, 1, chatListener);
-//					mEditTextSearch.setEnabled(false);
-//					isMoreData = true;
+					// activity.searchChats(data, 0, 1, chatListener);
+					// mEditTextSearch.setEnabled(false);
+					// isMoreData = true;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+					isLocationFilter = false;
 					
+					isFavoriteFilter = false;
+					Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm1);
+					
+
 					List<Contact> temp = searchContact(searchString);
 					mListAdapter.clear();
 					mListAdapter.addAll(temp);
-					
+
 					// RestAsyncHelper.getInstance().lookup(data, new
 					// RestListener<LookupResponse>() {
 					//
@@ -257,6 +391,38 @@ public class ChatListFragment extends Fragment {
 		});
 	}
 
+	public class CustomComparator implements Comparator<Contact> {
+
+		@Override
+		public int compare(Contact lhs, Contact rhs) {
+			MainActivity activity = (MainActivity) callback;
+			Location location = activity.getCurrentLocation();
+			Integer leftDistance = 0;
+			Integer rightDistance = 0;
+			ChatLoad lhsChat = callback.getChatLoad(lhs.chatId);
+			ChatLoad rhsChat = callback.getChatLoad(rhs.chatId);
+			if (location != null && lhsChat != null && rhsChat != null) {
+				try {
+					double lat = Double.parseDouble(lhsChat.latitude);
+					double lng = Double.parseDouble(lhsChat.longitude);
+					leftDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+
+				} catch (Exception e) {
+				}
+				try {
+					double lat = Double.parseDouble(rhsChat.latitude);
+					double lng = Double.parseDouble(rhsChat.longitude);
+					rightDistance = (int) distance(lat, lng, location.getLatitude(),
+							location.getLongitude(), 'M');
+				} catch (Exception e) {
+				}
+			}
+			return leftDistance.compareTo(rightDistance);
+		}
+
+	}
+	
 	private void start() {
 		final String wsuri = "ws://54.204.45.228/python";
 
@@ -311,7 +477,7 @@ public class ChatListFragment extends Fragment {
 				null);
 		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
 		mListView.addHeaderView(headerSearchView);
-		//mListView.addFooterView(footerView);
+		// mListView.addFooterView(footerView);
 
 		List<Contact> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
@@ -505,8 +671,7 @@ public class ChatListFragment extends Fragment {
 
 	public void updateUi() {
 		if (isViewCreated && callback.getContactList() != null) {
-			mListAdapter.clear();
-			// List<Contact> 
+			// List<Contact>
 			contacts.clear();
 			contacts = Lists.newArrayList();
 			for (Contact c : callback.getContactList()) {
@@ -514,7 +679,10 @@ public class ChatListFragment extends Fragment {
 					contacts.add(c);
 			}
 
-			mListAdapter.addAll(searchContact(searchString));
+			if (!isLocationFilter && !isFavoriteFilter) {
+				mListAdapter.clear();
+				mListAdapter.addAll(searchContact(searchString));
+			}
 			// addTestData();
 			long focusedChat = ChatFocusSaver.getFocusedChatId();
 			selectChat(focusedChat);
@@ -527,7 +695,7 @@ public class ChatListFragment extends Fragment {
 			return contacts;
 		}
 		List<Contact> temp = Lists.newArrayList();
-		
+
 		for (Contact c : contacts) {
 			if (c.title != null && c.title.toLowerCase().contains(searchString.toLowerCase())) {
 				temp.add(c);
@@ -621,4 +789,43 @@ public class ChatListFragment extends Fragment {
 				isMoreData = false;
 		}
 	};
+
+	/**
+	 * This function is calculate the distance between two Geo Points
+	 * 
+	 * @param lat1
+	 * @param lon1
+	 * @param lat2
+	 * @param lon2
+	 * @param unit
+	 * @return
+	 */
+	private double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+				* Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+		dist = Math.acos(dist);
+		dist = rad2deg(dist);
+		dist = dist * 60 * 1.1515;
+		if (unit == 'K') {
+			dist = dist * 1.609344;
+		} else if (unit == 'N') {
+			dist = dist * 0.8684;
+		}
+		return (dist);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts decimal degrees to radians : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
+	}
+
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts radians to decimal degrees : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double rad2deg(double rad) {
+		return (rad * 180.0 / Math.PI);
+	}
 }

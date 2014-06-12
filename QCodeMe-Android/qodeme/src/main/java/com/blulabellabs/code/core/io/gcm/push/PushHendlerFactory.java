@@ -20,6 +20,8 @@ public class PushHendlerFactory {
 	private static final String PUSH_CHAT_MEMBER_ADD = "Chat add member";
 	private static final String PUSH_MESSAGE_SET_FLAGGED = "Set flagged";
 	private static final String PUSH_CHAT_SET_FAVORITE = "Set favorite";
+	private static final String PUSH_MESSAGE_DELETED = "Message deleted";
+	
 
 	//
 
@@ -51,6 +53,8 @@ public class PushHendlerFactory {
 			instance = new MessageFlaggedPushHandler(context);
 		} else if (bundle.getString(TYPE).equals(PUSH_CHAT_SET_FAVORITE)) {
 			instance = new ChatFavoritePushHandler(context);
+		} else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_DELETED)){
+			instance = new MessageDeletePushHandler(context);
 		}
 
 		if (instance != null)

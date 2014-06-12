@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -41,6 +43,8 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
@@ -77,7 +81,7 @@ public class ChatInsideFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
+	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom, mImgFavorite;
 	private EditText mMessageField;
 	private TextView mName, mStatus, mStatusUpdate;
 	private TextView mDate;
@@ -177,13 +181,42 @@ public class ChatInsideFragment extends Fragment {
 
 		initListView();
 		isViewCreated = true;
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
 
 		initSendMessage();
 		mName = (TextView) getView().findViewById(R.id.name);
 		mStatus = (TextView) getView().findViewById(R.id.textView_status);
-		mStatusUpdate= (TextView) getView().findViewById(R.id.textView_status_update);
+		mStatusUpdate = (TextView) getView().findViewById(R.id.textView_status_update);
 		mLinearLayStatusUpdte = (LinearLayout) getView().findViewById(R.id.linear_status_update);
+
 		
+		mImgFavorite.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int is_favorite = 1;
+				MainActivity activity = (MainActivity) getActivity();
+				ChatLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				if (chatLoad != null) {
+					int num_of_favorite = chatLoad.number_of_likes;
+					if (chatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+					}
+
+					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+					SyncHelper.requestManualSync();
+				}
+			}
+		});
 		// new Handler().postDelayed(new Runnable() {
 		//
 		// @Override
@@ -607,7 +640,7 @@ public class ChatInsideFragment extends Fragment {
 	 */
 	public void updateUi() {
 		if (isViewCreated) {
-			
+
 			String statusUpdate = QodemePreferences.getInstance().get(
 					"" + getArguments().getLong(CHAT_ID), "");
 			if (statusUpdate.equals("")) {
@@ -615,18 +648,32 @@ public class ChatInsideFragment extends Fragment {
 			} else {
 				mLinearLayStatusUpdte.setVisibility(View.VISIBLE);
 				mStatusUpdate.setText(statusUpdate);
-//				QodemePreferences.getInstance().set(
-//						"" + getArguments().getLong(CHAT_ID), "");
+				// QodemePreferences.getInstance().set(
+				// "" + getArguments().getLong(CHAT_ID), "");
 			}
-			
+
 			mListAdapter.clear();
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			mName.setText(getChatName());
 
 			MainActivity activity = (MainActivity) callback;
 			ChatLoad chatLoad = activity.getChatLoad(getChatId());
-			if (chatLoad != null)
+			if (chatLoad != null){
 				mStatus.setText(chatLoad.status);
+				if (chatLoad.is_favorite == 1) {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgFavorite.setImageBitmap(bm);
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite_h);
+					mImgFavorite.setImageBitmap(bm);
+				}
+				// if (chatLoad.type == 2) {
+				// mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
+				// mTextViewNumFavorite.setVisibility(View.VISIBLE);
+				// }
+			}
 			// mName.setTextColor(getChatColor());
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
 				if (getDate() != null) {

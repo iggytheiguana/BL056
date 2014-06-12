@@ -3,6 +3,7 @@ package com.blulabellabs.code.ui.contacts;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -18,12 +19,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.core.sync.SyncHelper;
+import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.utils.DbUtils;
-
+import com.blulabellabs.code.utils.LatLonCity;
 
 /**
  * Created by Alex on 10/20/13.
@@ -54,7 +57,8 @@ public class ContactListItemInvited extends LinearLayout implements
 		this.mContact = contactListItemEntity.getContact();
 		int color = mContact.color == 0 ? Color.GRAY : mContact.color;
 		String sQrCode = mContact.qrCode;
-//		Drawable d = mContext.getResources().getDrawable(R.drawable.white_color_logo);
+		// Drawable d =
+		// mContext.getResources().getDrawable(R.drawable.white_color_logo);
 		getName().setText(mContact.title != null ? mContact.title : "User");
 		getName().setTextColor(color);
 
@@ -71,6 +75,40 @@ public class ContactListItemInvited extends LinearLayout implements
 				mContext.getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
 						QodemeContract.Contacts.acceptContactValues(mContact.updated),
 						DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(mContact._id));
+				try {
+					Cursor cursor = getContext().getContentResolver().query(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.ChatQuery.PROJECTION,
+							QodemeContract.Chats.CHAT_ID + " = " + mContact.chatId, null, null);
+					LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
+					String latitude = "0";
+					String longitude = "0";
+
+					if (latLonCity != null) {
+						latitude = latLonCity.getLatitude();// (latLonCity.getLat()
+															// / 1E6) + "";
+						longitude = latLonCity.getLongitude();// (latLonCity.getLon()
+																// / 1E6) + "";
+
+					}
+					if (cursor != null) {
+						if (cursor.getCount() > 0) {
+						} else {
+							getContext().getContentResolver().insert(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.addNewPushChatValues(mContact.chatId, 0,
+											"", "", latitude, longitude, "", "", 0, 0, "", "", 0,
+											""));
+						}
+					} else {
+						getContext().getContentResolver().insert(
+								QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.addNewPushChatValues(mContact.chatId, 0, "",
+										"", latitude, longitude, "", "", 0, 0, "", "", 0, ""));
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				SyncHelper.requestManualSync();
 			}
 		});

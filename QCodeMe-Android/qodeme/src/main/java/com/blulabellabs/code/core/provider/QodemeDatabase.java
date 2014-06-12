@@ -68,7 +68,9 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Contacts.CONTACT_DATETIME + " TEXT,"
                 + Contacts.CONTACT_CHAT_ID + " INTEGER,"
                 + Contacts.CONTACT_IS_ARCHIVE + " INTEGER,"
-                + Contacts.CONTACT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0)");
+                + Contacts.CONTACT_IS_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                + Contacts.CONTACT_LATITUDE + " TEXT,"
+                + Contacts.CONTACT_LONGITUDE + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.CHATS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -111,7 +113,7 @@ public class QodemeDatabase extends SQLiteOpenHelper {
                 + Messages.MESSAGE_SENDERNAME + " TEXT,"
                 + Messages.MESSAGE_PHOTO_URL_LOCAL + " TEXT,"
                 + Messages.MESSAGE_HAS_FLAGGED + " INTEGER,"
-                + Messages.MESSAGE_HAS_DELETED + " INTEGER,"
+                + Messages.MESSAGE_HAS_DELETED + " INTEGER INTEGER NOT NULL DEFAULT 0,"
                 + Messages.MESSAGE_IS_SEARCH + " INTEGER NOT NULL DEFAULT 0)");
 
         db.execSQL("CREATE TABLE " + Tables.CHAT_SETTINGS + " ("

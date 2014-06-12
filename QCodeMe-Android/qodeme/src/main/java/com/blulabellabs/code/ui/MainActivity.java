@@ -217,7 +217,7 @@ public class MainActivity extends BaseActivity implements
 	private String privateSearchString = "";
 	private String oneToOneSearchString = "";
 	private Location currentLocation;
-	
+
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -732,9 +732,11 @@ public class MainActivity extends BaseActivity implements
 					ChatLoad chatLoad = getChatLoad(currentChatId);
 					if (chatLoad != null)
 						setChatInfo(currentChatId, null, color, chatLoad.tag, chatLoad.description,
-								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title, chatLoad.latitude, chatLoad.longitude);
+								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title,
+								chatLoad.latitude, chatLoad.longitude);
 					else
-						setChatInfo(currentChatId, null, color, null, null, null, null, null,"0","0");
+						setChatInfo(currentChatId, null, color, null, null, null, null, null, "0",
+								"0");
 				}
 				mViewPager.setCurrentItem(1);
 				break;
@@ -1160,6 +1162,8 @@ public class MainActivity extends BaseActivity implements
 			final LatLonCity latLonCity = new LatLonCity();
 			latLonCity.setLat((int) (loc.getLatitude() * 1E6));
 			latLonCity.setLon((int) (loc.getLongitude() * 1E6));
+			latLonCity.setLatitude(loc.getLatitude()+"");
+			latLonCity.setLongitude(loc.getLongitude()+"");
 			new AsyncTask<LatLonCity, Void, String>() {
 
 				@Override
@@ -1811,7 +1815,7 @@ public class MainActivity extends BaseActivity implements
 		@Override
 		public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 			return new CursorLoader(getActivity(), QodemeContract.Messages.CONTENT_URI,
-					QodemeContract.Messages.Query.PROJECTION, null, null,
+					QodemeContract.Messages.Query.PROJECTION, QodemeContract.Messages.MESSAGE_HAS_DELETED +" != 1", null,
 					QodemeContract.Messages.DEFAULT_SORT);
 			// QodemeContract.Messages.UPDATED + " ASC ");
 
@@ -2072,93 +2076,106 @@ public class MainActivity extends BaseActivity implements
 		// final FullViewChatFragment one2OneChatInsideFragment =
 		// (FullViewChatFragment) getSupportFragmentManager()
 		// .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
-
-		if (chatType == 0) {
-			ChatInsideFragment one2OneChatInsideFragment = null;
-			ChatProfileFragment chatProfileFragment = null;
-			ChatPhotosFragment chatPhotosFragment = null;
-			if (mPagerAdapter != null && !getActionBar().isShowing()) {
-				one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
-				chatProfileFragment = (ChatProfileFragment) mPagerAdapter.getItem(1);
-				chatPhotosFragment = (ChatPhotosFragment) mPagerAdapter.getItem(2);
-			}
-			if (one2OneChatInsideFragment != null) {
-				if (mContactInfoUpdated) {
-					long chatId = one2OneChatInsideFragment.getChatId();
-					int chatColor = 0;
-					String chatName = "";
-					Contact c = findContactEntityByChatId(chatId);
-					if (c != null) {
-						chatColor = c.color;
-						chatName = c.title;
-					}
-					// final int fColor = chatColor;
-					// final String fName = chatName;
-
-					mContactInfoUpdated = false;
-					showOne2OneChatFragment(c, false, mViewPager);
-
+		try {
+			if (chatType == 0) {
+				ChatInsideFragment one2OneChatInsideFragment = null;
+				ChatProfileFragment chatProfileFragment = null;
+				ChatPhotosFragment chatPhotosFragment = null;
+				if (mPagerAdapter != null && !getActionBar().isShowing()) {
+					one2OneChatInsideFragment = (ChatInsideFragment) mPagerAdapter.getItem(0);
+					chatProfileFragment = (ChatProfileFragment) mPagerAdapter.getItem(1);
+					chatPhotosFragment = (ChatPhotosFragment) mPagerAdapter.getItem(2);
 				}
-				one2OneChatInsideFragment.updateUi();
-				// Contact c = findContactEntityByChatId(currentChatId);
-				// if (c != null)
-				// chatProfileFragment.setContact(c);
-				chatProfileFragment.setData();
-				chatPhotosFragment.updateUi();
-				mViewPager.setCurrentItem(fullChatIndex);
-
-			}
-		} else {
-			ChatInsideGroupFragment groupChatInsideFragment = null;
-			ChatGroupProfileFragment chatGroupProfileFragment = null;
-			ChatGroupPhotosFragment chatGroupPhotosFragment = null;
-
-			if (mPagerAdapter != null && !getActionBar().isShowing()) {
-				groupChatInsideFragment = (ChatInsideGroupFragment) mPagerAdapter.getItem(0);
-				chatGroupProfileFragment = (ChatGroupProfileFragment) mPagerAdapter.getItem(1);
-				chatGroupPhotosFragment = (ChatGroupPhotosFragment) mPagerAdapter.getItem(2);
-			}
-			if (groupChatInsideFragment != null) {
-				// if (mContactInfoUpdated) {
-				// long chatId = one2OneChatInsideFragment.getChatId();
-				// int chatColor = 0;
-				// String chatName = "";
-				// Contact c = findContactEntityByChatId(chatId);
-				// if (c != null) {
-				// chatColor = c.color;
-				// chatName = c.title;
-				// }
-				// // final int fColor = chatColor;
-				// // final String fName = chatName;
-				//
-				// mContactInfoUpdated = false;
-				// showOne2OneChatFragment(c, false);
-				//
-				// }
-
-				if (chatGroupProfileFragment != null) {
-
-					List<ChatLoad> chatLoads = getChatList(chatType);
-
-					for (ChatLoad chatLoad : chatLoads) {
-						if (chatLoad.chatId == chatGroupProfileFragment.getChatload().chatId) {
-							groupChatInsideFragment.setArgument(chatLoad);
-							chatGroupProfileFragment.setChatload(chatLoad);
-							if (chatGroupPhotosFragment != null)
-								chatGroupPhotosFragment.setArgument(chatLoad);
-							break;
+				if (chatProfileFragment != null)
+					chatProfileFragment.setData();
+				if (chatPhotosFragment != null)
+					chatPhotosFragment.updateUi();
+				if (one2OneChatInsideFragment != null) {
+					one2OneChatInsideFragment.updateUi();
+					if (mContactInfoUpdated) {
+						long chatId = one2OneChatInsideFragment.getChatId();
+						int chatColor = 0;
+						String chatName = "";
+						Contact c = findContactEntityByChatId(chatId);
+						if (c != null) {
+							chatColor = c.color;
+							chatName = c.title;
 						}
+						// final int fColor = chatColor;
+						// final String fName = chatName;
+
+						mContactInfoUpdated = false;
+						showOne2OneChatFragment(c, false, mViewPager);
+
 					}
-					chatGroupProfileFragment.setData();
+					one2OneChatInsideFragment.updateUi();
+					// Contact c = findContactEntityByChatId(currentChatId);
+					// if (c != null)
+					// chatProfileFragment.setContact(c);
+					chatProfileFragment.setData();
+					chatPhotosFragment.updateUi();
+					mViewPager.setCurrentItem(fullChatIndex);
+
+				}
+			} else {
+				ChatInsideGroupFragment groupChatInsideFragment = null;
+				ChatGroupProfileFragment chatGroupProfileFragment = null;
+				ChatGroupPhotosFragment chatGroupPhotosFragment = null;
+
+				if (mPagerAdapter != null && !getActionBar().isShowing()) {
+					groupChatInsideFragment = (ChatInsideGroupFragment) mPagerAdapter.getItem(0);
+					chatGroupProfileFragment = (ChatGroupProfileFragment) mPagerAdapter.getItem(1);
+					chatGroupPhotosFragment = (ChatGroupPhotosFragment) mPagerAdapter.getItem(2);
+				}
+				if (groupChatInsideFragment != null) {
+					// if (mContactInfoUpdated) {
+					// long chatId = one2OneChatInsideFragment.getChatId();
+					// int chatColor = 0;
+					// String chatName = "";
+					// Contact c = findContactEntityByChatId(chatId);
+					// if (c != null) {
+					// chatColor = c.color;
+					// chatName = c.title;
+					// }
+					// // final int fColor = chatColor;
+					// // final String fName = chatName;
+					//
+					// mContactInfoUpdated = false;
+					// showOne2OneChatFragment(c, false);
+					//
+					// }
+
+					if (chatGroupProfileFragment != null) {
+
+						List<ChatLoad> chatLoads = getChatList(chatType);
+
+						for (ChatLoad chatLoad : chatLoads) {
+							if (chatLoad.chatId == chatGroupProfileFragment.getChatload().chatId) {
+								groupChatInsideFragment.setChatLoad(chatLoad);
+								chatGroupProfileFragment.setChatload(chatLoad);
+								// groupChatInsideFragment.setArgument(chatLoad);
+								chatGroupProfileFragment.setChatload(chatLoad);
+								if (chatGroupPhotosFragment != null){
+									chatGroupPhotosFragment.setChatLoad(chatLoad);
+									chatGroupPhotosFragment.updateUi();
+								}
+								// chatGroupPhotosFragment.setArgument(chatLoad);
+								break;
+							}
+						}
+						chatGroupProfileFragment.setData();
+					}
+
+					groupChatInsideFragment.updateUi();
+					if (chatGroupPhotosFragment != null) {
+						chatGroupPhotosFragment.updateUi();
+					}
+					mViewPager.setCurrentItem(fullChatIndex);
+
 				}
 
-				groupChatInsideFragment.updateUi();
-				if (chatGroupPhotosFragment != null)
-					chatGroupPhotosFragment.updateUi();
-				mViewPager.setCurrentItem(fullChatIndex);
-
 			}
-
+		} catch (Exception e) {
 		}
 	}
 

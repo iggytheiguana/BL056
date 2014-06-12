@@ -1,5 +1,6 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.io.IOException;
 import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -51,11 +55,13 @@ import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.core.sync.SyncHelper;
+import com.blulabellabs.code.ui.FlaggedMessageListActivity;
 import com.blulabellabs.code.ui.GroupMemberListActivity;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.QrUtils;
 import com.google.common.collect.Lists;
 
@@ -68,6 +74,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	private static final String LOCATION = "location";
 	private static final String DATE = "date";
 	private static final String FIRST_UPDATE = "first_update";
+	private static final String MEMBER_LIST = "MemberList";
+	private static final String MESSAGE_LIST = "MessageList";
 
 	private TextView mTextViewDate, mTextViewLocation, mTextViewStatus, mTextViewTotalMessages,
 			mTextViewTotalPhoto, mTextViewTotalMember, mTextViewGroupTitle, mTextViewGroupDesc,
@@ -79,9 +87,12 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	private EditText mEditTextStatus, mEditTextTitle, mEditTextDesc, mEditTextTags;
 	private RelativeLayout mRelativeLayoutDesc, mRelativeLayoutSetDesc;
 	private ChatLoad chatload;
-	private TextView mTextViewMemberList, mTextViewPublicThreadLable, mTextViewTotalFlagged;
+	private TextView mTextViewMemberList, mTextViewPublicThreadLable, mTextViewTotalFlagged,
+			mTextViewNumFavorite;
 	boolean isChangeByUser = false;
 	private LinearLayout mLinearLayFlag;
+	private ArrayList<Contact> memberList = new ArrayList<Contact>();
+	private ArrayList<Message> totalFlaggedMessagelist = new ArrayList<Message>();
 
 	private One2OneChatInsideFragmentCallback callback;
 
@@ -139,6 +150,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mTextViewPublicThreadLable = (TextView) getView().findViewById(
 				R.id.textView_public_lable_bottom);
 		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+		mTextViewNumFavorite = (TextView) getView().findViewById(R.id.textView_totalFavorite);
 
 		mEditTextTags = (EditText) getView().findViewById(R.id.editText_GroupTags);
 		mEditTextTitle = (EditText) getView().findViewById(R.id.editText_GroupTitle);
@@ -161,6 +173,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mImgFavorite.setOnClickListener(this);
 		mImgBtnSearch.setOnClickListener(this);
 		mTextViewTotalMember.setOnClickListener(this);
+		mTextViewTotalFlagged.setOnClickListener(this);
 
 		String mQrCodeText = chatload != null ? chatload.qrcode : "";
 		mImgQr.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
@@ -278,6 +291,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			mEditTextTags.setVisibility(View.GONE);
 			mImgQr.setVisibility(View.GONE);
 		} else {
+			mTextViewNumFavorite.setVisibility(View.VISIBLE);
 			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
 				mTextViewPublicThreadLable.setVisibility(View.GONE);
 				mLinearLayFlag.setVisibility(View.VISIBLE);
@@ -357,6 +371,86 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		setData();
 	}
 
+	private void getLocation() {
+		final LatLonCity latLonCity = new LatLonCity();
+		if (getChatload().latitude != null && !getChatload().latitude.trim().equals("")
+				&& getChatload().longitude != null && !getChatload().longitude.trim().equals("")
+				&& !getChatload().latitude.trim().equals("0")
+				&& !getChatload().longitude.trim().equals("0")
+				&& !getChatload().latitude.trim().equals("-1")
+				&& !getChatload().longitude.trim().equals("-1")
+				&& !getChatload().latitude.trim().equals("0.0")
+				&& !getChatload().longitude.trim().equals("0.0")) {
+
+			double lat = Double.parseDouble(getChatload().latitude);
+			double lng = Double.parseDouble(getChatload().longitude);
+
+			// getGeoCode(lat, lng);
+
+			latLonCity.setLat((int) (lat * 1E6));
+			latLonCity.setLon((int) (lng * 1E6));
+			new AsyncTask<LatLonCity, Void, String>() {
+
+				@Override
+				protected String doInBackground(LatLonCity... params) {
+					try {
+						List<Address> addresses = new Geocoder(getActivity(), Locale.ENGLISH)
+								.getFromLocation(latLonCity.getLat() / 1E6,
+										latLonCity.getLon() / 1E6, 1);
+						if (!addresses.isEmpty()) {
+							return addresses.get(0).getLocality() + ", "
+									+ addresses.get(0).getCountryName();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					return null;
+				}
+
+				@SuppressLint("SimpleDateFormat")
+				@Override
+				protected void onPostExecute(String s) {
+					super.onPostExecute(s);
+					if (s != null) {
+						latLonCity.setCity(s);
+						@SuppressWarnings("unused")
+						SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+						mTextViewLocation.setText(s + "");
+					}
+				}
+			}.execute(latLonCity);
+		}
+	}
+
+	public void getGeoCode(double lat, double lng) {
+		final Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+		// final String zip = "380051";
+		try {
+			// double latitude = TruckRatingApplication.getLatitude();
+			// double longituede = TruckRatingApplication.getLongitude();
+			List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+			if (addresses != null && !addresses.isEmpty()) {
+				Address address = addresses.get(0);
+				// Use the address as needed
+				// String message = String.format("Latitude: %f, Longitude: %f",
+				// address.getLatitude(), address.getLongitude()) +
+				// address.getAddressLine(0);
+				// setLatitude(address.getLatitude() + "");
+				// setLongitude(address.getLongitude() + "");
+				// setCountryName(address.getCountryName());
+				// setCityName(address.getLocality());
+				mTextViewLocation.setText(address.getLocality() + ", " + address.getCountryName());
+
+			} else {
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void setChips() {
 		// if (mEditTextTags.getText().toString().contains(",")) // check comman
 		// in
@@ -421,6 +515,16 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	public void setData() {
 
 		try {
+			if (getChatload().is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_profile_favorite);
+				mImgFavorite.setImageBitmap(bm);
+			} else {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_profile_favorite_h);
+				mImgFavorite.setImageBitmap(bm);
+			}
+			mTextViewNumFavorite.setText(getChatload().number_of_likes + "");
 			try {
 				// SimpleDateFormat fmtOut = new
 				// SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
@@ -436,6 +540,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				String dateStr1 = fmtOut1.format(new Date(Converter
 						.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 				mTextViewDate.setText(dateStr1);
+
+				getLocation();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -482,11 +588,13 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					if (chatload.members != null) {
 						int i = 0;
 						ArrayList<String> nameList = new ArrayList<String>();
+						memberList.clear();
 						for (String memberQr : chatload.members) {
 							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
 								Contact c = callback.getContact(memberQr);
 								if (c != null) {
 									nameList.add(c.title);
+									memberList.add(c);
 									// if (i == 0)
 									// memberNames += c.title + "";
 									// else
@@ -517,6 +625,18 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				} else {
 					((LinearLayout) getView().findViewById(R.id.linear_memberlist))
 							.setVisibility(View.GONE);
+
+					if (chatload.members != null) {
+						memberList.clear();
+						for (String memberQr : chatload.members) {
+							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+								Contact c = callback.getContact(memberQr);
+								if (c != null)
+									memberList.add(c);
+							}
+							// i++;
+						}
+					}
 				}
 				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
 					if (chatload.type == 2) {
@@ -535,11 +655,14 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 						List<Message> messages = callback.getChatMessages(getChatload().chatId);
 						int totalFlagged = 0;
+						totalFlaggedMessagelist.clear();
 						if (messages != null) {
 
 							for (Message msg : messages) {
-								if (msg.is_flagged == 1)
+								if (msg.is_flagged == 1) {
 									totalFlagged++;
+									totalFlaggedMessagelist.add(msg);
+								}
 							}
 						}
 						if (totalFlagged <= 1)
@@ -679,20 +802,31 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			break;
 		case R.id.btnFavorite:
 			int is_favorite = 1;
-			if (getChatload().is_favorite == 1)
+			int num_of_favorite = getChatload().number_of_likes;
+			if (getChatload().is_favorite == 1) {
 				is_favorite = 2;
-			else {
+				num_of_favorite--;
+			} else {
 				is_favorite = 1;
+				if (num_of_favorite <= 0) {
+					num_of_favorite = 1;
+				} else
+					num_of_favorite++;
 			}
+
 			getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-					QodemeContract.Chats.updateFavorite(is_favorite),
+					QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
 					QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
 			SyncHelper.requestManualSync();
 			// setFavorite();
 			break;
 		case R.id.textView_member:
-			Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
-			getActivity().startActivity(intent);
+			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
+				Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
+				intent.putExtra(CHAT_ID, getArguments().getLong(CHAT_ID));
+				intent.putParcelableArrayListExtra(MEMBER_LIST, memberList);
+				getActivity().startActivity(intent);
+			}
 
 			break;
 		case R.id.btnSearch:
@@ -700,6 +834,14 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				setSearchable(0);
 			else
 				setSearchable(1);
+			break;
+		case R.id.textView_totolFlagged:
+			Intent intent = new Intent(getActivity(), FlaggedMessageListActivity.class);
+			intent.putExtra(CHAT_ID, getArguments().getLong(CHAT_ID));
+			intent.putParcelableArrayListExtra(MEMBER_LIST, memberList);
+			intent.putParcelableArrayListExtra(MESSAGE_LIST, totalFlaggedMessagelist);
+
+			getActivity().startActivity(intent);
 			break;
 		default:
 			break;
@@ -759,7 +901,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
 			String status, Integer isLocked, String chat_title) {
 		RestAsyncHelper.getInstance().chatSetInfo(getChatload().chatId, title, color, tag, desc,
-				isLocked, status, chat_title,getChatload().latitude, getChatload().longitude, new RestListener<VoidResponse>() {
+				isLocked, status, chat_title, getChatload().latitude, getChatload().longitude,
+				new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {

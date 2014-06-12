@@ -104,10 +104,10 @@
                     android:orientation="horizontal" >
 
                     <ImageButton
-                        android:id="@+id/btn_favourite"
+                        android:id="@+id/btnFavorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_chat_favorite" />
 
@@ -115,7 +115,7 @@
                         android:id="@+id/btn_camera"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_camera" />
 
@@ -123,7 +123,7 @@
                         android:id="@+id/btn_share"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
                         android:src="@drawable/ic_share_h"
                         android:visibility="visible" />
@@ -172,9 +172,9 @@
                 android:id="@+id/layout_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_above="@+id/drag_image"
                 android:layout_alignParentBottom="true"
                 android:paddingLeft="10dp"
-                android:layout_above="@+id/drag_image"
                 android:paddingRight="0dp"
                 android:visibility="visible" >
 

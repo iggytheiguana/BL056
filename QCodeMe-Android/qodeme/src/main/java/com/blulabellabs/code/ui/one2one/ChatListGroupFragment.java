@@ -9,6 +9,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -63,7 +65,7 @@ public class ChatListGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter;
+	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter,mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
 	private int chatType;
 	int lastFirstvisibleItem = 0;
@@ -75,6 +77,8 @@ public class ChatListGroupFragment extends Fragment {
 	private boolean isThreadRunning;
 	private LinearLayout mFooterLayout;
 	private String searchString = "";
+	private boolean isLocationFilter = false;
+	private boolean isFavoriteFilter = false;
 
 	private static final String TAG = "ChatListGroupFragment";
 	private final WebSocketConnection mConnection = new WebSocketConnection();
@@ -149,6 +153,7 @@ public class ChatListGroupFragment extends Fragment {
 		mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
+		mImgBtnFavoriteFilter = (ImageButton) getView().findViewById(R.id.imgBtn_favoriteFilter);
 
 		initListView();
 		isViewCreated = true;
@@ -188,16 +193,87 @@ public class ChatListGroupFragment extends Fragment {
 				updateUi();
 			}
 		});
+		
+		mImgBtnFavoriteFilter.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(isLocationFilter){
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				}
+				if (isFavoriteFilter) {
+					isFavoriteFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+					updateUi();
+				} else {
+					if (chatLoads != null) {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_chat_favorite_h);
+						mImgBtnFavoriteFilter.setImageBitmap(bm);
+						isFavoriteFilter = true;
+						List<ChatLoad> temp = Lists.newArrayList();
+						List<ChatLoad> searchList = searchChats(searchString);
+						for (ChatLoad c : searchList) {
+							if (c.is_favorite == 1) {
+								Log.d("latLong", c.latitude + " " + c.longitude);
+								temp.add(c);
+							}
+						}
+
+						//Collections.sort(temp, new CustomComparator());
+						mListAdapter.clear();
+						mListAdapter.addAll(temp);
+					}
+				}
+			}
+		});
+		
 		mImgBtnLocationFilter.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// MainActivity activity = (MainActivity) callback;
 				// if (activity.isPrivateSearch()) {
-				if (chatLoads != null) {
-					Collections.sort(chatLoads, new CustomComparator());
-					mListAdapter.clear();
-					mListAdapter.addAll(chatLoads);
+				if(isFavoriteFilter){
+					isFavoriteFilter =false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				}
+				if (isLocationFilter) {
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+					updateUi();
+				} else {
+					if (chatLoads != null) {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_location_blue_big);
+						mImgBtnLocationFilter.setImageBitmap(bm);
+						isLocationFilter = true;
+						List<ChatLoad> temp = Lists.newArrayList();
+						List<ChatLoad> searchList = searchChats(searchString);
+						for (ChatLoad c : searchList) {
+							if (c.latitude != null && c.longitude != null && !c.latitude.equals("")
+									&& !c.longitude.equals("") && !c.latitude.equals("0")
+									&& !c.latitude.equals("0.0") && !c.latitude.equals("-1")
+									&& !c.longitude.equals("0") && !c.longitude.equals("0.0")
+									&& !c.longitude.equals("-1")) {
+								Log.d("latLong", c.latitude + " " + c.longitude);
+								temp.add(c);
+							}
+						}
+
+						Collections.sort(temp, new CustomComparator());
+						mListAdapter.clear();
+						mListAdapter.addAll(temp);
+					}
 				}
 				// }
 			}
@@ -215,6 +291,38 @@ public class ChatListGroupFragment extends Fragment {
 		}
 
 		updateUi();
+		mImgBtnSearch.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				if(isLocationFilter){
+					isLocationFilter = false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				}
+				if(isFavoriteFilter){
+					isFavoriteFilter =false;
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				}
+				
+				String data = mEditTextSearch.getText().toString();
+				searchString = data;
+				MainActivity activity = (MainActivity) callback;
+				activity.setPrivateSearch(true);
+				activity.setPrivateSearchString(data);
+				chatLoads = searchChats(data);
+				mListAdapter.clear();
+				mListAdapter.addAll(chatLoads);
+
+				mImgBtnClear.setVisibility(View.VISIBLE);
+				mImgBtnSearch.setVisibility(View.GONE);
+
+			}
+		});
 		mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -231,6 +339,17 @@ public class ChatListGroupFragment extends Fragment {
 					activity.setPrivateSearch(true);
 					activity.setPrivateSearchString(data);
 					chatLoads = searchChats(data);
+					
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+					isLocationFilter = false;
+					
+					isFavoriteFilter = false;
+					Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgBtnFavoriteFilter.setImageBitmap(bm1);
+					
 					mListAdapter.clear();
 					mListAdapter.addAll(chatLoads);
 					// activity.searchChats(data, 1, 1, chatListener);
@@ -594,13 +713,15 @@ public class ChatListGroupFragment extends Fragment {
 		if (isViewCreated && callback.getChatList(chatType) != null) {
 			Log.d("Chatlist", "size " + callback.getChatList(chatType).size() + " ");
 			if (callback.getChatList(chatType) != null) {
-				mListAdapter.clear();
 				chatLoads.clear();
 				chatLoads = Lists.newArrayList();
 
 				chatLoads = callback.getChatList(chatType);
 
-				mListAdapter.addAll(searchChats(searchString));
+				if (!isLocationFilter && !isFavoriteFilter) {
+					mListAdapter.clear();
+					mListAdapter.addAll(searchChats(searchString));
+				}
 
 				long focusedChat = ChatFocusSaver.getFocusedChatId();
 				selectChat(focusedChat);

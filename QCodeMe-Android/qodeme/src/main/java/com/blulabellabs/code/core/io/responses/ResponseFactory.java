@@ -69,6 +69,8 @@ public class ResponseFactory {
                 return new ClearSearchResponse().parse(jsonObject);
             case SET_SEARCHABLE:
             	return new SetSearchableResponse().parse(jsonObject);
+            case DELETE_MESSAGE:
+            	return new DeleteMessageResponse().parse(jsonObject);
             default:
                 throw new ResponseTypeError();
         }

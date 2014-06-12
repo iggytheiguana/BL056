@@ -39,6 +39,10 @@ public class ModelHelper {
 						.getString(QodemeContract.Contacts.ContactQuery.CONTACT_LOCATION);
 				c.isArchive = cursor
 						.getInt(QodemeContract.Contacts.ContactQuery.CONTACT_IS_ARCHIVE);
+				c.latitude = cursor
+						.getString(QodemeContract.Contacts.ContactQuery.CONTACT_LATITUDE);
+				c.longitude = cursor
+						.getString(QodemeContract.Contacts.ContactQuery.CONTACT_LONGITUDE);
 				contactList.add(c);
 
 			} while (cursor.moveToNext());

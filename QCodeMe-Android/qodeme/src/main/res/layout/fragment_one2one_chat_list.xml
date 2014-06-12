@@ -42,7 +42,7 @@
                 android:id="@+id/imgBtn_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@null"
+                android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:src="@drawable/ic_search_gray" />
@@ -57,7 +57,17 @@
                 android:src="@drawable/ic_action_close"
                 android:visibility="gone" />
 
-            <ImageButton android:id="@+id/imgBtn_locationFilter"
+            <ImageButton
+                android:id="@+id/imgBtn_favoriteFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@drawable/ic_chat_favorite" />
+
+            <ImageButton
+                android:id="@+id/imgBtn_locationFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/selectable_background_actionbar"
@@ -118,6 +128,5 @@
             android:hint="Type message"
             android:inputType="textMultiLine|textNoSuggestions" />
     </RelativeLayout>
-
 
 </RelativeLayout>

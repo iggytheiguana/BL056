@@ -56,16 +56,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:background="@null"
+                    android:background="@drawable/selectable_background_actionbar"
                     android:padding="10dp"
                     android:src="@drawable/ic_camera" />
 
                 <ImageButton
-                    android:id="@+id/btn_favourite"
+                    android:id="@+id/btnFavorite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@id/btn_camera"
-                    android:background="@null"
+                    android:background="@drawable/selectable_background_actionbar"
                     android:padding="10dp"
                     android:src="@drawable/ic_chat_favorite" />
 

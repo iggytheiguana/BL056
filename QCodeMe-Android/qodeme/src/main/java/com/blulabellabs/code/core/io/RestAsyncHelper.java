@@ -433,6 +433,7 @@ public class RestAsyncHelper implements RestClient {
 	public void contactRemove(String contactId, RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.CONTACT_ID, String.valueOf(contactId));
+		params.put(RestKeyMap.QRCODE, String.valueOf(contactId));
 		post(RequestType.CONTACT_REMOVE, params, callback);
 	}
 

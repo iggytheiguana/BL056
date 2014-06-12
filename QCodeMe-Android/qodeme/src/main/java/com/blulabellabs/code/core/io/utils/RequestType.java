@@ -29,8 +29,8 @@ public enum RequestType{
     SET_FLAGGED("setFlagged"),
     SET_FAVORITE("setFavorite"),
     CLEAR_SEARCH("clear_search"),
-    SET_SEARCHABLE("set_searchable");
-    
+    SET_SEARCHABLE("set_searchable"),
+    DELETE_MESSAGE("delete_message");
 
 
 

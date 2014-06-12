@@ -15,7 +15,7 @@
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
     <string name="reject_user">Reject user</string>
-    <string name="block_user">Block user</string>
+    <string name="block_user">Block User</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="decline">Decline</string>
 
@@ -111,5 +111,7 @@
     <string name="member">Members: </string>
     <string name="loading_text">Loading...</string>
     <string name="this_is_public_thread">This is a public thread.</string>
+    <string name="delete_message">Delete Message</string>
+    <string name="un_flag_message">Unflag Message</string>
 
 </resources>

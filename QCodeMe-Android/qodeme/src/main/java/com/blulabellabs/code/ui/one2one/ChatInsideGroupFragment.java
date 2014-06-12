@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -52,6 +53,7 @@ import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
@@ -94,13 +96,13 @@ public class ChatInsideGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
-	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom;
+	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom, mImgFavorite;
 	private EditText mMessageField, mStatusField;
 	private TextView mName, mStatus, mStatusUpdate;
 	private TextView mDate;
 	private TextView mLocation;
 	private LinearLayout mLinearLayStatusUpdte;
-	private TextView mTextViewMembers, mTextViewMembersLabel;
+	private TextView mTextViewMembers, mTextViewMembersLabel, mTextViewNumFavorite;
 	private ImageView mImgMemberBottomLine;
 
 	private boolean mFirstUpdate = true;
@@ -201,6 +203,39 @@ public class ChatInsideGroupFragment extends Fragment {
 		mTextViewMembers = (TextView) getView().findViewById(R.id.textView_member1);
 		mImgMemberBottomLine = (ImageView) getView().findViewById(R.id.img_memberline);
 		mTextViewMembersLabel = (TextView) getView().findViewById(R.id.textView_member);
+
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+		mTextViewNumFavorite = (TextView) getView().findViewById(R.id.textView_totalFavorite);
+
+		
+		mImgFavorite.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int is_favorite = 1;
+//				MaiNACTIVITY ACTIVITY = (MAINACTIVITY) GETACTIVITY();
+//				CHATLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				if (chatLoad != null) {
+					int num_of_favorite = chatLoad.number_of_likes;
+					if (chatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+					}
+
+					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+					SyncHelper.requestManualSync();
+				}
+			}
+		});
+		
 		updateUi();
 
 		if (QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
@@ -232,16 +267,16 @@ public class ChatInsideGroupFragment extends Fragment {
 						int updated = chatLoad.updated;
 						getActivity().getContentResolver().update(
 								QodemeContract.Chats.CONTENT_URI,
-								QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, status, "",
-										updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+								QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, status,
+										"", updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
 								DbUtils.getWhereArgsForId(chatLoad.chatId));
 						// setChatInfo(chatload.chatId, null, null, null, null,
 						// status, null);
 						chatLoad.status = status;
 						setChatInfo(chatLoad.chatId, null, chatLoad.color, chatLoad.tag,
-								chatLoad.description, status, chatLoad.is_locked,
-								chatLoad.title, chatLoad.latitude, chatLoad.longitude);
-						
+								chatLoad.description, status, chatLoad.is_locked, chatLoad.title,
+								chatLoad.latitude, chatLoad.longitude);
+
 						return true;
 					}
 					return false;
@@ -251,10 +286,11 @@ public class ChatInsideGroupFragment extends Fragment {
 		}
 
 	}
+
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
 			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
-		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc,
-				isLocked, status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
+		RestAsyncHelper.getInstance().chatSetInfo(chatId, title, color, tag, desc, isLocked,
+				status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {
@@ -268,6 +304,7 @@ public class ChatInsideGroupFragment extends Fragment {
 					}
 				});
 	}
+
 	private void initSendMessage() {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
@@ -679,6 +716,21 @@ public class ChatInsideGroupFragment extends Fragment {
 	 */
 	public void updateUi() {
 		if (isViewCreated) {
+
+			if (chatLoad.is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				mImgFavorite.setImageBitmap(bm);
+			} else {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite_h);
+				mImgFavorite.setImageBitmap(bm);
+			}
+			if (chatLoad.type == 2) {
+				mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
+				mTextViewNumFavorite.setVisibility(View.VISIBLE);
+			}
+
 			String statusUpdate = QodemePreferences.getInstance().get(
 					"" + getArguments().getLong(CHAT_ID), "");
 			if (statusUpdate.equals("")) {

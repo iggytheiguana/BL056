@@ -79,6 +79,8 @@ public class QodemeContract {
 
 		String CONTACT_IS_ARCHIVE = "contact_is_archive";
 		String CONTACT_IS_DELETED = "contact_is_deleted";
+		String CONTACT_LATITUDE = "contact_latitude";
+		String CONTACT_LONGITUDE = "contact_longitude";
 	}
 
 	interface ChatColumns {
@@ -250,12 +252,21 @@ public class QodemeContract {
 			String location = "";
 			// if (QodemePreferences.getInstance().isSaveLocationDateChecked()){
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
-			String latitude = "0";
-			String longitude = "0";
+			// String latitude = "0";
+			// String longitude = "0";
+			// if (latLonCity != null && latLonCity.getCity() != null) {
+			// location = latLonCity.getCity();
+			// }
+			String lat = "0";
+			String lng = "0";
 			if (latLonCity != null && latLonCity.getCity() != null) {
 				location = latLonCity.getCity();
+				lat = latLonCity.getLatitude();// latLonCity.getLat() / 1E6;
+				lng = latLonCity.getLongitude();// latLonCity.getLon() / 1E6;
 			}
 			contentValues.put(CONTACT_LOCATION, location);
+			contentValues.put(CONTACT_LATITUDE, "" + lat);
+			contentValues.put(CONTACT_LONGITUDE, "" + lng);
 
 			String message = "";
 			if (QodemePreferences.getInstance().isMessageChecked())
@@ -279,9 +290,20 @@ public class QodemeContract {
 			contentValues.put(CONTACT_PUBLIC_NAME, contact.publicName);
 			String location = "";
 			LatLonCity latLonCity = QodemePreferences.getInstance().getLastLocation();
-			if (latLonCity != null && latLonCity.getCity() != null)
+			String lat = "0";
+			String lng = "0";
+			if (latLonCity != null && latLonCity.getCity() != null) {
 				location = latLonCity.getCity();
+				// lat = latLonCity.getLat() / 1E6;
+				// lng = latLonCity.getLon() / 1E6;
+				lat = latLonCity.getLatitude();
+				lng = latLonCity.getLongitude();
+			}
+
 			contentValues.put(CONTACT_LOCATION, location);
+			contentValues.put(CONTACT_LATITUDE, "" + lat);
+			contentValues.put(CONTACT_LONGITUDE, "" + lng);
+
 			return contentValues;
 		}
 
@@ -338,7 +360,8 @@ public class QodemeContract {
 					Contacts.CONTACT_TITLE, Contacts.CONTACT_QRCODE, Contacts.CONTACT_COLOR,
 					Contacts.CONTACT_CHAT_ID, Contacts.CONTACT_STATE, Contacts.CONTACT_PUBLIC_NAME,
 					Contacts.CONTACT_MESSAGE, Contacts.CONTACT_LOCATION, Contacts.CONTACT_DATETIME,
-					Contacts.CONTACT_IS_ARCHIVE, Contacts.CONTACT_IS_DELETED };
+					Contacts.CONTACT_IS_ARCHIVE, Contacts.CONTACT_IS_DELETED,
+					Contacts.CONTACT_LATITUDE, Contacts.CONTACT_LONGITUDE };
 
 			int _ID = 0;
 			int UPDATED = 1;
@@ -354,6 +377,8 @@ public class QodemeContract {
 			int CONTACT_DATETIME = 11;
 			int CONTACT_IS_ARCHIVE = 12;
 			int CONTACT_IS_DELETED = 13;
+			int CONTACT_LATITUDE = 14;
+			int CONTACT_LONGITUDE = 15;
 
 		}
 	}
@@ -506,9 +531,11 @@ public class QodemeContract {
 			return contentValues;
 		}
 
-		public static ContentValues updateFavorite(int is_favorite) {
+		public static ContentValues updateFavorite(int is_favorite, int num_of_favorite) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(CHAT_IS_FAVORITE, is_favorite);
+			contentValues.put(CHAT_NUMBER_OF_FAVORITE, num_of_favorite);
+			contentValues.put(UPDATED, Sync.UPDATED);
 
 			return contentValues;
 		}
@@ -722,7 +749,7 @@ public class QodemeContract {
 
 		public static ContentValues updateMessageUnFlagged() {
 			ContentValues c = new ContentValues();
-			c.put(MESSAGE_HAS_FLAGGED, 0);
+			c.put(MESSAGE_HAS_FLAGGED, 2);
 			c.put(SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
 			return c;
 		}

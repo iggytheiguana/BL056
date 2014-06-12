@@ -29,7 +29,7 @@ public class Utils {
 
 
     @TargetApi(VERSION_CODES.HONEYCOMB)
-    public static void enableStrictMode() {
+    public static void enableStrictMode123() {
         if (Utils.hasGingerbread()) {
             StrictMode.ThreadPolicy.Builder threadPolicyBuilder =
                     new StrictMode.ThreadPolicy.Builder()

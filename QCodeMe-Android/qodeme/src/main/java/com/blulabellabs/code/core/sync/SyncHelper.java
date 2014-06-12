@@ -33,6 +33,7 @@ import org.json.JSONException;
 import android.accounts.Account;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
@@ -59,6 +60,7 @@ import com.blulabellabs.code.core.io.hendler.ContactAddHandler;
 import com.blulabellabs.code.core.io.hendler.ContactBlockHandler;
 import com.blulabellabs.code.core.io.hendler.ContactRejectHandler;
 import com.blulabellabs.code.core.io.hendler.ContactSetInfoHandler;
+import com.blulabellabs.code.core.io.hendler.MessageDeleteHandler;
 import com.blulabellabs.code.core.io.hendler.MessageFlaggedHandler;
 import com.blulabellabs.code.core.io.hendler.MessageReadHandler;
 import com.blulabellabs.code.core.io.model.Contact;
@@ -66,6 +68,7 @@ import com.blulabellabs.code.core.io.responses.AccountContactsResponse;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.ChatMessageResponse;
 import com.blulabellabs.code.core.io.responses.ContactAddResponse;
+import com.blulabellabs.code.core.io.responses.DeleteMessageResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetFlaggedResponse;
 import com.blulabellabs.code.core.io.responses.UploadImageResponse1;
@@ -73,6 +76,7 @@ import com.blulabellabs.code.core.io.responses.UserSettingsResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.provider.QodemeContract.Sync;
 import com.blulabellabs.code.utils.Converter;
 import com.bugsense.trace.BugSenseHandler;
 import com.google.common.collect.Lists;
@@ -260,6 +264,8 @@ public class SyncHelper {
 						String status = "";
 						String tags = "";
 						int chat_color = color;
+						String latitude = "0";
+						String longitude = "0";
 						if (cursorChat != null && cursorChat.getCount() > 0) {
 							cursorChat.moveToFirst();
 							desc = cursorChat
@@ -271,6 +277,10 @@ public class SyncHelper {
 							tags = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
 							chat_color = cursorChat
 									.getInt(QodemeContract.Chats.ChatQuery.CHAT_COLOR);
+							latitude = cursorChat
+									.getString(QodemeContract.Chats.ChatQuery.CHAT_LATITUDE);
+							longitude = cursorChat
+									.getString(QodemeContract.Chats.ChatQuery.CHAT_LONGITUDE);
 							// int type =
 							// cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
 							// if (type == 0)
@@ -278,7 +288,7 @@ public class SyncHelper {
 						}
 
 						VoidResponse response = rest.chatSetInfo(chatId, title, color, null, desc,
-								is_locked, status, tags, chat_color);
+								is_locked, status, tags, chat_color, latitude, longitude);
 						new ContactSetInfoHandler(context, id).parse(response, batch);
 					} catch (RestError e) {
 						BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
@@ -339,7 +349,8 @@ public class SyncHelper {
 						String status = "";
 						String tags = "";
 						int chat_color = 0;
-						;
+						String latitude = "0";
+						String longitude = "0";
 						Cursor cursorChat = contentResolver.query(QodemeContract.Chats.CONTENT_URI,
 								QodemeContract.Chats.ChatQuery.PROJECTION,
 								QodemeContract.Chats.CHAT_ID + " = " + chatId, null, null);
@@ -354,6 +365,10 @@ public class SyncHelper {
 							tags = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
 							chat_color = cursorChat
 									.getInt(QodemeContract.Chats.ChatQuery.CHAT_COLOR);
+							latitude = cursorChat
+									.getString(QodemeContract.Chats.ChatQuery.CHAT_LATITUDE);
+							longitude = cursorChat
+									.getString(QodemeContract.Chats.ChatQuery.CHAT_LONGITUDE);
 							// int type =
 							// cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
 							// if (type == 0)
@@ -361,7 +376,7 @@ public class SyncHelper {
 						}
 						try {
 							VoidResponse response = rest.chatSetInfo(chatId, title, color, null,
-									desc, is_locked, status, tags, chat_color);
+									desc, is_locked, status, tags, chat_color, latitude, longitude);
 							new ContactSetInfoHandler(context, id).parse(response, batch);
 						} catch (RestError e) {
 							BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
@@ -381,61 +396,68 @@ public class SyncHelper {
 		QodemeContract.applyBatch(context, batch);
 	}
 
-	public static void doChatSync(Context context, ContentResolver contentResolver) {
-		LOGI(TAG, "Chat sync");
-		ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
-		RestSyncHelper rest = RestSyncHelper.getInstance(context);
-		// Cursor cursor =
-		// contentResolver.query(QodemeContract.Contacts.CONTENT_URI,
-		// QodemeContract.Contacts.ContactQuery.PROJECTION,
-		// QodemeContract.Contacts.UPDATED
-		// + " != " + QodemeContract.Contacts.Sync.DONE, null, null);
-		Cursor cursorChat = contentResolver.query(QodemeContract.Chats.CONTENT_URI,
-				QodemeContract.Chats.ChatQuery.PROJECTION,
-				QodemeContract.Chats.CHAT_TYPE + " != 0", null, null);
-
-		if (cursorChat.moveToFirst())
-			do {
-				try {
-
-					long chatId = cursorChat.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
-					String title = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TITLE);
-
-					String desc = "";
-					int is_locked = 0;
-					String status = "";
-					String tags = "";
-					Integer chat_color;
-					desc = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_DESCRIPTION);
-					is_locked = cursorChat.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_LOCKED);
-					status = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
-					tags = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
-					chat_color = cursorChat.getInt(QodemeContract.Chats.ChatQuery.CHAT_COLOR);
-					// int type =
-					// cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
-					// if (type == 0)
-
-					VoidResponse response = rest.chatSetInfo(chatId, null, null, null, desc,
-							is_locked, status, tags, chat_color);
-				} catch (RestError e) {
-					BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
-					LOGE(TAG, e.toString(context), e);
-				} catch (InterruptedException e) {
-					LOGE(TAG, "doInitialSync", e);
-				} catch (ExecutionException e) {
-					LOGE(TAG, "doInitialSync", e);
-				} catch (JSONException e) {
-					LOGE(TAG, "doInitialSync", e);
-				}
-
-			} while (cursorChat.moveToNext());
-
-		// QodemeContract.applyBatch(context, batch);
-	}
+	// public static void doChatSync123(Context context, ContentResolver
+	// contentResolver) {
+	// LOGI(TAG, "Chat sync");
+	// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+	// RestSyncHelper rest = RestSyncHelper.getInstance(context);
+	// // Cursor cursor =
+	// // contentResolver.query(QodemeContract.Contacts.CONTENT_URI,
+	// // QodemeContract.Contacts.ContactQuery.PROJECTION,
+	// // QodemeContract.Contacts.UPDATED
+	// // + " != " + QodemeContract.Contacts.Sync.DONE, null, null);
+	// Cursor cursorChat =
+	// contentResolver.query(QodemeContract.Chats.CONTENT_URI,
+	// QodemeContract.Chats.ChatQuery.PROJECTION,
+	// QodemeContract.Chats.CHAT_TYPE + " != 0", null, null);
+	//
+	// if (cursorChat.moveToFirst())
+	// do {
+	// try {
+	//
+	// long chatId = cursorChat.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
+	// String title =
+	// cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TITLE);
+	//
+	// String desc = "";
+	// int is_locked = 0;
+	// String status = "";
+	// String tags = "";
+	// Integer chat_color;
+	// desc =
+	// cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_DESCRIPTION);
+	// is_locked =
+	// cursorChat.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_LOCKED);
+	// status =
+	// cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_STATUS);
+	// tags = cursorChat.getString(QodemeContract.Chats.ChatQuery.CHAT_TAGS);
+	// chat_color =
+	// cursorChat.getInt(QodemeContract.Chats.ChatQuery.CHAT_COLOR);
+	// // int type =
+	// // cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_TYPE);
+	// // if (type == 0)
+	//
+	// VoidResponse response = rest.chatSetInfo(chatId, null, null, null, desc,
+	// is_locked, status, tags, chat_color);
+	// } catch (RestError e) {
+	// BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
+	// LOGE(TAG, e.toString(context), e);
+	// } catch (InterruptedException e) {
+	// LOGE(TAG, "doInitialSync", e);
+	// } catch (ExecutionException e) {
+	// LOGE(TAG, "doInitialSync", e);
+	// } catch (JSONException e) {
+	// LOGE(TAG, "doInitialSync", e);
+	// }
+	//
+	// } while (cursorChat.moveToNext());
+	//
+	// // QodemeContract.applyBatch(context, batch);
+	// }
 
 	public static void doChatFavoriteSync(Context context, ContentResolver contentResolver) {
 		LOGI(TAG, "Chat sync");
-//		ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+		// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
 		RestSyncHelper rest = RestSyncHelper.getInstance(context);
 		// Cursor cursor =
 		// contentResolver.query(QodemeContract.Contacts.CONTENT_URI,
@@ -449,20 +471,29 @@ public class SyncHelper {
 		if (cursorChat.moveToFirst())
 			do {
 				try {
+					int updated = cursorChat.getInt(QodemeContract.Chats.ChatQuery.UPDATED);
+					if (updated == QodemeContract.Sync.UPDATED) {
 
-					long _id = cursorChat.getLong(QodemeContract.Chats.ChatQuery._ID);
-					long chatId = cursorChat.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
-					int is_favorite = cursorChat
-							.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
+						long _id = cursorChat.getLong(QodemeContract.Chats.ChatQuery._ID);
+						long chatId = cursorChat.getLong(QodemeContract.Chats.ChatQuery.CHAT_ID);
+						int is_favorite = cursorChat
+								.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
 
-					String date = Converter.getCurrentGtmTimestampString();
-					
-					if(is_favorite == 2)
-						is_favorite = 0;
-					SetFavoriteResponse favoriteResponse = rest.setFavorite(date,is_favorite,chatId);
+						String date = Converter.getCurrentGtmTimestampString();
 
-					new ChatFavoriteHandler(context, _id, is_favorite)
-							.parseAndApply(favoriteResponse);
+						ContentValues values = new ContentValues();
+						values.put(QodemeContract.Chats.UPDATED, Sync.DONE);
+
+						contentResolver.update(QodemeContract.Chats.CONTENT_URI, values,
+								QodemeContract.Chats.CHAT_ID + "=" + chatId, null);
+						if (is_favorite == 2)
+							is_favorite = 0;
+						SetFavoriteResponse favoriteResponse = rest.setFavorite(date, is_favorite,
+								chatId);
+
+						new ChatFavoriteHandler(context, _id, is_favorite)
+								.parseAndApply(favoriteResponse);
+					}
 				} catch (RestError e) {
 					BugSenseHandler.sendExceptionMessage(TAG, "catch exception", e);
 					LOGE(TAG, e.toString(context), e);
@@ -521,8 +552,9 @@ public class SyncHelper {
 						long created = (long) (Converter.getCrurentTimeFromTimestamp(cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED)) / 1E3);
 
-						int is_search = cursor.getInt(QodemeContract.Messages.Query.MESSAGE_IS_SEARCH);
-						
+						int is_search = cursor
+								.getInt(QodemeContract.Messages.Query.MESSAGE_IS_SEARCH);
+
 						String dateString = cursor
 								.getString(QodemeContract.Messages.Query.MESSAGE_CREATED);
 
@@ -578,7 +610,7 @@ public class SyncHelper {
 										.parseAndApply(imageResponse);
 								ChatMessageResponse response = rest.chatMessage(chatId, message,
 										created, imageResponse.getUrl(), hashPhoto, replyTo_id,
-										latitude, longitude, senderName, dateString,is_search);
+										latitude, longitude, senderName, dateString, is_search);
 								new ChatMessageHandler(context, id).parseAndApply(response);
 							}
 							// Intent intent = new Intent(context,
@@ -591,7 +623,7 @@ public class SyncHelper {
 						} else {
 							ChatMessageResponse response = rest.chatMessage(chatId, message,
 									created, photoUrl, hashPhoto, replyTo_id, latitude, longitude,
-									senderName, dateString,is_search);
+									senderName, dateString, is_search);
 							new ChatMessageHandler(context, id).parseAndApply(response);
 						}
 					} catch (RestError e) {
@@ -602,6 +634,26 @@ public class SyncHelper {
 					} catch (ExecutionException e) {
 						e.printStackTrace();
 					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} else if (update == (update & QodemeContract.Sync.UPDATED) && is_deleted == 1) {
+
+					try {
+						long messageId = cursor.getLong(QodemeContract.Messages.Query.MESSAGE_ID);
+						long chat_id =  cursor.getLong(QodemeContract.Messages.Query.MESSAGE_CHAT_ID);
+						DeleteMessageResponse response = rest.deleteMessage(messageId, chat_id);
+						new MessageDeleteHandler(context, id).parseAndApply(response);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RestError e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else if (update == (update & QodemeContract.Sync.UPDATED)
@@ -627,6 +679,9 @@ public class SyncHelper {
 					try {
 						long messageId = cursor.getLong(QodemeContract.Messages.Query.MESSAGE_ID);
 						long chatId = cursor.getLong(QodemeContract.Messages.Query.MESSAGE_CHAT_ID);
+
+						if (is_flagged != 1)
+							is_flagged = 0;
 						SetFlaggedResponse response = rest
 								.setFlagged(messageId, is_flagged, chatId);
 						new MessageFlaggedHandler(context, id).parseAndApply(response);
@@ -642,7 +697,6 @@ public class SyncHelper {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				} else if (update == (update & QodemeContract.Sync.UPDATED) && is_deleted == 1) {
 				}
 			} while (cursor.moveToNext());
 	}

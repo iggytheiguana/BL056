@@ -1,7 +1,14 @@
 package com.blulabellabs.code.ui.one2one;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Editable;
@@ -13,9 +20,7 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -36,10 +41,10 @@ import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomEdit;
-import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExGroupAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ListAdapter;
@@ -50,17 +55,7 @@ import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
-import com.flurry.sdk.ch;
-import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Alex on 10/23/13.
@@ -99,7 +94,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private int mPosition;
 	// private Contact mContact;
 	private ChatLoad mChatLoad;
-	private ImageButton shareChatBtn;
+	private ImageButton shareChatBtn, mImgBtnFavorite;
 	private EditText editTextTitle;
 	private RelativeLayout mChatItem;
 
@@ -196,6 +191,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public ImageButton getShareChatBtn() {
 		return shareChatBtn = shareChatBtn != null ? shareChatBtn
 				: (ImageButton) findViewById(R.id.btn_share);
+	}
+
+	public ImageButton getFavoriteBtn() {
+		return mImgBtnFavorite = mImgBtnFavorite != null ? mImgBtnFavorite
+				: (ImageButton) findViewById(R.id.btnFavorite);
 	}
 
 	public RelativeLayout getChatItem() {
@@ -417,6 +417,37 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public void fill(ChatLoad t) {
 
 		mChatLoad = t;
+
+		if (t.is_favorite == 1) {
+			Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_chat_favorite);
+			getFavoriteBtn().setImageBitmap(bm);
+		} else {
+			Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_chat_favorite_h);
+			getFavoriteBtn().setImageBitmap(bm);
+		}
+		getFavoriteBtn().setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int num_of_favorite = mChatLoad.number_of_likes;
+				int is_favorite = 1;
+				if (mChatLoad.is_favorite == 1) {
+					is_favorite = 2;
+					num_of_favorite--;
+				} else {
+					is_favorite = 1;
+					if (num_of_favorite <= 0) {
+						num_of_favorite = 1;
+					} else
+						num_of_favorite++;
+				}
+
+				getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+						QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
+				SyncHelper.requestManualSync();
+			}
+		});
 
 		if (t.type == 1) {
 			getMemberListView().setVisibility(VISIBLE);
@@ -751,8 +782,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
 
-		if (chatLoad != null && chatLoad.is_locked == 1)
+		if (chatLoad != null && chatLoad.is_locked == 1
+				&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
 			getSendImage().setVisibility(View.GONE);
+		} else {
+			getSendImage().setVisibility(View.VISIBLE);
+		}
 
 		getSendImage().setOnClickListener(new OnClickListener() {
 
@@ -778,7 +813,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
 			String status, Integer isLocked, String chat_title, String latitude, String longitude) {
 		RestAsyncHelper.getInstance().chatSetInfo(mChatLoad.chatId, title, color, tag, desc,
-				isLocked, status, chat_title, latitude, longitude, new RestListener<VoidResponse>() {
+				isLocked, status, chat_title, latitude, longitude,
+				new RestListener<VoidResponse>() {
 
 					@Override
 					public void onResponse(VoidResponse response) {

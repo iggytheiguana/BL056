@@ -1,10 +1,12 @@
 package com.blulabellabs.code.core.io.hendler;
 
-import android.content.ContentProviderOperation;
-import android.content.Context;
+import static com.blulabellabs.code.core.provider.QodemeContract.addCallerIsSyncAdapterParameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import android.content.ContentProviderOperation;
+import android.content.Context;
 
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
@@ -12,14 +14,9 @@ import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.provider.QodemeContract.Chats;
 import com.blulabellabs.code.core.provider.QodemeContract.Contacts;
+import com.blulabellabs.code.core.provider.QodemeContract.Messages;
 import com.blulabellabs.code.core.provider.QodemeContract.SyncColumns;
-import com.blulabellabs.code.utils.DbUtils;
-import com.flurry.sdk.ch;
 import com.google.android.gms.internal.bu;
-
-
-import static com.blulabellabs.code.core.provider.QodemeContract.Messages;
-import static com.blulabellabs.code.core.provider.QodemeContract.addCallerIsSyncAdapterParameter;
 
 /**
  * Created by Alex on 11/27/13.
@@ -95,6 +92,8 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 		builder.withValue(Chats.CHAT_NUMBER_OF_MEMBER, chatLoad.number_of_members);
 		builder.withValue(Chats.CHAT_MEMBER_QRCODES, memberQR);
 		builder.withValue(Chats.CHAT_CREATED_DATE, chatLoad.created);
+		builder.withValue(Chats.CHAT_NUMBER_OF_FAVORITE, chatLoad.number_of_likes);
+		builder.withValue(Chats.CHAT_IS_FAVORITE, chatLoad.is_favorite);
 
 		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		batch.add(builder.build());

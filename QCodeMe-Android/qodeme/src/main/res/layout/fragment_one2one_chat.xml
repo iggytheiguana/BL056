@@ -52,12 +52,25 @@
             android:visibility="visible" >
 
             <ImageButton
-                android:id="@+id/btn_favourite"
+                android:id="@+id/btnFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:padding="10dp"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
                 android:src="@drawable/ic_chat_favorite" />
+
+            <com.blulabellabs.code.ui.common.TextViewRegular
+                android:id="@+id/textView_totalFavorite"
+                style="@style/TextView.Message.Date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="0"
+                android:textColor="#adadad"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/btn_camera"
@@ -133,9 +146,9 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:hint="@string/message"
-            android:visibility="gone"
             android:inputType="textMultiLine|textNoSuggestions"
-            android:padding="5dp" >
+            android:padding="5dp"
+            android:visibility="gone" >
 
             <requestFocus />
         </EditText>

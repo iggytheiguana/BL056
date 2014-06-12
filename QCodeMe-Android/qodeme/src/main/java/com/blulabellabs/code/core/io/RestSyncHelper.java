@@ -28,6 +28,7 @@ import com.blulabellabs.code.core.io.responses.AccountLoginResponse;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.ChatMessageResponse;
 import com.blulabellabs.code.core.io.responses.ContactAddResponse;
+import com.blulabellabs.code.core.io.responses.DeleteMessageResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetFlaggedResponse;
 import com.blulabellabs.code.core.io.responses.UploadImageResponse1;
@@ -184,8 +185,8 @@ public class RestSyncHelper {
 	}
 
 	public VoidResponse setUserSettings(String message, boolean withMessage, String publicName,
-			boolean withPublicName, boolean withAutoAccept, String location, double latitude,
-			double longitude, boolean withSaveDateTime, String status) throws InterruptedException,
+			boolean withPublicName, boolean withAutoAccept, String location, String latitude,
+			String longitude, boolean withSaveDateTime, String status) throws InterruptedException,
 			ExecutionException, JSONException, RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.MESSAGE, message);
@@ -213,11 +214,14 @@ public class RestSyncHelper {
 		String location = "location";
 		boolean withSaveDateTime = pref.isSaveLocationDateChecked();
 		LatLonCity latLonCity = pref.getLastLocation();
+		String latitude = "0";
+		String longitude = "0";
+		if (latLonCity != null) {
+			latitude = latLonCity.getLatitude();
+			longitude = latLonCity.getLongitude();
+			location = latLonCity.getCity();
+		}
 
-		double latitude = latLonCity.getLat();
-		double longitude = latLonCity.getLon();
-
-		location = latLonCity.getCity();
 		String status = pref.getStatus();
 
 		return setUserSettings(message, withMessage, publicName, withPublicName, withAutoAccept,
@@ -225,8 +229,9 @@ public class RestSyncHelper {
 	}
 
 	public VoidResponse chatSetInfo(long chatId, String title, Integer color, Integer height,
-			String description, int is_locked, String status, String tags, Integer chat_color)
-			throws InterruptedException, ExecutionException, JSONException, RestError {
+			String description, int is_locked, String status, String tags, Integer chat_color,
+			String lat, String lng) throws InterruptedException, ExecutionException, JSONException,
+			RestError {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.ID, String.valueOf(chatId));
 		if (title != null)
@@ -244,6 +249,8 @@ public class RestSyncHelper {
 			params.put(RestKeyMap.TAGS, tags);
 		params.put(RestKeyMap.CHAT_TYPE, String.valueOf(0));
 		params.put("chat_color", String.valueOf(chat_color));
+		params.put(RestKeyMap.LATITUDE, lat);
+		params.put(RestKeyMap.LONGITUDE, lng);
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.CHAT_SET_INFO, params);
 		return new VoidResponse().parse(jsonObject);
 	}
@@ -281,6 +288,18 @@ public class RestSyncHelper {
 		params.put("date_time", date);
 		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.SET_FAVORITE, params);
 		return new SetFavoriteResponse().parse(jsonObject);
+	}
+
+	/**
+	 * delete message
+	 */
+	public DeleteMessageResponse deleteMessage(long messageId, long chat_id) throws InterruptedException,
+			ExecutionException, JSONException, RestError {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.MESSAGE_ID, String.valueOf(messageId));
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		JSONObject jsonObject = newSyncJsonObjectRequest(RequestType.DELETE_MESSAGE, params);
+		return new DeleteMessageResponse().parse(jsonObject);
 	}
 
 	/**

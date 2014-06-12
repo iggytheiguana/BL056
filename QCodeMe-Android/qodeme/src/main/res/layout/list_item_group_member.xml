@@ -28,14 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView_name"
-        android:layout_marginBottom="10dp"
+        android:paddingBottom="10dp"
         android:layout_toLeftOf="@+id/linear_btn"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Location"
-        android:textColor="@color/block_user_btn"
+        android:textColor="#adadad"
         android:textSize="14sp"
         android:visibility="visible" />
 
@@ -48,7 +48,7 @@
         android:layout_marginRight="10dp"
         android:orientation="horizontal" >
 
-        <Button
+        <Button android:id="@+id/btnUnBlock"
             android:layout_width="75dp"
             android:layout_height="30dp"
             android:paddingLeft="10dp"
@@ -57,7 +57,7 @@
             android:textSize="14dp"
              android:textColor="@color/block_user_btn"
             android:background="@drawable/bg_block" />
-        <Button
+        <Button android:id="@+id/btnBlock"
             android:layout_width="75dp"
             android:layout_height="30dp" 
             android:paddingLeft="10dp"

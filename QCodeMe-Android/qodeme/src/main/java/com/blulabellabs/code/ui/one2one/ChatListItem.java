@@ -10,6 +10,8 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Editable;
@@ -34,6 +36,8 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomEdit;
@@ -74,7 +78,7 @@ public class ChatListItem extends RelativeLayout implements
 	private CustomEdit edit;
 	private ImageView dragImage;
 	private ImageButton sendMessageBtn;
-	private ImageButton sendImgMessageBtn;
+	private ImageButton sendImgMessageBtn, mImgBtnFavorite;
 	private View cornerTop;
 	private View cornerBottom;
 	private View cornerLeft;
@@ -330,10 +334,48 @@ public class ChatListItem extends RelativeLayout implements
 			}
 		});
 
-		ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
+		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
 
-		if (chatLoad != null && chatLoad.is_locked == 1)
-			getSendImage().setVisibility(View.GONE);
+		if (chatLoad != null) {
+			if (chatLoad.is_locked == 1 && !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)){
+				getSendImage().setVisibility(View.GONE);
+			}else{
+				getSendImage().setVisibility(View.VISIBLE);
+			}
+
+			if (chatLoad.is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				getFavoriteBtn().setImageBitmap(bm);
+			} else {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite_h);
+				getFavoriteBtn().setImageBitmap(bm);
+			}
+			getFavoriteBtn().setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					int num_of_favorite = chatLoad.number_of_likes;
+					int is_favorite = 1;
+					if (chatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+					}
+
+					getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+					SyncHelper.requestManualSync();
+				}
+			});
+		}
 		getSendImage().setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -405,6 +447,11 @@ public class ChatListItem extends RelativeLayout implements
 	public ImageButton getSendImage() {
 		return sendImgMessageBtn = sendImgMessageBtn != null ? sendImgMessageBtn
 				: (ImageButton) findViewById(R.id.btn_camera);
+	}
+
+	public ImageButton getFavoriteBtn() {
+		return mImgBtnFavorite = mImgBtnFavorite != null ? mImgBtnFavorite
+				: (ImageButton) findViewById(R.id.btnFavorite);
 	}
 
 	public RelativeLayout getChatItem() {
@@ -481,9 +528,9 @@ public class ChatListItem extends RelativeLayout implements
 		public void onLongPress(MotionEvent e) {
 			super.onLongPress(e);
 			Toast.makeText(getContext(), "Long Press", Toast.LENGTH_LONG).show();
-			
+
 		}
-		
+
 	}
 
 	public void showMessage() {

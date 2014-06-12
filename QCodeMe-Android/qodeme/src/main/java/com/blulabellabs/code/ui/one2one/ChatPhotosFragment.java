@@ -13,6 +13,8 @@ import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageCache;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
@@ -22,12 +24,16 @@ import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFrag
 import com.blulabellabs.code.utils.Converter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -54,7 +60,8 @@ public class ChatPhotosFragment extends Fragment {
 	private boolean isViewCreated;
 	SeparatedListAdapter mListAdapter;
 	ListView mListViewPhotos;
-	
+	private ImageButton mBtnImageSend, mImgFavorite;
+
 	private TextView mTextViewProfileName, mTextViewStatus;
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
@@ -118,11 +125,10 @@ public class ChatPhotosFragment extends Fragment {
 
 		// The ImageFetcher takes care of loading images into our ImageView
 		// children asynchronously
-		mImageFetcher = new ImageFetcher(getActivity(), longest);//mImageThumbSize
+		mImageFetcher = new ImageFetcher(getActivity(), longest);// mImageThumbSize
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
-		
 		mTextViewProfileName = (TextView) getView().findViewById(R.id.name);
 		mTextViewStatus = (TextView) getView().findViewById(R.id.textView_status);
 		// Log.e(">>>>>>>>>>SIZE", "==== " + mMapList.size());
@@ -131,10 +137,51 @@ public class ChatPhotosFragment extends Fragment {
 		// SeparatedListAdapter(getActivity());
 		mListAdapter = new SeparatedListAdapter(getActivity());
 
-
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
 		mListViewPhotos.setAdapter(mListAdapter);
 		isViewCreated = true;
+
+		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
+		mBtnImageSend.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				MainActivity activity = (MainActivity) getActivity();
+				activity.setCurrentChatId(getArguments().getLong(CHAT_ID));
+				activity.takePhoto();
+			}
+		});
+
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+		mImgFavorite.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int is_favorite = 1;
+				MainActivity activity = (MainActivity) getActivity();
+				ChatLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				if (chatLoad != null) {
+					int num_of_favorite = chatLoad.number_of_likes;
+					if (chatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+					}
+
+					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+					SyncHelper.requestManualSync();
+				}
+			}
+		});
+
 		updateUi();
 	}
 
@@ -154,21 +201,31 @@ public class ChatPhotosFragment extends Fragment {
 	}
 
 	public void updateUi() {
-		if (isViewCreated && callback!= null) {
+		if (isViewCreated && callback != null) {
 			// mListAdapter.clear();
 			// mListAdapter.addAll(callback.getChatMessages(getChatId()));
-			mListAdapter = new SeparatedListAdapter((MainActivity)callback);
-//			mListAdapter.clearData();
-//			mListAdapter.notifyDataSetChanged();
+			mListAdapter = new SeparatedListAdapter((MainActivity) callback);
+			// mListAdapter.clearData();
+			// mListAdapter.notifyDataSetChanged();
 			List<Message> messages = callback.getChatMessages(getChatId());
-			
+
 			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
 			MainActivity activity = (MainActivity) callback;
 			ChatLoad chatLoad = activity.getChatLoad(getChatId());
-			if (chatLoad != null)
+			if (chatLoad != null) {
 				mTextViewStatus.setText(chatLoad.status);
-			
-//			mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
+				if (chatLoad.is_favorite == 1) {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite);
+					mImgFavorite.setImageBitmap(bm);
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite_h);
+					mImgFavorite.setImageBitmap(bm);
+				}
+			}
+
+			// mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));
 			if (messages != null) {
 				Message previousMessage = null;
 				List<Message> temp = new ArrayList<Message>();
@@ -280,7 +337,7 @@ public class ChatPhotosFragment extends Fragment {
 				}
 				mListViewPhotos.setAdapter(mListAdapter);
 			}
-//			mListAdapter.notifyDataSetChanged();
+			// mListAdapter.notifyDataSetChanged();
 			// mName.setText(getChatName());
 			// mName.setTextColor(getChatColor());
 			// if (QodemePreferences.getInstance().isSaveLocationDateChecked())

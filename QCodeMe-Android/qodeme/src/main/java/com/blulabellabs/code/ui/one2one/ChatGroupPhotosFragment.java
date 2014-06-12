@@ -13,6 +13,8 @@ import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageCache;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.Utils;
@@ -27,12 +29,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -52,9 +57,9 @@ public class ChatGroupPhotosFragment extends Fragment {
 	private boolean isViewCreated;
 	SeparatedListAdapter mListAdapter;
 	ListView mListViewPhotos;
-	public ChatLoad chatLoad;
-	private ImageButton mBtnImageSend;
-	private TextView mName, mStatus;
+	private ChatLoad chatLoad;
+	private ImageButton mBtnImageSend, mImgFavorite;
+	private TextView mName, mStatus, mTextViewNumFavorite;
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
@@ -85,7 +90,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 		// args.putString(LOCATION, c.location);
 		// args.putString(DATE, c.date);
 		args.putBoolean(FIRST_UPDATE, firstUpdate);
-		f.chatLoad = c;
+		f.setChatLoad(c);
 		// f.contact = c;
 		f.setArguments(args);
 		return f;
@@ -150,6 +155,36 @@ public class ChatGroupPhotosFragment extends Fragment {
 
 		mListViewPhotos = (ListView) getView().findViewById(R.id.listview);
 
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+		mImgFavorite.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int is_favorite = 1;
+				MainActivity activity = (MainActivity) getActivity();
+				ChatLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				if (chatLoad != null) {
+					int num_of_favorite = chatLoad.number_of_likes;
+					if (chatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+					}
+
+					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+					SyncHelper.requestManualSync();
+				}
+			}
+		});
+		mTextViewNumFavorite = (TextView) getView().findViewById(R.id.textView_totalFavorite);
+
 		isViewCreated = true;
 		updateUi();
 	}
@@ -182,7 +217,7 @@ public class ChatGroupPhotosFragment extends Fragment {
 		// args.putBoolean(FIRST_UPDATE, getFirstUpdate());
 		//
 		// setArguments(args);
-		this.chatLoad = c;
+		this.setChatLoad(c);
 	}
 
 	// private boolean getFirstUpdate() {
@@ -193,8 +228,22 @@ public class ChatGroupPhotosFragment extends Fragment {
 	public void updateUi() {
 		if (isViewCreated && callback != null) {
 
-			if (chatLoad != null && chatLoad.is_locked == 1
-					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
+			if (getChatLoad().is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				mImgFavorite.setImageBitmap(bm);
+			} else {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite_h);
+				mImgFavorite.setImageBitmap(bm);
+			}
+			if (getChatLoad().type == 2) {
+				mTextViewNumFavorite.setText(getChatLoad().number_of_likes + "");
+				mTextViewNumFavorite.setVisibility(View.VISIBLE);
+			}
+
+			if (getChatLoad() != null && getChatLoad().is_locked == 1
+					&& !QodemePreferences.getInstance().getQrcode().equals(getChatLoad().user_qrcode)) {
 				mBtnImageSend.setVisibility(View.GONE);
 			} else {
 				mBtnImageSend.setVisibility(View.VISIBLE);
@@ -207,8 +256,8 @@ public class ChatGroupPhotosFragment extends Fragment {
 			mListAdapter = new SeparatedListAdapter((MainActivity) callback);
 			List<Message> messages = callback.getChatMessages(getChatId());
 
-			mName.setText(chatLoad != null ? chatLoad.title : getArguments().getString(CHAT_NAME));
-			mStatus.setText(chatLoad != null ? chatLoad.status : getArguments().getString(
+			mName.setText(getChatLoad() != null ? getChatLoad().title : getArguments().getString(CHAT_NAME));
+			mStatus.setText(getChatLoad() != null ? getChatLoad().status : getArguments().getString(
 					CHAT_STATUS));
 
 			if (messages != null) {
@@ -379,5 +428,13 @@ public class ChatGroupPhotosFragment extends Fragment {
 		//
 		// }
 	}
-	
+
+	public void setChatLoad(ChatLoad chatLoad) {
+		this.chatLoad = chatLoad;
+	}
+
+	public ChatLoad getChatLoad() {
+		return chatLoad;
+	}
+
 }

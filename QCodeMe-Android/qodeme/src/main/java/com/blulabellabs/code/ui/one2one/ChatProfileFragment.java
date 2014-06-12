@@ -1,5 +1,6 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +26,21 @@ import com.blulabellabs.code.ui.contacts.ContactDetailsActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.LatLonCity;
 import com.google.android.gms.internal.ac;
 import com.google.android.gms.internal.co;
 import com.google.android.gms.internal.cu;
 import com.google.common.collect.Lists;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -64,7 +72,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			mTextViewStatus, mTextViewTotalMessages, mTextViewTotalPhoto;
 	private ImageButton mImgBtnColorWheelSmall, mImgBtnColorWheel;
 	private CustomDotView customDotView;
-	private ImageButton mBtnEditStatus, mBtnEditName, mBtnDelete, mBtnArchive;
+	private ImageButton mBtnEditStatus, mBtnEditName, mBtnDelete, mBtnArchive, mImgFavorite;
 	private Button mBtnSetStatus, mBtnSetName;
 	private EditText mEditTextStatus, mEdittextName;
 	private RelativeLayout mRelativeLayoutName, mRelativeLayoutSetName;
@@ -125,6 +133,8 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mBtnDelete = (ImageButton) getView().findViewById(R.id.btnDelete);
 		mBtnArchive = (ImageButton) getView().findViewById(R.id.btnArchive);
 
+		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
+
 		mBtnDelete.setOnClickListener(this);
 		mImgBtnColorWheel.setOnClickListener(this);
 		mImgBtnColorWheelSmall.setOnClickListener(this);
@@ -133,6 +143,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mBtnSetName.setOnClickListener(this);
 		mBtnSetStatus.setOnClickListener(this);
 		mBtnArchive.setOnClickListener(this);
+		mImgFavorite.setOnClickListener(this);
 
 		mEdittextName.setOnEditorActionListener(new OnEditorActionListener() {
 
@@ -183,6 +194,9 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mTextViewStatus.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mEditTextStatus.setVisibility(View.GONE);
+					
+//					callback.sendMessage(getArguments().getLong(CHAT_ID), status, "", 2, -1, 0, 0,
+//							QodemePreferences.getInstance().getPublicName(), "");
 
 					QodemePreferences.getInstance().setStatus(status);
 					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "",
@@ -222,6 +236,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
 			customDotView.invalidate();
 			if (callback != null) {
+				getLocation();
 				List<Message> messages = callback.getChatMessages(getArguments().getLong(CHAT_ID));
 				mTextViewTotalMessages.setText((messages != null ? messages.size() : 0)
 						+ " messages");
@@ -234,17 +249,32 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					}
 					mTextViewTotalPhoto.setText(temp.size() + " photos");
 				}
+
+				MainActivity activity = (MainActivity) callback;
+				ChatLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				if (chatLoad != null) {
+					if (chatLoad.is_favorite == 1) {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_profile_favorite);
+						mImgFavorite.setImageBitmap(bm);
+					} else {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_profile_favorite_h);
+						mImgFavorite.setImageBitmap(bm);
+					}
+				}
 			}
 
-			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+//			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
+			 SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
 			String dateStr = fmtOut.format(new Date(Converter
 					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 			mTextViewLocation.setText(contact.location + "");
 			mTextViewDatelocation
-					.setText(dateStr + ", " + contact.location != null ? contact.location : "");
+					.setText(dateStr + ", " + (contact.location != null ? contact.location : ""));
 
-			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMMM dd,yyyy, h:mm a", Locale.US);
+//			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMM dd,yyyy, h:mm a", Locale.US);
+			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMM dd,yyyy, HH:mm");
 			String dateStr1 = fmtOut1.format(new Date(Converter
 					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 			mTextViewDate.setText(dateStr1);
@@ -252,6 +282,61 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void getLocation() {
+		final LatLonCity latLonCity = new LatLonCity();
+		ChatLoad chatLoad = callback.getChatLoad(getArguments().getLong(CHAT_ID));
+		if (chatLoad != null) {
+			if (chatLoad.latitude != null && !chatLoad.latitude.trim().equals("")
+					&& chatLoad.longitude != null && !chatLoad.longitude.trim().equals("")
+					&& !chatLoad.latitude.trim().equals("0")
+					&& !chatLoad.longitude.trim().equals("0")
+					&& !chatLoad.latitude.trim().equals("-1")
+					&& !chatLoad.longitude.trim().equals("-1")
+					&& !chatLoad.latitude.trim().equals("0.0")
+					&& !chatLoad.longitude.trim().equals("0.0")) {
+
+				double lat = Double.parseDouble(chatLoad.latitude);
+				double lng = Double.parseDouble(chatLoad.longitude);
+
+				// getGeoCode(lat, lng);
+
+				latLonCity.setLat((int) (lat * 1E6));
+				latLonCity.setLon((int) (lng * 1E6));
+				new AsyncTask<LatLonCity, Void, String>() {
+
+					@Override
+					protected String doInBackground(LatLonCity... params) {
+						try {
+							List<Address> addresses = new Geocoder(getActivity(), Locale.ENGLISH)
+									.getFromLocation(latLonCity.getLat() / 1E6,
+											latLonCity.getLon() / 1E6, 1);
+							if (!addresses.isEmpty()) {
+								return addresses.get(0).getLocality() + ", "
+										+ addresses.get(0).getCountryName();
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						return null;
+					}
+
+					@SuppressLint("SimpleDateFormat")
+					@Override
+					protected void onPostExecute(String s) {
+						super.onPostExecute(s);
+						if (s != null) {
+							latLonCity.setCity(s);
+							@SuppressWarnings("unused")
+							SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+							mTextViewLocation.setText(s + "");
+						}
+					}
+				}.execute(latLonCity);
+			}
+		}
 	}
 
 	private void callColorPicker(int type) {
@@ -319,6 +404,29 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					QodemeContract.Contacts.isArchiveValues(1), DbUtils.getWhereClauseForId(),
 					DbUtils.getWhereArgsForId(contact._id));
 			getActivity().onBackPressed();
+			break;
+		case R.id.btnFavorite:
+			int is_favorite = 1;
+			MainActivity activity = (MainActivity) getActivity();
+			ChatLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+			if (chatLoad != null) {
+				int num_of_favorite = chatLoad.number_of_likes;
+				if (chatLoad.is_favorite == 1) {
+					is_favorite = 2;
+					num_of_favorite--;
+				} else {
+					is_favorite = 1;
+					if (num_of_favorite <= 0) {
+						num_of_favorite = 1;
+					} else
+						num_of_favorite++;
+				}
+
+				getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+						QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+				SyncHelper.requestManualSync();
+			}
 			break;
 		default:
 			break;
