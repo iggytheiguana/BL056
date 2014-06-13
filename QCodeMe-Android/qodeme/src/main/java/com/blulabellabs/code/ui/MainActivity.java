@@ -3087,6 +3087,7 @@ public class MainActivity extends BaseActivity implements
 									chatLoad.longitude = entity.getLongitude();
 									chatLoad.is_favorite = entity.getIs_favorite();
 									chatLoad.type = 2;
+									chatLoad.created = entity.getCreated();
 									chatLoad.isSearchResult = true;
 									
 									mChatListSearchPublic.add(chatLoad);

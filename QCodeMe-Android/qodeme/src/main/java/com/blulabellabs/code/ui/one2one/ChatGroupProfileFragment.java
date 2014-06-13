@@ -399,11 +399,12 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 								.getFromLocation(latLonCity.getLat() / 1E6,
 										latLonCity.getLon() / 1E6, 1);
 						if (!addresses.isEmpty()) {
-							String city = addresses.get(0).getLocality();
+							String city = addresses.get(0).getAddressLine(1);//.getLocality();
 							String country = addresses.get(0).getCountryName();
 							String add = null;
 							if (city != null && !city.equals("") && !city.equals("null"))
 								add = city;
+							
 							if (country != null && !country.equals("") && !country.equals("null"))
 								if (add != null)
 									add += ", " + country;

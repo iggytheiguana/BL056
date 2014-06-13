@@ -900,35 +900,41 @@ public class ChatListGroupPublicFragment extends Fragment {
 		// selectChat(focusedChat);
 		//
 		// }
-		if (isViewCreated && callback.getChatList(chatType) != null) {
+		try {
+			if (isViewCreated && callback != null && callback.getChatList(chatType) != null) {
 
-			chatLoads = callback.getChatList(chatType);
-			if (chatLoads != null
-					&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
-				ChatLoad newChatLoad = null;
-				for (ChatLoad c : chatLoads) {
-					if (QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId) {
-						newChatLoad = c;
-						break;
+				chatLoads = callback.getChatList(chatType);
+				if (chatLoads != null
+						&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
+					try {
+						ChatLoad newChatLoad = null;
+						for (ChatLoad c : chatLoads) {
+							if (QodemePreferences.getInstance().getNewPublicGroupChatId() == c.chatId) {
+								newChatLoad = c;
+								break;
+							}
+						}
+						chatLoads.remove(newChatLoad);
+						chatLoads.add(0, newChatLoad);
+					} catch (Exception e) {
+					}
+
+					if (!isLocationFilter && !isFavoriteFilter) {
+						mListAdapter.clear();
+						mListAdapter.addAll(chatLoads);
+						mListView.setSelection(0);
+					}
+				} else {
+					if (!isLocationFilter && !isFavoriteFilter) {
+						mListAdapter.clear();
+						mListAdapter.addAll(chatLoads);
 					}
 				}
-				chatLoads.remove(newChatLoad);
-				chatLoads.add(0, newChatLoad);
 
-				if (!isLocationFilter && !isFavoriteFilter) {
-					mListAdapter.clear();
-					mListAdapter.addAll(chatLoads);
-					mListView.setSelection(0);
-				}
-			} else {
-				if (!isLocationFilter && !isFavoriteFilter) {
-					mListAdapter.clear();
-					mListAdapter.addAll(chatLoads);
-				}
+				// long focusedChat = ChatFocusSaver.getFocusedChatId();
+				// selectChat(focusedChat);
 			}
-
-			// long focusedChat = ChatFocusSaver.getFocusedChatId();
-			// selectChat(focusedChat);
+		} catch (Exception e) {
 		}
 	}
 

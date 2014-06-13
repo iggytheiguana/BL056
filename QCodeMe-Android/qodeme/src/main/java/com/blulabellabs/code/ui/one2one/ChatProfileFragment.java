@@ -315,8 +315,19 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 									.getFromLocation(latLonCity.getLat() / 1E6,
 											latLonCity.getLon() / 1E6, 1);
 							if (!addresses.isEmpty()) {
-								return addresses.get(0).getLocality() + ", "
-										+ addresses.get(0).getCountryName();
+								String city = addresses.get(0).getAddressLine(1);//.getLocality();
+								String country = addresses.get(0).getCountryName();
+								String add = null;
+								if (city != null && !city.equals("") && !city.equals("null"))
+									add = city;
+								
+								if (country != null && !country.equals("") && !country.equals("null"))
+									if (add != null)
+										add += ", " + country;
+									else
+										add = country;
+
+								return add;
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
