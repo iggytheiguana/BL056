@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.NullHelper;
+import com.google.android.gms.internal.cu;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,6 +78,7 @@ public class ModelHelper {
 				c.is_favorite = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_FAVORITE);
 				c.created = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_CREATED_DATE);
 				c.is_searchable = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_SEARCHABLE);
+				c.is_deleted = cursor.getInt(QodemeContract.Chats.ChatQuery.CHAT_IS_DELETED);
 
 				String memQr = cursor.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
 

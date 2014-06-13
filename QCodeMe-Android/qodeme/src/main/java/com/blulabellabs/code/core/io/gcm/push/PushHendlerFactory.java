@@ -21,6 +21,7 @@ public class PushHendlerFactory {
 	private static final String PUSH_MESSAGE_SET_FLAGGED = "Set flagged";
 	private static final String PUSH_CHAT_SET_FAVORITE = "Set favorite";
 	private static final String PUSH_MESSAGE_DELETED = "Message deleted";
+	private static final String PUSH_CHAT_DELETED = "chat deleted";
 	
 
 	//
@@ -55,6 +56,8 @@ public class PushHendlerFactory {
 			instance = new ChatFavoritePushHandler(context);
 		} else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_DELETED)){
 			instance = new MessageDeletePushHandler(context);
+		}else if(bundle.getString(TYPE).equals(PUSH_CHAT_DELETED)){
+			instance = new ChatDeletePushHandler(context);
 		}
 
 		if (instance != null)

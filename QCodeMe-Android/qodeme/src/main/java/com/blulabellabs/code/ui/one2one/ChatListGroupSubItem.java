@@ -194,6 +194,8 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	@Override
 	public void fill(Message me) {
 		final Message msg = me;
+		setDefault();
+
 		getMessage().setText(me.message);
 		if (me.hasPhoto == 2) {
 			if (QodemePreferences.getInstance().getQrcode().equals(me.qrcode)) {
@@ -205,6 +207,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getImageMessage().setVisibility(View.GONE);
 				getImageLayout().setVisibility(View.GONE);
 			} else {
+
 				getUserSpace().setVisibility(VISIBLE);
 				getStatusLayout().setVisibility(VISIBLE);
 				getMessageLayout().setVisibility(GONE);
@@ -292,7 +295,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(getMessage(), msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(getMessage(), msg);
 						return true;
 					}
 				});
@@ -415,7 +420,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(v, msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(v, msg);
 						return true;
 					}
 				});
@@ -427,7 +434,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					public void onClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
 
-						if (chatLoad != null && chatLoad.is_locked != 1)
+						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
 							initSendMessage();
 					}
 				});
@@ -435,7 +442,10 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(v, msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(v, msg);
 						return true;
 					}
 				});
@@ -582,6 +592,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				}
 			}
 		}
+	}
+
+	private void setDefault() {
+		this.setVisibility(VISIBLE);
+		getUserSpace().setVisibility(VISIBLE);
+		getStatusLayout().setVisibility(VISIBLE);
+		getMessageLayout().setVisibility(VISIBLE);
+		getHeaderContainer().setVisibility(VISIBLE);
+		getImageMessage().setVisibility(View.VISIBLE);
+		getImageLayout().setVisibility(View.VISIBLE);
 	}
 
 	@SuppressWarnings("deprecation")

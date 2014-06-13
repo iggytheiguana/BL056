@@ -202,6 +202,15 @@ public class ChatListGroupPublicFragment extends Fragment {
 				mEditTextSearch.setText("");
 				searchString = "";
 				pageNo = 1;
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_location_gray);
+				mImgBtnLocationFilter.setImageBitmap(bm);
+				isLocationFilter = false;
+
+				isFavoriteFilter = false;
+				Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				mImgBtnFavoriteFilter.setImageBitmap(bm1);
 				updateUi();
 
 				RestAsyncHelper.getInstance().clearSearchChats(2,
@@ -225,7 +234,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				if(isLocationFilter){
+				if (isLocationFilter) {
 					isLocationFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
 							R.drawable.ic_location_gray);
@@ -266,13 +275,13 @@ public class ChatListGroupPublicFragment extends Fragment {
 			public void onClick(View v) {
 				// MainActivity activity = (MainActivity) callback;
 				// if (activity.isPrivateSearch()) {
-				if(isFavoriteFilter){
-					isFavoriteFilter =false;
+				if (isFavoriteFilter) {
+					isFavoriteFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
 							R.drawable.ic_chat_favorite);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 				}
-				
+
 				if (isLocationFilter) {
 					isLocationFilter = false;
 					updateUi();
@@ -321,20 +330,20 @@ public class ChatListGroupPublicFragment extends Fragment {
 			public void onClick(View v) {
 				String data = mEditTextSearch.getText().toString();
 				if (!data.trim().equals("")) {
-					
-					if(isLocationFilter){
+
+					if (isLocationFilter) {
 						isLocationFilter = false;
 						Bitmap bm = BitmapFactory.decodeResource(getResources(),
 								R.drawable.ic_location_gray);
 						mImgBtnLocationFilter.setImageBitmap(bm);
 					}
-					if(isFavoriteFilter){
-						isFavoriteFilter =false;
+					if (isFavoriteFilter) {
+						isFavoriteFilter = false;
 						Bitmap bm = BitmapFactory.decodeResource(getResources(),
 								R.drawable.ic_chat_favorite);
 						mImgBtnFavoriteFilter.setImageBitmap(bm);
 					}
-					
+
 					searchString = data;
 					MainActivity activity = (MainActivity) callback;
 					activity.setPublicSearch(true);
@@ -395,7 +404,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 							R.drawable.ic_location_gray);
 					mImgBtnLocationFilter.setImageBitmap(bm);
 					isLocationFilter = false;
-					
+
 					isFavoriteFilter = false;
 					Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
 							R.drawable.ic_chat_favorite);
@@ -906,13 +915,13 @@ public class ChatListGroupPublicFragment extends Fragment {
 				chatLoads.remove(newChatLoad);
 				chatLoads.add(0, newChatLoad);
 
-				if (!isLocationFilter  && !isFavoriteFilter) {
+				if (!isLocationFilter && !isFavoriteFilter) {
 					mListAdapter.clear();
 					mListAdapter.addAll(chatLoads);
 					mListView.setSelection(0);
 				}
 			} else {
-				if (!isLocationFilter  && !isFavoriteFilter) {
+				if (!isLocationFilter && !isFavoriteFilter) {
 					mListAdapter.clear();
 					mListAdapter.addAll(chatLoads);
 				}

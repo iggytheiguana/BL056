@@ -70,7 +70,9 @@ public class ResponseFactory {
             case SET_SEARCHABLE:
             	return new SetSearchableResponse().parse(jsonObject);
             case DELETE_MESSAGE:
-            	return new DeleteMessageResponse().parse(jsonObject);
+            	return new DeleteMessageResponse().parse(getResult(jsonObject));
+            case DELETE_CHAT:
+            	return new DeleteChatResponse().parse(getResult(jsonObject));
             default:
                 throw new ResponseTypeError();
         }

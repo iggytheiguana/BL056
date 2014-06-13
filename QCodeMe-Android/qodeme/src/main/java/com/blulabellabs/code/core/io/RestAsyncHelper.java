@@ -430,10 +430,10 @@ public class RestAsyncHelper implements RestClient {
 	 * @param contactId
 	 * @param callback
 	 */
-	public void contactRemove(String contactId, RestListener callback) {
+	public void contactRemove(String qr, long contactId,  RestListener callback) {
 		RequestParams params = new RequestParams();
 		params.put(RestKeyMap.CONTACT_ID, String.valueOf(contactId));
-		params.put(RestKeyMap.QRCODE, String.valueOf(contactId));
+		params.put(RestKeyMap.QRCODE, String.valueOf(qr));
 		post(RequestType.CONTACT_REMOVE, params, callback);
 	}
 
@@ -520,5 +520,11 @@ public class RestAsyncHelper implements RestClient {
 		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
 		params.put("is_searchable", String.valueOf(is_searchable));
 		post(RequestType.SET_SEARCHABLE, params, callback);
+	}
+	
+	public void deleteChat(long chat_id, RestListener callback) {
+		RequestParams params = new RequestParams();
+		params.put(RestKeyMap.CHAT_ID, String.valueOf(chat_id));
+		post(RequestType.DELETE_CHAT, params, callback);
 	}
 }

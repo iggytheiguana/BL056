@@ -17,7 +17,7 @@ public interface RestClient {
     void chatMessage(long chatId, String message, long date,String photoUrl, int hasPhoto,int replyToId,int isFlagged,String senderName, double latitude, double longitude, RestListener callback);
     void chatLoad(long chatId, int page, int limit, RestListener callback);
     void contactAdd(String contactCqroce,double latitude, double longitude, RestListener callback);
-    void contactRemove(String contactId, RestListener callback);
+    void contactRemove(String qr, long contactId, RestListener callback);
     void chatDropMember(long chatId, String memberQrcode, RestListener callback);
     void lookup(String searchQuery, int type, int pageNo, RestListener callback);
     void registerToken(String gcmToken, RestListener callback);
@@ -25,4 +25,5 @@ public interface RestClient {
     void setFavorite(String date, int is_favorite, long chatId, RestListener callback);
     void setSearchable(int is_searchable, long chatId, RestListener callback);
     void clearSearchChats(int type, RestListener callback);
+    void deleteChat(long chatId, RestListener callback);
 }

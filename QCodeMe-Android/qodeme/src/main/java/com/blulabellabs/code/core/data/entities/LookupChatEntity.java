@@ -17,6 +17,7 @@ public class LookupChatEntity extends ChatEntity {
 	private String description;
 	private String longitude;
 	private String latitude;
+	private int is_favorite = 0;
 
 	public String getStatus() {
 		return status;
@@ -83,6 +84,7 @@ public class LookupChatEntity extends ChatEntity {
 		description = jsonObject.getString(RestKeyMap.DESCRIPTION);
 		latitude = jsonObject.getString(RestKeyMap.LATITUDE);
 		longitude = jsonObject.getString(RestKeyMap.LONGITUDE);
+		is_favorite = jsonObject.getInt("is_favorite");
 
 		try {
 			number_of_member = Integer.parseInt(jsonObject.getString("number_of_members"));
@@ -101,5 +103,13 @@ public class LookupChatEntity extends ChatEntity {
 
 	public String getTags() {
 		return tags;
+	}
+
+	public void setIs_favorite(int is_favorite) {
+		this.is_favorite = is_favorite;
+	}
+
+	public int getIs_favorite() {
+		return is_favorite;
 	}
 }

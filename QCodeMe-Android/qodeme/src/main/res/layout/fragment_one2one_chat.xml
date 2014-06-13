@@ -193,6 +193,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textView_member"
         android:background="@drawable/line_horizontal" />
+    
+     <com.blulabellabs.code.ui.common.TextViewMedium
+        android:id="@+id/textView_deleteBanner"
+        style="@style/TextView.Chat.Name"
+        android:layout_width="match_parent"
+        android:layout_below="@id/img_memberline"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:paddingLeft="10dp"
+        android:text="@string/this_conversation_is_closed"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_main"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+     
     <!-- <LinearLayout -->
     <!-- android:id="@+id/linear_message" -->
     <!-- android:layout_width="match_parent" -->
@@ -205,7 +221,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linear_status_update"
-        android:layout_below="@+id/img_memberline"
+        android:layout_below="@+id/textView_deleteBanner"
         android:layout_marginLeft="10dp"
         tools:padding="5dp"
         tools:text_size="18sp" />
@@ -215,7 +231,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linear_status_update"
-        android:layout_below="@+id/img_memberline"
+        android:layout_below="@+id/textView_deleteBanner"
         android:cacheColorHint="@android:color/transparent"
         android:divider="@null"
         android:listSelector="@android:color/transparent" />

@@ -102,7 +102,8 @@ public class ChatInsideGroupFragment extends Fragment {
 	private TextView mDate;
 	private TextView mLocation;
 	private LinearLayout mLinearLayStatusUpdte;
-	private TextView mTextViewMembers, mTextViewMembersLabel, mTextViewNumFavorite;
+	private TextView mTextViewMembers, mTextViewMembersLabel, mTextViewNumFavorite,
+			mTextViewDeleteBaner;
 	private ImageView mImgMemberBottomLine;
 
 	private boolean mFirstUpdate = true;
@@ -206,15 +207,16 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
 		mTextViewNumFavorite = (TextView) getView().findViewById(R.id.textView_totalFavorite);
+		mTextViewDeleteBaner = (TextView) getView().findViewById(R.id.textView_deleteBanner);
 
-		
 		mImgFavorite.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				int is_favorite = 1;
-//				MaiNACTIVITY ACTIVITY = (MAINACTIVITY) GETACTIVITY();
-//				CHATLoad chatLoad = activity.getChatLoad(getArguments().getLong(CHAT_ID));
+				// MaiNACTIVITY ACTIVITY = (MAINACTIVITY) GETACTIVITY();
+				// CHATLoad chatLoad =
+				// activity.getChatLoad(getArguments().getLong(CHAT_ID));
 				if (chatLoad != null) {
 					int num_of_favorite = chatLoad.number_of_likes;
 					if (chatLoad.is_favorite == 1) {
@@ -235,7 +237,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				}
 			}
 		});
-		
+
 		updateUi();
 
 		if (QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
@@ -263,6 +265,9 @@ public class ChatInsideGroupFragment extends Fragment {
 						String status = v.getText().toString().trim();
 
 						mStatus.setText(status);
+
+						callback.sendMessage(chatLoad.chatId, status, "", 2, -1, 0, 0,
+								QodemePreferences.getInstance().getPublicName(), "");
 
 						int updated = chatLoad.updated;
 						getActivity().getContentResolver().update(
@@ -744,73 +749,6 @@ public class ChatInsideGroupFragment extends Fragment {
 
 			mListAdapter.clear();
 
-			// List<Message> listData = callback.getChatMessages(getChatId());
-			// listData = sortMessages(listData);
-			// boolean isContainUnread = false;
-			// if (listData != null) {
-			// List<Message> replyMessage = new ArrayList<Message>();
-			// final List<Message> tempMessage = new ArrayList<Message>();
-			// tempMessage.addAll(listData);
-			//
-			// for (Message message : tempMessage) {
-			// if (message.replyTo_id > 0) {
-			// replyMessage.add(message);
-			// listData.remove(message);
-			// }
-			// if (message.state == 3) {
-			// isContainUnread = true;
-			// }
-			// }
-			//
-			// HashMap<Long, List<Message>> map = new HashMap<Long,
-			// List<Message>>();
-			// ArrayList<Long> chatId = new ArrayList<Long>();
-			// for (Message m : listData) {
-			//
-			// List<Message> arrayList = new ArrayList<Message>();
-			// for (Message message : replyMessage) {
-			// if (message.replyTo_id == m.messageId) {
-			// arrayList.add(message);
-			// }
-			// }
-			// arrayList = sortMessages(arrayList);
-			// if (arrayList.size() > 0) {
-			// if (arrayList.size() > 1) {
-			// int i = 0;
-			// for (Message me : arrayList) {
-			// if (i == 0)
-			// me.isLast = true;
-			// else if (i == arrayList.size() - 1)
-			// me.isFirst = true;
-			// else {
-			// me.isFirst = true;
-			// me.isLast = true;
-			// }
-			// i++;
-			// }
-			// }
-			//
-			// map.put(m.messageId, arrayList);
-			// chatId.add(m.messageId);
-			// }
-			//
-			// }
-			// for (Long id : chatId) {
-			// int i = 0;
-			// for (Message m : listData) {
-			// if (m.messageId == id) {
-			// if (i < listData.size()) {
-			// listData.addAll(i + 1, map.get(id));
-			// } else {
-			// listData.addAll(map.get(id));
-			// // break;
-			// }
-			// break;
-			// }
-			// i++;
-			// }
-			// }
-			// }
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			if (mListAdapter.getCount() > 0)
 				mListView.setSelection(mListAdapter.getCount() - 1);
@@ -898,15 +836,10 @@ public class ChatInsideGroupFragment extends Fragment {
 								Contact c = callback.getContact(memberQr);
 								if (c != null) {
 									nameList.add(c.title);
-									// if (i == 0)
-									// memberNames += c.title + "";
-									// else
-									// memberNames += ", " + c.title + "";
 								} else {
 									nameList.add("User");
 								}
 							}
-							// i++;
 						}
 						Collections.sort(nameList);
 						for (String memberQr : nameList) {
@@ -931,6 +864,17 @@ public class ChatInsideGroupFragment extends Fragment {
 					mTextViewMembersLabel.setVisibility(View.GONE);
 				}
 			}
+			
+
+			if (chatLoad.is_deleted == 1) {
+				mTextViewDeleteBaner.setVisibility(View.VISIBLE);
+				mBtnImageSend.setVisibility(View.INVISIBLE);
+				mBtnImageSendBottom.setVisibility(View.INVISIBLE);
+				mSendButton.setVisibility(View.INVISIBLE);
+				mMessageField.setVisibility(View.INVISIBLE);
+				mImgFavorite.setClickable(false);
+			}
+
 		}
 	}
 
@@ -971,18 +915,6 @@ public class ChatInsideGroupFragment extends Fragment {
 
 	public void setArgument(ChatLoad c) {
 
-		// Bundle args = new Bundle();
-		// args.putLong(CHAT_ID, c.chatId);
-		// args.putInt(CHAT_COLOR, c.color);
-		// // args.putString(CHAT_NAME, c.title);
-		// args.putString(QRCODE, c.qrcode);
-		// args.putString(STATUS, c.status);
-		// args.putString(DESCRIPTION, c.description);
-		// // args.putString(LOCATION, c.location);
-		// // args.putString(DATE, c.date);
-		// args.putBoolean(FIRST_UPDATE, getFirstUpdate());
-		//
-		// setArguments(args);
 		this.chatLoad = c;
 	}
 

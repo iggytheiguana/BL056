@@ -316,6 +316,13 @@ public class QodemeContract {
 			return contentValues;
 		}
 
+		public static ContentValues deleteContact() {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(CONTACT_IS_DELETED, 1);
+
+			return contentValues;
+		}
+
 		public static ContentValues acceptContactValues(int updated) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(CONTACT_STATE, State.APPRUVED);
@@ -543,6 +550,13 @@ public class QodemeContract {
 		public static ContentValues updateSearchabel(int is_searchable) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(CHAT_IS_SEARCHABLE, is_searchable);
+
+			return contentValues;
+		}
+
+		public static ContentValues deleteChat() {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(CHAT_IS_DELETED, 1);
 
 			return contentValues;
 		}

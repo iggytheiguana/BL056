@@ -37,6 +37,7 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
@@ -248,7 +249,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
 
-			if (chatLoad.is_locked != 1)
+			if (chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
 				showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mChatLoad);
@@ -416,398 +417,454 @@ public class ChatListGroupItem extends RelativeLayout implements
 	@Override
 	public void fill(ChatLoad t) {
 
-		mChatLoad = t;
+		try {
+			mChatLoad = t;
 
-		if (t.is_favorite == 1) {
-			Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_chat_favorite);
-			getFavoriteBtn().setImageBitmap(bm);
-		} else {
-			Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_chat_favorite_h);
-			getFavoriteBtn().setImageBitmap(bm);
-		}
-		getFavoriteBtn().setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				int num_of_favorite = mChatLoad.number_of_likes;
-				int is_favorite = 1;
-				if (mChatLoad.is_favorite == 1) {
-					is_favorite = 2;
-					num_of_favorite--;
-				} else {
-					is_favorite = 1;
-					if (num_of_favorite <= 0) {
-						num_of_favorite = 1;
-					} else
-						num_of_favorite++;
-				}
-
-				getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-						QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
-				SyncHelper.requestManualSync();
-			}
-		});
-
-		if (t.type == 1) {
-			getMemberListView().setVisibility(VISIBLE);
-			getMemberListBottomLine().setVisibility(VISIBLE);
-
-			String memberNames = "";
-			if (t.members != null) {
-				int i = 0;
-				ArrayList<String> nameList = new ArrayList<String>();
-				for (String memberQr : t.members) {
-					if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
-						Contact c = mCallback.getContact(memberQr);
-						if (c != null) {
-							nameList.add(c.title);
-							// if (i == 0)
-							// memberNames += c.title + "";
-							// else
-							// memberNames += ", " + c.title + "";
-						} else {
-							nameList.add("User");
-						}
-					}
-					// i++;
-				}
-				Collections.sort(nameList);
-				for (String memberQr : nameList) {
-					// Contact c = callback.getContact(memberQr);
-					// if (c != null) {
-					if (i > 5) {
-						memberNames += "...";
-						break;
-					}
-					if (i == 0)
-						memberNames += memberQr + "";
-					else
-						memberNames += ", " + memberQr + "";
-					// }
-					i++;
-				}
-			}
-			getMembersTextView().setText(memberNames);
-		}
-		if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId) {
-			getTitleEditText().setVisibility(VISIBLE);
-			getTitleEditText().setText(mChatLoad.title);
-			getName().setVisibility(GONE);
-			getSendMessage().setVisibility(View.VISIBLE);
-			getMessageEdit().setVisibility(VISIBLE);
-			if (mChatLoad.title.trim().length() > 0) {
+			if (t.is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				getFavoriteBtn().setImageBitmap(bm);
 			} else {
-				getTitleEditText().setFocusable(true);
-				getTitleEditText().requestFocus();
-				// InputMethodManager
-				// inputMethodManager=(InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-				// inputMethodManager.toggleSoftInputFromWindow(getTitleEditText().getWindowToken(),
-				// InputMethodManager.SHOW_FORCED, 0);
-
-				getTitleEditText().post(new Runnable() {
-					@Override
-					public void run() {
-						getTitleEditText().requestFocus();
-						Helper.showKeyboard(getContext(), getTitleEditText());
-					}
-				});
-				getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
-
-					@Override
-					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-						if (actionId == EditorInfo.IME_ACTION_SEARCH
-								|| actionId == EditorInfo.IME_ACTION_DONE
-								|| event.getAction() == KeyEvent.ACTION_DOWN
-								&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-
-							String title = v.getText().toString().trim();
-
-							int updated = mChatLoad.updated;
-							getContext().getContentResolver().update(
-									QodemeContract.Chats.CONTENT_URI,
-									QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "",
-											"", updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
-									DbUtils.getWhereArgsForId(mChatLoad.chatId));
-							// setChatInfo(chatload.chatId, title, null, null,
-							// null,
-							// null, null);
-							mChatLoad.title = title;
-							setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
-									mChatLoad.description, mChatLoad.status, mChatLoad.is_locked,
-									mChatLoad.title, mChatLoad.latitude, mChatLoad.longitude);
-
-							Helper.hideKeyboard(getContext(), getTitleEditText());
-							// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
-							return true;
-						}
-						return false;
-					}
-				});
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite_h);
+				getFavoriteBtn().setImageBitmap(bm);
 			}
-		} else {
-			getTitleEditText().setVisibility(GONE);
-			getName().setVisibility(VISIBLE);
-			getTitleEditText().setText("");
-		}
+			getFavoriteBtn().setOnClickListener(new OnClickListener() {
 
-		final String oponentQr = mChatLoad.qrcode;
-		final int oponentColor = mChatLoad.color == 0 ? Color.GRAY : mChatLoad.color;
-		final int myColor = context.getResources().getColor(R.color.text_chat_name);
-		getName().setText(mChatLoad.title != null ? mChatLoad.title : "");
-		// getName().setTextColor(oponentColor);
-		setCornerColor(mCallback.getNewMessagesCount(mChatLoad.chatId), oponentColor);
-		// getName().setTypeface(mCallback.getFont(Fonts.ROBOTO_BOLD));
-		if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
-			// if (ce.date != null) {
-			// SimpleDateFormat fmtOut = new
-			// SimpleDateFormat("MM/dd/yy HH:mm a");
-			// String dateStr = fmtOut.format(new Date(Converter
-			// .getCrurentTimeFromTimestamp(ce.date)));
-			// getDate().setText(dateStr + ",");
-			// } else
-			// getDate().setText("");
-			// getLocation().setText(ce.location);
-		} else {
-			getDate().setText("");
-			getLocation().setText("");
-		}
-
-		// List preparation
-		List<Message> listForAdapter = Lists.newArrayList();
-		List<Message> listData = mCallback.getMessages(mChatLoad.chatId);
-		listData = sortMessages(listData);
-		boolean isContainUnread = false;
-		if (listData != null) {
-			List<Message> replyMessage = new ArrayList<Message>();
-			final List<Message> tempMessage = new ArrayList<Message>();
-			tempMessage.addAll(listData);
-
-			for (Message message : tempMessage) {
-				if (message.replyTo_id > 0) {
-					replyMessage.add(message);
-					listData.remove(message);
-				}
-				if (message.state == 3) {
-					Contact contact = mCallback.getContact(message.qrcode);
-					if (contact != null
-							&& contact.state != QodemeContract.Contacts.State.BLOCKED_BY)
-						isContainUnread = true;
-				}
-			}
-
-			HashMap<Long, List<Message>> map = new HashMap<Long, List<Message>>();
-			ArrayList<Long> chatId = new ArrayList<Long>();
-			for (Message m : listData) {
-
-				List<Message> arrayList = new ArrayList<Message>();
-				for (Message message : replyMessage) {
-					if (message.replyTo_id == m.messageId) {
-						arrayList.add(message);
+				@Override
+				public void onClick(View v) {
+					int num_of_favorite = mChatLoad.number_of_likes;
+					int is_favorite = 1;
+					if (mChatLoad.is_favorite == 1) {
+						is_favorite = 2;
+						num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
 					}
-				}
-				arrayList = sortMessages(arrayList);
-				if (arrayList.size() > 0) {
-					if (arrayList.size() > 1) {
-						int i = 0;
-						for (Message me : arrayList) {
-							if (i == 0)
-								me.isLast = true;
-							else if (i == arrayList.size() - 1)
-								me.isFirst = true;
-							else {
-								me.isFirst = true;
-								me.isLast = true;
-							}
-							i++;
-						}
-					}
-
-					map.put(m.messageId, arrayList);
-					chatId.add(m.messageId);
-				}
-
-			}
-			for (Long id : chatId) {
-				int i = 0;
-				for (Message m : listData) {
-					if (m.messageId == id) {
-						if (i < listData.size()) {
-							listData.addAll(i + 1, map.get(id));
+					if (mChatLoad.isSearchResult) {
+						mChatLoad.number_of_likes = num_of_favorite;
+						mChatLoad.is_favorite = is_favorite;
+						if (is_favorite == 1) {
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_chat_favorite);
+							getFavoriteBtn().setImageBitmap(bm);
 						} else {
-							listData.addAll(map.get(id));
-							// break;
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_chat_favorite_h);
+							getFavoriteBtn().setImageBitmap(bm);
 						}
+
+						String date = Converter.getCurrentGtmTimestampString();
+						RestAsyncHelper.getInstance().setFavorite(date, is_favorite,
+								mChatLoad.chatId, new RestListener<SetFavoriteResponse>() {
+
+									@Override
+									public void onResponse(SetFavoriteResponse response) {
+
+									}
+
+									@Override
+									public void onServiceError(RestError error) {
+
+									}
+								});
+					} else {
+						getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+								QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
+						SyncHelper.requestManualSync();
+					}
+				}
+			});
+
+			if (t.type == 1) {
+				getMemberListView().setVisibility(VISIBLE);
+				getMemberListBottomLine().setVisibility(VISIBLE);
+
+				String memberNames = "";
+				if (t.members != null) {
+					int i = 0;
+					ArrayList<String> nameList = new ArrayList<String>();
+					for (String memberQr : t.members) {
+						if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+							Contact c = mCallback.getContact(memberQr);
+							if (c != null) {
+								nameList.add(c.title);
+								// if (i == 0)
+								// memberNames += c.title + "";
+								// else
+								// memberNames += ", " + c.title + "";
+							} else {
+								nameList.add("User");
+							}
+						}
+						// i++;
+					}
+					Collections.sort(nameList);
+					for (String memberQr : nameList) {
+						// Contact c = callback.getContact(memberQr);
+						// if (c != null) {
+						if (i > 5) {
+							memberNames += "...";
+							break;
+						}
+						if (i == 0)
+							memberNames += memberQr + "";
+						else
+							memberNames += ", " + memberQr + "";
+						// }
+						i++;
+					}
+				}
+				getMembersTextView().setText(memberNames);
+			}
+			if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId) {
+				getTitleEditText().setVisibility(VISIBLE);
+				getTitleEditText().setText(mChatLoad.title);
+				getName().setVisibility(GONE);
+				getSendMessage().setVisibility(View.VISIBLE);
+				getMessageEdit().setVisibility(VISIBLE);
+				if (mChatLoad.title.trim().length() > 0) {
+				} else {
+					getTitleEditText().setFocusable(true);
+					getTitleEditText().requestFocus();
+					// InputMethodManager
+					// inputMethodManager=(InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+					// inputMethodManager.toggleSoftInputFromWindow(getTitleEditText().getWindowToken(),
+					// InputMethodManager.SHOW_FORCED, 0);
+
+					getTitleEditText().post(new Runnable() {
+						@Override
+						public void run() {
+							getTitleEditText().requestFocus();
+							Helper.showKeyboard(getContext(), getTitleEditText());
+						}
+					});
+					getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
+
+						@Override
+						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+							if (actionId == EditorInfo.IME_ACTION_SEARCH
+									|| actionId == EditorInfo.IME_ACTION_SEND
+									|| actionId == EditorInfo.IME_ACTION_DONE
+									|| event.getAction() == KeyEvent.ACTION_DOWN
+									&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+								String title = v.getText().toString().trim();
+
+								int updated = mChatLoad.updated;
+								getContext().getContentResolver().update(
+										QodemeContract.Chats.CONTENT_URI,
+										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
+												"", "", updated, 0),
+										QodemeContract.Chats.CHAT_ID + "=?",
+										DbUtils.getWhereArgsForId(mChatLoad.chatId));
+								// setChatInfo(chatload.chatId, title, null,
+								// null,
+								// null,
+								// null, null);
+								mChatLoad.title = title;
+								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
+										mChatLoad.description, mChatLoad.status,
+										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
+										mChatLoad.longitude);
+
+								Helper.hideKeyboard(getContext(), getTitleEditText());
+								// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
+								return true;
+							}
+							return false;
+						}
+					});
+				}
+			} else {
+				getTitleEditText().setVisibility(GONE);
+				getName().setVisibility(VISIBLE);
+				getTitleEditText().setText("");
+			}
+
+			final String oponentQr = mChatLoad.qrcode;
+			final int oponentColor = mChatLoad.color == 0 ? Color.GRAY : mChatLoad.color;
+			final int myColor = context.getResources().getColor(R.color.text_chat_name);
+			getName().setText(mChatLoad.title != null ? mChatLoad.title : "");
+			// getName().setTextColor(oponentColor);
+			setCornerColor(mCallback.getNewMessagesCount(mChatLoad.chatId), oponentColor);
+			// getName().setTypeface(mCallback.getFont(Fonts.ROBOTO_BOLD));
+			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
+				// if (ce.date != null) {
+				// SimpleDateFormat fmtOut = new
+				// SimpleDateFormat("MM/dd/yy HH:mm a");
+				// String dateStr = fmtOut.format(new Date(Converter
+				// .getCrurentTimeFromTimestamp(ce.date)));
+				// getDate().setText(dateStr + ",");
+				// } else
+				// getDate().setText("");
+				// getLocation().setText(ce.location);
+			} else {
+				getDate().setText("");
+				getLocation().setText("");
+			}
+
+			// List preparation
+			List<Message> listForAdapter = Lists.newArrayList();
+			List<Message> listData = Lists.newArrayList();
+//			if (mChatLoad.isSearchResult) {
+//				for(Message msg:mChatLoad.messages)
+//					listData.add(msg);
+//			}else{
+				listData = mCallback.getMessages(mChatLoad.chatId);
+//			}
+			listData = sortMessages(listData);
+			boolean isContainUnread = false;
+			if (listData != null) {
+				List<Message> replyMessage = new ArrayList<Message>();
+				final List<Message> tempMessage = new ArrayList<Message>();
+				tempMessage.addAll(listData);
+
+				for (Message message : tempMessage) {
+					if (message.replyTo_id > 0) {
+						replyMessage.add(message);
+						listData.remove(message);
+					}
+					if (message.state == 3) {
+						Contact contact = mCallback.getContact(message.qrcode);
+						if (contact != null
+								&& contact.state != QodemeContract.Contacts.State.BLOCKED_BY)
+							isContainUnread = true;
+					}
+				}
+
+				HashMap<Long, List<Message>> map = new HashMap<Long, List<Message>>();
+				ArrayList<Long> chatId = new ArrayList<Long>();
+				for (Message m : listData) {
+
+					List<Message> arrayList = new ArrayList<Message>();
+					for (Message message : replyMessage) {
+						if (message.replyTo_id == m.messageId) {
+							arrayList.add(message);
+						}
+					}
+					arrayList = sortMessages(arrayList);
+					if (arrayList.size() > 0) {
+						if (arrayList.size() > 1) {
+							int i = 0;
+							for (Message me : arrayList) {
+								if (i == 0)
+									me.isLast = true;
+								else if (i == arrayList.size() - 1)
+									me.isFirst = true;
+								else {
+									me.isFirst = true;
+									me.isLast = true;
+								}
+								i++;
+							}
+						}
+
+						map.put(m.messageId, arrayList);
+						chatId.add(m.messageId);
+					}
+
+				}
+				for (Long id : chatId) {
+					int i = 0;
+					for (Message m : listData) {
+						if (m.messageId == id) {
+							if (i < listData.size()) {
+								listData.addAll(i + 1, map.get(id));
+							} else {
+								listData.addAll(map.get(id));
+								// break;
+							}
+							break;
+						}
+						i++;
+					}
+				}
+				// for (Message message : replyMessage) {
+				// int i = 0;
+				// for (Message m : listData) {
+				// if (message.replyTo_id == m.messageId) {
+				// if (i != listData.size() - 1) {
+				// if (listData.get(i + 1).replyTo_id > 0
+				// && listData.get(i + 1).replyTo_id == message.replyTo_id) {
+				// } else
+				// listData.add(i + 1, message);
+				// } else
+				// listData.add(message);
+				// break;
+				// }
+				// i++;
+				// }
+				// }
+			}
+			ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
+					context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
+					new ChatListSubAdapterCallback() {
+						@Override
+						public int getColor(String senderQrcode) {
+							// if (TextUtils.equals(oponentQr, senderQrcode))
+							// return oponentColor;
+							// else
+							if (QodemePreferences.getInstance().getQrcode().equals(senderQrcode))
+								return myColor;
+							else {
+								Contact contact = mCallback.getContact(senderQrcode);
+								if (contact != null)
+									return mCallback.getContact(senderQrcode).color;
+								else
+									return myColor;
+							}
+
+						}
+
+						@Override
+						public Typeface getFont(Fonts font) {
+							return mCallback.getFont(font);
+						}
+
+						@Override
+						public Contact getContact(String senderQrcode) {
+							return mCallback.getContact(senderQrcode);
+						}
+
+						@Override
+						public ChatLoad getChatLoad(long chatId) {
+							return mCallback.getChatLoad(chatId);
+						}
+					}, callbackChatListInsideFragmentCallback);
+
+			if (isContainUnread)
+				getChatItem().setBackgroundResource(R.drawable.bg_shadow);
+			else {
+				getChatItem().setBackgroundResource(R.drawable.bg_box);
+			}
+			if (listData != null)
+				listAdapter.addAll(listData);
+			getList().setAdapter(listAdapter);
+			getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+			getList().setStackFromBottom(true);
+			// getList().setDisabled(true);
+			getList().setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+
+					return gestureDetector.onTouchEvent(event);
+				}
+			});
+
+			height = mCallback.getChatHeight(mChatLoad.chatId);
+			ListView.LayoutParams lParams = new ListView.LayoutParams(
+					ListView.LayoutParams.MATCH_PARENT, height);
+			setLayoutParams(lParams);
+			getDragView().setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					final int Y = (int) event.getRawY();
+					switch (event.getAction() & MotionEvent.ACTION_MASK) {
+					case MotionEvent.ACTION_DOWN: {
+						ListView.LayoutParams lParams = getLayoutParams();
+						_yDelta = Y;
+						_startY = lParams.height;
+						mCallback.setDragModeEnabled(true);
+						getDragImage().setImageResource(R.drawable.chat_panel_resizer_pressed);
+						return true;
+					}
+					case MotionEvent.ACTION_MOVE: {
+						ListView.LayoutParams lParams = getLayoutParams();
+						int delta = _startY + Y - _yDelta;
+						lParams.height = delta < minContentSizePx ? minContentSizePx
+								: delta > maxContentSizePx ? maxContentSizePx : delta;
+						getView().setLayoutParams(lParams);
+						getView().invalidate();
+						return true;
+					}
+					case MotionEvent.ACTION_CANCEL:
+						cancelMotion();
+						break;
+					case MotionEvent.ACTION_UP:
+						cancelMotion();
+						break;
+
+					case MotionEvent.ACTION_OUTSIDE:
+						cancelMotion();
 						break;
 					}
-					i++;
+					return false;
 				}
-			}
-			// for (Message message : replyMessage) {
-			// int i = 0;
-			// for (Message m : listData) {
-			// if (message.replyTo_id == m.messageId) {
-			// if (i != listData.size() - 1) {
-			// if (listData.get(i + 1).replyTo_id > 0
-			// && listData.get(i + 1).replyTo_id == message.replyTo_id) {
-			// } else
-			// listData.add(i + 1, message);
-			// } else
-			// listData.add(message);
-			// break;
-			// }
-			// i++;
-			// }
-			// }
-		}
-		ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
-				context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
-				new ChatListSubAdapterCallback() {
-					@Override
-					public int getColor(String senderQrcode) {
-						// if (TextUtils.equals(oponentQr, senderQrcode))
-						// return oponentColor;
-						// else
-						if (QodemePreferences.getInstance().getQrcode().equals(senderQrcode))
-							return myColor;
-						else {
-							Contact contact = mCallback.getContact(senderQrcode);
-							if (contact != null)
-								return mCallback.getContact(senderQrcode).color;
-							else
-								return myColor;
-						}
 
-					}
-
-					@Override
-					public Typeface getFont(Fonts font) {
-						return mCallback.getFont(font);
-					}
-
-					@Override
-					public Contact getContact(String senderQrcode) {
-						return mCallback.getContact(senderQrcode);
-					}
-
-					@Override
-					public ChatLoad getChatLoad(long chatId) {
-						return mCallback.getChatLoad(chatId);
-					}
-				}, callbackChatListInsideFragmentCallback);
-
-		if (isContainUnread)
-			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
-		else {
-			getChatItem().setBackgroundResource(R.drawable.bg_box);
-		}
-		if (listData != null)
-			listAdapter.addAll(listData);
-		getList().setAdapter(listAdapter);
-		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-		getList().setStackFromBottom(true);
-		// getList().setDisabled(true);
-		getList().setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-
-				return gestureDetector.onTouchEvent(event);
-			}
-		});
-
-		height = mCallback.getChatHeight(mChatLoad.chatId);
-		ListView.LayoutParams lParams = new ListView.LayoutParams(
-				ListView.LayoutParams.MATCH_PARENT, height);
-		setLayoutParams(lParams);
-		getDragView().setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				final int Y = (int) event.getRawY();
-				switch (event.getAction() & MotionEvent.ACTION_MASK) {
-				case MotionEvent.ACTION_DOWN: {
-					ListView.LayoutParams lParams = getLayoutParams();
-					_yDelta = Y;
-					_startY = lParams.height;
-					mCallback.setDragModeEnabled(true);
-					getDragImage().setImageResource(R.drawable.chat_panel_resizer_pressed);
-					return true;
+				private void cancelMotion() {
+					mCallback.setChatHeight(mChatLoad.chatId, getLayoutParams().height);
+					mCallback.setDragModeEnabled(false);
+					getDragImage().setImageResource(R.drawable.chat_panel_resizer);
 				}
-				case MotionEvent.ACTION_MOVE: {
-					ListView.LayoutParams lParams = getLayoutParams();
-					int delta = _startY + Y - _yDelta;
-					lParams.height = delta < minContentSizePx ? minContentSizePx
-							: delta > maxContentSizePx ? maxContentSizePx : delta;
-					getView().setLayoutParams(lParams);
-					getView().invalidate();
-					return true;
+
+				private ListView.LayoutParams getLayoutParams() {
+					return (ListView.LayoutParams) getView().getLayoutParams();
 				}
-				case MotionEvent.ACTION_CANCEL:
-					cancelMotion();
-					break;
-				case MotionEvent.ACTION_UP:
-					cancelMotion();
-					break;
 
-				case MotionEvent.ACTION_OUTSIDE:
-					cancelMotion();
-					break;
+			});
+
+			if (ChatFocusSaver.getFocusedChatId() == mChatLoad.chatId) {
+				showMessage();
+			}
+
+			getSendMessage().setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					sendMessage();
 				}
-				return false;
+			});
+
+			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
+
+			if (chatLoad != null && chatLoad.is_locked == 1
+					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode) ) {
+				getSendImage().setVisibility(View.GONE);
+				getFavoriteBtn().setClickable(false);
+				getTitleEditText().setEnabled(false);
+			} else {
+				getSendImage().setVisibility(View.VISIBLE);
+				getFavoriteBtn().setClickable(true);
+				getTitleEditText().setEnabled(true);
+			}
+			if(chatLoad != null && chatLoad.is_deleted == 1){
+				getSendImage().setVisibility(View.GONE);
+				getFavoriteBtn().setClickable(false);
+				getTitleEditText().setEnabled(false);
+				getSendMessage().setVisibility(View.GONE);
+				getMessageEdit().setVisibility(View.GONE);
+				getShareChatBtn().setVisibility(View.GONE);
 			}
 
-			private void cancelMotion() {
-				mCallback.setChatHeight(mChatLoad.chatId, getLayoutParams().height);
-				mCallback.setDragModeEnabled(false);
-				getDragImage().setImageResource(R.drawable.chat_panel_resizer);
-			}
+			
+			getSendImage().setOnClickListener(new OnClickListener() {
 
-			private ListView.LayoutParams getLayoutParams() {
-				return (ListView.LayoutParams) getView().getLayoutParams();
-			}
+				@Override
+				public void onClick(View v) {
+					MainActivity activity = (MainActivity) v.getContext();
+					activity.setCurrentChatId(mChatLoad.chatId);
+					activity.takePhoto();
+				}
+			});
 
-		});
+			getShareChatBtn().setOnClickListener(new OnClickListener() {
 
-		if (ChatFocusSaver.getFocusedChatId() == mChatLoad.chatId) {
-			showMessage();
+				@Override
+				public void onClick(View v) {
+					MainActivity activity = (MainActivity) v.getContext();
+					activity.setCurrentChatId(mChatLoad.chatId);
+					activity.addMemberInExistingChat();
+				}
+			});
+		} catch (Exception e) {
 		}
-
-		getSendMessage().setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sendMessage();
-			}
-		});
-
-		ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
-
-		if (chatLoad != null && chatLoad.is_locked == 1
-				&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
-			getSendImage().setVisibility(View.GONE);
-		} else {
-			getSendImage().setVisibility(View.VISIBLE);
-		}
-
-		getSendImage().setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				MainActivity activity = (MainActivity) v.getContext();
-				activity.setCurrentChatId(mChatLoad.chatId);
-				activity.takePhoto();
-			}
-		});
-
-		getShareChatBtn().setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				MainActivity activity = (MainActivity) v.getContext();
-				activity.setCurrentChatId(mChatLoad.chatId);
-				activity.addMemberInExistingChat();
-			}
-		});
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,

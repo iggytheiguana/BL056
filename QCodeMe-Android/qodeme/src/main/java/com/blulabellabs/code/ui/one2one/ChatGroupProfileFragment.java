@@ -48,6 +48,7 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.DeleteChatResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetSearchableResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
@@ -398,11 +399,22 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 								.getFromLocation(latLonCity.getLat() / 1E6,
 										latLonCity.getLon() / 1E6, 1);
 						if (!addresses.isEmpty()) {
-							return addresses.get(0).getLocality() + ", "
-									+ addresses.get(0).getCountryName();
+							String city = addresses.get(0).getLocality();
+							String country = addresses.get(0).getCountryName();
+							String add = null;
+							if (city != null && !city.equals("") && !city.equals("null"))
+								add = city;
+							if (country != null && !country.equals("") && !country.equals("null"))
+								if (add != null)
+									add += ", " + country;
+								else
+									add = country;
+
+							return add;
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
+					} catch (Exception e) {
 					}
 
 					return null;
@@ -547,6 +559,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			}
 
 			if (getChatload() != null) {
+
 				if (getChatload().is_locked == 1) {
 					mImgBtnLocked.setImageBitmap(new BitmapFactory().decodeResource(getResources(),
 							R.drawable.ic_lock_close));
@@ -706,6 +719,17 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		if (getChatload().is_deleted == 1) {
+			mBtnDelete.setVisibility(View.INVISIBLE);
+			mBtnEditDesc.setVisibility(View.INVISIBLE);
+			mBtnEditStatus.setVisibility(View.INVISIBLE);
+			mImgBtnLocked.setVisibility(View.INVISIBLE);
+			mImgBtnSearch.setVisibility(View.INVISIBLE);
+			mImgBtnShare.setVisibility(View.INVISIBLE);
+			mImgBtnColorWheel.setVisibility(View.INVISIBLE);
+			mImgFavorite.setClickable(false);
+		}
 	}
 
 	private void callColorPicker() {
@@ -725,126 +749,128 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.imgBtn_colorWheelSmall:
-		case R.id.imgBtn_colorWheelBig:
-			// callColorPicker();
-			break;
-		case R.id.btnEditStatus:
-			mTextViewStatus.setVisibility(View.GONE);
-			mBtnEditStatus.setVisibility(View.GONE);
-			mEditTextStatus.setVisibility(View.VISIBLE);
-			// mBtnSetStatus.setVisibility(View.VISIBLE);
-			break;
+		if (getChatload().is_deleted != 1) {
+			switch (v.getId()) {
+			case R.id.imgBtn_colorWheelSmall:
+			case R.id.imgBtn_colorWheelBig:
+				// callColorPicker();
+				break;
+			case R.id.btnEditStatus:
+				mTextViewStatus.setVisibility(View.GONE);
+				mBtnEditStatus.setVisibility(View.GONE);
+				mEditTextStatus.setVisibility(View.VISIBLE);
+				// mBtnSetStatus.setVisibility(View.VISIBLE);
+				break;
 
-		case R.id.btnSetStatus:
-			mTextViewStatus.setVisibility(View.VISIBLE);
-			mBtnEditStatus.setVisibility(View.VISIBLE);
-			mEditTextStatus.setVisibility(View.GONE);
-			mBtnSetStatus.setVisibility(View.GONE);
+			case R.id.btnSetStatus:
+				mTextViewStatus.setVisibility(View.VISIBLE);
+				mBtnEditStatus.setVisibility(View.VISIBLE);
+				mEditTextStatus.setVisibility(View.GONE);
+				mBtnSetStatus.setVisibility(View.GONE);
 
-			String status = mEditTextStatus.getText().toString();
+				String status = mEditTextStatus.getText().toString();
 
-			if (!status.trim().equals("")) {
-				mTextViewStatus.setText(status);
-				int updated = getChatload().updated;
+				if (!status.trim().equals("")) {
+					mTextViewStatus.setText(status);
+					int updated = getChatload().updated;
+					getActivity().getContentResolver().update(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, status, "",
+									updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+							DbUtils.getWhereArgsForId(getChatload().chatId));
+
+					getChatload().status = status;
+					// String title, int color,
+					// String description, int is_locked, String status, String
+					// tags, int updated,
+					// int updateType) {
+
+					setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+							getChatload().description, status, getChatload().is_locked,
+							getChatload().title);
+					// SyncHelper.requestManualSync();
+				}
+
+				break;
+			case R.id.btnEditDesc:
+				mRelativeLayoutDesc.setVisibility(View.GONE);
+				mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+				isChangeByUser = true;
+				break;
+			case R.id.btnSetDesc:
+				mRelativeLayoutDesc.setVisibility(View.VISIBLE);
+				mRelativeLayoutSetDesc.setVisibility(View.GONE);
+				break;
+			case R.id.btnDelete:
+				deleteContact();
+				break;
+			case R.id.btnShare:
+				MainActivity activity = (MainActivity) getActivity();
+				activity.addMemberInExistingChat();
+				break;
+			case R.id.btnLock:
+				if (getChatload().is_locked != 1)
+					getChatload().is_locked = 1;
+				else
+					getChatload().is_locked = 0;
+
 				getActivity().getContentResolver().update(
 						QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateChatInfoValues("", -1, "", 0, status, "",
-								updated, 4), QodemeContract.Chats.CHAT_ID + "=?",
+						QodemeContract.Chats.updateChatInfoValues("", -1, "",
+								getChatload().is_locked, "", "", QodemeContract.Sync.DONE, 3),
+						QodemeContract.Chats.CHAT_ID + "=?",
 						DbUtils.getWhereArgsForId(getChatload().chatId));
 
-				getChatload().status = status;
-				// String title, int color,
-				// String description, int is_locked, String status, String
-				// tags, int updated,
-				// int updateType) {
-
 				setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
-						getChatload().description, status, getChatload().is_locked,
+						getChatload().description, getChatload().status, getChatload().is_locked,
 						getChatload().title);
-				// SyncHelper.requestManualSync();
-			}
+				break;
+			case R.id.btnFavorite:
+				int is_favorite = 1;
+				int num_of_favorite = getChatload().number_of_likes;
+				if (getChatload().is_favorite == 1) {
+					is_favorite = 2;
+					num_of_favorite--;
+				} else {
+					is_favorite = 1;
+					if (num_of_favorite <= 0) {
+						num_of_favorite = 1;
+					} else
+						num_of_favorite++;
+				}
 
-			break;
-		case R.id.btnEditDesc:
-			mRelativeLayoutDesc.setVisibility(View.GONE);
-			mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
-			isChangeByUser = true;
-			break;
-		case R.id.btnSetDesc:
-			mRelativeLayoutDesc.setVisibility(View.VISIBLE);
-			mRelativeLayoutSetDesc.setVisibility(View.GONE);
-			break;
-		case R.id.btnDelete:
-			deleteContact();
-			break;
-		case R.id.btnShare:
-			MainActivity activity = (MainActivity) getActivity();
-			activity.addMemberInExistingChat();
-			break;
-		case R.id.btnLock:
-			if (getChatload().is_locked != 1)
-				getChatload().is_locked = 1;
-			else
-				getChatload().is_locked = 0;
+				getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+						QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
+				SyncHelper.requestManualSync();
+				// setFavorite();
+				break;
+			case R.id.textView_member:
+				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
+					Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
+					intent.putExtra(CHAT_ID, getArguments().getLong(CHAT_ID));
+					intent.putParcelableArrayListExtra(MEMBER_LIST, memberList);
+					getActivity().startActivity(intent);
+				}
 
-			getActivity().getContentResolver().update(
-					QodemeContract.Chats.CONTENT_URI,
-					QodemeContract.Chats.updateChatInfoValues("", -1, "", getChatload().is_locked,
-							"", "", QodemeContract.Sync.DONE, 3),
-					QodemeContract.Chats.CHAT_ID + "=?",
-					DbUtils.getWhereArgsForId(getChatload().chatId));
-
-			setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
-					getChatload().description, getChatload().status, getChatload().is_locked,
-					getChatload().title);
-			break;
-		case R.id.btnFavorite:
-			int is_favorite = 1;
-			int num_of_favorite = getChatload().number_of_likes;
-			if (getChatload().is_favorite == 1) {
-				is_favorite = 2;
-				num_of_favorite--;
-			} else {
-				is_favorite = 1;
-				if (num_of_favorite <= 0) {
-					num_of_favorite = 1;
-				} else
-					num_of_favorite++;
-			}
-
-			getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-					QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-					QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
-			SyncHelper.requestManualSync();
-			// setFavorite();
-			break;
-		case R.id.textView_member:
-			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
-				Intent intent = new Intent(getActivity(), GroupMemberListActivity.class);
+				break;
+			case R.id.btnSearch:
+				if (getChatload().is_searchable == 1)
+					setSearchable(0);
+				else
+					setSearchable(1);
+				break;
+			case R.id.textView_totolFlagged:
+				Intent intent = new Intent(getActivity(), FlaggedMessageListActivity.class);
 				intent.putExtra(CHAT_ID, getArguments().getLong(CHAT_ID));
 				intent.putParcelableArrayListExtra(MEMBER_LIST, memberList);
+				intent.putParcelableArrayListExtra(MESSAGE_LIST, totalFlaggedMessagelist);
+
 				getActivity().startActivity(intent);
+				break;
+			default:
+				break;
 			}
-
-			break;
-		case R.id.btnSearch:
-			if (getChatload().is_searchable == 1)
-				setSearchable(0);
-			else
-				setSearchable(1);
-			break;
-		case R.id.textView_totolFlagged:
-			Intent intent = new Intent(getActivity(), FlaggedMessageListActivity.class);
-			intent.putExtra(CHAT_ID, getArguments().getLong(CHAT_ID));
-			intent.putParcelableArrayListExtra(MEMBER_LIST, memberList);
-			intent.putParcelableArrayListExtra(MESSAGE_LIST, totalFlaggedMessagelist);
-
-			getActivity().startActivity(intent);
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -918,17 +944,17 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	}
 
 	private void deleteContact() {
-		RestAsyncHelper.getInstance().contactRemove(getChatload().qrcode,
-				new RestListener<VoidResponse>() {
+		RestAsyncHelper.getInstance().deleteChat(getChatload().chatId,
+				new RestListener<DeleteChatResponse>() {
 
 					@Override
-					public void onResponse(VoidResponse response) {
-						Log.d("Response", "successfull remove contact");
+					public void onResponse(DeleteChatResponse response) {
+						Log.d("Response", "successfull remove chat");
 					}
 
 					@Override
 					public void onServiceError(RestError error) {
-						Log.d("Error", "Error in remove contact");
+						Log.d("Error", "Error in remove chat");
 
 					}
 				});

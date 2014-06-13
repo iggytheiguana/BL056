@@ -113,5 +113,6 @@
     <string name="this_is_public_thread">This is a public thread.</string>
     <string name="delete_message">Delete Message</string>
     <string name="un_flag_message">Unflag Message</string>
+    <string name="this_conversation_is_closed">This conversation is closed.</string>
 
 </resources>

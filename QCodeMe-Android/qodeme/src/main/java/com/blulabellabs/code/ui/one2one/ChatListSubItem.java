@@ -1,12 +1,46 @@
 package com.blulabellabs.code.ui.one2one;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.text.Editable;
+import android.text.Html.ImageGetter;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.text.style.RelativeSizeSpan;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.blulabellabs.code.Application;
 import com.blulabellabs.code.R;
@@ -21,58 +55,14 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.ImageResizer;
 import com.blulabellabs.code.images.utils.Utils;
 import com.blulabellabs.code.ui.ImageDetailActivity;
+import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
 import com.blulabellabs.code.ui.common.ExtendedAdapterBasedView;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
-import com.blulabellabs.code.ui.quickaction.ActionItem;
-import com.blulabellabs.code.ui.quickaction.QuickAction;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
-import com.google.android.gms.internal.cu;
-
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.v7.widget.PopupMenu;
-import android.text.Editable;
-import android.text.Html.ImageGetter;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.ImageSpan;
-import android.text.style.RelativeSizeSpan;
-import android.util.AttributeSet;
-import android.util.Base64;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by Alex on 10/23/13.
@@ -219,9 +209,22 @@ public class ChatListSubItem extends RelativeLayout implements
 		return builder;
 	}
 
+	private void setDefault() {
+		this.setVisibility(VISIBLE);
+		getUserSpace().setVisibility(VISIBLE);
+		getStatusLayout().setVisibility(VISIBLE);
+		getMessageLayout().setVisibility(VISIBLE);
+		getHeaderContainer().setVisibility(VISIBLE);
+		getImageMessage().setVisibility(View.VISIBLE);
+		getImageLayout().setVisibility(View.VISIBLE);
+	}
+
 	@Override
 	public void fill(Message me) {
 		final Message msg = me;
+
+		setDefault();
+
 		getMessage().setText(me.message);
 
 		if (me.hasPhoto == 2) {
@@ -314,7 +317,15 @@ public class ChatListSubItem extends RelativeLayout implements
 									v.getWidth(), v.getHeight());
 							getContext().startActivity(i, options.toBundle());
 						} else {
+							// ActivityOptionsCompat activityOptionsCompat =
+							// ActivityOptionsCompat.makeScaleUpAnimation(v, 0,
+							// 0,
+							// v.getWidth(), v.getHeight());
+							// getContext().startActivity(i,
+							// activityOptionsCompat.toBundle());
 							getContext().startActivity(i);
+							// ActivityCompat.startActivity((MainActivity)getContext(),
+							// i, activityOptionsCompat.toBundle());
 						}
 					}
 				});
@@ -322,7 +333,9 @@ public class ChatListSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(getMessage(), msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(getMessage(), msg);
 						return true;
 					}
 				});
@@ -422,7 +435,9 @@ public class ChatListSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(v, msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(v, msg);
 						return true;
 					}
 				});
@@ -434,7 +449,7 @@ public class ChatListSubItem extends RelativeLayout implements
 					public void onClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
 
-						if (chatLoad != null && chatLoad.is_locked != 1)
+						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
 							initSendMessage();
 					}
 				});
@@ -442,7 +457,9 @@ public class ChatListSubItem extends RelativeLayout implements
 
 					@Override
 					public boolean onLongClick(View v) {
-						showPopupMenu(v, msg);
+						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+						if (chatLoad != null && chatLoad.is_deleted != 1)
+							showPopupMenu(v, msg);
 						return true;
 					}
 				});

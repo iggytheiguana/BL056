@@ -97,7 +97,6 @@ import com.blulabellabs.code.core.io.model.ModelHelper;
 import com.blulabellabs.code.core.io.responses.BaseResponse;
 import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.ChatCreateResponse;
-import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.LookupResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
@@ -148,7 +147,7 @@ import com.google.common.primitives.Longs;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
 @SuppressWarnings({ "unused", "unchecked", "rawtypes" })
-public class MainActivity extends BaseActivity implements
+public class MainFullActivity extends BaseActivity implements
 		ChatListFragment.One2OneChatListFragmentCallback,
 		ChatInsideFragment.One2OneChatInsideFragmentCallback,
 		GooglePlayServicesClient.ConnectionCallbacks,
@@ -268,12 +267,13 @@ public class MainActivity extends BaseActivity implements
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// loadData();
 		initImageFetcher();
-		initActionBar();
+		//initActionBar();
+		getSupportActionBar().hide();
 		initContactsList();
 		// TODO remove temporary solution
-		((Application) getApplication()).setMainActivity(this);
+		//((Application) getApplication()).setMainActivity(this);
 		initChatHeight();
-		initChatListFragment();
+		//initChatListFragment();
 		// randomColorGenerator = new RandomColorGenerator();
 		if (savedInstanceState != null) {
 			// Then the application is being reloaded
@@ -284,6 +284,7 @@ public class MainActivity extends BaseActivity implements
 		initKeyboardListener();
 
 		initFullChatLayout();
+		
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -327,7 +328,7 @@ public class MainActivity extends BaseActivity implements
 			@Override
 			public void onPageSelected(int arg0) {
 				fullChatIndex = arg0;
-				Helper.hideKeyboard(MainActivity.this);
+				Helper.hideKeyboard(MainFullActivity.this);
 			}
 
 			@Override
@@ -448,7 +449,6 @@ public class MainActivity extends BaseActivity implements
 		// }
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
-		mViewPager.setCurrentItem(fullChatIndex);
 		// zoomImageFromThumb(v, 0);
 		// ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
 		// Animation.RELATIVE_TO_SELF,
@@ -500,11 +500,9 @@ public class MainActivity extends BaseActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
-
-		mViewPager.setCurrentItem(fullChatIndex);
 		// mViewPager.setVisibility(View.GONE);
 		// zoomImageFromThumb(view, 0);
-		Helper.hideKeyboard(MainActivity.this);
+		Helper.hideKeyboard(MainFullActivity.this);
 	}
 
 	private void initActionBar() {
@@ -1122,8 +1120,8 @@ public class MainActivity extends BaseActivity implements
 			final LatLonCity latLonCity = new LatLonCity();
 			latLonCity.setLat((int) (loc.getLatitude() * 1E6));
 			latLonCity.setLon((int) (loc.getLongitude() * 1E6));
-			latLonCity.setLatitude(loc.getLatitude() + "");
-			latLonCity.setLongitude(loc.getLongitude() + "");
+			latLonCity.setLatitude(loc.getLatitude()+"");
+			latLonCity.setLongitude(loc.getLongitude()+"");
 			new AsyncTask<LatLonCity, Void, String>() {
 
 				@Override
@@ -1351,7 +1349,7 @@ public class MainActivity extends BaseActivity implements
 					} else if (ce.state == QodemeContract.Contacts.State.BLOCKED_BY) {
 						final CharSequence[] items = { "Unblock" };
 
-						AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+						AlertDialog.Builder builder = new AlertDialog.Builder(MainFullActivity.this);
 						builder.setTitle(R.string.app_name);
 						builder.setItems(items, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
@@ -1387,7 +1385,7 @@ public class MainActivity extends BaseActivity implements
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, MoreOptionActivity.class);
+				Intent intent = new Intent(MainFullActivity.this, MoreOptionActivity.class);
 				startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
 				mDrawerLayout.closeDrawers();
 			}
@@ -1437,7 +1435,7 @@ public class MainActivity extends BaseActivity implements
 
 							@Override
 							public void onClick(View v) {
-								Intent intent = new Intent(MainActivity.this,
+								Intent intent = new Intent(MainFullActivity.this,
 										MoreOptionActivity.class);
 								startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
 								mDrawerLayout.closeDrawers();
@@ -1775,8 +1773,7 @@ public class MainActivity extends BaseActivity implements
 		@Override
 		public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 			return new CursorLoader(getActivity(), QodemeContract.Messages.CONTENT_URI,
-					QodemeContract.Messages.Query.PROJECTION,
-					QodemeContract.Messages.MESSAGE_HAS_DELETED + " != 1", null,
+					QodemeContract.Messages.Query.PROJECTION, QodemeContract.Messages.MESSAGE_HAS_DELETED +" != 1", null,
 					QodemeContract.Messages.DEFAULT_SORT);
 			// QodemeContract.Messages.UPDATED + " ASC ");
 
@@ -1916,7 +1913,7 @@ public class MainActivity extends BaseActivity implements
 		// mContactListAddChatAdapter.clear();
 		// mContactListAddChatAdapter.addAll(contactListItemsApp);
 
-		refreshOne2OneList();
+		//refreshOne2OneList();
 		mHandler.sendEmptyMessage(2);
 	}
 
@@ -2089,15 +2086,6 @@ public class MainActivity extends BaseActivity implements
 					chatGroupPhotosFragment = (ChatGroupPhotosFragment) mPagerAdapter.getItem(2);
 				}
 				if (groupChatInsideFragment != null) {
-
-					try {
-						long chatId = groupChatInsideFragment.getChatId();
-						ChatLoad chatLoad1 = getChatLoad(chatId);
-
-						showOne2OneChatFragment(chatLoad1, false, mViewPager);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
 					// if (mContactInfoUpdated) {
 					// long chatId = one2OneChatInsideFragment.getChatId();
 					// int chatColor = 0;
@@ -2125,7 +2113,7 @@ public class MainActivity extends BaseActivity implements
 								chatGroupProfileFragment.setChatload(chatLoad);
 								// groupChatInsideFragment.setArgument(chatLoad);
 								chatGroupProfileFragment.setChatload(chatLoad);
-								if (chatGroupPhotosFragment != null) {
+								if (chatGroupPhotosFragment != null){
 									chatGroupPhotosFragment.setChatLoad(chatLoad);
 									chatGroupPhotosFragment.updateUi();
 								}
@@ -3074,7 +3062,7 @@ public class MainActivity extends BaseActivity implements
 								for (LookupChatEntity entity : response.getChatList()) {
 									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
 											+ " " + entity.getId());
-									 ChatLoad chatLoad = new ChatLoad();
+									ChatLoad chatLoad = new ChatLoad();
 									chatLoad.title = entity.getTitle();
 									chatLoad.chatId = entity.getId();
 									chatLoad.qrcode = entity.getQrcode();
@@ -3085,11 +3073,9 @@ public class MainActivity extends BaseActivity implements
 									chatLoad.number_of_members = entity.getNumber_of_member();
 									chatLoad.latitude = entity.getLatitude();
 									chatLoad.longitude = entity.getLongitude();
-									chatLoad.is_favorite = entity.getIs_favorite();
 									chatLoad.type = 2;
-									chatLoad.isSearchResult = true;
-									
 									mChatListSearchPublic.add(chatLoad);
+
 								}
 								chatListener.onSearchResult(response.getChatList().size(), 1);
 								refreshOne2OneList();
@@ -3148,7 +3134,7 @@ public class MainActivity extends BaseActivity implements
 						} else {
 							chatListener.onSearchResult(0, 2);
 							Log.d("lookup", "null response");
-							Toast.makeText(MainActivity.this,
+							Toast.makeText(MainFullActivity.this,
 									getString(R.string.no_network_connection_toast),
 									Toast.LENGTH_SHORT).show();
 						}
@@ -3161,33 +3147,6 @@ public class MainActivity extends BaseActivity implements
 								.show();
 					}
 				});
-	}
-
-	public void getMessageFromSearch() {
-		List<ChatLoad> chatLoads = getChatList(2);
-		if (chatLoads != null) {
-			for (final ChatLoad chatLoad : chatLoads) {
-				RestAsyncHelper.getInstance().chatLoad(chatLoad.chatId, 1, 100,
-						new RestListener<ChatLoadResponse>() {
-
-							@Override
-							public void onResponse(ChatLoadResponse response) {
-								if (response != null) {
-									ChatLoad chat = response.getChatLoad();
-									if (chat != null) {
-										chatLoad.messages = chat.messages;
-									}
-								}
-							}
-
-							@Override
-							public void onServiceError(RestError error) {
-
-							}
-						});
-			}
-			refreshOne2OneList();
-		}
 	}
 
 	public void setPublicSearch(boolean isPublicSearch) {

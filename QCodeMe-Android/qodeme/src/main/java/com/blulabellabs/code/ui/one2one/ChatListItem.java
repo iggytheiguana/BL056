@@ -342,6 +342,14 @@ public class ChatListItem extends RelativeLayout implements
 			}else{
 				getSendImage().setVisibility(View.VISIBLE);
 			}
+			
+			if(chatLoad != null && chatLoad.is_deleted == 1){
+				getSendImage().setVisibility(View.GONE);
+				getFavoriteBtn().setClickable(false);
+				getSendMessage().setVisibility(View.GONE);
+				getMessageEdit().setVisibility(View.GONE);
+			}
+
 
 			if (chatLoad.is_favorite == 1) {
 				Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -506,7 +514,7 @@ public class ChatListItem extends RelativeLayout implements
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
 
-			if (chatLoad != null && chatLoad.is_locked != 1)
+			if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
 				showMessage();
 
 			mCallback.onSingleTap(getView(), mPosition, mContact);

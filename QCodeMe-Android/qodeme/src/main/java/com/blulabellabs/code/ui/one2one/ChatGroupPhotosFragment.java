@@ -242,8 +242,10 @@ public class ChatGroupPhotosFragment extends Fragment {
 				mTextViewNumFavorite.setVisibility(View.VISIBLE);
 			}
 
-			if (getChatLoad() != null && getChatLoad().is_locked == 1
-					&& !QodemePreferences.getInstance().getQrcode().equals(getChatLoad().user_qrcode)) {
+			if (getChatLoad() != null
+					&& getChatLoad().is_locked == 1
+					&& !QodemePreferences.getInstance().getQrcode()
+							.equals(getChatLoad().user_qrcode)) {
 				mBtnImageSend.setVisibility(View.GONE);
 			} else {
 				mBtnImageSend.setVisibility(View.VISIBLE);
@@ -256,9 +258,10 @@ public class ChatGroupPhotosFragment extends Fragment {
 			mListAdapter = new SeparatedListAdapter((MainActivity) callback);
 			List<Message> messages = callback.getChatMessages(getChatId());
 
-			mName.setText(getChatLoad() != null ? getChatLoad().title : getArguments().getString(CHAT_NAME));
-			mStatus.setText(getChatLoad() != null ? getChatLoad().status : getArguments().getString(
-					CHAT_STATUS));
+			mName.setText(getChatLoad() != null ? getChatLoad().title : getArguments().getString(
+					CHAT_NAME));
+			mStatus.setText(getChatLoad() != null ? getChatLoad().status : getArguments()
+					.getString(CHAT_STATUS));
 
 			if (messages != null) {
 				Message previousMessage = null;
@@ -385,6 +388,11 @@ public class ChatGroupPhotosFragment extends Fragment {
 
 			}
 			mListViewPhotos.setAdapter(mListAdapter);
+		}
+		if (getChatLoad().is_deleted == 1){
+			mBtnImageSend.setVisibility(View.INVISIBLE);
+			mImgFavorite.setClickable(false);
+			
 		}
 		// mListAdapter.notifyDataSetChanged();
 		// mName.setText(getChatName());

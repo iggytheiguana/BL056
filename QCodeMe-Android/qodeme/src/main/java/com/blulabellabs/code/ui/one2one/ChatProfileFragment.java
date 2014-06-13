@@ -194,9 +194,9 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 					mTextViewStatus.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mEditTextStatus.setVisibility(View.GONE);
-					
-//					callback.sendMessage(getArguments().getLong(CHAT_ID), status, "", 2, -1, 0, 0,
-//							QodemePreferences.getInstance().getPublicName(), "");
+
+					callback.sendMessage(getArguments().getLong(CHAT_ID), status, "", 2, -1, 0, 0,
+							QodemePreferences.getInstance().getPublicName(), "");
 
 					QodemePreferences.getInstance().setStatus(status);
 					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "",
@@ -265,15 +265,17 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 				}
 			}
 
-//			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US);
-			 SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
+			// SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy h:mm a",
+			// Locale.US);
+			SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
 			String dateStr = fmtOut.format(new Date(Converter
 					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
 			mTextViewLocation.setText(contact.location + "");
-			mTextViewDatelocation
-					.setText(dateStr + ", " + (contact.location != null ? contact.location : ""));
+			mTextViewDatelocation.setText(dateStr + ", "
+					+ (contact.location != null ? contact.location : ""));
 
-//			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMM dd,yyyy, h:mm a", Locale.US);
+			// SimpleDateFormat fmtOut1 = new
+			// SimpleDateFormat("MMMM dd,yyyy, h:mm a", Locale.US);
 			SimpleDateFormat fmtOut1 = new SimpleDateFormat("MMMM dd,yyyy, HH:mm");
 			String dateStr1 = fmtOut1.format(new Date(Converter
 					.getCrurentTimeFromTimestamp(getArguments().getString(DATE))));
@@ -318,6 +320,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
 						}
 
 						return null;
@@ -397,7 +400,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		case R.id.btnDelete:
-			// deleteContact();
+			deleteContact();
 			break;
 		case R.id.btnArchive:
 			getActivity().getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
@@ -452,7 +455,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	}
 
 	private void deleteContact() {
-		RestAsyncHelper.getInstance().contactRemove(contact.qrCode,
+		RestAsyncHelper.getInstance().contactRemove(contact.qrCode, contact.contactId,
 				new RestListener<VoidResponse>() {
 
 					@Override

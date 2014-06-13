@@ -33,4 +33,6 @@ public class ChatLoad {
     public String created;
     public int is_favorite;
     public int is_searchable;
+    public int is_deleted;
+    public boolean isSearchResult = false;
 }

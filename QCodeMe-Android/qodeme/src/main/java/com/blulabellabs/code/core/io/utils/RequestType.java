@@ -30,7 +30,8 @@ public enum RequestType{
     SET_FAVORITE("setFavorite"),
     CLEAR_SEARCH("clear_search"),
     SET_SEARCHABLE("set_searchable"),
-    DELETE_MESSAGE("delete_message");
+    DELETE_MESSAGE("delete_message"),
+    DELETE_CHAT("chat_delete");
 
 
 
