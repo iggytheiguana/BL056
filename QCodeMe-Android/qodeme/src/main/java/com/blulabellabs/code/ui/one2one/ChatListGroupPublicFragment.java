@@ -254,10 +254,13 @@ public class ChatListGroupPublicFragment extends Fragment {
 					if (chatLoads != null) {
 						List<ChatLoad> temp = Lists.newArrayList();
 						for (ChatLoad c : chatLoads) {
-							if (c.is_favorite == 1) {
-								// Log.d("latLong", c.latitude + " " +
-								// c.longitude);
-								temp.add(c);
+							try {
+								if (c.is_favorite == 1) {
+									// Log.d("latLong", c.latitude + " " +
+									// c.longitude);
+									temp.add(c);
+								}
+							} catch (Exception e) {
 							}
 						}
 
@@ -296,13 +299,17 @@ public class ChatListGroupPublicFragment extends Fragment {
 					if (chatLoads != null) {
 						List<ChatLoad> temp = Lists.newArrayList();
 						for (ChatLoad c : chatLoads) {
-							if (c.latitude != null && c.longitude != null && !c.latitude.equals("")
-									&& !c.longitude.equals("") && !c.latitude.equals("0")
-									&& !c.latitude.equals("0.0") && !c.latitude.equals("-1")
-									&& !c.longitude.equals("0") && !c.longitude.equals("0.0")
-									&& !c.longitude.equals("-1")) {
-								Log.d("latLong", c.latitude + " " + c.longitude);
-								temp.add(c);
+							try {
+								if (c.latitude != null && c.longitude != null
+										&& !c.latitude.equals("") && !c.longitude.equals("")
+										&& !c.latitude.equals("0") && !c.latitude.equals("0.0")
+										&& !c.latitude.equals("-1") && !c.longitude.equals("0")
+										&& !c.longitude.equals("0.0") && !c.longitude.equals("-1")) {
+									Log.d("latLong", c.latitude + " " + c.longitude);
+									temp.add(c);
+								}
+							} catch (Exception e) {
+								// TODO: handle exception
 							}
 						}
 
