@@ -49,6 +49,8 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
+import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestListener;
@@ -229,11 +231,55 @@ public class ChatInsideGroupFragment extends Fragment {
 						} else
 							num_of_favorite++;
 					}
+					if (chatLoad.isSearchResult) {
+						chatLoad.number_of_likes = num_of_favorite;
+						chatLoad.is_favorite = is_favorite;
+						if (is_favorite == 1) {
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_chat_favorite);
+							mImgFavorite.setImageBitmap(bm);
+						} else {
+							Bitmap bm = BitmapFactory.decodeResource(getResources(),
+									R.drawable.ic_chat_favorite_h);
+							mImgFavorite.setImageBitmap(bm);
+						}
 
-					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
-					SyncHelper.requestManualSync();
+						String date = Converter.getCurrentGtmTimestampString();
+						RestAsyncHelper.getInstance().setFavorite(date, is_favorite,
+								chatLoad.chatId, new RestListener<SetFavoriteResponse>() {
+
+									@Override
+									public void onResponse(SetFavoriteResponse response) {
+
+									}
+
+									@Override
+									public void onServiceError(RestError error) {
+
+									}
+								});
+						
+						RestAsyncHelper.getInstance().chatAddMember(chatLoad.chatId,
+								QodemePreferences.getInstance().getQrcode(),
+								new RestListener<ChatAddMemberResponse>() {
+
+									@Override
+									public void onResponse(ChatAddMemberResponse response) {
+										Log.d("Chat add in public ", "Chat add mem "
+												+ response.getChat().getId());
+									}
+
+									@Override
+									public void onServiceError(RestError error) {
+										Log.d("Error", "Chat add member");
+									}
+								});
+					} else {
+						getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+								QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+						SyncHelper.requestManualSync();
+					}
 				}
 			}
 		});
@@ -864,7 +910,6 @@ public class ChatInsideGroupFragment extends Fragment {
 					mTextViewMembersLabel.setVisibility(View.GONE);
 				}
 			}
-			
 
 			if (chatLoad.is_deleted == 1) {
 				mTextViewDeleteBaner.setVisibility(View.VISIBLE);

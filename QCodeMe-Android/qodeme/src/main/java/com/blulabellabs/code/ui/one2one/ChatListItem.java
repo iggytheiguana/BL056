@@ -42,6 +42,7 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomEdit;
 import com.blulabellabs.code.ui.common.ExAdapterBasedView;
+import com.blulabellabs.code.ui.common.ExListAdapter.ViewHolder;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
@@ -70,25 +71,26 @@ public class ChatListItem extends RelativeLayout implements
 	private int height;
 
 	private final Context context;
-	private TextView name;
-	private TextView date;
-	private TextView location;
-	private ScrollDisabledListView subList;
-	private LinearLayout dragView;
-	private CustomEdit edit;
-	private ImageView dragImage;
-	private ImageButton sendMessageBtn;
-	private ImageButton sendImgMessageBtn, mImgBtnFavorite;
+	public TextView name;
+	public TextView date;
+	public TextView location;
+	public ScrollDisabledListView subList;
+	public LinearLayout dragView;
+	public CustomEdit edit;
+	public ImageView dragImage;
+	public ImageButton sendMessageBtn;
+	public ImageButton sendImgMessageBtn, mImgBtnFavorite;
 	private View cornerTop;
 	private View cornerBottom;
 	private View cornerLeft;
 	private View cornerRight;
-	private RelativeLayout mChatItem;
+	public RelativeLayout mChatItem;
 
 	private GestureDetector gestureDetector;
 	private ChatListAdapterCallback mCallback;
 	private int mPosition;
 	private Contact mContact;
+	private ViewHolder viewHolder; 
 
 	public ChatListItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -99,6 +101,8 @@ public class ChatListItem extends RelativeLayout implements
 
 	}
 
+	
+	
 	@SuppressWarnings("unchecked")
 	@SuppressLint("SimpleDateFormat")
 	@Override
@@ -338,28 +342,13 @@ public class ChatListItem extends RelativeLayout implements
 
 		if (chatLoad != null) {
 			if (chatLoad.is_locked == 1 && !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)){
-				getSendImage().setVisibility(View.GONE);
+				getSendImage().setVisibility(View.INVISIBLE);
+				getFavoriteBtn().setClickable(false);
 			}else{
 				getSendImage().setVisibility(View.VISIBLE);
+				getFavoriteBtn().setClickable(true);
 			}
 			
-			if(chatLoad != null && chatLoad.is_deleted == 1){
-				getSendImage().setVisibility(View.GONE);
-				getFavoriteBtn().setClickable(false);
-				getSendMessage().setVisibility(View.GONE);
-				getMessageEdit().setVisibility(View.GONE);
-			}
-
-
-			if (chatLoad.is_favorite == 1) {
-				Bitmap bm = BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_chat_favorite);
-				getFavoriteBtn().setImageBitmap(bm);
-			} else {
-				Bitmap bm = BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_chat_favorite_h);
-				getFavoriteBtn().setImageBitmap(bm);
-			}
 			getFavoriteBtn().setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -383,6 +372,25 @@ public class ChatListItem extends RelativeLayout implements
 					SyncHelper.requestManualSync();
 				}
 			});
+			
+			if(chatLoad != null && chatLoad.is_deleted == 1){
+				getSendImage().setVisibility(View.INVISIBLE);
+				getFavoriteBtn().setClickable(false);
+				getSendMessage().setVisibility(View.GONE);
+				getMessageEdit().setVisibility(View.GONE);
+			}
+
+
+			if (chatLoad.is_favorite == 1) {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite);
+				getFavoriteBtn().setImageBitmap(bm);
+			} else {
+				Bitmap bm = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_chat_favorite_h);
+				getFavoriteBtn().setImageBitmap(bm);
+			}
+			
 		}
 		getSendImage().setOnClickListener(new OnClickListener() {
 
@@ -627,6 +635,16 @@ public class ChatListItem extends RelativeLayout implements
 		// getCornerBottom().setBackgroundColor(c);
 		// getCornerLeft().setBackgroundColor(c);
 		// getCornerRight().setBackgroundColor(c);
+	}
+
+	public void setViewHolder(ViewHolder viewHolder) {
+		this.viewHolder = viewHolder;
+	}
+
+
+
+	public ViewHolder getViewHolder() {
+		return viewHolder;
 	}
 
 	One2OneChatListInsideFragmentCallback callbackChatListInsideFragmentCallback = new One2OneChatListInsideFragmentCallback() {

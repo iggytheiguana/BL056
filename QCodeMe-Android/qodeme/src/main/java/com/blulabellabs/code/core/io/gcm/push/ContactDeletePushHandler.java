@@ -1,13 +1,12 @@
 package com.blulabellabs.code.core.io.gcm.push;
 
-import com.blulabellabs.code.core.data.preference.QodemePreferences;
-import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.sync.SyncHelper;
-import com.google.android.gms.internal.cu;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
 
 /**
  * Created by Alex on 12/10/13.
@@ -60,8 +59,8 @@ public class ContactDeletePushHandler extends BasePushHandler {
 				else
 					contactlist += "," + contactId + "";
 
-				if (is_deleted != 1)
-					QodemePreferences.getInstance().set("RemoveContact", contactlist);
+//				if (is_deleted != 1)
+//					QodemePreferences.getInstance().set("RemoveContact", contactlist);
 			}
 
 			if (is_deleted != 1)

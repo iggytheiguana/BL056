@@ -39,7 +39,6 @@ import com.blulabellabs.code.core.io.utils.RequestType;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestErrorType;
 import com.blulabellabs.code.core.io.utils.RestKeyMap;
-import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.RestUtils;
@@ -66,6 +65,7 @@ public class RestSyncHelper {
 
 	}
 
+	@SuppressWarnings("static-access")
 	private RestSyncHelper(Context context) {
 		mQueue = new Volley().newRequestQueue(context);
 	}
@@ -321,6 +321,7 @@ public class RestSyncHelper {
 		Log.d("Image Url", RestUtils.getAbsoluteUrl(requestType) + "");
 
 		StringRequest request = new StringRequest(method, absoluteUrl, future, future) {
+			@SuppressWarnings("unchecked")
 			@Override
 			protected Map<String, String> getParams() throws AuthFailureError {
 				Map<String, String> map = null;

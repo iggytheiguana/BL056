@@ -1,21 +1,10 @@
 package com.blulabellabs.code.core.io.gcm.push;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 
-import com.blulabellabs.code.Application;
-import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
-import com.blulabellabs.code.core.io.model.Contact;
-import com.blulabellabs.code.core.io.utils.RestKeyMap;
 import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.sync.SyncHelper;
-import com.google.android.gms.internal.bu;
-import com.google.gson.Gson;
-
-import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_CONTACT;
-import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
 
 /**
  * Created by Alex on 12/10/13.

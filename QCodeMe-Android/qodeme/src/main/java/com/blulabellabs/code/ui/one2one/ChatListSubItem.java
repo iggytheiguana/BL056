@@ -324,6 +324,7 @@ public class ChatListSubItem extends RelativeLayout implements
 							// getContext().startActivity(i,
 							// activityOptionsCompat.toBundle());
 							getContext().startActivity(i);
+							((MainActivity)getContext()).overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_scale);
 							// ActivityCompat.startActivity((MainActivity)getContext(),
 							// i, activityOptionsCompat.toBundle());
 						}

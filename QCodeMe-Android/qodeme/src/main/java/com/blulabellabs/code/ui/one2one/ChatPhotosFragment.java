@@ -223,6 +223,12 @@ public class ChatPhotosFragment extends Fragment {
 							R.drawable.ic_chat_favorite_h);
 					mImgFavorite.setImageBitmap(bm);
 				}
+				
+				
+				if(chatLoad.is_deleted == 1){
+					mImgFavorite.setClickable(false);
+					mBtnImageSend.setVisibility(View.INVISIBLE);
+				}
 			}
 
 			// mTextViewProfileName.setText(getArguments().getString(CHAT_NAME));

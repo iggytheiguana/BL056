@@ -80,7 +80,8 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 								mChatLoad.qrcode, "", mChatLoad.latitude, mChatLoad.longitude,
 								mChatLoad.description, mChatLoad.status,
 								mChatLoad.number_of_flagged, mChatLoad.number_of_members,
-								mChatLoad.title, mChatLoad.tag, mChatLoad.is_locked, mChatLoad.created));
+								mChatLoad.title, mChatLoad.tag, mChatLoad.is_locked,
+								mChatLoad.created));
 			}
 		} else {
 			getContext().getContentResolver().insert(
@@ -89,31 +90,34 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 							mChatLoad.qrcode, "", mChatLoad.latitude, mChatLoad.longitude,
 							mChatLoad.description, mChatLoad.status, mChatLoad.number_of_flagged,
 							mChatLoad.number_of_members, mChatLoad.title, mChatLoad.tag,
-							mChatLoad.is_locked,mChatLoad.created));
+							mChatLoad.is_locked, mChatLoad.created));
 		}
 		String id = QodemePreferences.getInstance().get("AddMemberId", "");
-		if(id.trim().equals(""))
-			id = mChatLoad.chatId+"";
+		if (id.trim().equals(""))
+			id = mChatLoad.chatId + "";
 		else
-			id = id+","+mChatLoad.chatId+"";
-			
+			id = id + "," + mChatLoad.chatId + "";
+
+		getContext().getContentResolver().delete(QodemeContract.Messages.CONTENT_URI,
+				QodemeContract.Messages.MESSAGE_CHAT_ID + "=" + mChatLoad.chatId, null);
 		QodemePreferences.getInstance().set("AddMemberId", id);
-//		try {
-//			ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
-//			RestSyncHelper rest = RestSyncHelper.getInstance(getContext());
-//			ChatLoadResponse chatLoadResponse = rest.chatLoad(mChatLoad.chatId, 0, 1000);
-//			new ChatLoadHandler(getContext()).parse(chatLoadResponse, batch);
-//			QodemeContract.applyBatch(getContext(), batch);
-		
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+		// RestSyncHelper rest = RestSyncHelper.getInstance(getContext());
+		// ChatLoadResponse chatLoadResponse = rest.chatLoad(mChatLoad.chatId,
+		// 0, 1000);
+		// new ChatLoadHandler(getContext()).parse(chatLoadResponse, batch);
+		// QodemeContract.applyBatch(getContext(), batch);
+
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 		// getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
 		// QodemeContract.Chats.updateChatInfoValues("",mChatLoad.color,
 		// mChatLoad.description, mChatLoad.is_locked, mChatLoad.status,
 		// mChatLoad.tag, mChatLoad.number_of_flagged,
 		// mChatLoad.number_of_members),
 		// QodemeContract.Chats.CHAT_ID+" = "+mChatLoad.chatId, null);
-		 SyncHelper.requestManualSync();
+		SyncHelper.requestManualSync();
 	}
 }

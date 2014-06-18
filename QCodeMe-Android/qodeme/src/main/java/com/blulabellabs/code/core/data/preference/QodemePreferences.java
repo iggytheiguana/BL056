@@ -1,12 +1,11 @@
 package com.blulabellabs.code.core.data.preference;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.blulabellabs.code.core.io.model.UserSettings;
 import com.blulabellabs.code.core.io.responses.UserSettingsResponse;
 import com.blulabellabs.code.utils.LatLonCity;
-import com.flurry.sdk.ch;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 
 public class QodemePreferences extends CommonPreferences {
 
@@ -45,6 +44,7 @@ public class QodemePreferences extends CommonPreferences {
 	private static final String PREF_LAST_LOCATION_LONGITUDE = "pref_last_location_longitude";
 
 	private static QodemePreferences instance;
+	@SuppressWarnings("unused")
 	private Context context;
 
 	/**
@@ -117,7 +117,7 @@ public class QodemePreferences extends CommonPreferences {
 	}
 
 	public String getQrcode() {
-		return get(PREF_QRCODE, null);
+		return get(PREF_QRCODE, "null");
 	}
 
 	public void setQrcode(String value) {

@@ -54,6 +54,7 @@ import de.tavendo.autobahn.WebSocketHandler;
  * Created by Alex on 10/7/13.
  */
 @SuppressLint("DefaultLocale")
+@SuppressWarnings("unused")
 public class ChatListFragment extends Fragment {
 
 	private One2OneChatListFragmentCallback callback;
@@ -115,6 +116,14 @@ public class ChatListFragment extends Fragment {
 		ChatLoad getChatLoad(long chatId);
 	}
 
+	public static ChatListFragment getInstance(){
+		ChatListFragment chatListFragment = new ChatListFragment();
+		Bundle args = new Bundle();
+		args.putInt("index", 1);
+		chatListFragment.setArguments(args);
+		return chatListFragment;
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -307,18 +316,18 @@ public class ChatListFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				if (isLocationFilter) {
-					isLocationFilter = false;
-					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_location_gray);
-					mImgBtnLocationFilter.setImageBitmap(bm);
-				}
-				if (isFavoriteFilter) {
-					isFavoriteFilter = false;
-					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
-					mImgBtnFavoriteFilter.setImageBitmap(bm);
-				}
+				// if (isLocationFilter) {
+				// isLocationFilter = false;
+				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
+				// R.drawable.ic_location_gray);
+				// mImgBtnLocationFilter.setImageBitmap(bm);
+				// }
+				// if (isFavoriteFilter) {
+				// isFavoriteFilter = false;
+				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
+				// R.drawable.ic_chat_favorite);
+				// mImgBtnFavoriteFilter.setImageBitmap(bm);
+				// }
 
 				String data = mEditTextSearch.getText().toString();
 				searchString = data;
@@ -326,7 +335,43 @@ public class ChatListFragment extends Fragment {
 				activity.setOneToOneSearch(true);
 				activity.setOneToOneSearchString(data);
 
-				List<Contact> temp = searchContact(searchString);
+				List<Contact> searchList = searchContact(searchString);
+
+				List<Contact> temp = Lists.newArrayList();
+				if (isFavoriteFilter) {
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.is_favorite == 1) {
+							temp.add(c);
+						}
+					}
+				} else if (isLocationFilter) {
+					// List<Contact> temp = Lists.newArrayList();
+					// List<Contact> searchList =
+					// searchContact(searchString);
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.latitude != null
+								&& chatLoad.longitude != null && !chatLoad.latitude.equals("")
+								&& !chatLoad.longitude.equals("") && !chatLoad.latitude.equals("0")
+								&& !chatLoad.latitude.equals("0.0")
+								&& !chatLoad.latitude.equals("-1")
+								&& !chatLoad.longitude.equals("0")
+								&& !chatLoad.longitude.equals("0.0")
+								&& !chatLoad.longitude.equals("-1")) {
+							Log.d("latLong", chatLoad.latitude + " " + chatLoad.longitude);
+							Log.d("latLong", c.latitude + " " + c.longitude);
+							temp.add(c);
+						}
+					}
+
+					Collections.sort(temp, new CustomComparator());
+				} else {
+					temp.addAll(searchList);
+				}
+
 				mListAdapter.clear();
 				mListAdapter.addAll(temp);
 
@@ -352,43 +397,57 @@ public class ChatListFragment extends Fragment {
 					// activity.searchChats(data, 0, 1, chatListener);
 					// mEditTextSearch.setEnabled(false);
 					// isMoreData = true;
-					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_location_gray);
-					mImgBtnLocationFilter.setImageBitmap(bm);
-					isLocationFilter = false;
+					// Bitmap bm = BitmapFactory.decodeResource(getResources(),
+					// R.drawable.ic_location_gray);
+					// mImgBtnLocationFilter.setImageBitmap(bm);
+					// isLocationFilter = false;
+					//
+					// isFavoriteFilter = false;
+					// Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
+					// R.drawable.ic_chat_favorite);
+					// mImgBtnFavoriteFilter.setImageBitmap(bm1);
 
-					isFavoriteFilter = false;
-					Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
-					mImgBtnFavoriteFilter.setImageBitmap(bm1);
+					// List<Contact> temp = searchContact(searchString);
+					List<Contact> searchList = searchContact(searchString);
 
-					List<Contact> temp = searchContact(searchString);
+					List<Contact> temp = Lists.newArrayList();
+					if (isFavoriteFilter) {
+						for (Contact c : searchList) {
+							ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+							if (chatLoad != null && chatLoad.is_favorite == 1) {
+								temp.add(c);
+							}
+						}
+					} else if (isLocationFilter) {
+						// List<Contact> temp = Lists.newArrayList();
+						// List<Contact> searchList =
+						// searchContact(searchString);
+						for (Contact c : searchList) {
+							ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+							if (chatLoad != null && chatLoad.latitude != null
+									&& chatLoad.longitude != null && !chatLoad.latitude.equals("")
+									&& !chatLoad.longitude.equals("")
+									&& !chatLoad.latitude.equals("0")
+									&& !chatLoad.latitude.equals("0.0")
+									&& !chatLoad.latitude.equals("-1")
+									&& !chatLoad.longitude.equals("0")
+									&& !chatLoad.longitude.equals("0.0")
+									&& !chatLoad.longitude.equals("-1")) {
+								Log.d("latLong", chatLoad.latitude + " " + chatLoad.longitude);
+								Log.d("latLong", c.latitude + " " + c.longitude);
+								temp.add(c);
+							}
+						}
+
+						Collections.sort(temp, new CustomComparator());
+					} else {
+						temp.addAll(searchList);
+					}
+
 					mListAdapter.clear();
 					mListAdapter.addAll(temp);
-
-					// RestAsyncHelper.getInstance().lookup(data, new
-					// RestListener<LookupResponse>() {
-					//
-					// @Override
-					// public void onResponse(LookupResponse response) {
-					// if (response.getChatList() != null)
-					// for (LookupChatEntity entity : response.getChatList()) {
-					// Log.d("lookup", entity.getTitle() + " " +
-					// entity.getTags()
-					// + " " + entity.getId());
-					// }
-					// else {
-					// Log.d("lookup", "null response");
-					// }
-					// }
-					//
-					// @Override
-					// public void onServiceError(RestError error) {
-					// Toast.makeText(getActivity(), error.getMessage(),
-					// Toast.LENGTH_SHORT)
-					// .show();
-					// }
-					// });
 
 					mImgBtnClear.setVisibility(View.VISIBLE);
 					mImgBtnSearch.setVisibility(View.GONE);
@@ -690,6 +749,45 @@ public class ChatListFragment extends Fragment {
 			if (!isLocationFilter && !isFavoriteFilter) {
 				mListAdapter.clear();
 				mListAdapter.addAll(searchContact(searchString));
+			} else {
+				if (isLocationFilter) {
+					List<Contact> temp = Lists.newArrayList();
+					List<Contact> searchList = searchContact(searchString);
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.latitude != null
+								&& chatLoad.longitude != null && !chatLoad.latitude.equals("")
+								&& !chatLoad.longitude.equals("") && !chatLoad.latitude.equals("0")
+								&& !chatLoad.latitude.equals("0.0")
+								&& !chatLoad.latitude.equals("-1")
+								&& !chatLoad.longitude.equals("0")
+								&& !chatLoad.longitude.equals("0.0")
+								&& !chatLoad.longitude.equals("-1")) {
+							Log.d("latLong", chatLoad.latitude + " " + chatLoad.longitude);
+							Log.d("latLong", c.latitude + " " + c.longitude);
+							temp.add(c);
+						}
+					}
+
+					Collections.sort(temp, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(temp);
+				} else if (isFavoriteFilter) {
+					List<Contact> temp = Lists.newArrayList();
+					List<Contact> searchList = searchContact(searchString);
+					for (Contact c : searchList) {
+						ChatLoad chatLoad = callback.getChatLoad(c.chatId);
+
+						if (chatLoad != null && chatLoad.is_favorite == 1) {
+							temp.add(c);
+						}
+					}
+
+					// Collections.sort(temp, new CustomComparator());
+					mListAdapter.clear();
+					mListAdapter.addAll(temp);
+				}
 			}
 			// addTestData();
 			long focusedChat = ChatFocusSaver.getFocusedChatId();

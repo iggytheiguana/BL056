@@ -62,7 +62,8 @@ public class GcmController {
 
         new AsyncTask<Void, Void, Void>() {
 
-            @Override
+            @SuppressWarnings("unused")
+			@Override
             protected Void doInBackground(Void... params) {
                 Log.d(TAG, "getting_registration_id");
                 try {
@@ -123,7 +124,8 @@ public class GcmController {
      *
      * @return true if the registration has expired.
      */
-    private boolean isGcmRegistrationTokenInvalid() {
+    @SuppressWarnings("unused")
+	private boolean isGcmRegistrationTokenInvalid() {
         long expirationTime = pref.getGcmTokenExpirationTime();
         int appVersion = pref.getAppVersion();
         if (expirationTime == -1L || appVersion < getAppVersion(context))

@@ -22,7 +22,7 @@ public class PushHendlerFactory {
 	private static final String PUSH_CHAT_SET_FAVORITE = "Set favorite";
 	private static final String PUSH_MESSAGE_DELETED = "Message deleted";
 	private static final String PUSH_CHAT_DELETED = "chat deleted";
-	
+	private static final String PUSH_CONTACT_REMOVED = "contact removed";
 
 	//
 
@@ -54,10 +54,12 @@ public class PushHendlerFactory {
 			instance = new MessageFlaggedPushHandler(context);
 		} else if (bundle.getString(TYPE).equals(PUSH_CHAT_SET_FAVORITE)) {
 			instance = new ChatFavoritePushHandler(context);
-		} else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_DELETED)){
+		} else if (bundle.getString(TYPE).equals(PUSH_MESSAGE_DELETED)) {
 			instance = new MessageDeletePushHandler(context);
-		}else if(bundle.getString(TYPE).equals(PUSH_CHAT_DELETED)){
+		} else if (bundle.getString(TYPE).equals(PUSH_CHAT_DELETED)) {
 			instance = new ChatDeletePushHandler(context);
+		} else if (bundle.getString(TYPE).equals(PUSH_CONTACT_REMOVED)) {
+			instance = new ContactDeletePushHandler(context);
 		}
 
 		if (instance != null)

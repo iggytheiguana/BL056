@@ -219,7 +219,9 @@ public class SyncHelper {
 				long chatId = Long.parseLong(c);
 				ChatLoadResponse chatLoadResponse = rest.chatLoad(chatId, 0, 1000);
 				new ChatLoadAddMemberHandler(context).parseAndApply(chatLoadResponse);// ,
-																						// batch);
+				context.getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateFavorite(1, chatLoadResponse.getChatLoad().number_of_likes+1),
+						QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
 			}
 		}
 	}

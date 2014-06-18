@@ -19,7 +19,8 @@ public class PrivateChatEntity implements ParseableEntity{
 
     private long id;
     private String qrcode;
-    private int type = TYPE_PRIVATE;
+    @SuppressWarnings("unused")
+	private int type = TYPE_PRIVATE;
     private List<String> memberQrcodeList;
 
 

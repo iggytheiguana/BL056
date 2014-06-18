@@ -37,6 +37,7 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
@@ -76,15 +77,15 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private int height;
 
 	private final Context context;
-	private TextView name;
-	private TextView date;
-	private TextView location, mTextViewMembers;
-	private ScrollDisabledListView subList;
-	private LinearLayout dragView, mLinearMemberList;
-	private CustomEdit edit;
-	private ImageView dragImage, memberListBottomLine;
-	private ImageButton sendMessageBtn;
-	private ImageButton sendImgMessageBtn;
+	public TextView name;
+	public TextView date;
+	public TextView location, mTextViewMembers;
+	public ScrollDisabledListView subList;
+	public LinearLayout dragView, mLinearMemberList;
+	public CustomEdit edit;
+	public ImageView dragImage, memberListBottomLine;
+	public ImageButton sendMessageBtn;
+	public ImageButton sendImgMessageBtn;
 	// private View cornerTop;
 	// private View cornerBottom;
 	// private View cornerLeft;
@@ -95,9 +96,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private int mPosition;
 	// private Contact mContact;
 	private ChatLoad mChatLoad;
-	private ImageButton shareChatBtn, mImgBtnFavorite;
+	public ImageButton shareChatBtn, mImgBtnFavorite;
 	private EditText editTextTitle;
-	private RelativeLayout mChatItem;
+	public RelativeLayout mChatItem;
+	public boolean isScrolling = false;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -247,13 +249,15 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
-			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
+//			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
+			try {
+				if (mChatLoad.is_locked != 1 && mChatLoad.is_deleted != 1)
+					showMessage();
 
-			if (chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
-				showMessage();
-
-			mCallback.onSingleTap(getView(), mPosition, mChatLoad);
-			messageRead();
+				mCallback.onSingleTap(getView(), mPosition, mChatLoad);
+				messageRead();
+			} catch (Exception ex) {
+			}
 			Log.i("GestureListener", "onSingleTap");
 			return true;
 		}
@@ -417,6 +421,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 	@Override
 	public void fill(ChatLoad t) {
 
+		getSendImage().setVisibility(View.VISIBLE);
+		getFavoriteBtn().setClickable(true);
+		getTitleEditText().setEnabled(true);
+		getShareChatBtn().setEnabled(true);
 		try {
 			mChatLoad = t;
 
@@ -470,6 +478,21 @@ public class ChatListGroupItem extends RelativeLayout implements
 									@Override
 									public void onServiceError(RestError error) {
 
+									}
+								});
+						RestAsyncHelper.getInstance().chatAddMember(mChatLoad.chatId,
+								QodemePreferences.getInstance().getQrcode(),
+								new RestListener<ChatAddMemberResponse>() {
+
+									@Override
+									public void onResponse(ChatAddMemberResponse response) {
+										Log.d("Chat add in public ", "Chat add mem "
+												+ response.getChat().getId());
+									}
+
+									@Override
+									public void onServiceError(RestError error) {
+										Log.d("Error", "Chat add member");
 									}
 								});
 					} else {
@@ -612,12 +635,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 			// List preparation
 			List<Message> listForAdapter = Lists.newArrayList();
 			List<Message> listData = Lists.newArrayList();
-//			if (mChatLoad.isSearchResult) {
-//				for(Message msg:mChatLoad.messages)
-//					listData.add(msg);
-//			}else{
-				listData = mCallback.getMessages(mChatLoad.chatId);
-//			}
+			// if (mChatLoad.isSearchResult) {
+			// for(Message msg:mChatLoad.messages)
+			// listData.add(msg);
+			// }else{
+			listData = mCallback.getMessages(mChatLoad.chatId);
+			// }
 			listData = sortMessages(listData);
 			boolean isContainUnread = false;
 			if (listData != null) {
@@ -743,8 +766,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 			else {
 				getChatItem().setBackgroundResource(R.drawable.bg_box);
 			}
-			if (listData != null)
-				listAdapter.addAll(listData);
+			if (!isScrolling)
+				if (listData != null)
+					listAdapter.addAll(listData);
 			getList().setAdapter(listAdapter);
 			getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 			getList().setStackFromBottom(true);
@@ -825,25 +849,26 @@ public class ChatListGroupItem extends RelativeLayout implements
 			ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
 
 			if (chatLoad != null && chatLoad.is_locked == 1
-					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode) ) {
+					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
 				getSendImage().setVisibility(View.GONE);
 				getFavoriteBtn().setClickable(false);
 				getTitleEditText().setEnabled(false);
+				
 			} else {
 				getSendImage().setVisibility(View.VISIBLE);
 				getFavoriteBtn().setClickable(true);
 				getTitleEditText().setEnabled(true);
+				
 			}
-			if(chatLoad != null && chatLoad.is_deleted == 1){
+			if (mChatLoad != null && mChatLoad.is_deleted == 1) {
 				getSendImage().setVisibility(View.GONE);
 				getFavoriteBtn().setClickable(false);
 				getTitleEditText().setEnabled(false);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
-				getShareChatBtn().setVisibility(View.GONE);
+				getShareChatBtn().setEnabled(false);
 			}
 
-			
 			getSendImage().setOnClickListener(new OnClickListener() {
 
 				@Override

@@ -164,6 +164,7 @@ public class MainFullActivity extends BaseActivity implements
 	private static final String CHAT_LIST_PUBLIC_FRAGMENT = "chat_list_public_fragment";
 
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
+	private static final String CHAT_ID = "chat_id";
 	private static final int DEFAULT_HEIGHT_DP = 200;
 
 	private int mDefaultHeightPx;
@@ -255,6 +256,7 @@ public class MainFullActivity extends BaseActivity implements
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 	private MyLocation myLocation;
+	private long chatId;
 
 	/**
 	 * Called when the activity is first created.
@@ -267,6 +269,12 @@ public class MainFullActivity extends BaseActivity implements
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// loadData();
 		initImageFetcher();
+		
+		Bundle bundle = getIntent().getExtras();
+		if(bundle != null){
+			chatId = bundle.getLong(CHAT_ID);
+		}
+		
 		//initActionBar();
 		getSupportActionBar().hide();
 		initContactsList();

@@ -590,6 +590,15 @@ public class QodemeContract {
 			}
 			return contentValues;
 		}
+		
+		public static ContentValues updateLocation(String latitude, String longitude){
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
+			contentValues.put(CHAT_LATITUDE, latitude);
+			contentValues.put(CHAT_LONGITUDE, longitude);
+			
+			return contentValues;
+		}
 
 		public static ContentValues updateChatInfoValuesAll(String title, Integer color,
 				String description, int is_locked, String status, String tags,

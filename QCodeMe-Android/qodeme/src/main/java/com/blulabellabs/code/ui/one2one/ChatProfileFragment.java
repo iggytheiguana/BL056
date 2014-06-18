@@ -27,6 +27,7 @@ import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFrag
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.LatLonCity;
+import com.flurry.sdk.ch;
 import com.google.android.gms.internal.ac;
 import com.google.android.gms.internal.co;
 import com.google.android.gms.internal.cu;
@@ -199,6 +200,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 							QodemePreferences.getInstance().getPublicName(), "");
 
 					QodemePreferences.getInstance().setStatus(status);
+					QodemePreferences.getInstance().setUserSettingsUpToDate(false);
 					setChatInfo(getArguments().getLong(CHAT_ID), "", null, "", "", status, 0, "",
 							"0", "0");
 					SyncHelper.requestManualSync();
@@ -230,10 +232,17 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			// || getArguments().getInt(CHAT_COLOR) == 0) {
 			// mTextViewProfileName.setTextColor(Color.GRAY);
 			// } else
-			mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
+			int color = getArguments().getInt(CHAT_COLOR);
 			Log.d("Color", getArguments().getInt(CHAT_COLOR) + "");
+			if(color == 0 || color == -1){
+				mTextViewProfileName.setTextColor(Color.BLACK);
+				customDotView.setDotColor(Color.BLACK);
+			}else{
+				mTextViewProfileName.setTextColor(getArguments().getInt(CHAT_COLOR));
+				customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
+				
+			}
 			mEdittextName.setText(getArguments().getString(CHAT_NAME));
-			customDotView.setDotColor(getArguments().getInt(CHAT_COLOR));
 			customDotView.invalidate();
 			if (callback != null) {
 				getLocation();
@@ -261,6 +270,16 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 						Bitmap bm = BitmapFactory.decodeResource(getResources(),
 								R.drawable.ic_profile_favorite_h);
 						mImgFavorite.setImageBitmap(bm);
+					}
+					
+					if(chatLoad.is_deleted == 1){
+						mImgBtnColorWheel.setVisibility(View.INVISIBLE);
+						mImgBtnColorWheelSmall.setVisibility(View.INVISIBLE);
+						mBtnArchive.setVisibility(View.INVISIBLE);
+						mBtnDelete.setVisibility(View.INVISIBLE);
+						mBtnEditName.setVisibility(View.INVISIBLE);
+						mBtnEditStatus.setVisibility(View.INVISIBLE);
+						mImgFavorite.setClickable(false);
 					}
 				}
 			}
@@ -315,13 +334,14 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 									.getFromLocation(latLonCity.getLat() / 1E6,
 											latLonCity.getLon() / 1E6, 1);
 							if (!addresses.isEmpty()) {
-								String city = addresses.get(0).getAddressLine(1);//.getLocality();
+								String city = addresses.get(0).getAddressLine(1);// .getLocality();
 								String country = addresses.get(0).getCountryName();
 								String add = null;
 								if (city != null && !city.equals("") && !city.equals("null"))
 									add = city;
-								
-								if (country != null && !country.equals("") && !country.equals("null"))
+
+								if (country != null && !country.equals("")
+										&& !country.equals("null"))
 									if (add != null)
 										add += ", " + country;
 									else

@@ -9,9 +9,12 @@
         android:layout_height="35dp"
         android:id="@+id/btn_more"
         android:text="@string/more"
+        android:textColor="@color/signup_text_selector"
         android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_more"
+        android:drawablePadding="10dp"
         android:visibility="visible"
-        android:background="@drawable/selector_button_blue"/>
+        android:background="@null"/>
 
 
     <View

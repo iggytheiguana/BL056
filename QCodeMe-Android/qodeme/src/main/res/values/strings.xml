@@ -114,5 +114,16 @@
     <string name="delete_message">Delete Message</string>
     <string name="un_flag_message">Unflag Message</string>
     <string name="this_conversation_is_closed">This conversation is closed.</string>
-
+    <string name="remove">remove</string>
+    <string name="add_location">Add location</string>
+    <string name="add_status_hint">Add Status Message</string>
+    
+    <string name="share_qr_code">Share QR Code</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="about">About</string>
+    <string name="help">Help</string>
+    <string name="logout">Logout</string>
+    <string name="add_screen_name">Add Screen Name</string>
+    <string name="user_name_display_hint">Your screen name shows in Private Chats and when adding a contact. </string>
+    
 </resources>

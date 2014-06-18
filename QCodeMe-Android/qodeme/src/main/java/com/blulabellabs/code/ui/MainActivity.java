@@ -51,6 +51,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -69,6 +72,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
@@ -99,16 +104,20 @@ import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.ChatCreateResponse;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.LookupResponse;
+import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestErrorType;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.provider.QodemeContract.SyncColumns;
+import com.blulabellabs.code.core.provider.QodemeContract.Contacts.Sync;
 import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageCache;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.images.utils.Utils;
 import com.blulabellabs.code.ui.common.FullChatListAdapter;
+import com.blulabellabs.code.ui.common.MainChatListAdapter;
 import com.blulabellabs.code.ui.common.MenuListAdapter;
 import com.blulabellabs.code.ui.contacts.ContactDetailsActivity;
 import com.blulabellabs.code.ui.contacts.ContactListItem;
@@ -129,6 +138,7 @@ import com.blulabellabs.code.ui.qr.QrCodeShowActivity;
 import com.blulabellabs.code.utils.AnalyticsHelper;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.ExpandAnimation;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
@@ -137,8 +147,6 @@ import com.blulabellabs.code.utils.MyLocation.LocationResult;
 import com.blulabellabs.code.utils.NullHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.internal.co;
-import com.google.android.gms.internal.cu;
 import com.google.android.gms.location.LocationClient;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -219,6 +227,12 @@ public class MainActivity extends BaseActivity implements
 	private String oneToOneSearchString = "";
 	private Location currentLocation;
 
+	private ImageButton mImgBtnOneToOne, mImgBtnPrivate, mImgBtnPublic;
+
+	private ChatListFragment one2OneChatListFragment;
+	private ChatListGroupFragment privateChatListFragment;
+	private ChatListGroupPublicFragment publicChatListFragment;
+
 	/*
 	 * Animator for Zoom chat view
 	 */
@@ -230,7 +244,8 @@ public class MainActivity extends BaseActivity implements
 	 */
 	private int mShortAnimationDuration;
 	private FullChatListAdapter mPagerAdapter;
-	private ViewPager mViewPager;
+
+	private ViewPager mViewPager, mViewPagerMain;
 
 	/**
 	 * Handle to a SyncObserver. The ProgressBar element is visible until the
@@ -267,6 +282,9 @@ public class MainActivity extends BaseActivity implements
 		setContentView(R.layout.activity_main);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// loadData();
+
+		mViewPagerMain = (ViewPager) findViewById(R.id.pager_main);
+
 		initImageFetcher();
 		initActionBar();
 		initContactsList();
@@ -340,6 +358,41 @@ public class MainActivity extends BaseActivity implements
 		});
 	}
 
+	public class ChatListAdapter extends FragmentPagerAdapter {
+		// private ArrayList<Fragment> mFragmentsList = new
+		// ArrayList<Fragment>();
+
+		public ChatListAdapter(FragmentManager fm) {
+			super(fm);
+
+			// for (int i = 0; i < 3; i++)
+			// getmFragmentsList().add(ChatListFragment.getInstance());
+			// getmFragmentsList().add(ChatListGroupFragment.getInstance());
+			// getmFragmentsList().add(ChatListGroupPublicFragment.getInstance());
+
+		}
+
+		@Override
+		public int getCount() {
+			return 3;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			switch (position) {
+			case 0:
+				return ChatListFragment.getInstance();
+			case 1:
+				return ChatListGroupFragment.getInstance();
+			case 2:
+				return ChatListGroupPublicFragment.getInstance();
+			default:
+				return ChatListGroupPublicFragment.getInstance();
+			}
+		}
+
+	}
+
 	private void initKeyboardListener() {
 		mDrawerLayout.getViewTreeObserver().addOnGlobalLayoutListener(
 				new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -399,11 +452,94 @@ public class MainActivity extends BaseActivity implements
 		// chatHeightDataSource.close();
 	}
 
+	MainChatListAdapter adapter;
+
 	private void initChatListFragment() {
-		ChatListFragment one2OneChatListFragment = new ChatListFragment();
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.add(R.id.content_frame, one2OneChatListFragment, CHAT_LIST_FRAGMENT);
-		transaction.commit();
+		// ChatListFragment one2OneChatListFragment = new ChatListFragment();
+		// FragmentTransaction transaction =
+		// getSupportFragmentManager().beginTransaction();
+		// transaction.add(R.id.content_frame, one2OneChatListFragment,
+		// CHAT_LIST_FRAGMENT);
+		// transaction.commit();
+		// one2OneChatListFragment = ChatListFragment.getInstance();
+		// privateChatListFragment = ChatListGroupFragment.getInstance();
+		// publicChatListFragment = ChatListGroupPublicFragment.getInstance();
+
+		adapter = new MainChatListAdapter(getSupportFragmentManager());
+		// ArrayList<Fragment> arrayList = new ArrayList<Fragment>();
+		// arrayList.add(one2OneChatListFragment);
+		// arrayList.add(privateChatListFragment);
+		// arrayList.add(publicChatListFragment);
+		// adapter.setmFragmentsList(arrayList);
+		// one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+		// privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+		// publicChatListFragment = (ChatListGroupPublicFragment)
+		// adapter.getItem(2);
+		mViewPagerMain.setAdapter(adapter);
+		mViewPagerMain.setOnPageChangeListener(new OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int arg0) {
+				// Toast.makeText(getActivity(), "" + arg0,
+				// Toast.LENGTH_SHORT).show();
+				chatType = arg0;
+				Bitmap oneToone;
+				Bitmap priateGroup;
+				Bitmap publicGroup;
+
+				switch (arg0) {
+				case 0:
+					oneToone = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_one_to_one_h);
+					priateGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_private_group);
+					publicGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_public_group);
+					mImgBtnOneToOne.setImageBitmap(oneToone);
+					mImgBtnPrivate.setImageBitmap(priateGroup);
+					mImgBtnPublic.setImageBitmap(publicGroup);
+					break;
+				case 1:
+					oneToone = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_one_to_one);
+					priateGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_private_group_h);
+					publicGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_public_group);
+					mImgBtnOneToOne.setImageBitmap(oneToone);
+					mImgBtnPrivate.setImageBitmap(priateGroup);
+					mImgBtnPublic.setImageBitmap(publicGroup);
+					break;
+				case 2:
+					oneToone = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_one_to_one);
+					priateGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_private_group);
+					publicGroup = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_public_group_h);
+					mImgBtnOneToOne.setImageBitmap(oneToone);
+					mImgBtnPrivate.setImageBitmap(priateGroup);
+					mImgBtnPublic.setImageBitmap(publicGroup);
+					break;
+
+				default:
+					break;
+				}
+
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	@SuppressLint("NewApi")
@@ -450,6 +586,9 @@ public class MainActivity extends BaseActivity implements
 		expandedImageView.setVisibility(View.VISIBLE);
 		mViewPager.setCurrentItem(fullChatIndex);
 		// zoomImageFromThumb(v, 0);
+		// Animation animator = AnimationUtils.loadAnimation(this,
+		// R.anim.zoom_in);
+		// expandedImageView.startAnimation(animator);
 		// ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
 		// Animation.RELATIVE_TO_SELF,
 		// (float) 0.5, Animation.RELATIVE_TO_SELF, (float) 0.5);
@@ -500,6 +639,9 @@ public class MainActivity extends BaseActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
+		// ExpandAnimation animation = new ExpandAnimation(expandedImageView,
+		// 200);
+		// expandedImageView.startAnimation(animation);
 
 		mViewPager.setCurrentItem(fullChatIndex);
 		// mViewPager.setVisibility(View.GONE);
@@ -545,114 +687,133 @@ public class MainActivity extends BaseActivity implements
 						return true;
 					}
 				});
-		customActionView.findViewById(R.id.imgBtn_one2one).setOnClickListener(
-				new View.OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						if (chatType == 0)
-							return;
-						chatType = 0;
-						Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_one_to_one_h);
-						Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_private_group);
-						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_public_group);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
-								.setImageBitmap(priateGroup);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
-								.setImageBitmap(publicGroup);
-						((ImageButton) v).setImageBitmap(oneToone);
+		mImgBtnOneToOne = (ImageButton) customActionView.findViewById(R.id.imgBtn_one2one);
 
-						ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
-								.findFragmentByTag(CHAT_LIST_FRAGMENT);
-						if (one2OneChatListFragment != null) {
+		mImgBtnOneToOne.setOnClickListener(new View.OnClickListener() {
 
-						} else {
-							one2OneChatListFragment = new ChatListFragment();
-						}
-						FragmentTransaction transaction = getSupportFragmentManager()
-								.beginTransaction();
-						transaction.replace(R.id.content_frame, one2OneChatListFragment,
-								CHAT_LIST_FRAGMENT);
-						transaction.commit();
-					}
-				});
-		customActionView.findViewById(R.id.imgBtn_private).setOnClickListener(
-				new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (chatType == 0)
+					return;
+				chatType = 0;
+				Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_one_to_one_h);
+				Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_private_group);
+				Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_public_group);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
+						.setImageBitmap(priateGroup);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
+						.setImageBitmap(publicGroup);
+				((ImageButton) v).setImageBitmap(oneToone);
 
-					@Override
-					public void onClick(View v) {
-						if (chatType == 1)
-							return;
-						chatType = 1;
-						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
-						// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
-						// v.setBackgroundResource(R.drawable.bg_tab_h);
+				mViewPagerMain.setCurrentItem(0);
+				// ChatListFragment one2OneChatListFragment =
+				// (ChatListFragment) getSupportFragmentManager()
+				// .findFragmentByTag(CHAT_LIST_FRAGMENT);
+				// if (one2OneChatListFragment != null) {
+				//
+				// } else {
+				// one2OneChatListFragment = new ChatListFragment();
+				// }
+				// FragmentTransaction transaction =
+				// getSupportFragmentManager()
+				// .beginTransaction();
+				// transaction.replace(R.id.content_frame,
+				// one2OneChatListFragment,
+				// CHAT_LIST_FRAGMENT);
+				// transaction.commit();
+			}
+		});
 
-						Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_one_to_one);
-						Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_private_group_h);
-						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_public_group);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
-								.setImageBitmap(oneToone);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
-								.setImageBitmap(publicGroup);
-						((ImageButton) v).setImageBitmap(priateGroup);
+		mImgBtnPrivate = (ImageButton) customActionView.findViewById(R.id.imgBtn_private);
+		mImgBtnPrivate.setOnClickListener(new View.OnClickListener() {
 
-						ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
-								.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
-						if (privateChatListFragment == null) {
-							privateChatListFragment = new ChatListGroupFragment(1);
-						}
-						FragmentTransaction transaction = getSupportFragmentManager()
-								.beginTransaction();
-						transaction.replace(R.id.content_frame, privateChatListFragment,
-								CHAT_LIST_PRIVATE_FRAGMENT);
-						transaction.commit();
-					}
-				});
-		customActionView.findViewById(R.id.imgBtn_public).setOnClickListener(
-				new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (chatType == 1)
+					return;
+				chatType = 1;
+				// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+				// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+				// v.setBackgroundResource(R.drawable.bg_tab_h);
 
-					@Override
-					public void onClick(View v) {
-						if (chatType == 2)
-							return;
-						chatType = 2;
-						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
-						// customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
-						// v.setBackgroundResource(R.drawable.bg_tab_h);
-						Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_one_to_one);
-						Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_private_group);
-						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_public_group_h);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
-								.setImageBitmap(oneToone);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
-								.setImageBitmap(priateGroup);
-						((ImageButton) v).setImageBitmap(publicGroup);
+				Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_one_to_one);
+				Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_private_group_h);
+				Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_public_group);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
+						.setImageBitmap(oneToone);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
+						.setImageBitmap(publicGroup);
+				((ImageButton) v).setImageBitmap(priateGroup);
 
-						ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()
-								.findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
-						if (publicChatListFragment == null) {
-							publicChatListFragment = new ChatListGroupPublicFragment(2);
-						}
-						// ChatListGroupFragment privateChatListFragment = new
-						// ChatListGroupFragment(2);
-						FragmentTransaction transaction = getSupportFragmentManager()
-								.beginTransaction();
-						transaction.replace(R.id.content_frame, publicChatListFragment,
-								CHAT_LIST_PUBLIC_FRAGMENT);
-						transaction.commit();
+				mViewPagerMain.setCurrentItem(1);
+				// ChatListGroupFragment privateChatListFragment =
+				// (ChatListGroupFragment) getSupportFragmentManager()
+				// .findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
+				// if (privateChatListFragment == null) {
+				// privateChatListFragment = new
+				// ChatListGroupFragment(1);
+				// }
+				// FragmentTransaction transaction =
+				// getSupportFragmentManager()
+				// .beginTransaction();
+				// transaction.replace(R.id.content_frame,
+				// privateChatListFragment,
+				// CHAT_LIST_PRIVATE_FRAGMENT);
+				// transaction.commit();
+			}
+		});
+		mImgBtnPublic = (ImageButton) customActionView.findViewById(R.id.imgBtn_public);
+		mImgBtnPublic.setOnClickListener(new View.OnClickListener() {
 
-					}
-				});
+			@Override
+			public void onClick(View v) {
+				if (chatType == 2)
+					return;
+				chatType = 2;
+				// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+				// customActionView.findViewById(R.id.imgBtn_private).setBackgroundResource(0);
+				// v.setBackgroundResource(R.drawable.bg_tab_h);
+				Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_one_to_one);
+				Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_private_group);
+				Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_public_group_h);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
+						.setImageBitmap(oneToone);
+				((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
+						.setImageBitmap(priateGroup);
+				((ImageButton) v).setImageBitmap(publicGroup);
+
+				mViewPagerMain.setCurrentItem(2);
+				// ChatListGroupPublicFragment publicChatListFragment =
+				// (ChatListGroupPublicFragment)
+				// getSupportFragmentManager()
+				// .findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
+				// if (publicChatListFragment == null) {
+				// publicChatListFragment = new
+				// ChatListGroupPublicFragment(2);
+				// }
+				// // ChatListGroupFragment privateChatListFragment =
+				// new
+				// // ChatListGroupFragment(2);
+				// FragmentTransaction transaction =
+				// getSupportFragmentManager()
+				// .beginTransaction();
+				// transaction.replace(R.id.content_frame,
+				// publicChatListFragment,
+				// CHAT_LIST_PUBLIC_FRAGMENT);
+				// transaction.commit();
+
+			}
+		});
 		customActionView.findViewById(R.id.imgBtn_add).setOnClickListener(
 				new View.OnClickListener() {
 
@@ -698,7 +859,7 @@ public class MainActivity extends BaseActivity implements
 				if ((type & QrCodeCaptureActivity.QODEME_CONTACT) == QrCodeCaptureActivity.QODEME_CONTACT
 						&& !TextUtils.isEmpty(qrCode)) {
 					Cursor c = getContentResolver().query(QodemeContract.Contacts.CONTENT_URI,
-							new String[] { QodemeContract.Contacts._ID },
+							QodemeContract.Contacts.ContactQuery.PROJECTION,
 							QodemeContract.Contacts.CONTACT_QRCODE + " = '" + qrCode + "'", null,
 							null);
 					if (!c.moveToFirst()) {
@@ -706,7 +867,23 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Contacts.addNewContactValues(qrCode));
 						SyncHelper.requestManualSync();
 					} else {
-						showMessage("It's already your contact!");
+						if (c.moveToFirst()) {
+							int state = c
+									.getInt(QodemeContract.Contacts.ContactQuery.CONTACT_STATE);
+							long id = c.getLong(QodemeContract.Contacts.ContactQuery._ID);
+							if (state != QodemeContract.Contacts.State.APPRUVED) {
+								ContentValues contentValues = new ContentValues();
+								contentValues.put(SyncColumns.UPDATED, Sync.NEW | Sync.UPDATED);
+								getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+										contentValues, DbUtils.getWhereClauseForId(),
+										DbUtils.getWhereArgsForId(id));
+								SyncHelper.requestManualSync();
+								// contentValues.put(QodemeContract.Contacts.CONTACT_STATE,
+								// value)
+							} else
+								showMessage("It's already your contact!");
+						} else
+							showMessage("It's already your contact!");
 					}
 				}
 				break;
@@ -2004,20 +2181,32 @@ public class MainActivity extends BaseActivity implements
 		// Collections.sort(mChatList, new
 		// ApprovedChatComparator(mLastMessageInChatMap));
 		// }
+		one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+		privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+		publicChatListFragment = (ChatListGroupPublicFragment) adapter.getItem(2);
 
-		ChatListFragment one2OneChatListFragment = (ChatListFragment) getSupportFragmentManager()
-				.findFragmentByTag(CHAT_LIST_FRAGMENT);
+		one2OneChatListFragment.updateUi();
+		privateChatListFragment.updateUi();
+		publicChatListFragment.updateUi();
 
-		ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
-				.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
-		ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()
-				.findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
-		if (one2OneChatListFragment != null)
-			one2OneChatListFragment.updateUi();
-		if (privateChatListFragment != null)
-			privateChatListFragment.updateUi();
-		if (publicChatListFragment != null)
-			publicChatListFragment.updateUi();
+		adapter.notifyDataSetChanged();
+
+		// ChatListFragment one2OneChatListFragment = (ChatListFragment)
+		// getSupportFragmentManager()
+		// .findFragmentByTag(CHAT_LIST_FRAGMENT);
+		//
+		// ChatListGroupFragment privateChatListFragment =
+		// (ChatListGroupFragment) getSupportFragmentManager()
+		// .findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
+		// ChatListGroupPublicFragment publicChatListFragment =
+		// (ChatListGroupPublicFragment) getSupportFragmentManager()
+		// .findFragmentByTag(CHAT_LIST_PUBLIC_FRAGMENT);
+		// if (one2OneChatListFragment != null)
+		// one2OneChatListFragment.updateUi();
+		// if (privateChatListFragment != null)
+		// privateChatListFragment.updateUi();
+		// if (publicChatListFragment != null)
+		// publicChatListFragment.updateUi();
 	}
 
 	private void openChat(String name) {
@@ -2352,15 +2541,98 @@ public class MainActivity extends BaseActivity implements
 
 		int is_search = 0;
 		if (chatLoad == null) {
+			if (mChatListSearchPublic != null) {
+				for (ChatLoad chat : mChatListSearchPublic)
+					if (chat.chatId == chatId)
+						// return chatLoad;
+						chatLoad = chat;
+			}
+			if (chatLoad != null)
+				chatLoad.is_favorite = 1;
 			is_search = 1;
+//			String date = Converter.getCurrentGtmTimestampString();
+//			RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
+//					new RestListener<SetFavoriteResponse>() {
+//
+//						@Override
+//						public void onResponse(SetFavoriteResponse response) {
+//
+//						}
+//
+//						@Override
+//						public void onServiceError(RestError error) {
+//
+//						}
+//					});
+
+			// RestAsyncHelper.getInstance().chatAddMember(chatId,
+			// QodemePreferences.getInstance().getQrcode(),
+			// new RestListener<ChatAddMemberResponse>() {
+			//
+			// @Override
+			// public void onResponse(ChatAddMemberResponse response) {
+			// Log.d("Chat add in public ", "Chat add mem "
+			// + response.getChat().getId());
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			// Log.d("Error", "Chat add member");
+			// }
+			// });
 		} else {
 			is_search = 0;
+
+			if (chatLoad.type == 2) {
+
+				int num_of_favorite = chatLoad.number_of_likes;
+				int is_favorite = 1;
+				if (chatLoad.is_favorite == 1) {
+					is_favorite = 2;
+					num_of_favorite--;
+				} else {
+					is_favorite = 1;
+					if (num_of_favorite <= 0) {
+						num_of_favorite = 1;
+					} else
+						num_of_favorite++;
+				}
+				getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+						QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+				String date = Converter.getCurrentGtmTimestampString();
+			}
 		}
 		getContentResolver().insert(
 				QodemeContract.Messages.CONTENT_URI,
 				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
 						replyTo_Id, latitude, longitude, senderName, localUrl, is_search));
 		SyncHelper.requestManualSync();
+
+		if (is_search == 1) {
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					RestAsyncHelper.getInstance().chatAddMember(chatId,
+							QodemePreferences.getInstance().getQrcode(),
+							new RestListener<ChatAddMemberResponse>() {
+
+								@Override
+								public void onResponse(ChatAddMemberResponse response) {
+									Log.d("Chat add in public ", "Chat add mem "
+											+ response.getChat().getId());
+								}
+
+								@Override
+								public void onServiceError(RestError error) {
+									Log.d("Error", "Chat add member");
+								}
+							});
+				}
+			}, 1000);
+			
+		}
 
 	}
 
@@ -2773,7 +3045,7 @@ public class MainActivity extends BaseActivity implements
 				.with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_X, startScale, 1f))
 				.with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_Y, startScale, 1f));
 		set.setDuration(mShortAnimationDuration);
-		set.setInterpolator(new LinearInterpolator());
+		set.setInterpolator(new DecelerateInterpolator());
 		set.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
@@ -3074,7 +3346,7 @@ public class MainActivity extends BaseActivity implements
 								for (LookupChatEntity entity : response.getChatList()) {
 									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
 											+ " " + entity.getId());
-									 ChatLoad chatLoad = new ChatLoad();
+									ChatLoad chatLoad = new ChatLoad();
 									chatLoad.title = entity.getTitle();
 									chatLoad.chatId = entity.getId();
 									chatLoad.qrcode = entity.getQrcode();
@@ -3089,7 +3361,13 @@ public class MainActivity extends BaseActivity implements
 									chatLoad.type = 2;
 									chatLoad.created = entity.getCreated();
 									chatLoad.isSearchResult = true;
-									
+									for (ChatLoad c : mChatList) {
+										if (c.chatId == entity.getId()) {
+											chatLoad.isSearchResult = false;
+											break;
+										}
+									}
+
 									mChatListSearchPublic.add(chatLoad);
 								}
 								chatListener.onSearchResult(response.getChatList().size(), 1);

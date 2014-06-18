@@ -9,10 +9,52 @@
         android:id="@+id/textView_share"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Share"
         android:layout_marginTop="20dp"
-        android:textColor="@android:color/white"
+        android:padding="10dp"
+        android:text="@string/share_qr_code"
+        android:textColor="@color/signup_text_selector"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@drawable/line_horizontal" />
+
+    <com.blulabellabs.code.ui.common.TextViewRegular
+        android:id="@+id/textView_scanQR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/scan_qr_code"
+        android:textColor="@color/signup_text_selector"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@drawable/line_horizontal" />
+
+    <com.blulabellabs.code.ui.common.TextViewRegular
+        android:id="@+id/textView_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/about"
+        android:textColor="@color/signup_text_selector"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@drawable/line_horizontal" />
+
+    <com.blulabellabs.code.ui.common.TextViewRegular
+        android:id="@+id/textView_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/help"
+        android:textColor="@color/signup_text_selector"
         android:textSize="18sp" />
 
     <View
@@ -25,8 +67,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Logout"
-        android:textColor="@android:color/white"
+        android:text="@string/logout"
+        android:textColor="@color/signup_text_selector"
         android:textSize="18sp" />
 
 </LinearLayout>

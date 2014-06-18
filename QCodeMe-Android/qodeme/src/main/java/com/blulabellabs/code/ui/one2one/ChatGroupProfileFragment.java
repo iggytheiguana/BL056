@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -48,6 +49,7 @@ import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.DeleteChatResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetSearchableResponse;
@@ -64,6 +66,7 @@ import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.QrUtils;
+import com.google.android.gms.internal.bt;
 import com.google.common.collect.Lists;
 
 public class ChatGroupProfileFragment extends Fragment implements OnClickListener {
@@ -94,6 +97,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	private LinearLayout mLinearLayFlag;
 	private ArrayList<Contact> memberList = new ArrayList<Contact>();
 	private ArrayList<Message> totalFlaggedMessagelist = new ArrayList<Message>();
+	private Button mBtnAddLocaton, mBtnRemoveLocation;
 
 	private One2OneChatInsideFragmentCallback callback;
 
@@ -162,7 +166,11 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mLinearLayFlag = (LinearLayout) getView().findViewById(R.id.linear_flagged);
 		mRelativeLayoutDesc = (RelativeLayout) getView().findViewById(R.id.relative_desc);
 		mRelativeLayoutSetDesc = (RelativeLayout) getView().findViewById(R.id.relative_editDesc);
+		mBtnAddLocaton = (Button) getView().findViewById(R.id.btn_addLocation);
+		mBtnRemoveLocation = (Button) getView().findViewById(R.id.btn_removeLocation);
 
+		mBtnRemoveLocation.setOnClickListener(this);
+		mBtnAddLocaton.setOnClickListener(this);
 		mBtnDelete.setOnClickListener(this);
 		mImgBtnColorWheel.setOnClickListener(this);
 		mBtnEditStatus.setOnClickListener(this);
@@ -383,6 +391,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				&& !getChatload().latitude.trim().equals("0.0")
 				&& !getChatload().longitude.trim().equals("0.0")) {
 
+			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode))
+				mBtnRemoveLocation.setVisibility(View.VISIBLE);
 			double lat = Double.parseDouble(getChatload().latitude);
 			double lng = Double.parseDouble(getChatload().longitude);
 
@@ -399,12 +409,12 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 								.getFromLocation(latLonCity.getLat() / 1E6,
 										latLonCity.getLon() / 1E6, 1);
 						if (!addresses.isEmpty()) {
-							String city = addresses.get(0).getAddressLine(1);//.getLocality();
+							String city = addresses.get(0).getAddressLine(1);// .getLocality();
 							String country = addresses.get(0).getCountryName();
 							String add = null;
 							if (city != null && !city.equals("") && !city.equals("null"))
 								add = city;
-							
+
 							if (country != null && !country.equals("") && !country.equals("null"))
 								if (add != null)
 									add += ", " + country;
@@ -433,6 +443,9 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					}
 				}
 			}.execute(latLonCity);
+		} else {
+			if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode))
+				mBtnAddLocaton.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -839,11 +852,55 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					} else
 						num_of_favorite++;
 				}
+				if (getChatload().isSearchResult) {
+					getChatload().number_of_likes = num_of_favorite;
+					getChatload().is_favorite = is_favorite;
+					if (is_favorite == 1) {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_chat_favorite);
+						mImgFavorite.setImageBitmap(bm);
+					} else {
+						Bitmap bm = BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_chat_favorite_h);
+						mImgFavorite.setImageBitmap(bm);
+					}
 
-				getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-						QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
-				SyncHelper.requestManualSync();
+					String date = Converter.getCurrentGtmTimestampString();
+					RestAsyncHelper.getInstance().setFavorite(date, is_favorite,
+							getChatload().chatId, new RestListener<SetFavoriteResponse>() {
+
+								@Override
+								public void onResponse(SetFavoriteResponse response) {
+
+								}
+
+								@Override
+								public void onServiceError(RestError error) {
+
+								}
+							});
+
+					RestAsyncHelper.getInstance().chatAddMember(getChatload().chatId,
+							QodemePreferences.getInstance().getQrcode(),
+							new RestListener<ChatAddMemberResponse>() {
+
+								@Override
+								public void onResponse(ChatAddMemberResponse response) {
+									Log.d("Chat add in public ", "Chat add mem "
+											+ response.getChat().getId());
+								}
+
+								@Override
+								public void onServiceError(RestError error) {
+									Log.d("Error", "Chat add member");
+								}
+							});
+				} else {
+					getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + getChatload().chatId, null);
+					SyncHelper.requestManualSync();
+				}
 				// setFavorite();
 				break;
 			case R.id.textView_member:
@@ -868,6 +925,42 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				intent.putParcelableArrayListExtra(MESSAGE_LIST, totalFlaggedMessagelist);
 
 				getActivity().startActivity(intent);
+				break;
+			case R.id.btn_addLocation:
+				MainActivity activity2 = (MainActivity) getActivity();
+				Location location = activity2.getCurrentLocation();
+				if (location != null) {
+					getActivity().getContentResolver().update(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateLocation(location.getLatitude() + "",
+									location.getLongitude() + ""),
+							QodemeContract.Chats.CHAT_ID + "=?",
+							DbUtils.getWhereArgsForId(getChatload().chatId));
+
+					getChatload().latitude = location.getLatitude() + "";
+					getChatload().longitude = location.getLongitude() + "";
+
+					setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+							getChatload().description, getChatload().status,
+							getChatload().is_locked, getChatload().title);
+				} else {
+					Toast.makeText(getActivity(),
+							"Location not found, please check your GPS settings. ",
+							Toast.LENGTH_SHORT).show();
+				}
+				break;
+			case R.id.btn_removeLocation:
+				getActivity().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+						QodemeContract.Chats.updateLocation("0", "0"),
+						QodemeContract.Chats.CHAT_ID + "=?",
+						DbUtils.getWhereArgsForId(getChatload().chatId));
+
+				getChatload().latitude = "0";
+				getChatload().longitude = "0";
+
+				setChatInfo(getChatload().chatId, null, getChatload().color, getChatload().tag,
+						getChatload().description, getChatload().status, getChatload().is_locked,
+						getChatload().title);
 				break;
 			default:
 				break;

@@ -32,6 +32,7 @@ import com.blulabellabs.code.core.io.utils.RestRequest;
 /**
  * Created with IntelliJ IDEA. User: Alex Vegner Date: 8/15/13 Time: 6:24 PM
  */
+@SuppressWarnings("rawtypes")
 public class RestAsyncHelper implements RestClient {
 
 	private static final int MY_SOCKET_TIMEOUT_MS = 10 * 1000;
@@ -69,6 +70,7 @@ public class RestAsyncHelper implements RestClient {
 	 * @param callback
 	 *            - UI callback
 	 */
+	
 	private void post(RequestType requestType, RequestParams params, RestListener callback) {
 		RequestPackage pack = new RequestPackage(JsonObjectRequest.Method.POST, requestType,
 				params, callback);
@@ -89,6 +91,7 @@ public class RestAsyncHelper implements RestClient {
 		packege.countTries();
 		RestRequest restRequest = new RestRequest(context, packege, new RestRequest.Listener() {
 
+			@SuppressWarnings({ "unchecked", "unused" })
 			@Override
 			public void onResponse(JSONObject jsonObject, RequestPackage packege) {
 				if (ApplicationConstants.DEVELOP_MODE)

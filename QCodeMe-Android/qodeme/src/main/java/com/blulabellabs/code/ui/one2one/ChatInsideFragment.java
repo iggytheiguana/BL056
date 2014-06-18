@@ -87,6 +87,7 @@ public class ChatInsideFragment extends Fragment {
 	private TextView mDate;
 	private TextView mLocation;
 	private LinearLayout mLinearLayStatusUpdte;
+	private TextView mTextViewDeleteBaner;
 
 	private boolean mFirstUpdate = true;
 	private ImageView imgUserTyping;
@@ -188,7 +189,7 @@ public class ChatInsideFragment extends Fragment {
 		mStatus = (TextView) getView().findViewById(R.id.textView_status);
 		mStatusUpdate = (TextView) getView().findViewById(R.id.textView_status_update);
 		mLinearLayStatusUpdte = (LinearLayout) getView().findViewById(R.id.linear_status_update);
-
+		mTextViewDeleteBaner = (TextView) getView().findViewById(R.id.textView_deleteBanner);
 		
 		mImgFavorite.setOnClickListener(new OnClickListener() {
 
@@ -659,6 +660,8 @@ public class ChatInsideFragment extends Fragment {
 			MainActivity activity = (MainActivity) callback;
 			ChatLoad chatLoad = activity.getChatLoad(getChatId());
 			if (chatLoad != null){
+				
+				
 				mStatus.setText(chatLoad.status);
 				if (chatLoad.is_favorite == 1) {
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -673,6 +676,16 @@ public class ChatInsideFragment extends Fragment {
 				// mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
 				// mTextViewNumFavorite.setVisibility(View.VISIBLE);
 				// }
+				
+				
+				if(chatLoad.is_deleted == 1){
+					mTextViewDeleteBaner.setVisibility(View.VISIBLE);
+					mImgFavorite.setClickable(false);
+					mSendButton.setVisibility(View.INVISIBLE);
+					mMessageField.setVisibility(View.INVISIBLE);
+					mBtnImageSend.setVisibility(View.INVISIBLE);
+					mBtnImageSendBottom.setVisibility(View.INVISIBLE);
+				}
 			}
 			// mName.setTextColor(getChatColor());
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
