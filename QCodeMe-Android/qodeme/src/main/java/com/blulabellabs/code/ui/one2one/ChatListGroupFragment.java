@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -35,6 +38,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
@@ -109,7 +113,7 @@ public class ChatListGroupFragment extends Fragment {
 	// void messageRead(long chatId);
 	// }
 
-	public static ChatListGroupFragment getInstance(){
+	public static ChatListGroupFragment getInstance() {
 		ChatListGroupFragment fragment = new ChatListGroupFragment();
 		Bundle args = new Bundle();
 		args.putInt("index", 1);
@@ -117,6 +121,7 @@ public class ChatListGroupFragment extends Fragment {
 		fragment.setArguments(args);
 		return fragment;
 	}
+
 	public ChatListGroupFragment() {
 		super();
 	}
@@ -207,7 +212,7 @@ public class ChatListGroupFragment extends Fragment {
 
 				isFavoriteFilter = false;
 				Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_chat_favorite);
+						R.drawable.ic_chat_favorite_h);
 				mImgBtnFavoriteFilter.setImageBitmap(bm1);
 				updateUi();
 			}
@@ -226,13 +231,13 @@ public class ChatListGroupFragment extends Fragment {
 				if (isFavoriteFilter) {
 					isFavoriteFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
+							R.drawable.ic_chat_favorite_h);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 					updateUi();
 				} else {
 					if (chatLoads != null) {
 						Bitmap bm = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_chat_favorite_h);
+								R.drawable.ic_star_blue);
 						mImgBtnFavoriteFilter.setImageBitmap(bm);
 						isFavoriteFilter = true;
 						List<ChatLoad> temp = Lists.newArrayList();
@@ -261,7 +266,7 @@ public class ChatListGroupFragment extends Fragment {
 				if (isFavoriteFilter) {
 					isFavoriteFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
+							R.drawable.ic_chat_favorite_h);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 				}
 				if (isLocationFilter) {
@@ -324,7 +329,7 @@ public class ChatListGroupFragment extends Fragment {
 				// if (isFavoriteFilter) {
 				// isFavoriteFilter = false;
 				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
-				// R.drawable.ic_chat_favorite);
+				// R.drawable.ic_chat_favorite_h);
 				// mImgBtnFavoriteFilter.setImageBitmap(bm);
 				// }
 
@@ -396,7 +401,7 @@ public class ChatListGroupFragment extends Fragment {
 					//
 					// isFavoriteFilter = false;
 					// Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
-					// R.drawable.ic_chat_favorite);
+					// R.drawable.ic_chat_favorite_h);
 					// mImgBtnFavoriteFilter.setImageBitmap(bm1);
 
 					if (chatLoads != null) {
@@ -428,8 +433,7 @@ public class ChatListGroupFragment extends Fragment {
 							// Collections.sort(temp, new CustomComparator());
 							mListAdapter.clear();
 							mListAdapter.addAll(temp);
-						}
-						else{
+						} else {
 							mListAdapter.clear();
 							mListAdapter.addAll(chatLoads);
 						}
@@ -553,6 +557,7 @@ public class ChatListGroupFragment extends Fragment {
 					public void onOpen() {
 						Log.d(TAG, "Status: Connected to " + wsuri);
 						// mConnection.sendTextMessage("Hello, world!");
+//						sendRegisterForChatEvents();
 					}
 
 					@Override
@@ -724,21 +729,20 @@ public class ChatListGroupFragment extends Fragment {
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				
-				 if (scrollState == SCROLL_STATE_FLING)
-					 mListAdapter.isScroll = true;
-			       else {
-			    	   mListAdapter.isScroll = false;
-			    	   mListAdapter.notifyDataSetChanged();
-			       }
+
+//				if (scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL)
+//					mListAdapter.isScroll = true;
+//				else {
+//					mListAdapter.isScroll = false;
+//					mListAdapter.notifyDataSetChanged();
+//				}
 			}
 
 			@SuppressLint("NewApi")
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
 					int totalItemCount) {
-				
-				
+
 				if (lastFirstvisibleItem != firstVisibleItem) {
 					if (lastFirstvisibleItem > firstVisibleItem) {
 						if (mLinearLayoutSearch.getVisibility() != View.VISIBLE) {
@@ -953,4 +957,6 @@ public class ChatListGroupFragment extends Fragment {
 				isMoreData = false;
 		}
 	};
+	
+	
 }

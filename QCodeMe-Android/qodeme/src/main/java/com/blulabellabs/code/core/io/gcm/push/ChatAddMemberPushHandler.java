@@ -98,8 +98,8 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 		else
 			id = id + "," + mChatLoad.chatId + "";
 
-		getContext().getContentResolver().delete(QodemeContract.Messages.CONTENT_URI,
-				QodemeContract.Messages.MESSAGE_CHAT_ID + "=" + mChatLoad.chatId, null);
+//		getContext().getContentResolver().delete(QodemeContract.Messages.CONTENT_URI,
+//				QodemeContract.Messages.MESSAGE_CHAT_ID + "=" + mChatLoad.chatId, null);
 		QodemePreferences.getInstance().set("AddMemberId", id);
 		// try {
 		// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();

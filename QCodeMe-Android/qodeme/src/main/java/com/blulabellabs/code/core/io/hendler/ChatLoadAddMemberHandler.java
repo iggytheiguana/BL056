@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,24 +46,32 @@ public class ChatLoadAddMemberHandler extends BaseResponseHandler<ChatLoadRespon
 	}
 
 	private static void parseMessage(Message m, ArrayList<ContentProviderOperation> batch) {
-		ContentProviderOperation.Builder builder = ContentProviderOperation
-				.newInsert(addCallerIsSyncAdapterParameter(Messages.CONTENT_URI));
-		builder.withValue(Messages.MESSAGE_ID, m.messageId);
-		builder.withValue(Messages.MESSAGE_CHAT_ID, m.chatId);
-		builder.withValue(Messages.MESSAGE_TEXT, m.message);
-		builder.withValue(Messages.MESSAGE_QRCODE, m.qrcode);
-		builder.withValue(Messages.MESSAGE_CREATED, m.created);
-		builder.withValue(Messages.MESSAGE_STATE, m.state);
-		builder.withValue(Messages.MESSAGE_PHOTO_URL, m.photoUrl);
-		builder.withValue(Messages.MESSAGE_HASH_PHOTO, m.hasPhoto);
-		builder.withValue(Messages.MESSAGE_REPLY_TO_ID, m.replyTo_id);
-		builder.withValue(Messages.MESSAGE_LATITUDE, m.latitude);
-		builder.withValue(Messages.MESSAGE_LONGITUDE, m.longitude);
-		builder.withValue(Messages.MESSAGE_SENDERNAME, m.senderName);
-		builder.withValue(Messages.MESSAGE_HAS_FLAGGED, m.is_flagged);
 
-		builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
-		batch.add(builder.build());
+		Cursor cursor = mContext.getContentResolver().query(QodemeContract.Messages.CONTENT_URI,
+				QodemeContract.Messages.Query.PROJECTION,
+				QodemeContract.Messages.MESSAGE_ID + "=" + m.messageId, null, null);
+
+		if (cursor != null && cursor.moveToFirst()) {
+		} else {
+			ContentProviderOperation.Builder builder = ContentProviderOperation
+					.newInsert(addCallerIsSyncAdapterParameter(Messages.CONTENT_URI));
+			builder.withValue(Messages.MESSAGE_ID, m.messageId);
+			builder.withValue(Messages.MESSAGE_CHAT_ID, m.chatId);
+			builder.withValue(Messages.MESSAGE_TEXT, m.message);
+			builder.withValue(Messages.MESSAGE_QRCODE, m.qrcode);
+			builder.withValue(Messages.MESSAGE_CREATED, m.created);
+			builder.withValue(Messages.MESSAGE_STATE, m.state);
+			builder.withValue(Messages.MESSAGE_PHOTO_URL, m.photoUrl);
+			builder.withValue(Messages.MESSAGE_HASH_PHOTO, m.hasPhoto);
+			builder.withValue(Messages.MESSAGE_REPLY_TO_ID, m.replyTo_id);
+			builder.withValue(Messages.MESSAGE_LATITUDE, m.latitude);
+			builder.withValue(Messages.MESSAGE_LONGITUDE, m.longitude);
+			builder.withValue(Messages.MESSAGE_SENDERNAME, m.senderName);
+			builder.withValue(Messages.MESSAGE_HAS_FLAGGED, m.is_flagged);
+
+			builder.withValue(SyncColumns.UPDATED, Contacts.Sync.DONE);
+			batch.add(builder.build());
+		}
 	}
 
 	private static void parseChat(ChatLoad chatLoad, ArrayList<ContentProviderOperation> batch) {

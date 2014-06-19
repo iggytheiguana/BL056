@@ -219,9 +219,14 @@ public class SyncHelper {
 				long chatId = Long.parseLong(c);
 				ChatLoadResponse chatLoadResponse = rest.chatLoad(chatId, 0, 1000);
 				new ChatLoadAddMemberHandler(context).parseAndApply(chatLoadResponse);// ,
-				context.getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateFavorite(1, chatLoadResponse.getChatLoad().number_of_likes+1),
-						QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+
+				if (chatLoadResponse.getChatLoad().is_favorite != 1)
+					context.getContentResolver().update(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(1,
+									chatLoadResponse.getChatLoad().number_of_likes + 1),
+							QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+				// rest.setFavorite(date, is_favorite, chat_id)
 			}
 		}
 	}
@@ -642,7 +647,8 @@ public class SyncHelper {
 
 					try {
 						long messageId = cursor.getLong(QodemeContract.Messages.Query.MESSAGE_ID);
-						long chat_id =  cursor.getLong(QodemeContract.Messages.Query.MESSAGE_CHAT_ID);
+						long chat_id = cursor
+								.getLong(QodemeContract.Messages.Query.MESSAGE_CHAT_ID);
 						DeleteMessageResponse response = rest.deleteMessage(messageId, chat_id);
 						new MessageDeleteHandler(context, id).parseAndApply(response);
 					} catch (InterruptedException e) {

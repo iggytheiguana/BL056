@@ -34,9 +34,9 @@ public class ExGroupListAdapter<T extends ExGroupAdapterBasedView<E, C>, E, C ex
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
+//		ViewHolder holder;
 		if (convertView == null) {
-			holder = new ViewHolder();
+//			holder = new ViewHolder();
 			convertView = layoutInflater.inflate(layoutResId, null);
 
 //			ChatListGroupItem chatListItem = (ChatListGroupItem) convertView;
@@ -52,9 +52,10 @@ public class ExGroupListAdapter<T extends ExGroupAdapterBasedView<E, C>, E, C ex
 //			holder.mImgBtnFavorite = chatListItem.getFavoriteBtn();
 //			holder.mChatItem = chatListItem.getChatItem();
 
-			convertView.setTag(holder);
-		} else
-			holder = (ViewHolder) convertView.getTag();
+//			convertView.setTag(holder);
+		}
+//		else
+//			holder = (ViewHolder) convertView.getTag();
 
 		ChatListGroupItem chatListItem = (ChatListGroupItem) convertView;
 //		chatListItem.date = holder.date;
@@ -68,7 +69,7 @@ public class ExGroupListAdapter<T extends ExGroupAdapterBasedView<E, C>, E, C ex
 //		chatListItem.sendImgMessageBtn = holder.sendImgMessageBtn;
 //		chatListItem.mImgBtnFavorite = holder.mImgBtnFavorite;
 //		chatListItem.mChatItem = holder.mChatItem;
-		chatListItem.isScrolling = isScroll;
+//		chatListItem.isScrolling = isScroll;
 //		if (!isScroll) {
 			view = (T) convertView;
 			E e = (E) getItem(position);

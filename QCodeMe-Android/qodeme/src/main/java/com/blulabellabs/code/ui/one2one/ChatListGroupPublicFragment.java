@@ -220,7 +220,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 				isFavoriteFilter = false;
 				Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_chat_favorite);
+						R.drawable.ic_chat_favorite_h);
 				mImgBtnFavoriteFilter.setImageBitmap(bm1);
 				updateUi();
 
@@ -255,11 +255,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 					isFavoriteFilter = false;
 					updateUi();
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
+							R.drawable.ic_chat_favorite_h);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 				} else {
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite_h);
+							R.drawable.ic_star_blue);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 					isFavoriteFilter = true;
 					if (chatLoads != null) {
@@ -280,7 +280,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 				// if (isFavoriteFilter) {
 				// isFavoriteFilter = false;
 				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
-				// R.drawable.ic_chat_favorite);
+				// R.drawable.ic_chat_favorite_h);
 				// mImgBtnFavoriteFilter.setImageBitmap(bm);
 				// }
 
@@ -349,7 +349,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 					// if (isFavoriteFilter) {
 					// isFavoriteFilter = false;
 					// Bitmap bm = BitmapFactory.decodeResource(getResources(),
-					// R.drawable.ic_chat_favorite);
+					// R.drawable.ic_chat_favorite_h);
 					// mImgBtnFavoriteFilter.setImageBitmap(bm);
 					// }
 
@@ -755,12 +755,12 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				 if (scrollState == SCROLL_STATE_FLING)
-					 mListAdapter.isScroll = true;
-			       else {
-			    	   mListAdapter.isScroll = false;
-			    	   mListAdapter.notifyDataSetChanged();
-			       }
+//				 if (scrollState == SCROLL_STATE_FLING)
+//					 mListAdapter.isScroll = true;
+//			       else {
+//			    	   mListAdapter.isScroll = false;
+//			    	   mListAdapter.notifyDataSetChanged();
+//			       }
 
 			}
 
@@ -1072,6 +1072,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 				// long focusedChat = ChatFocusSaver.getFocusedChatId();
 				// selectChat(focusedChat);
+				
+				
 			}
 		} catch (Exception e) {
 		}

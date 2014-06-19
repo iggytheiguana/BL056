@@ -16,6 +16,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.accounts.Account;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -76,6 +79,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -153,6 +157,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
+
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
 @SuppressWarnings({ "unused", "unchecked", "rawtypes" })
@@ -271,6 +279,7 @@ public class MainActivity extends BaseActivity implements
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 	private MyLocation myLocation;
+	private final WebSocketConnection mConnection = new WebSocketConnection();
 
 	/**
 	 * Called when the activity is first created.
@@ -2588,19 +2597,20 @@ public class MainActivity extends BaseActivity implements
 				int num_of_favorite = chatLoad.number_of_likes;
 				int is_favorite = 1;
 				if (chatLoad.is_favorite == 1) {
-					is_favorite = 2;
-					num_of_favorite--;
+					// is_favorite = 2;
+					// num_of_favorite--;
 				} else {
 					is_favorite = 1;
 					if (num_of_favorite <= 0) {
 						num_of_favorite = 1;
 					} else
 						num_of_favorite++;
+
+					getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+							QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+					String date = Converter.getCurrentGtmTimestampString();
 				}
-				getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-						QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-						QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
-				String date = Converter.getCurrentGtmTimestampString();
 			}
 		}
 		getContentResolver().insert(
@@ -2631,7 +2641,7 @@ public class MainActivity extends BaseActivity implements
 							});
 				}
 			}, 1000);
-			
+
 		}
 
 	}
@@ -2729,7 +2739,7 @@ public class MainActivity extends BaseActivity implements
 				mMessageListObjerver);
 		getContentResolver().registerContentObserver(QodemeContract.Chats.CONTENT_URI, true,
 				mChatListObserver);
-
+		start();
 	}
 
 	@Override
@@ -2745,6 +2755,7 @@ public class MainActivity extends BaseActivity implements
 		getContentResolver().unregisterContentObserver(mContactListObserver);
 		getContentResolver().unregisterContentObserver(mMessageListObjerver);
 		Helper.hideKeyboard(this);
+		stop();
 	}
 
 	public boolean isActive() {
@@ -3364,6 +3375,7 @@ public class MainActivity extends BaseActivity implements
 									for (ChatLoad c : mChatList) {
 										if (c.chatId == entity.getId()) {
 											chatLoad.isSearchResult = false;
+											chatLoad = c;
 											break;
 										}
 									}
@@ -3527,5 +3539,197 @@ public class MainActivity extends BaseActivity implements
 
 	public interface LoadMoreChatListener {
 		public void onSearchResult(int count, int responseCode);
+	}
+	public void addPrivateAdapter(){
+		
+	}
+	
+	
+	private void start() {
+		final String wsuri = "ws://54.204.45.228/python";
+
+		try {
+			if (!mConnection.isConnected()) {
+				mConnection.connect(wsuri, new WebSocketHandler() {
+
+					@Override
+					public void onOpen() {
+						Log.d(TAG, "Status: Connected to " + wsuri);
+						// mConnection.sendTextMessage("Hello, world!");
+//						sendRegisterForChatEvents();
+//						for(ChatLoad chatLoad:mChatList){
+//							sendRegisterForChatEvents(chatLoad.chatId);
+//						}
+					}
+
+					@Override
+					public void onTextMessage(String payload) {
+						Log.d(TAG, "Got echo: " + payload);
+						receiveWebSocketMessageWith(payload);
+					}
+
+					@Override
+					public void onClose(int code, String reason) {
+						Log.d(TAG, "Connection lost.");
+					}
+				});
+			}
+		} catch (WebSocketException e) {
+
+			Log.d(TAG, e.toString());
+		}
+	}
+
+	private void stop() {
+		try {
+			if (mConnection.isConnected()) {
+				// let's disconnect the socket
+				mConnection.disconnect();
+				Log.d(TAG, "Disconnected web socket");
+			}
+
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+
+		}
+	}
+	
+	public void sendUserStoppedTypingMessage(long chatId) {
+		String activityName = "sendUserStoppedTypingMessage:";
+		if (mConnection.isConnected()) {
+			// we have a open web socket connection
+//			long chatId = getChatId();
+			String restToken = QodemePreferences.getInstance().getRestToken();
+			int event = GetEventForUserStoppedTypingMessage();
+			Log.d(TAG, activityName + "Sending user stopped typing message...");
+			sendWebSocketMessageWith(chatId, restToken, event);
+		}
+	}
+
+	public void sendUserTypingMessage(long chatId) {
+		String activityName = "sendUserTypingMessage:";
+		// this will send over the web socket a message that the user has begun
+		// typing
+		if (mConnection.isConnected()) {
+			sendRegisterForChatEvents(chatId);
+			// we need the chat id
+//			long chatId = getChatId();
+			// the auth token
+			String restToken = QodemePreferences.getInstance().getRestToken();
+
+			int event = GetEventForUserStartedTypingMessage();
+			Log.d(TAG, activityName + "Sending user typing message...");
+			sendWebSocketMessageWith(chatId, restToken, event);
+
+		}
+	}
+	private void sendWebSocketMessageWith(long chatId, String authToken, int event) {
+		String activityName = "sendWebSocketMessageWith:";
+
+		if (mConnection.isConnected()) {
+
+			try {
+				JSONObject json = new JSONObject();
+				json.put("chatId", chatId);
+				json.put("authToken", authToken);
+				json.put("event", event);
+				// json.put("event1", authToken);
+
+				// now we send the message
+				mConnection.sendTextMessage(json.toString());
+
+				Log.d(TAG, activityName + "Successfully sent payload " + json.toString());
+			} catch (JSONException e) {
+				Log.e(TAG, activityName + "Received JSONException: " + e.toString());
+			} catch (Exception e) {
+				Log.e(TAG, activityName + "Received Exception: " + e.toString());
+
+			}
+		}
+	}
+	private int GetEventForChatEvents() {
+		return 0;
+	}
+
+	private int GetEventForUserStartedTypingMessage() {
+		return 1;
+	}
+
+	private int GetEventForUserStoppedTypingMessage() {
+		return 2;
+	}
+	private void sendRegisterForChatEvents(long chatId) {
+		// this method sends a message over the websocket registering for
+		// notifications that
+		// are related to the current chat id
+		String activityName = "sendRegisterForChatEvents:";
+
+		if (mConnection.isConnected()) {
+			// we need the chat id
+//			long chatId = getChatId();
+			// the auth token
+			String restToken = QodemePreferences.getInstance().getRestToken();
+
+			int event = GetEventForChatEvents();
+			Log.d(TAG, activityName + "Sending register for chat event message...");
+			sendWebSocketMessageWith(chatId, restToken, event);
+
+		}
+	}
+	// This method is called to handle the data received as part of a web socket
+	// message
+	private void receiveWebSocketMessageWith(String message) {
+		String activityName = "receiveWebSocketMessageWith:";
+
+		try {
+			JSONObject messageJson = new JSONObject(message);
+			long chatId = messageJson.getLong("chatId");
+			int event = messageJson.getInt("event");
+			// String token = messageJson.getString("event1");
+
+			Log.d(TAG, activityName + "Received event: " + event + " in chat: " + chatId);
+			if (event == GetEventForUserStartedTypingMessage()) {
+				// if
+				// (QodemePreferences.getInstance().getRestToken().equals(token))
+				receiveOtherUserStartedTypingEvent(chatId);
+			} else if (event == GetEventForUserStoppedTypingMessage()) {
+				receiveOtherUserStoppedTypingEvent(chatId);
+			}
+
+		} catch (JSONException je) {
+			Log.e(TAG, activityName + je.toString());
+		}
+	}
+
+	private void receiveOtherUserStoppedTypingEvent(long chatId) {
+//		if (chatId == getChatId()) {
+//			// this.imgUserTyping.setVisibility(View.INVISIBLE);
+//			customDotViewUserTyping.setVisibility(View.INVISIBLE);
+//			footerView.setVisibility(View.GONE);
+//			isUsertyping = false;
+//		}
+		ChatLoad chatLoad = getChatLoad(chatId);
+		if(chatLoad != null){
+			chatLoad.isTyping = false;
+			refreshOne2OneList();
+		}
+	}
+
+	private void receiveOtherUserStartedTypingEvent(long chatId) {
+		ChatLoad chatLoad = getChatLoad(chatId);
+		if(chatLoad != null){
+			chatLoad.isTyping = true;
+			refreshOne2OneList();
+		}
+//		if (chatId == getChatId()) {
+//			// we make visible the image view to show the other user is typing
+//			// this.imgUserTyping.setVisibility(View.VISIBLE);
+//			customDotViewUserTyping.setVisibility(View.VISIBLE);
+//			footerView.setVisibility(View.VISIBLE);
+//			if (!isUsertyping) {
+//				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
+//				isUsertyping = true;
+//			}
+//		}
 	}
 }

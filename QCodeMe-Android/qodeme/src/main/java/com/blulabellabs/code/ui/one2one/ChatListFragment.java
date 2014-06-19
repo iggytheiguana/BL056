@@ -208,7 +208,7 @@ public class ChatListFragment extends Fragment {
 
 				isFavoriteFilter = false;
 				Bitmap bm1 = BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_chat_favorite);
+						R.drawable.ic_chat_favorite_h);
 				mImgBtnFavoriteFilter.setImageBitmap(bm1);
 				updateUi();
 			}
@@ -231,7 +231,7 @@ public class ChatListFragment extends Fragment {
 				if (isFavoriteFilter) {
 					isFavoriteFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
+							R.drawable.ic_chat_favorite_h);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 				}
 
@@ -285,12 +285,12 @@ public class ChatListFragment extends Fragment {
 				if (isFavoriteFilter) {
 					isFavoriteFilter = false;
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite);
+							R.drawable.ic_chat_favorite_h);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 					updateUi();
 				} else {
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
-							R.drawable.ic_chat_favorite_h);
+							R.drawable.ic_star_blue);
 					mImgBtnFavoriteFilter.setImageBitmap(bm);
 					isFavoriteFilter = true;
 					List<Contact> temp = Lists.newArrayList();

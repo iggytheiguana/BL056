@@ -11,7 +11,10 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_message"
         android:layout_marginTop="13dp"
+        android:animationCache="false"
+        android:cacheColorHint="#00000000"
         android:divider="@null"
+        android:smoothScrollbar="true"
         android:visibility="visible" />
 
     <LinearLayout
@@ -64,7 +67,7 @@
                 android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:src="@drawable/ic_chat_favorite" />
+                android:src="@drawable/ic_chat_favorite_h" />
 
             <ImageButton
                 android:id="@+id/imgBtn_locationFilter"

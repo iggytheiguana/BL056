@@ -167,6 +167,8 @@
                 android:layout_below="@+id/top_line"
                 android:divider="@null"
                 android:fadingEdge="none"
+                android:smoothScrollbar="true"
+                android:animationCache="false"
                 android:listSelector="@color/transparent"
                 android:visibility="visible" />
 

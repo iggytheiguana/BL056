@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -100,6 +101,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private EditText editTextTitle;
 	public RelativeLayout mChatItem;
 	public boolean isScrolling = false;
+	private TextView textViewUserTyping;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -148,7 +150,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public TextView getLocation() {
 		return location = location != null ? location : (TextView) findViewById(R.id.location);
 	}
-
+	
+	public TextView getUserTyping() {
+		return textViewUserTyping = textViewUserTyping != null ? textViewUserTyping : (TextView) findViewById(R.id.userTyping);
+	}
+	
 	public ScrollDisabledListView getList() {
 		return subList = subList != null ? subList
 				: (ScrollDisabledListView) findViewById(R.id.subList);
@@ -282,7 +288,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+				if (s.length() > 0) {
+//					mSendButton.setVisibility(View.VISIBLE);
+//					sendUserTypingMessage();// send user typing message
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserTypingMessage(mChatLoad.chatId);
+				}
 			}
 
 			@Override
@@ -294,6 +305,17 @@ public class ChatListGroupItem extends RelativeLayout implements
 				// } else {
 				// getSendMessage().setVisibility(View.GONE);
 				// }
+				if (s.length() > 0) {
+//					mSendButton.setVisibility(View.VISIBLE);
+//					sendUserTypingMessage();
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserTypingMessage(mChatLoad.chatId);
+				} else {
+//					mSendButton.setVisibility(View.GONE);
+//					sendUserStoppedTypingMessage();
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserStoppedTypingMessage(mChatLoad.chatId);
+				}
 
 			}
 		});
@@ -304,6 +326,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 				ChatFocusSaver.setFocusedChatId(0);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
+				MainActivity activity = (MainActivity) getContext();
+				activity.sendUserStoppedTypingMessage(mChatLoad.chatId);
 			}
 		});
 
@@ -417,7 +441,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 		//
 		// }
 	};
-
+	List<Message> temp = Lists.newArrayList();
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fill(ChatLoad t) {
 
@@ -427,6 +452,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 		getShareChatBtn().setEnabled(true);
 		try {
 			mChatLoad = t;
+			
+			if(mChatLoad.isTyping)
+				getUserTyping().setTextColor(Color.RED);
+			else
+				getUserTyping().setTextColor(Color.GRAY);
 
 			if (t.is_favorite == 1) {
 				Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -641,8 +671,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 			// }else{
 			listData = mCallback.getMessages(mChatLoad.chatId);
 			// }
-			listData = sortMessages(listData);
 			boolean isContainUnread = false;
+			temp.clear();
+			listData = sortMessages(listData);
 			if (listData != null) {
 				List<Message> replyMessage = new ArrayList<Message>();
 				final List<Message> tempMessage = new ArrayList<Message>();
@@ -708,6 +739,13 @@ public class ChatListGroupItem extends RelativeLayout implements
 						i++;
 					}
 				}
+				if(listData.size()>5){
+					for(int i=listData.size()-5; i<listData.size();i++)
+						temp.add(listData.get(i));
+				}else{
+					temp.addAll(listData);
+				}
+				
 				// for (Message message : replyMessage) {
 				// int i = 0;
 				// for (Message m : listData) {
@@ -725,7 +763,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 				// }
 				// }
 			}
-			ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
+			
+			
+			final ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
 					context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
 					new ChatListSubAdapterCallback() {
 						@Override
@@ -766,9 +806,18 @@ public class ChatListGroupItem extends RelativeLayout implements
 			else {
 				getChatItem().setBackgroundResource(R.drawable.bg_box);
 			}
-			if (!isScrolling)
-				if (listData != null)
-					listAdapter.addAll(listData);
+//			if (!isScrolling)
+				if (listData != null){
+					new Handler().postDelayed(new Runnable() {
+						
+						@Override
+						public void run() {
+							listAdapter.addAll(temp);
+							
+						}
+					},200);
+					
+				}
 			getList().setAdapter(listAdapter);
 			getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 			getList().setStackFromBottom(true);
