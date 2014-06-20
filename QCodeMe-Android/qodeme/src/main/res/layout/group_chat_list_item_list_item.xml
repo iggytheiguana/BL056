@@ -62,13 +62,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
                 tools:padding="5dp"
-                tools:text_size="18sp" />
+                tools:text_size="17sp" />
 
             <!-- style="@style/TextView.Message.Date" -->
 
             <LinearLayout 
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="-5dp"
                 android:orientation="vertical" >
 
                 <com.blulabellabs.code.ui.common.TextViewRegular
@@ -86,8 +87,8 @@
                     android:paddingTop="0dp"
                     android:text="Item"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    android:visibility="gone" />
+                    android:textSize="17sp"
+                    android:visibility="visible" />
 
                 <com.blulabellabs.code.ui.common.TextViewRegular
                     android:id="@+id/message"
@@ -96,22 +97,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-3dp"
                     android:layout_marginBottom="0dp"
                     android:paddingBottom="0dp"
                     android:paddingLeft="1dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="0dp"
+                    android:paddingTop="-5dp"
                     android:text="Item"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:textSize="17sp" />
 
-<!--                 <View -->
-<!--                     android:id="@+id/view_space" -->
-<!--                     android:layout_width="match_parent" -->
-<!--                     android:layout_height="10dp" -->
-<!--                     android:layout_alignParentTop="true" -->
-<!--                     android:visibility="gone" /> -->
+                <View
+                    android:id="@+id/view_space1"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 

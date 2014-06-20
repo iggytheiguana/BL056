@@ -2559,20 +2559,20 @@ public class MainActivity extends BaseActivity implements
 			if (chatLoad != null)
 				chatLoad.is_favorite = 1;
 			is_search = 1;
-//			String date = Converter.getCurrentGtmTimestampString();
-//			RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
-//					new RestListener<SetFavoriteResponse>() {
-//
-//						@Override
-//						public void onResponse(SetFavoriteResponse response) {
-//
-//						}
-//
-//						@Override
-//						public void onServiceError(RestError error) {
-//
-//						}
-//					});
+			// String date = Converter.getCurrentGtmTimestampString();
+			// RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
+			// new RestListener<SetFavoriteResponse>() {
+			//
+			// @Override
+			// public void onResponse(SetFavoriteResponse response) {
+			//
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			//
+			// }
+			// });
 
 			// RestAsyncHelper.getInstance().chatAddMember(chatId,
 			// QodemePreferences.getInstance().getQrcode(),
@@ -3540,11 +3540,11 @@ public class MainActivity extends BaseActivity implements
 	public interface LoadMoreChatListener {
 		public void onSearchResult(int count, int responseCode);
 	}
-	public void addPrivateAdapter(){
-		
+
+	public void addPrivateAdapter() {
+
 	}
-	
-	
+
 	private void start() {
 		final String wsuri = "ws://54.204.45.228/python";
 
@@ -3556,10 +3556,10 @@ public class MainActivity extends BaseActivity implements
 					public void onOpen() {
 						Log.d(TAG, "Status: Connected to " + wsuri);
 						// mConnection.sendTextMessage("Hello, world!");
-//						sendRegisterForChatEvents();
-//						for(ChatLoad chatLoad:mChatList){
-//							sendRegisterForChatEvents(chatLoad.chatId);
-//						}
+						// sendRegisterForChatEvents();
+						for (ChatLoad chatLoad : mChatList) {
+							sendRegisterForChatEvents(chatLoad.chatId);
+						}
 					}
 
 					@Override
@@ -3593,12 +3593,12 @@ public class MainActivity extends BaseActivity implements
 
 		}
 	}
-	
+
 	public void sendUserStoppedTypingMessage(long chatId) {
 		String activityName = "sendUserStoppedTypingMessage:";
 		if (mConnection.isConnected()) {
 			// we have a open web socket connection
-//			long chatId = getChatId();
+			// long chatId = getChatId();
 			String restToken = QodemePreferences.getInstance().getRestToken();
 			int event = GetEventForUserStoppedTypingMessage();
 			Log.d(TAG, activityName + "Sending user stopped typing message...");
@@ -3613,7 +3613,7 @@ public class MainActivity extends BaseActivity implements
 		if (mConnection.isConnected()) {
 			sendRegisterForChatEvents(chatId);
 			// we need the chat id
-//			long chatId = getChatId();
+			// long chatId = getChatId();
 			// the auth token
 			String restToken = QodemePreferences.getInstance().getRestToken();
 
@@ -3623,6 +3623,7 @@ public class MainActivity extends BaseActivity implements
 
 		}
 	}
+
 	private void sendWebSocketMessageWith(long chatId, String authToken, int event) {
 		String activityName = "sendWebSocketMessageWith:";
 
@@ -3647,6 +3648,7 @@ public class MainActivity extends BaseActivity implements
 			}
 		}
 	}
+
 	private int GetEventForChatEvents() {
 		return 0;
 	}
@@ -3658,6 +3660,7 @@ public class MainActivity extends BaseActivity implements
 	private int GetEventForUserStoppedTypingMessage() {
 		return 2;
 	}
+
 	private void sendRegisterForChatEvents(long chatId) {
 		// this method sends a message over the websocket registering for
 		// notifications that
@@ -3666,7 +3669,7 @@ public class MainActivity extends BaseActivity implements
 
 		if (mConnection.isConnected()) {
 			// we need the chat id
-//			long chatId = getChatId();
+			// long chatId = getChatId();
 			// the auth token
 			String restToken = QodemePreferences.getInstance().getRestToken();
 
@@ -3676,6 +3679,7 @@ public class MainActivity extends BaseActivity implements
 
 		}
 	}
+
 	// This method is called to handle the data received as part of a web socket
 	// message
 	private void receiveWebSocketMessageWith(String message) {
@@ -3702,34 +3706,57 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	private void receiveOtherUserStoppedTypingEvent(long chatId) {
-//		if (chatId == getChatId()) {
-//			// this.imgUserTyping.setVisibility(View.INVISIBLE);
-//			customDotViewUserTyping.setVisibility(View.INVISIBLE);
-//			footerView.setVisibility(View.GONE);
-//			isUsertyping = false;
-//		}
+		// if (chatId == getChatId()) {
+		// // this.imgUserTyping.setVisibility(View.INVISIBLE);
+		// customDotViewUserTyping.setVisibility(View.INVISIBLE);
+		// footerView.setVisibility(View.GONE);
+		// isUsertyping = false;
+		// }
 		ChatLoad chatLoad = getChatLoad(chatId);
-		if(chatLoad != null){
+		if (chatLoad != null) {
 			chatLoad.isTyping = false;
-			refreshOne2OneList();
+			// refreshOne2OneList();
+			one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+			privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+			publicChatListFragment = (ChatListGroupPublicFragment) adapter.getItem(2);
+
+			if (chatLoad.type == 0)
+				one2OneChatListFragment.notifyUi(chatId, chatLoad);
+			else if (chatLoad.type == 1)
+				privateChatListFragment.notifyUi(chatId, chatLoad);
+			else
+				publicChatListFragment.notifyUi(chatId, chatLoad);
+
 		}
 	}
 
 	private void receiveOtherUserStartedTypingEvent(long chatId) {
 		ChatLoad chatLoad = getChatLoad(chatId);
-		if(chatLoad != null){
-			chatLoad.isTyping = true;
-			refreshOne2OneList();
+		if (chatLoad != null) {
+			if (!chatLoad.isTyping)
+				chatLoad.isTyping = true;
+
+			// refreshOne2OneList();
+			one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+			privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+			publicChatListFragment = (ChatListGroupPublicFragment) adapter.getItem(2);
+
+			if (chatLoad.type == 0)
+				one2OneChatListFragment.notifyUi(chatId, chatLoad);
+			else if (chatLoad.type == 1)
+				privateChatListFragment.notifyUi(chatId, chatLoad);
+			else
+				publicChatListFragment.notifyUi(chatId, chatLoad);
 		}
-//		if (chatId == getChatId()) {
-//			// we make visible the image view to show the other user is typing
-//			// this.imgUserTyping.setVisibility(View.VISIBLE);
-//			customDotViewUserTyping.setVisibility(View.VISIBLE);
-//			footerView.setVisibility(View.VISIBLE);
-//			if (!isUsertyping) {
-//				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
-//				isUsertyping = true;
-//			}
-//		}
+		// if (chatId == getChatId()) {
+		// // we make visible the image view to show the other user is typing
+		// // this.imgUserTyping.setVisibility(View.VISIBLE);
+		// customDotViewUserTyping.setVisibility(View.VISIBLE);
+		// footerView.setVisibility(View.VISIBLE);
+		// if (!isUsertyping) {
+		// handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
+		// isUsertyping = true;
+		// }
+		// }
 	}
 }

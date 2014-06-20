@@ -16,8 +16,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.text.Editable;
 import android.text.Html.ImageGetter;
 import android.text.Spannable;
@@ -93,7 +91,7 @@ public class ChatListSubItem extends RelativeLayout implements
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
 	private ProgressBar mProgressBar;
-	private View viewUserSpace;
+	private View viewUserSpace, viewUserSpace1;
 
 	public ChatListSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -130,6 +128,11 @@ public class ChatListSubItem extends RelativeLayout implements
 	public View getUserSpace() {
 		return viewUserSpace = viewUserSpace != null ? viewUserSpace
 				: (View) findViewById(R.id.view_space);
+	}
+
+	public View getUserSpace1() {
+		return viewUserSpace1 = viewUserSpace1 != null ? viewUserSpace1
+				: (View) findViewById(R.id.view_space1);
 	}
 
 	public ImageView getImageMessage() {
@@ -324,7 +327,8 @@ public class ChatListSubItem extends RelativeLayout implements
 							// getContext().startActivity(i,
 							// activityOptionsCompat.toBundle());
 							getContext().startActivity(i);
-							((MainActivity)getContext()).overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_scale);
+							((MainActivity) getContext()).overridePendingTransition(
+									R.anim.activity_open_scale, R.anim.activity_close_scale);
 							// ActivityCompat.startActivity((MainActivity)getContext(),
 							// i, activityOptionsCompat.toBundle());
 						}
@@ -390,6 +394,8 @@ public class ChatListSubItem extends RelativeLayout implements
 			// +
 			// "</font>";
 			String str = getMessage().getText().toString();
+			if (me.hasPhoto == 1)
+				str = "I";
 			String mainString = str + dateString + " ";
 			String flag = "f";
 			if (me.is_flagged == 1) {
@@ -401,7 +407,9 @@ public class ChatListSubItem extends RelativeLayout implements
 			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
 																							// size
 			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
-																									// size
+																									// color
+			if (me.hasPhoto == 1)
+				ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, str.length(), 0);
 			if (me.is_flagged == 1) {
 				Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
 				bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
@@ -418,8 +426,8 @@ public class ChatListSubItem extends RelativeLayout implements
 				if (previousMessage != null) {
 					if (previousMessage.replyTo_id > 0) {
 						param.topMargin = 0;
-						getDate().setCircleTopMargine(
-								(int) getDate().convertDpToPixel(2, getContext()));
+						// getDate().setCircleTopMargine(
+						// (int) getDate().convertDpToPixel(2, getContext()));
 					}
 				}
 				getDate().setLayoutParams(param);
@@ -517,13 +525,17 @@ public class ChatListSubItem extends RelativeLayout implements
 				getDate().invalidate();
 			}
 			getUserSpace().setVisibility(GONE);
+			getUserSpace1().setVisibility(GONE);
 			getHeaderContainer().setVisibility(View.GONE);
 			getOpponentSeparator().setVisibility(View.GONE);
 			if (nextMessage != null) {
 				if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
 					getUserSpace().setVisibility(GONE);
 				} else {
-					getUserSpace().setVisibility(VISIBLE);
+					if (me.replyTo_id > 0)
+						getUserSpace1().setVisibility(VISIBLE);
+					else
+						getUserSpace().setVisibility(VISIBLE);
 				}
 			}
 			/*

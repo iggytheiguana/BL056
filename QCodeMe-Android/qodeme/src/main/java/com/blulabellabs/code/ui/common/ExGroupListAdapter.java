@@ -69,7 +69,7 @@ public class ExGroupListAdapter<T extends ExGroupAdapterBasedView<E, C>, E, C ex
 //		chatListItem.sendImgMessageBtn = holder.sendImgMessageBtn;
 //		chatListItem.mImgBtnFavorite = holder.mImgBtnFavorite;
 //		chatListItem.mChatItem = holder.mChatItem;
-//		chatListItem.isScrolling = isScroll;
+		chatListItem.isScrolling = isScroll;
 //		if (!isScroll) {
 			view = (T) convertView;
 			E e = (E) getItem(position);

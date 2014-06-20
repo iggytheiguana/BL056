@@ -96,6 +96,15 @@
                         android:layout_marginRight="10dp"
                         android:text="Location" />
                 </LinearLayout>
+                <ImageView
+                    android:id="@+id/userTyping"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/btnFavorite"
+                    android:layout_marginTop="-10dp"
+                    android:background="@drawable/bg_user_typing"
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <!--

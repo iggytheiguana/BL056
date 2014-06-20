@@ -60,7 +60,7 @@ public class QrCodeShowActivity extends Activity {
 				email();
 			}
 		});
-
+		mScanButton = (Button) findViewById(R.id.scanQR);
 		mScanButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override

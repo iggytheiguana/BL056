@@ -85,6 +85,7 @@ public class ChatListItem extends RelativeLayout implements
 	private View cornerLeft;
 	private View cornerRight;
 	public RelativeLayout mChatItem;
+	public ImageView textViewUserTyping;
 
 	private GestureDetector gestureDetector;
 	private ChatListAdapterCallback mCallback;
@@ -341,6 +342,13 @@ public class ChatListItem extends RelativeLayout implements
 		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
 
 		if (chatLoad != null) {
+			if(chatLoad.isTyping){
+//				getUserTyping().setTextColor(Color.RED);
+				getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
+			}
+			else{
+				getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
+			}
 			if (chatLoad.is_locked == 1 && !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)){
 				getSendImage().setVisibility(View.INVISIBLE);
 				getFavoriteBtn().setClickable(false);
@@ -349,29 +357,7 @@ public class ChatListItem extends RelativeLayout implements
 				getFavoriteBtn().setClickable(true);
 			}
 			
-			getFavoriteBtn().setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					int num_of_favorite = chatLoad.number_of_likes;
-					int is_favorite = 1;
-					if (chatLoad.is_favorite == 1) {
-						is_favorite = 2;
-						num_of_favorite--;
-					} else {
-						is_favorite = 1;
-						if (num_of_favorite <= 0) {
-							num_of_favorite = 1;
-						} else
-							num_of_favorite++;
-					}
-
-					getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-							QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
-					SyncHelper.requestManualSync();
-				}
-			});
+			
 			
 			if(chatLoad != null && chatLoad.is_deleted == 1){
 				getSendImage().setVisibility(View.INVISIBLE);
@@ -454,7 +440,9 @@ public class ChatListItem extends RelativeLayout implements
 		return dragImage = dragImage != null ? dragImage
 				: (ImageView) findViewById(R.id.drag_image);
 	}
-
+	public ImageView getUserTyping() {
+		return textViewUserTyping = textViewUserTyping != null ? textViewUserTyping : (ImageView) findViewById(R.id.userTyping);
+	}
 	public ImageButton getSendMessage() {
 		return sendMessageBtn = sendMessageBtn != null ? sendMessageBtn
 				: (ImageButton) findViewById(R.id.button_message);
@@ -559,18 +547,29 @@ public class ChatListItem extends RelativeLayout implements
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+				if (s.length() > 0) {
+//					mSendButton.setVisibility(View.VISIBLE);
+//					sendUserTypingMessage();// send user typing message
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserTypingMessage(mContact.chatId);
+				}
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
 
-				// if (s.length() > 0) {
-				// getSendMessage().setVisibility(View.VISIBLE);
-				// } else {
-				// getSendMessage().setVisibility(View.GONE);
-				// }
+				if (s.length() > 0) {
+//					mSendButton.setVisibility(View.VISIBLE);
+//					sendUserTypingMessage();
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserTypingMessage(mContact.chatId);
+				} else {
+//					mSendButton.setVisibility(View.GONE);
+//					sendUserStoppedTypingMessage();
+					MainActivity activity = (MainActivity) getContext();
+					activity.sendUserStoppedTypingMessage(mContact.chatId);
+				}
 
 			}
 		});
@@ -651,14 +650,16 @@ public class ChatListItem extends RelativeLayout implements
 
 		@Override
 		public void stopTypingMessage() {
-			// TODO Auto-generated method stub
+				MainActivity activity = (MainActivity) getContext();
+				activity.sendUserStoppedTypingMessage(mContact.chatId);
 
 		}
 
 		@Override
 		public void startTypingMessage() {
 			// TODO Auto-generated method stub
-
+				MainActivity activity = (MainActivity) getContext();
+				activity.sendUserTypingMessage(mContact.chatId);
 		}
 
 		@Override

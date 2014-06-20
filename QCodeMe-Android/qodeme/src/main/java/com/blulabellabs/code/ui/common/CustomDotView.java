@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
@@ -31,7 +32,7 @@ public class CustomDotView extends TextView {
 	private boolean isCircle = true;
 	private int dotColor;
 	Bitmap circle = null;
-	int textSize = 16;
+	public int textSize = 16;
 	int textPixel = 16;
 	int padding = 5;
 	int paddingDp = 5;
@@ -156,6 +157,8 @@ public class CustomDotView extends TextView {
 				}
 			}
 			// canvas.drawBitmap(circle, 0,0,new Paint());
+			
+			
 		}
 
 	}

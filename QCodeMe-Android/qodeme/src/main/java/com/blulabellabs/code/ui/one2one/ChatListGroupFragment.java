@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -730,12 +731,12 @@ public class ChatListGroupFragment extends Fragment {
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-//				if (scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL)
-//					mListAdapter.isScroll = true;
-//				else {
-//					mListAdapter.isScroll = false;
+				if (scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL)
+					mListAdapter.isScroll = true;
+				else {
+					mListAdapter.isScroll = false;
 //					mListAdapter.notifyDataSetChanged();
-//				}
+				}
 			}
 
 			@SuppressLint("NewApi")
@@ -857,7 +858,25 @@ public class ChatListGroupFragment extends Fragment {
 			}
 		}
 	}
+	public void notifyUi(long chatId, ChatLoad chatLoad) {
+		// mListAdapter.notifyDataSetChanged();
+		ChatListGroupItem chatListGroupItem = null;
+		for (int i = mListView.getFirstVisiblePosition(); i < mListView.getLastVisiblePosition(); i++) {
+			ChatLoad chatLoad2 = mListAdapter.getItem(i);
+			Log.d("chatid", chatLoad2.chatId+"");
+			if (chatLoad2.chatId == chatId) {
+				chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i-mListView.getFirstVisiblePosition()+1);
+				break;
+			}
+		}
+		if (chatListGroupItem != null) {
+			if (chatLoad.isTyping)
+				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
+			else
+				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
+		}
 
+	}
 	private List<ChatLoad> searchChats(String searchString) {
 		if (searchString.trim().equals("")) {
 			return chatLoads;

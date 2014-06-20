@@ -157,21 +157,16 @@
                         android:layout_marginRight="10dp"
                         android:text="Location" />
                 </LinearLayout>
-                <com.blulabellabs.code.ui.common.TextViewRegular
+                <ImageView
                     android:id="@+id/userTyping"
-                    style="@style/TextView.Chat.Name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:paddingBottom="5dp"
-                    android:paddingTop="5dp"
-                    android:singleLine="true"
-                    android:text="...."
-                    android:textSize="24sp"
-                    
-                    android:textColor="@color/text_message_sent"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:layout_below="@id/linear_btn"
+                    android:layout_marginTop="-10dp"
+                    android:background="@drawable/bg_user_typing"
+                    android:visibility="visible" />
+<!--                     android:text="...." -->
             </RelativeLayout>
 
             <!--

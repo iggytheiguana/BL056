@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -795,7 +796,24 @@ public class ChatListFragment extends Fragment {
 
 		}
 	}
+	public void notifyUi(long chatId, ChatLoad chatLoad) {
+		// mListAdapter.notifyDataSetChanged();
+		ChatListItem chatListGroupItem = null;
+		for (int i = mListView.getFirstVisiblePosition(); i < mListView.getLastVisiblePosition(); i++) {
+			Contact contact = mListAdapter.getItem(i);
+			if (contact.chatId == chatId) {
+				chatListGroupItem = (ChatListItem) mListView.getChildAt(i-mListView.getFirstVisiblePosition()+1);
+				break;
+			}
+		}
+		if (chatListGroupItem != null) {
+			if (chatLoad.isTyping)
+				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
+			else
+				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
+		}
 
+	}
 	private List<Contact> searchContact(String searchString) {
 		if (searchString.trim().equals("")) {
 			return contacts;

@@ -97,7 +97,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
 	private ProgressBar mProgressBar;
-	private View viewUserSpace;
+	private View viewUserSpace,viewUserSpace1;
 
 	public ChatListGroupSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -133,6 +133,10 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	public View getUserSpace() {
 		return viewUserSpace = viewUserSpace != null ? viewUserSpace
 				: (View) findViewById(R.id.view_space);
+	}
+	public View getUserSpace1() {
+		return viewUserSpace1 = viewUserSpace1 != null ? viewUserSpace1
+				: (View) findViewById(R.id.view_space1);
 	}
 
 	public TextView getDateHeader() {
@@ -208,7 +212,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getImageLayout().setVisibility(View.GONE);
 			} else {
 
-				getUserSpace().setVisibility(VISIBLE);
+				//getUserSpace().setVisibility(VISIBLE);
 				getStatusLayout().setVisibility(VISIBLE);
 				getMessageLayout().setVisibility(GONE);
 				getHeaderContainer().setVisibility(GONE);
@@ -324,18 +328,20 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			}
 			getDate().invalidate();
 
-			Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
-			Paint paint = new Paint();
-			paint.setAntiAlias(true);
-			paint.setColor(color);
+//			Bitmap bmp = Bitmap.createBitmap(getDate().textSize , getDate().textSize,
+//					Bitmap.Config.ARGB_8888);
+//			Paint paint = new Paint();
+//			paint.setAntiAlias(true);
+//			paint.setColor(color);
 
-			Canvas c = new Canvas(bmp);
-			c.drawCircle(20, 20, 20, paint);
+//			Canvas c = new Canvas(bmp);
+//			c.drawCircle((getDate().textSize / 2) -4, (getDate().textSize / 2) -4, (getDate().textSize / 2)-4,
+//					paint);
+//
+//			BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
 
-			BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
-
-			// getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable,
-			// null, null, null);
+//			getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable, null,
+//					null, null);
 
 			int chatType = callback2.getChatType(me.chatId);
 			if (chatType == 1 && !QodemePreferences.getInstance().getQrcode().equals(msg.qrcode)) {
@@ -376,18 +382,25 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			// +
 			// "</font>";
 			String str = getMessage().getText().toString();
+			if(me.hasPhoto ==1)
+				str = "I";
 			String mainString = str + dateString + " ";
 			String flag = "f";
 			if (me.is_flagged == 1) {
 				mainString = mainString + flag;
 			}
 
+			
+				
 			// Create our span sections, and assign a format to each.
 			SpannableString ss1 = new SpannableString(mainString);
 			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
 																							// size
 			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
 																									// size
+			if(me.hasPhoto ==1)
+				ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, str.length(), 0);
+			
 			if (me.is_flagged == 1) {
 				Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
 				bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
@@ -498,13 +511,18 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getDate().invalidate();
 			}
 			getUserSpace().setVisibility(GONE);
+			getUserSpace1().setVisibility(GONE);
 			getHeaderContainer().setVisibility(View.GONE);
 			getOpponentSeparator().setVisibility(View.GONE);
 			if (nextMessage != null) {
 				if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
 					getUserSpace().setVisibility(GONE);
 				} else {
-					getUserSpace().setVisibility(VISIBLE);
+					
+					if(me.replyTo_id>0)
+						getUserSpace1().setVisibility(VISIBLE);
+					else
+						getUserSpace().setVisibility(VISIBLE);
 				}
 			}
 			/*
@@ -596,12 +614,13 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	private void setDefault() {
 		this.setVisibility(VISIBLE);
-		getUserSpace().setVisibility(VISIBLE);
-		getStatusLayout().setVisibility(VISIBLE);
+		//getUserSpace().setVisibility(VISIBLE);
+		getStatusLayout().setVisibility(GONE);
 		getMessageLayout().setVisibility(VISIBLE);
 		getHeaderContainer().setVisibility(VISIBLE);
 		getImageMessage().setVisibility(View.VISIBLE);
 		getImageLayout().setVisibility(View.VISIBLE);
+		
 	}
 
 	@SuppressWarnings("deprecation")
