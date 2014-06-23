@@ -91,6 +91,8 @@
                     android:layout_toLeftOf="@+id/linear_btn"
                     android:hint="@string/add_title_hint"
                     android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
+                    android:inputType="textNoSuggestions"
                     android:text=""
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
@@ -206,6 +208,8 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/button_message"
                     android:hint="@string/message"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:inputType="textNoSuggestions"
                     android:maxHeight="50dp"
                     android:visibility="gone" />

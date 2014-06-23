@@ -311,7 +311,7 @@
             android:layout_toLeftOf="@id/button_message"
             android:layout_toRightOf="@id/imageButton_imgMessage"
             android:hint="@string/message"
-            android:inputType="textMultiLine|textNoSuggestions"
+            android:inputType="textNoSuggestions"
             android:padding="5dp" >
 
             <requestFocus />

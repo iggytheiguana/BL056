@@ -92,7 +92,7 @@ public class ChatInsideFragment extends Fragment {
 	private boolean mFirstUpdate = true;
 	private ImageView imgUserTyping;
 	private CustomDotView customDotViewUserTyping;
-	private View footerView;
+	private View footerView, footerView1;
 	private boolean isUsertyping = false;
 
 	public static ChatInsideFragment newInstance(Contact c, boolean firstUpdate) {
@@ -237,7 +237,7 @@ public class ChatInsideFragment extends Fragment {
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				footerView1.setVisibility(View.GONE);
 				sendMessage();
 			}
 		});
@@ -294,6 +294,7 @@ public class ChatInsideFragment extends Fragment {
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
 					sendUserTypingMessage();// send user typing message
+					footerView1.setVisibility(View.VISIBLE);
 				}
 			}
 
@@ -303,8 +304,10 @@ public class ChatInsideFragment extends Fragment {
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
 					sendUserTypingMessage();
+					footerView1.setVisibility(View.VISIBLE);
 				} else {
 					mSendButton.setVisibility(View.GONE);
+					footerView1.setVisibility(View.GONE);
 					sendUserStoppedTypingMessage();
 				}
 			}
@@ -559,8 +562,18 @@ public class ChatInsideFragment extends Fragment {
 		imgUserTyping.setImageBitmap(bmp);
 		imgUserTyping.setVisibility(View.GONE);
 
-		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+//		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		View view  = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		footerView = view.findViewById(R.id.linearFooter_userTyping);
 		footerView.setVisibility(View.GONE);
+		
+		footerView1 = view.findViewById(R.id.linearTyping);
+		footerView1.setVisibility(View.GONE);
+		CustomDotView dotView = (CustomDotView) view.findViewById(R.id.dotView_userTyping1);
+		dotView.setDotColor(getResources().getColor(R.color.user_typing));
+		dotView.setOutLine(true);
+		dotView.setSecondVerticalLine(true);
+		dotView.invalidate();
 
 		customDotViewUserTyping = (CustomDotView) footerView.findViewById(R.id.dotView_userTyping);
 
@@ -601,7 +614,7 @@ public class ChatInsideFragment extends Fragment {
 
 				}, chatListInsideFragmentCallback);
 
-		mListView.addFooterView(footerView);
+		mListView.addFooterView(view);
 		mListView.setAdapter(mListAdapter);
 
 		mListView.setOnTouchListener(new View.OnTouchListener() {

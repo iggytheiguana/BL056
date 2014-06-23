@@ -19,7 +19,6 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal" >
 
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -165,8 +164,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btnSetStatus"
+                android:imeOptions="actionDone|actionSend"
+                android:singleLine="true"
                 android:text=""
-                android:imeOptions="actionDone|actionGo"
                 android:textColor="@android:color/black"
                 android:visibility="gone" />
 
@@ -208,7 +208,8 @@
             android:layout_margin="10dp"
             android:orientation="vertical" >
 
-            <RelativeLayout android:id="@+id/relative_Name"
+            <RelativeLayout
+                android:id="@+id/relative_Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -269,7 +270,8 @@
                     android:textSize="16sp" />
             </RelativeLayout>
 
-            <RelativeLayout android:id="@+id/relative_editName"
+            <RelativeLayout
+                android:id="@+id/relative_editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" >
@@ -281,6 +283,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/btnSetName"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:text=""
                     android:textColor="@android:color/black"
                     android:visibility="visible" />
@@ -297,7 +301,6 @@
                     android:visibility="gone" />
             </RelativeLayout>
         </LinearLayout>
-
 
         <View
             android:layout_width="fill_parent"
@@ -350,8 +353,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:textColor="@color/text_message_not_read"
                 android:text="0 photos"
+                android:textColor="@color/text_message_not_read"
                 android:textSize="16sp" />
         </LinearLayout>
 

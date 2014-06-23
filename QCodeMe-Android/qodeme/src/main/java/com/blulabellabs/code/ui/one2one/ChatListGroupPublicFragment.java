@@ -778,14 +778,35 @@ public class ChatListGroupPublicFragment extends Fragment {
 									.setListener(null);
 						}
 
-//						for(int i=0; i<firstVisibleItem;i++){
-//							callback.messageRead(mListAdapter.getItem(i).chatId);
-//						}
-						
+						for (int i = 0; i < firstVisibleItem; i++) {
+							final int j = i;
+							new Handler().post(new Runnable() {
+
+								@Override
+								public void run() {
+									try {
+										callback.messageRead(mListAdapter.getItem(j).chatId);
+									} catch (Exception e) {
+									}
+								}
+							});
+						}
+
 					} else {
-//						for(int i=mListView.getLastVisiblePosition(); i<mListView.getLastVisiblePosition()+1;i++){
-//							callback.messageRead(mListAdapter.getItem(i).chatId);
-//						}
+						for (int i = mListView.getLastVisiblePosition(); i < mListView
+								.getLastVisiblePosition() + 1; i++) {
+							final int j = i;
+							new Handler().post(new Runnable() {
+
+								@Override
+								public void run() {
+									try {
+										callback.messageRead(mListAdapter.getItem(j).chatId);
+									} catch (Exception e) {
+									}
+								}
+							});
+						}
 						if (mLinearLayoutSearch.getVisibility() == View.VISIBLE) {
 							mLinearLayoutSearch.animate().alpha(0f).setDuration(500)
 									.setListener(new AnimatorListenerAdapter() {
@@ -796,7 +817,6 @@ public class ChatListGroupPublicFragment extends Fragment {
 									});
 						}
 					}
-
 				}
 				lastFirstvisibleItem = firstVisibleItem;
 

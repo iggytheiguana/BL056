@@ -111,7 +111,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private boolean mFirstUpdate = true;
 	private ImageView imgUserTyping;
 	private CustomDotView customDotViewUserTyping;
-	private View footerView;
+	private View footerView,footerView1;
 	private boolean isUsertyping = false;
 	private ChatLoad chatLoad;
 
@@ -364,6 +364,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				footerView1.setVisibility(View.GONE);
 				sendMessage();
 			}
 		});
@@ -419,6 +420,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
 					sendUserTypingMessage();// send user typing message
+					footerView1.setVisibility(View.VISIBLE);
 				}
 			}
 
@@ -427,10 +429,12 @@ public class ChatInsideGroupFragment extends Fragment {
 				Log.d("CHATINSIDE", "afterTextChanged called");
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
+					footerView1.setVisibility(View.VISIBLE);
 					sendUserTypingMessage();
 				} else {
 					mSendButton.setVisibility(View.GONE);
 					sendUserStoppedTypingMessage();
+					footerView1.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -684,8 +688,19 @@ public class ChatInsideGroupFragment extends Fragment {
 		imgUserTyping.setImageBitmap(bmp);
 		imgUserTyping.setVisibility(View.GONE);
 
-		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+//		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+//		footerView.setVisibility(View.GONE);
+		View view  = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		footerView = view.findViewById(R.id.linearFooter_userTyping);
 		footerView.setVisibility(View.GONE);
+		
+		footerView1 = view.findViewById(R.id.linearTyping);
+		footerView1.setVisibility(View.GONE);
+		CustomDotView dotView = (CustomDotView) view.findViewById(R.id.dotView_userTyping1);
+		dotView.setDotColor(getResources().getColor(R.color.user_typing));
+		dotView.setOutLine(true);
+		dotView.setSecondVerticalLine(true);
+		dotView.invalidate();
 
 		customDotViewUserTyping = (CustomDotView) footerView.findViewById(R.id.dotView_userTyping);
 
@@ -727,7 +742,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 				}, chatListInsideFragmentCallback);
 
-		mListView.addFooterView(footerView);
+		mListView.addFooterView(view);
 		mListView.setAdapter(mListAdapter);
 
 		mListView.setOnTouchListener(new View.OnTouchListener() {
@@ -839,20 +854,20 @@ public class ChatInsideGroupFragment extends Fragment {
 			// Helper.hideKeyboard(getActivity(), mMessageField);
 			// }
 
-			mMessageField.addTextChangedListener(new TextWatcher() {
-				@Override
-				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				}
-
-				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-				}
-
-				@Override
-				public void afterTextChanged(Editable s) {
-					ChatFocusSaver.setCurrentMessage(getChatId(), s.toString());
-				}
-			});
+//			mMessageField.addTextChangedListener(new TextWatcher() {
+//				@Override
+//				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//				}
+//
+//				@Override
+//				public void onTextChanged(CharSequence s, int start, int before, int count) {
+//				}
+//
+//				@Override
+//				public void afterTextChanged(Editable s) {
+//					ChatFocusSaver.setCurrentMessage(getChatId(), s.toString());
+//				}
+//			});
 
 			if (getChatLoad() != null
 					&& getChatLoad().is_locked == 1

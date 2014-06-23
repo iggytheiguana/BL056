@@ -4,59 +4,130 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:orientation="horizontal"
-    android:paddingLeft="10dp" >
+    android:orientation="vertical"
+    android:paddingLeft="11dp" >
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" >
+    <LinearLayout
+        android:id="@+id/linearTyping"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:visibility="visible" >
 
-        <LinearLayout
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <com.blulabellabs.code.ui.common.CustomLineView
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="20dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    tools:padding="5dp"
+                    tools:text_size="17sp" />
+
+                <com.blulabellabs.code.ui.common.CustomLineView
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="20dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    tools:padding="5dp"
+                    tools:text_size="17sp" />
+            </LinearLayout>
+
+            <com.blulabellabs.code.ui.common.CustomDotView
+                android:id="@+id/dotView_userTyping1"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                tools:padding="5dp"
+                tools:text_size="17sp" />
+            <!-- style="@style/TextView.Message.Date" -->
+        </FrameLayout>
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            style="@style/TextView.Message.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="0dp"
+            android:paddingLeft="5dp"
+            android:layout_marginBottom="-3dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="..."
+            android:visibility="invisible"
+            android:textColor="@android:color/black"
+            android:textSize="17sp" />
+    </LinearLayout>
 
-            <com.blulabellabs.code.ui.common.CustomLineView
-                style="@style/TextView.Message.Date"
-                android:layout_width="20dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                tools:padding="5dp"
-                tools:text_size="18sp" />
+    <LinearLayout
+        android:id="@+id/linearFooter_userTyping"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal" >
 
-            <com.blulabellabs.code.ui.common.CustomLineView
-                style="@style/TextView.Message.Date"
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <com.blulabellabs.code.ui.common.CustomLineView
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="20dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    tools:padding="5dp"
+                    tools:text_size="17sp" />
+
+                <com.blulabellabs.code.ui.common.CustomLineView
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="20dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="invisible"
+                    tools:padding="5dp"
+                    tools:text_size="17sp" />
+            </LinearLayout>
+
+            <com.blulabellabs.code.ui.common.CustomDotView
+                android:id="@+id/dotView_userTyping"
                 android:layout_width="20dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:visibility="invisible"
                 tools:padding="5dp"
-                tools:text_size="18sp" />
-        </LinearLayout>
+                tools:text_size="17sp" />
+            <!-- style="@style/TextView.Message.Date" -->
+        </FrameLayout>
 
-        <com.blulabellabs.code.ui.common.CustomDotView
-            android:id="@+id/dotView_userTyping"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:visibility="invisible"
-            tools:padding="5dp"
-            tools:text_size="18sp" />
-        <!-- style="@style/TextView.Message.Date" -->
-    </FrameLayout>
-
-    <com.blulabellabs.code.ui.common.TextViewRegular
-        style="@style/TextView.Message.Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:gravity="center_vertical"
-        android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:text="..."
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="..."
+            android:textColor="@android:color/black"
+            android:textSize="17sp" />
+    </LinearLayout>
 
 </LinearLayout>

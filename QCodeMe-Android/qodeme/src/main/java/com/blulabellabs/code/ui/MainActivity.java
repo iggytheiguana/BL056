@@ -2413,15 +2413,16 @@ public class MainActivity extends BaseActivity implements
 					QodemePreferences.getInstance().set("" + chatId, null);
 					List<Message> messages = getChatMessages(chatId);
 					if (messages != null)
-						for (Message message : messages) {
-							if (message.state == QodemeContract.Messages.State.NOT_READ) {
-								getContentResolver().update(
-										QodemeContract.Messages.CONTENT_URI,
-										QodemeContract.Messages.msssageReadLocalValues(),
-										QodemeContract.Messages.MESSAGE_ID + "="
-												+ message.messageId, null);
-							}
-						}
+						messageRead(chatId);
+//						for (Message message : messages) {
+//							if (message.state == QodemeContract.Messages.State.NOT_READ) {
+//								getContentResolver().update(
+//										QodemeContract.Messages.CONTENT_URI,
+//										QodemeContract.Messages.msssageReadLocalValues(),
+//										QodemeContract.Messages.MESSAGE_ID + "="
+//												+ message.messageId, null);
+//							}
+//						}
 
 				}
 			}

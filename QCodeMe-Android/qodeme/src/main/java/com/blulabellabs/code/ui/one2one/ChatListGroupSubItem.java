@@ -482,6 +482,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				case QodemeContract.Messages.State.LOCAL:
 					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
 					getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
+					getDate().setOutLine(true);
 					getMessage().setTextColor(getResources().getColor(R.color.user_typing));
 					getDate().invalidate();
 					break;

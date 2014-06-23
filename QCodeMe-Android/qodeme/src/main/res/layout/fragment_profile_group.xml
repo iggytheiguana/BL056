@@ -64,11 +64,11 @@
                         style="@style/TextView.Message.Date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:visibility="gone"
                         android:layout_gravity="bottom"
+                        android:text="0"
                         android:textColor="@color/text_message_not_read"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:visibility="gone" />
 
                     <ImageButton
                         android:id="@+id/btnSearch"
@@ -214,25 +214,28 @@
                     android:textColor="@color/text_message_not_read"
                     android:textSize="14sp" />
 
-                <Button android:id="@+id/btn_addLocation"
+                <Button
+                    android:id="@+id/btn_addLocation"
                     style="@style/TextView.Message.Date"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:text="@string/add_location"
+                    android:background="@null"
                     android:drawableLeft="@drawable/ic_location"
                     android:drawablePadding="10dp"
-                    android:background="@null"
+                    android:text="@string/add_location"
                     android:textColor="#059BE9"
                     android:textSize="14sp"
                     android:visibility="gone" />
-                 <Button android:id="@+id/btn_removeLocation"
+
+                <Button
+                    android:id="@+id/btn_removeLocation"
                     style="@style/TextView.Message.Date"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:text="@string/remove"
                     android:background="@null"
+                    android:text="@string/remove"
                     android:textColor="#059BE9"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -273,7 +276,8 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btnSetStatus"
                 android:hint="@string/add_status_hint"
-                android:imeOptions="actionDone|actionGo"
+                android:imeOptions="actionDone|actionSend"
+                android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:visibility="gone" />
@@ -343,6 +347,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/btnSetTags"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:text=""
                     android:textColor="@android:color/black"
                     android:visibility="gone" />
@@ -436,7 +442,8 @@
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/btnSetDesc"
                     android:hint="@string/add_tag_hint"
-                    android:imeOptions="actionDone|actionGo"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:visibility="visible" />
 
@@ -448,7 +455,8 @@
                     android:layout_below="@+id/editText_GroupTags"
                     android:layout_toLeftOf="@+id/btnSetDesc"
                     android:hint="@string/add_title_hint"
-                    android:imeOptions="actionDone|actionGo"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:visibility="visible" />
 
@@ -471,7 +479,8 @@
                     android:layout_below="@id/editText_GroupTitle"
                     android:layout_toLeftOf="@+id/btnSetDesc"
                     android:hint="@string/add_descrioption_hint"
-                    android:imeOptions="actionDone|actionGo"
+                    android:imeOptions="actionDone|actionSend"
+                    android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:visibility="visible" />
@@ -668,20 +677,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="0 Messages"
-                    android:textColor="#059BE9"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/ic_flag_blue"
-                    android:textSize="18sp"
-                    android:paddingTop="10dp"
                     android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="0 Messages"
+                    android:textColor="#059BE9"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
-<!--                 <ImageButton -->
-<!--                     android:layout_width="wrap_content" -->
-<!--                     android:layout_height="wrap_content" -->
-<!--                     android:background="@null" -->
-<!--                     android:src="@drawable/ic_flag_blue" /> -->
+                <!-- <ImageButton -->
+                <!-- android:layout_width="wrap_content" -->
+                <!-- android:layout_height="wrap_content" -->
+                <!-- android:background="@null" -->
+                <!-- android:src="@drawable/ic_flag_blue" /> -->
             </LinearLayout>
         </RelativeLayout>
 
