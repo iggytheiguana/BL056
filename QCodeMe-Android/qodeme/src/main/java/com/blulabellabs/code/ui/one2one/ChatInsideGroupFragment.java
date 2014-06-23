@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -361,6 +362,10 @@ public class ChatInsideGroupFragment extends Fragment {
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
+		
+		
+		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -796,6 +801,49 @@ public class ChatInsideGroupFragment extends Fragment {
 				mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
 				mTextViewNumFavorite.setVisibility(View.VISIBLE);
 			}
+			
+			if (getChatLoad() != null) {
+				if (getChatLoad().type == 1) {
+					mImgMemberBottomLine.setVisibility(View.VISIBLE);
+					mTextViewMembers.setVisibility(View.VISIBLE);
+					mTextViewMembersLabel.setVisibility(View.VISIBLE);
+					String memberNames = "";
+					if (getChatLoad().members != null) {
+						int i = 0;
+						ArrayList<String> nameList = new ArrayList<String>();
+						for (String memberQr : getChatLoad().members) {
+							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
+								Contact c = callback.getContact(memberQr);
+								if (c != null) {
+									nameList.add(c.title);
+								} else {
+									nameList.add("User");
+								}
+							}
+						}
+						Collections.sort(nameList);
+						for (String memberQr : nameList) {
+							// Contact c = callback.getContact(memberQr);
+							// if (c != null) {
+							if (i > 5) {
+								memberNames += "...";
+								break;
+							}
+							if (i == 0)
+								memberNames += memberQr + "";
+							else
+								memberNames += ", " + memberQr + "";
+							// }
+							i++;
+						}
+					}
+					mTextViewMembers.setText(memberNames);
+				} else {
+					mImgMemberBottomLine.setVisibility(View.GONE);
+					mTextViewMembers.setVisibility(View.GONE);
+					mTextViewMembersLabel.setVisibility(View.GONE);
+				}
+			}
 
 			String statusUpdate = QodemePreferences.getInstance().get(
 					"" + getArguments().getLong(CHAT_ID), "");
@@ -883,48 +931,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				mBtnImageSendBottom.setVisibility(View.VISIBLE);
 				mMessageField.setVisibility(View.VISIBLE);
 			}
-			if (getChatLoad() != null) {
-				if (getChatLoad().type == 1) {
-					mImgMemberBottomLine.setVisibility(View.VISIBLE);
-					mTextViewMembers.setVisibility(View.VISIBLE);
-					mTextViewMembersLabel.setVisibility(View.VISIBLE);
-					String memberNames = "";
-					if (getChatLoad().members != null) {
-						int i = 0;
-						ArrayList<String> nameList = new ArrayList<String>();
-						for (String memberQr : getChatLoad().members) {
-							if (!QodemePreferences.getInstance().getQrcode().equals(memberQr)) {
-								Contact c = callback.getContact(memberQr);
-								if (c != null) {
-									nameList.add(c.title);
-								} else {
-									nameList.add("User");
-								}
-							}
-						}
-						Collections.sort(nameList);
-						for (String memberQr : nameList) {
-							// Contact c = callback.getContact(memberQr);
-							// if (c != null) {
-							if (i > 5) {
-								memberNames += "...";
-								break;
-							}
-							if (i == 0)
-								memberNames += memberQr + "";
-							else
-								memberNames += ", " + memberQr + "";
-							// }
-							i++;
-						}
-					}
-					mTextViewMembers.setText(memberNames);
-				} else {
-					mImgMemberBottomLine.setVisibility(View.GONE);
-					mTextViewMembers.setVisibility(View.GONE);
-					mTextViewMembersLabel.setVisibility(View.GONE);
-				}
-			}
+			
 
 			if (chatLoad.is_deleted == 1) {
 				mTextViewDeleteBaner.setVisibility(View.VISIBLE);

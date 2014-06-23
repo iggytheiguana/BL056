@@ -11,6 +11,7 @@ import android.widget.EditText;
 public class CustomEdit extends EditText{
 
     private OnEditTextImeBackListener mOnImeBack;
+    private OnEditTextImeEnterListener mOnImeEnter;
 
     public CustomEdit(Context context) {
         super(context);
@@ -38,6 +39,10 @@ public class CustomEdit extends EditText{
 
     public interface OnEditTextImeBackListener {
         public abstract void onImeBack(CustomEdit ctrl);
+    }
+    
+    public interface OnEditTextImeEnterListener {
+        public abstract void onImeEnter(CustomEdit ctrl);
     }
 
 

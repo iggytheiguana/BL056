@@ -43,6 +43,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -727,6 +728,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 										// getView().findViewById(R.id.button_message);
 		mMessageField = getMessageEditText();// (EditText)
 												// getView().findViewById(R.id.edit_message);
+		
+		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

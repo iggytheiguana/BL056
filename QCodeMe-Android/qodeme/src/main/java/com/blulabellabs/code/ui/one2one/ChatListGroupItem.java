@@ -14,6 +14,7 @@ import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -602,6 +603,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 							Helper.showKeyboard(getContext(), getTitleEditText());
 						}
 					});
+					getTitleEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+					getTitleEditText().setImeOptions(EditorInfo.IME_ACTION_DONE);
 					getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
 
 						@Override
