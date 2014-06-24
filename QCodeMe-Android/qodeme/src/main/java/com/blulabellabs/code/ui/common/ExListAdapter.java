@@ -22,6 +22,7 @@ public class ExListAdapter<T extends ExAdapterBasedView<E, C>, E, C extends ExAd
 
 	private final C callback;
 	private List<E> mItems;
+	public boolean isScroll = false;
 
 	public ExListAdapter(Context context, int layoutResId, List<E> list, C callback) {
 		super(context, layoutResId, list);
@@ -67,7 +68,7 @@ public class ExListAdapter<T extends ExAdapterBasedView<E, C>, E, C extends ExAd
 		chatListItem.sendImgMessageBtn = holder.sendImgMessageBtn;
 		chatListItem.mImgBtnFavorite = holder.mImgBtnFavorite;
 		chatListItem.mChatItem = holder.mChatItem;
-		
+		chatListItem.isScrolling = isScroll;
 		
 		view = (T) convertView;
 		E e = (E) getItem(position);

@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -43,6 +46,7 @@ import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomEdit;
 import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExListAdapter.ViewHolder;
+import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
@@ -91,7 +95,10 @@ public class ChatListItem extends RelativeLayout implements
 	private ChatListAdapterCallback mCallback;
 	private int mPosition;
 	private Contact mContact;
-	private ViewHolder viewHolder; 
+	private ViewHolder viewHolder;
+	public boolean isScrolling = false;
+	private View mViewTypedMessage ;
+	CustomDotView mTypedMessageDot;
 
 	public ChatListItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -101,9 +108,9 @@ public class ChatListItem extends RelativeLayout implements
 		gestureDetector = new GestureDetector(context, new GestureListener());
 
 	}
+	View footerView1;
+	List<Message> temp = Lists.newArrayList();
 
-	
-	
 	@SuppressWarnings("unchecked")
 	@SuppressLint("SimpleDateFormat")
 	@Override
@@ -111,6 +118,8 @@ public class ChatListItem extends RelativeLayout implements
 
 		mContact = ce;
 
+		getMessageTypedView().setVisibility(GONE);
+		
 		final String oponentQr = mContact.qrCode;
 		final int oponentColor = mContact.color == 0 ? Color.GRAY : mContact.color;
 		final int myColor = context.getResources().getColor(R.color.text_chat_name);
@@ -135,6 +144,7 @@ public class ChatListItem extends RelativeLayout implements
 		// List preparation
 		List<Message> listForAdapter = Lists.newArrayList();
 		List<Message> listData = mCallback.getMessages(mContact);
+		temp.clear();
 		listData = sortMessages(listData);
 		boolean isContainUnread = false;
 		if (listData != null) {
@@ -199,6 +209,13 @@ public class ChatListItem extends RelativeLayout implements
 					i++;
 				}
 			}
+
+			if (listData.size() > 10) {
+				for (int i = listData.size() - 10; i < listData.size(); i++)
+					temp.add(listData.get(i));
+			} else {
+				temp.addAll(listData);
+			}
 			// for (Message message : replyMessage) {
 			// int i = 0;
 			// for (Message m : listData) {
@@ -216,7 +233,7 @@ public class ChatListItem extends RelativeLayout implements
 			// }
 			// }
 		}
-		ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
+		final ListAdapter listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
 				context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
 				new ChatListSubAdapterCallback() {
 					@Override
@@ -246,12 +263,22 @@ public class ChatListItem extends RelativeLayout implements
 				}, callbackChatListInsideFragmentCallback);
 
 		if (listData != null) {
-			// if(listData.size()>15){
-			// for(int i=0; i<listData.size() - 15; i++){
-			// listData.remove(i);
+			// if (!isScrolling) {
+			if (listData != null) {
+				listAdapter.addAll(temp);
+			}
+			// } else {
+			// if (listData != null) {
+			// new Handler().postDelayed(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// listAdapter.addAll(temp);
+			//
+			// }
+			// }, 200);
 			// }
 			// }
-			listAdapter.addAll(listData);
 
 		}
 		if (isContainUnread)
@@ -271,6 +298,18 @@ public class ChatListItem extends RelativeLayout implements
 				return gestureDetector.onTouchEvent(event);
 			}
 		});
+
+//		View view = ((Activity) getContext()).getLayoutInflater().inflate(
+//				R.layout.footer_user_typing, null);
+//
+//		footerView1 = view.findViewById(R.id.linearTyping);
+//		footerView1.setVisibility(View.GONE);
+//		
+//		CustomDotView dotView = (CustomDotView) view.findViewById(R.id.dotView_userTyping1);
+		getMessageTypedDot().setDotColor(getResources().getColor(R.color.user_typing));
+		getMessageTypedDot().setOutLine(true);
+		getMessageTypedDot().setSecondVerticalLine(true);
+		getMessageTypedDot().invalidate();
 
 		height = mCallback.getChatHeight(mContact.chatId);
 		ListView.LayoutParams lParams = new ListView.LayoutParams(
@@ -342,30 +381,27 @@ public class ChatListItem extends RelativeLayout implements
 		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
 
 		if (chatLoad != null) {
-			if(chatLoad.isTyping){
-//				getUserTyping().setTextColor(Color.RED);
+			if (chatLoad.isTyping) {
+				// getUserTyping().setTextColor(Color.RED);
 				getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
-			}
-			else{
+			} else {
 				getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
 			}
-			if (chatLoad.is_locked == 1 && !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)){
+			if (chatLoad.is_locked == 1
+					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
 				getSendImage().setVisibility(View.INVISIBLE);
 				getFavoriteBtn().setClickable(false);
-			}else{
+			} else {
 				getSendImage().setVisibility(View.VISIBLE);
 				getFavoriteBtn().setClickable(true);
 			}
-			
-			
-			
-			if(chatLoad != null && chatLoad.is_deleted == 1){
+
+			if (chatLoad != null && chatLoad.is_deleted == 1) {
 				getSendImage().setVisibility(View.INVISIBLE);
 				getFavoriteBtn().setClickable(false);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
 			}
-
 
 			if (chatLoad.is_favorite == 1) {
 				Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -376,7 +412,7 @@ public class ChatListItem extends RelativeLayout implements
 						R.drawable.ic_chat_favorite_h);
 				getFavoriteBtn().setImageBitmap(bm);
 			}
-			
+
 		}
 		getSendImage().setOnClickListener(new OnClickListener() {
 
@@ -435,14 +471,23 @@ public class ChatListItem extends RelativeLayout implements
 	public CustomEdit getMessageEdit() {
 		return edit = edit != null ? edit : (CustomEdit) findViewById(R.id.edit_message);
 	}
+	public View getMessageTypedView() {
+		return mViewTypedMessage = mViewTypedMessage != null ? mViewTypedMessage : (View) findViewById(R.id.linearTyping);
+	}
+	public CustomDotView getMessageTypedDot() {
+		return mTypedMessageDot = mTypedMessageDot != null ? mTypedMessageDot : (CustomDotView) findViewById(R.id.dotView_userTyping1);
+	}
 
 	public ImageView getDragImage() {
 		return dragImage = dragImage != null ? dragImage
 				: (ImageView) findViewById(R.id.drag_image);
 	}
+
 	public ImageView getUserTyping() {
-		return textViewUserTyping = textViewUserTyping != null ? textViewUserTyping : (ImageView) findViewById(R.id.userTyping);
+		return textViewUserTyping = textViewUserTyping != null ? textViewUserTyping
+				: (ImageView) findViewById(R.id.userTyping);
 	}
+
 	public ImageButton getSendMessage() {
 		return sendMessageBtn = sendMessageBtn != null ? sendMessageBtn
 				: (ImageButton) findViewById(R.id.button_message);
@@ -539,6 +584,7 @@ public class ChatListItem extends RelativeLayout implements
 
 	public void showMessage() {
 		getSendMessage().setVisibility(View.VISIBLE);
+		getMessageEdit().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -548,10 +594,11 @@ public class ChatListItem extends RelativeLayout implements
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0) {
-//					mSendButton.setVisibility(View.VISIBLE);
-//					sendUserTypingMessage();// send user typing message
+					// mSendButton.setVisibility(View.VISIBLE);
+					// sendUserTypingMessage();// send user typing message
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mContact.chatId);
+					getMessageTypedView().setVisibility(VISIBLE);
 				}
 			}
 
@@ -560,15 +607,17 @@ public class ChatListItem extends RelativeLayout implements
 				ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
 
 				if (s.length() > 0) {
-//					mSendButton.setVisibility(View.VISIBLE);
-//					sendUserTypingMessage();
+					// mSendButton.setVisibility(View.VISIBLE);
+					// sendUserTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mContact.chatId);
+					getMessageTypedView().setVisibility(VISIBLE);
 				} else {
-//					mSendButton.setVisibility(View.GONE);
-//					sendUserStoppedTypingMessage();
+					// mSendButton.setVisibility(View.GONE);
+					// sendUserStoppedTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserStoppedTypingMessage(mContact.chatId);
+					getMessageTypedView().setVisibility(GONE);
 				}
 
 			}
@@ -580,6 +629,7 @@ public class ChatListItem extends RelativeLayout implements
 				ChatFocusSaver.setFocusedChatId(0);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
+				getMessageTypedView().setVisibility(GONE);
 			}
 		});
 
@@ -640,8 +690,6 @@ public class ChatListItem extends RelativeLayout implements
 		this.viewHolder = viewHolder;
 	}
 
-
-
 	public ViewHolder getViewHolder() {
 		return viewHolder;
 	}
@@ -650,16 +698,16 @@ public class ChatListItem extends RelativeLayout implements
 
 		@Override
 		public void stopTypingMessage() {
-				MainActivity activity = (MainActivity) getContext();
-				activity.sendUserStoppedTypingMessage(mContact.chatId);
+			MainActivity activity = (MainActivity) getContext();
+			activity.sendUserStoppedTypingMessage(mContact.chatId);
 
 		}
 
 		@Override
 		public void startTypingMessage() {
 			// TODO Auto-generated method stub
-				MainActivity activity = (MainActivity) getContext();
-				activity.sendUserTypingMessage(mContact.chatId);
+			MainActivity activity = (MainActivity) getContext();
+			activity.sendUserTypingMessage(mContact.chatId);
 		}
 
 		@Override

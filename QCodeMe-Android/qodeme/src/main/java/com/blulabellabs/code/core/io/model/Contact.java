@@ -30,6 +30,8 @@ public class Contact implements Parcelable {
 	public int isArchive = 0;
 	public String latitude = "0";
 	public String longitude = "0";
+	
+	public boolean isRead = false;
 
 	public Contact() {
 	}

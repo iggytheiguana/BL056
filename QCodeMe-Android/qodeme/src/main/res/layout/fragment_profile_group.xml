@@ -276,7 +276,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btnSetStatus"
                 android:hint="@string/add_status_hint"
-                android:imeOptions="actionDone|actionSend"
+                android:imeOptions="actionGo"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"

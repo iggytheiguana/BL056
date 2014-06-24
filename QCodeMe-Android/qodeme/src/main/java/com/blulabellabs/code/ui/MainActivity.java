@@ -1525,8 +1525,10 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Contacts.isArchiveValues(0),
 								DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(ce._id));
 						mDrawerLayout.closeDrawer(mContactListView);
-					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED
-							|| ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
+					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED) {
+						mDrawerLayout.closeDrawer(mContactListView);
+						showOne2OneChatFragment(ce, true, mViewPager);
+					} else if (ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
 						Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 						i.putExtra(QodemeContract.Contacts._ID, ce._id);
 						i.putExtra(QodemeContract.Contacts.CONTACT_TITLE, ce.title);
@@ -1829,6 +1831,9 @@ public class MainActivity extends BaseActivity implements
 						if (chatType == 2)
 							QodemePreferences.getInstance().setNewPublicGroupChatId(
 									response.getChat().getId());
+						if (chatType == 1)
+							QodemePreferences.getInstance().setNewPrivateGroupChatId(
+									response.getChat().getId());
 						getContentResolver().insert(
 								QodemeContract.Chats.CONTENT_URI,
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
@@ -1899,6 +1904,7 @@ public class MainActivity extends BaseActivity implements
 	protected void onDestroy() {
 		mImageFetcher.closeCache();
 		QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
+		QodemePreferences.getInstance().setNewPrivateGroupChatId(-1l);
 		super.onDestroy();
 	}
 
@@ -2414,15 +2420,16 @@ public class MainActivity extends BaseActivity implements
 					List<Message> messages = getChatMessages(chatId);
 					if (messages != null)
 						messageRead(chatId);
-//						for (Message message : messages) {
-//							if (message.state == QodemeContract.Messages.State.NOT_READ) {
-//								getContentResolver().update(
-//										QodemeContract.Messages.CONTENT_URI,
-//										QodemeContract.Messages.msssageReadLocalValues(),
-//										QodemeContract.Messages.MESSAGE_ID + "="
-//												+ message.messageId, null);
-//							}
-//						}
+					// for (Message message : messages) {
+					// if (message.state ==
+					// QodemeContract.Messages.State.NOT_READ) {
+					// getContentResolver().update(
+					// QodemeContract.Messages.CONTENT_URI,
+					// QodemeContract.Messages.msssageReadLocalValues(),
+					// QodemeContract.Messages.MESSAGE_ID + "="
+					// + message.messageId, null);
+					// }
+					// }
 
 				}
 			}
@@ -2687,32 +2694,43 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void messageRead(long chatId) {
+	public void messageRead(final long chatId) {
 		if (getNewMessagesCount(chatId) > 0) {
-			List<Message> messages = mChatMessagesMap.get(chatId);
-			if (messages != null && !messages.isEmpty()) {
-				ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
-				List<Long> idList = Lists.newArrayList();
-				for (Message m : messages) {
-					if (m.state == QodemeContract.Messages.State.NOT_READ) {
-						idList.add(m._id);
+
+			new AsyncTask<String, String, String>() {
+
+				@Override
+				protected String doInBackground(String... params) {
+					List<Message> messages = mChatMessagesMap.get(chatId);
+					if (messages != null && !messages.isEmpty()) {
+						ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+						List<Long> idList = Lists.newArrayList();
+						for (Message m : messages) {
+							if (m.state == QodemeContract.Messages.State.NOT_READ) {
+								idList.add(m._id);
+								m.state = QodemeContract.Messages.State.READ_LOCAL;
+							}
+						}
+						long[] ids = Longs.toArray(idList);
+						if (ids.length > 0) {
+							ContentProviderOperation.Builder builder = ContentProviderOperation
+									.newUpdate(QodemeContract.Messages.CONTENT_URI);
+							builder.withValue(QodemeContract.SyncColumns.UPDATED,
+									QodemeContract.Sync.UPDATED);
+							builder.withValue(QodemeContract.Messages.MESSAGE_STATE,
+									QodemeContract.Messages.State.READ_LOCAL);
+							builder.withSelection(DbUtils.getWhereClauseForIds(ids),
+									DbUtils.getWhereArgsForIds(ids));
+							batch.add(builder.build());
+							QodemeContract.applyBatch(getContext(), batch);
+							SyncHelper.requestManualSync();
+						}
 					}
+					return null;
 				}
-				long[] ids = Longs.toArray(idList);
-				if (ids.length > 0) {
-					ContentProviderOperation.Builder builder = ContentProviderOperation
-							.newUpdate(QodemeContract.Messages.CONTENT_URI);
-					builder.withValue(QodemeContract.SyncColumns.UPDATED,
-							QodemeContract.Sync.UPDATED);
-					builder.withValue(QodemeContract.Messages.MESSAGE_STATE,
-							QodemeContract.Messages.State.READ_LOCAL);
-					builder.withSelection(DbUtils.getWhereClauseForIds(ids),
-							DbUtils.getWhereArgsForIds(ids));
-					batch.add(builder.build());
-					QodemeContract.applyBatch(getContext(), batch);
-					SyncHelper.requestManualSync();
-				}
-			}
+
+			}.execute("");
+
 		}
 	}
 
@@ -3558,9 +3576,10 @@ public class MainActivity extends BaseActivity implements
 						Log.d(TAG, "Status: Connected to " + wsuri);
 						// mConnection.sendTextMessage("Hello, world!");
 						// sendRegisterForChatEvents();
-						for (ChatLoad chatLoad : mChatList) {
-							sendRegisterForChatEvents(chatLoad.chatId);
-						}
+						if (mChatList != null)
+							for (ChatLoad chatLoad : mChatList) {
+								sendRegisterForChatEvents(chatLoad.chatId);
+							}
 					}
 
 					@Override

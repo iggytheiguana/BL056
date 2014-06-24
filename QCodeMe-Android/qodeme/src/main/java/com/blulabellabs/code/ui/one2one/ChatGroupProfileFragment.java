@@ -1026,13 +1026,13 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 					@Override
 					public void onResponse(VoidResponse response) {
-						Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
+						//Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
 					public void onServiceError(RestError error) {
 						Log.d("Error", error.getMessage() + "");
-						Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_LONG).show();
+						//Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_LONG).show();
 					}
 				});
 	}

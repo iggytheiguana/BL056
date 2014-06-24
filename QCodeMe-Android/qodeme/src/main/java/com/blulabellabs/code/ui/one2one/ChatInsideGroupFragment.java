@@ -112,7 +112,7 @@ public class ChatInsideGroupFragment extends Fragment {
 	private boolean mFirstUpdate = true;
 	private ImageView imgUserTyping;
 	private CustomDotView customDotViewUserTyping;
-	private View footerView,footerView1;
+	private View footerView, footerView1;
 	private boolean isUsertyping = false;
 	private ChatLoad chatLoad;
 
@@ -259,7 +259,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 									}
 								});
-						
+
 						RestAsyncHelper.getInstance().chatAddMember(chatLoad.chatId,
 								QodemePreferences.getInstance().getQrcode(),
 								new RestListener<ChatAddMemberResponse>() {
@@ -362,10 +362,9 @@ public class ChatInsideGroupFragment extends Fragment {
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
-		
-		
+
 		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-		
+
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -517,11 +516,14 @@ public class ChatInsideGroupFragment extends Fragment {
 		if (chatId == getChatId()) {
 			// we make visible the image view to show the other user is typing
 			// this.imgUserTyping.setVisibility(View.VISIBLE);
-			customDotViewUserTyping.setVisibility(View.VISIBLE);
-			footerView.setVisibility(View.VISIBLE);
-			if (!isUsertyping) {
-				handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
-				isUsertyping = true;
+
+			if (getChatLoad().type != 2) {
+				customDotViewUserTyping.setVisibility(View.VISIBLE);
+				footerView.setVisibility(View.VISIBLE);
+				if (!isUsertyping) {
+					handlerForUserTyping.sendEmptyMessageDelayed(0, 500);
+					isUsertyping = true;
+				}
 			}
 		}
 	}
@@ -693,12 +695,14 @@ public class ChatInsideGroupFragment extends Fragment {
 		imgUserTyping.setImageBitmap(bmp);
 		imgUserTyping.setVisibility(View.GONE);
 
-//		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
-//		footerView.setVisibility(View.GONE);
-		View view  = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		// footerView =
+		// getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing,
+		// null);
+		// footerView.setVisibility(View.GONE);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
 		footerView = view.findViewById(R.id.linearFooter_userTyping);
 		footerView.setVisibility(View.GONE);
-		
+
 		footerView1 = view.findViewById(R.id.linearTyping);
 		footerView1.setVisibility(View.GONE);
 		CustomDotView dotView = (CustomDotView) view.findViewById(R.id.dotView_userTyping1);
@@ -801,7 +805,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
 				mTextViewNumFavorite.setVisibility(View.VISIBLE);
 			}
-			
+
 			if (getChatLoad() != null) {
 				if (getChatLoad().type == 1) {
 					mImgMemberBottomLine.setVisibility(View.VISIBLE);
@@ -902,20 +906,22 @@ public class ChatInsideGroupFragment extends Fragment {
 			// Helper.hideKeyboard(getActivity(), mMessageField);
 			// }
 
-//			mMessageField.addTextChangedListener(new TextWatcher() {
-//				@Override
-//				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//				}
-//
-//				@Override
-//				public void onTextChanged(CharSequence s, int start, int before, int count) {
-//				}
-//
-//				@Override
-//				public void afterTextChanged(Editable s) {
-//					ChatFocusSaver.setCurrentMessage(getChatId(), s.toString());
-//				}
-//			});
+			// mMessageField.addTextChangedListener(new TextWatcher() {
+			// @Override
+			// public void beforeTextChanged(CharSequence s, int start, int
+			// count, int after) {
+			// }
+			//
+			// @Override
+			// public void onTextChanged(CharSequence s, int start, int before,
+			// int count) {
+			// }
+			//
+			// @Override
+			// public void afterTextChanged(Editable s) {
+			// ChatFocusSaver.setCurrentMessage(getChatId(), s.toString());
+			// }
+			// });
 
 			if (getChatLoad() != null
 					&& getChatLoad().is_locked == 1
@@ -931,7 +937,6 @@ public class ChatInsideGroupFragment extends Fragment {
 				mBtnImageSendBottom.setVisibility(View.VISIBLE);
 				mMessageField.setVisibility(View.VISIBLE);
 			}
-			
 
 			if (chatLoad.is_deleted == 1) {
 				mTextViewDeleteBaner.setVisibility(View.VISIBLE);

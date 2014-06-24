@@ -2,6 +2,7 @@ package com.blulabellabs.code.ui.common;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
@@ -29,12 +30,18 @@ public class CustomEdit extends EditText{
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             if (mOnImeBack != null) mOnImeBack.onImeBack(this);
+        }else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+            if (mOnImeEnter != null) mOnImeEnter.onImeEnter(this);
         }
+        Log.d("keyCode", ""+keyCode+" "+event.getDisplayLabel());
         return super.dispatchKeyEvent(event);
     }
 
     public void setOnEditTextImeBackListener(OnEditTextImeBackListener listener) {
         mOnImeBack = listener;
+    }
+    public void setOnEditTextImeEnterListener(OnEditTextImeEnterListener listener) {
+        mOnImeEnter = listener;
     }
 
     public interface OnEditTextImeBackListener {

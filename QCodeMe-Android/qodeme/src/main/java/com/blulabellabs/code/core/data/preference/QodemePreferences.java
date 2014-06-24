@@ -42,6 +42,7 @@ public class QodemePreferences extends CommonPreferences {
 	private static final String PREF_EDIT_STATUS = "pref_edit_status";
 	private static final String PREF_LAST_LOCATION_LATITUDE = "pref_last_location_latitude";
 	private static final String PREF_LAST_LOCATION_LONGITUDE = "pref_last_location_longitude";
+	private static final String PRIVATE_GROUP_CHAT_ID = "private_group_chat_id";
 
 	private static QodemePreferences instance;
 	@SuppressWarnings("unused")
@@ -299,5 +300,14 @@ public class QodemePreferences extends CommonPreferences {
 
 	public long getNewPublicGroupChatId() {
 		return get(PUBLIC_GROUP_CHAT_ID, -1l);
+	}
+	public void setNewPrivateGroupChatId(long chatId) {
+		SharedPreferences.Editor ed = getEditor();
+		ed.putLong(PRIVATE_GROUP_CHAT_ID, chatId);
+		commit(ed);
+	}
+
+	public long getNewPrivateGroupChatId() {
+		return get(PRIVATE_GROUP_CHAT_ID, -1l);
 	}
 }

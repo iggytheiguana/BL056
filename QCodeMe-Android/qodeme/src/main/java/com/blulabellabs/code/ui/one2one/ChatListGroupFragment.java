@@ -558,7 +558,7 @@ public class ChatListGroupFragment extends Fragment {
 					public void onOpen() {
 						Log.d(TAG, "Status: Connected to " + wsuri);
 						// mConnection.sendTextMessage("Hello, world!");
-//						sendRegisterForChatEvents();
+						// sendRegisterForChatEvents();
 					}
 
 					@Override
@@ -735,7 +735,7 @@ public class ChatListGroupFragment extends Fragment {
 					mListAdapter.isScroll = true;
 				else {
 					mListAdapter.isScroll = false;
-//					mListAdapter.notifyDataSetChanged();
+					// mListAdapter.notifyDataSetChanged();
 				}
 			}
 
@@ -809,12 +809,25 @@ public class ChatListGroupFragment extends Fragment {
 		// }
 		if (isViewCreated && callback.getChatList(chatType) != null) {
 			Log.d("Chatlist", "size " + callback.getChatList(chatType).size() + " ");
-			if (callback.getChatList(chatType) != null) {
-				chatLoads.clear();
-				chatLoads = Lists.newArrayList();
+			chatLoads.clear();
+			chatLoads = Lists.newArrayList();
 
-				chatLoads = callback.getChatList(chatType);
-
+			chatLoads = callback.getChatList(chatType);
+			if (QodemePreferences.getInstance().getNewPrivateGroupChatId() != -1) {
+				try {
+					ChatLoad newChatLoad = null;
+					for (ChatLoad c : chatLoads) {
+						if (QodemePreferences.getInstance().getNewPrivateGroupChatId() == c.chatId) {
+							newChatLoad = c;
+							break;
+						}
+					}
+					chatLoads.remove(newChatLoad);
+					chatLoads.add(0, newChatLoad);
+				} catch (Exception e) {
+				}
+			} 
+//			else {
 				if (!isLocationFilter && !isFavoriteFilter) {
 					mListAdapter.clear();
 					mListAdapter.addAll(searchChats(searchString));
@@ -855,28 +868,32 @@ public class ChatListGroupFragment extends Fragment {
 
 				long focusedChat = ChatFocusSaver.getFocusedChatId();
 				selectChat(focusedChat);
-			}
+//			}
 		}
 	}
+
 	public void notifyUi(long chatId, ChatLoad chatLoad) {
 		// mListAdapter.notifyDataSetChanged();
 		ChatListGroupItem chatListGroupItem = null;
 		for (int i = mListView.getFirstVisiblePosition(); i < mListView.getLastVisiblePosition(); i++) {
 			ChatLoad chatLoad2 = mListAdapter.getItem(i);
-			Log.d("chatid", chatLoad2.chatId+"");
+			Log.d("chatid", chatLoad2.chatId + "");
 			if (chatLoad2.chatId == chatId) {
-				chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i-mListView.getFirstVisiblePosition()+1);
+				chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i
+						- mListView.getFirstVisiblePosition() + 1);
 				break;
 			}
 		}
 		if (chatListGroupItem != null) {
 			if (chatLoad.isTyping)
-				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
+				chatListGroupItem.getUserTyping()
+						.setBackgroundResource(R.drawable.bg_user_typing_h);
 			else
 				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
 		}
 
 	}
+
 	private List<ChatLoad> searchChats(String searchString) {
 		if (searchString.trim().equals("")) {
 			return chatLoads;
@@ -976,6 +993,5 @@ public class ChatListGroupFragment extends Fragment {
 				isMoreData = false;
 		}
 	};
-	
-	
+
 }

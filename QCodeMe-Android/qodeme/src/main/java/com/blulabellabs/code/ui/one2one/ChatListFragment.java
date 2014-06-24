@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -117,14 +118,14 @@ public class ChatListFragment extends Fragment {
 		ChatLoad getChatLoad(long chatId);
 	}
 
-	public static ChatListFragment getInstance(){
+	public static ChatListFragment getInstance() {
 		ChatListFragment chatListFragment = new ChatListFragment();
 		Bundle args = new Bundle();
 		args.putInt("index", 1);
 		chatListFragment.setArguments(args);
 		return chatListFragment;
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -675,7 +676,12 @@ public class ChatListFragment extends Fragment {
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				// TODO Auto-generated method stub
+				if (scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL)
+					mListAdapter.isScroll = true;
+				else {
+					mListAdapter.isScroll = false;
+					// mListAdapter.notifyDataSetChanged();
+				}
 
 			}
 
@@ -692,7 +698,43 @@ public class ChatListFragment extends Fragment {
 									.setListener(null);
 						}
 
+						for (int i = 0; i < firstVisibleItem; i++) {
+							final int j = i;
+							new Handler().post(new Runnable() {
+
+								@Override
+								public void run() {
+									try {
+										if (!mListAdapter.getItem(j).isRead) {
+											mListAdapter.getItem(j).isRead = true;
+											callback.messageRead(mListAdapter.getItem(j).chatId);
+										}
+									} catch (Exception e) {
+									}
+								}
+							});
+						}
+
 					} else {
+
+						for (int i = mListView.getLastVisiblePosition(); i < mListView
+								.getLastVisiblePosition() + 1; i++) {
+							final int j = i;
+							new Handler().post(new Runnable() {
+
+								@Override
+								public void run() {
+									try {
+										if (!mListAdapter.getItem(j).isRead) {
+											mListAdapter.getItem(j).isRead = true;
+											callback.messageRead(mListAdapter.getItem(j).chatId);
+										}
+									} catch (Exception e) {
+									}
+								}
+							});
+						}
+
 						if (mLinearLayoutSearch.getVisibility() == View.VISIBLE) {
 							mLinearLayoutSearch.animate().alpha(0f).setDuration(500)
 									.setListener(new AnimatorListenerAdapter() {
@@ -796,24 +838,28 @@ public class ChatListFragment extends Fragment {
 
 		}
 	}
+
 	public void notifyUi(long chatId, ChatLoad chatLoad) {
 		// mListAdapter.notifyDataSetChanged();
 		ChatListItem chatListGroupItem = null;
 		for (int i = mListView.getFirstVisiblePosition(); i < mListView.getLastVisiblePosition(); i++) {
 			Contact contact = mListAdapter.getItem(i);
 			if (contact.chatId == chatId) {
-				chatListGroupItem = (ChatListItem) mListView.getChildAt(i-mListView.getFirstVisiblePosition()+1);
+				chatListGroupItem = (ChatListItem) mListView.getChildAt(i
+						- mListView.getFirstVisiblePosition() + 1);
 				break;
 			}
 		}
 		if (chatListGroupItem != null) {
 			if (chatLoad.isTyping)
-				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
+				chatListGroupItem.getUserTyping()
+						.setBackgroundResource(R.drawable.bg_user_typing_h);
 			else
 				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
 		}
 
 	}
+
 	private List<Contact> searchContact(String searchString) {
 		if (searchString.trim().equals("")) {
 			return contacts;

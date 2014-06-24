@@ -189,9 +189,11 @@ public class ChatInsideFragment extends Fragment {
 		mName = (TextView) getView().findViewById(R.id.name);
 		mStatus = (TextView) getView().findViewById(R.id.textView_status);
 		mStatusUpdate = (TextView) getView().findViewById(R.id.textView_status_update);
+		mStatus.setVisibility(View.GONE);
+		getView().findViewById(R.id.img_statusline).setVisibility(View.GONE);
+		getView().findViewById(R.id.img_memberline).setVisibility(View.GONE);
 		mLinearLayStatusUpdte = (LinearLayout) getView().findViewById(R.id.linear_status_update);
 		mTextViewDeleteBaner = (TextView) getView().findViewById(R.id.textView_deleteBanner);
-		
 		mImgFavorite.setOnClickListener(new OnClickListener() {
 
 			@Override
