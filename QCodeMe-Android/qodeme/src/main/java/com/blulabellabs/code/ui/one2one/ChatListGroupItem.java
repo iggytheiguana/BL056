@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.blulabellabs.code.Application;
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
@@ -275,7 +276,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 					showMessage();
 
 				mCallback.onSingleTap(getView(), mPosition, mChatLoad);
-				messageRead();
+				//messageRead();
 			} catch (Exception ex) {
 			}
 			Log.i("GestureListener", "onSingleTap");
@@ -286,7 +287,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		public boolean onDoubleTap(MotionEvent e) {
 			// Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mChatLoad);
-			messageRead();
+//			messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
 		}
@@ -469,6 +470,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		getSendImage().setVisibility(View.VISIBLE);
 		getFavoriteBtn().setClickable(true);
 		getTitleEditText().setEnabled(true);
+		getTitleEditText().setTypeface(Application.typefaceRegular);
 		getShareChatBtn().setEnabled(true);
 		getMessageTypedView().setVisibility(GONE);
 		try {

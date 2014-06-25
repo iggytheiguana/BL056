@@ -503,7 +503,12 @@ public class ChatListSubItem extends RelativeLayout implements
 					getDate().setDotColor(
 							context.getResources().getColor(R.color.text_message_sent));
 					if (chatType == 0)
-						getDate().setOutLine(true);
+						getDate().setDotColor(
+								context.getResources().getColor(R.color.user_typing));
+					else
+						getDate().setDotColor(
+								context.getResources().getColor(R.color.text_message_sent));
+//						getDate().setOutLine(true);
 					getDate().invalidate();
 					break;
 				case QodemeContract.Messages.State.NOT_READ:

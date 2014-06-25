@@ -27,59 +27,68 @@ public class MoreOptionActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.textView_share:
-			 Intent i = new Intent(this, QrCodeShowActivity.class);
-			 i.putExtra(IntentKey.QR_CODE,
-			 QodemePreferences.getInstance().getQrcode());
-			 startActivity(i);
-			 finish();
+			// Intent i = new Intent(this, QrCodeShowActivity.class);
+			// i.putExtra(IntentKey.QR_CODE,
+			// QodemePreferences.getInstance().getQrcode());
+			// startActivity(i);
+			Intent intent = new Intent();
+			intent.putExtra("type", 3);
+			setResult(RESULT_OK, intent);
+			finish();
 			break;
 		case R.id.textView_logout:
-//			RestAsyncHelper.getInstance().registerToken("", new RestListener() {
-//
-//				@Override
-//				public void onResponse(BaseResponse response) {
-//					RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-//						@Override
-//						public void onResponse(BaseResponse response) {
-//							logoutHandler();
-//						}
-//
-//						@Override
-//						public void onServiceError(RestError error) {
-//							showMessage(RestErrorType.getMessage(MoreOptionActivity.this, error.getErrorType())
-//									+ error.getServerMsg());
-//						}
-//
-//						@Override
-//						public void onNetworkError(VolleyError error) {
-//							super.onNetworkError(error);
-//							showMessage(error.getMessage());
-//						}
-//					});
-//				}
-//
-//				@Override
-//				public void onServiceError(RestError error) {
-//					showMessage(RestErrorType.getMessage(MoreOptionActivity.this, error.getErrorType())
-//							+ error.getServerMsg());
-//				}
-//
-//				@Override
-//				public void onNetworkError(VolleyError error) {
-//					super.onNetworkError(error);
-//					showMessage("No internet connection!");
-//				}
-//
-//				private void logoutHandler() {
-//					QodemePreferences.getInstance().setLogged(false);
-//					QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-//					startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-//					finish();
-//
-//				}
-//			});
+			// RestAsyncHelper.getInstance().registerToken("", new
+			// RestListener() {
+			//
+			// @Override
+			// public void onResponse(BaseResponse response) {
+			// RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+			// @Override
+			// public void onResponse(BaseResponse response) {
+			// logoutHandler();
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			// showMessage(RestErrorType.getMessage(MoreOptionActivity.this,
+			// error.getErrorType())
+			// + error.getServerMsg());
+			// }
+			//
+			// @Override
+			// public void onNetworkError(VolleyError error) {
+			// super.onNetworkError(error);
+			// showMessage(error.getMessage());
+			// }
+			// });
+			// }
+			//
+			// @Override
+			// public void onServiceError(RestError error) {
+			// showMessage(RestErrorType.getMessage(MoreOptionActivity.this,
+			// error.getErrorType())
+			// + error.getServerMsg());
+			// }
+			//
+			// @Override
+			// public void onNetworkError(VolleyError error) {
+			// super.onNetworkError(error);
+			// showMessage("No internet connection!");
+			// }
+			//
+			// private void logoutHandler() {
+			// QodemePreferences.getInstance().setLogged(false);
+			// QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+			// startActivity(new Intent(getApplicationContext(),
+			// LoginActivity.class));
+			// finish();
+			//
+			// }
+			// });
 
-			setResult(RESULT_OK);
+			Intent intent1 = new Intent();
+			intent1.putExtra("type", 1);
+			setResult(RESULT_OK, intent1);
 			finish();
 			break;
 
@@ -87,14 +96,15 @@ public class MoreOptionActivity extends Activity implements OnClickListener {
 			break;
 		}
 	}
-//	private void showMessage(String message) {
-//		new AlertDialog.Builder(this).setTitle("Attention").setMessage(message)
-//				.setCancelable(true)
-//				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//						dialog.dismiss();
-//					}
-//				}).create().show();
-//	}
+	// private void showMessage(String message) {
+	// new AlertDialog.Builder(this).setTitle("Attention").setMessage(message)
+	// .setCancelable(true)
+	// .setPositiveButton(android.R.string.ok, new
+	// DialogInterface.OnClickListener() {
+	// @Override
+	// public void onClick(DialogInterface dialog, int which) {
+	// dialog.dismiss();
+	// }
+	// }).create().show();
+	// }
 }

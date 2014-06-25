@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import com.blulabellabs.code.core.provider.QodemeContract.Messages;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
+import com.google.common.collect.Lists;
 
 /**
  * Created by Alex on 10/24/13.
@@ -16,6 +18,7 @@ public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C 
 
 	private final C callback;
 	private final One2OneChatListInsideFragmentCallback callback2;
+	
 
 	public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback,
 			One2OneChatListInsideFragmentCallback callback2) {
@@ -23,6 +26,7 @@ public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C 
 		this.callback = callback;
 		this.callback2 = callback2;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override

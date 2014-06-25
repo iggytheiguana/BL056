@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_MESSAGE;
 import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
+import static com.blulabellabs.code.utils.NotificationUtils.sendNotificationForOneToOne;;
 
 /**
  * Created by Alex on 12/10/13.
@@ -94,19 +95,21 @@ public class MessageInChatPushHandler extends BasePushHandler {
 					userName = "User";
 				}
 				msg = "New message from " + userName;
-				
-				if(mMessage.hasPhoto == 2){
-					msg = "New status update from "+userName;
+
+				if (mMessage.hasPhoto == 2) {
+					msg = "New status update from " + userName;
 				}
 			} else {
 				msg = "New message in " + userName;
-				if(mMessage.hasPhoto == 2){
-					msg = "New status update in "+userName;
+				if (mMessage.hasPhoto == 2) {
+					msg = "New status update in " + userName;
 				}
 			}
-			
-			
-			sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
+
+//			if (type == 0)
+//				sendNotificationForOneToOne(msg,mMessage.chatId, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
+//			else
+				sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
 		}
 		Cursor cursor = getContext().getContentResolver().query(
 				QodemeContract.Messages.CONTENT_URI, QodemeContract.Messages.Query.PROJECTION,

@@ -489,8 +489,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					break;
 				case QodemeContract.Messages.State.SENT:
 					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
-					getDate().setDotColor(
-							context.getResources().getColor(R.color.text_message_sent));
+//					getDate().setDotColor(
+//							context.getResources().getColor(R.color.text_message_sent));
+					getDate().setDotColor(Color.BLACK);
 					break;
 				case QodemeContract.Messages.State.READ:
 				case QodemeContract.Messages.State.NOT_READ:

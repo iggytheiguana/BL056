@@ -45,5 +45,24 @@ public final class NotificationUtils {
         Log.i("Push", msg);
         mNotificationManager.notify(msg.hashCode(), mBuilder.getNotification());
     }
+    
+    public static void sendNotificationForOneToOne(String msg,long chatId, Context context, int requestCode) {
+        NotificationManager mNotificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Intent i = new Intent(context, MainActivity.class);
+        i.setAction(ApplicationConstants.ACTION_RECEIVE_GCM_MESSAGE);
+        i.putExtra("chat_id", chatId);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode, i, 0);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle(context.getResources().getString(R.string.app_name))
+                .setContentText(msg)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true);
+        Log.i("Push", msg);
+        mNotificationManager.notify(msg.hashCode(), mBuilder.getNotification());
+    }
 
 }

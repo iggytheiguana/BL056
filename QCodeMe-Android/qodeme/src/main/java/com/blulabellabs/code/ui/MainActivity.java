@@ -28,11 +28,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
@@ -175,6 +178,7 @@ public class MainActivity extends BaseActivity implements
 	private static final int REQUEST_ACTIVITY_PHOTO_GALLERY = 4;
 	private static final int REQUEST_ACTIVITY_CAMERA = 5;
 	private static final int REQUEST_ACTIVITY_MORE = 6;
+	private static final int REQUEST_ACTIVITY_SHOW_QR_CODE = 7;
 
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
 	private static final String CHAT_LIST_PRIVATE_FRAGMENT = "chat_list_private_fragment";
@@ -182,6 +186,7 @@ public class MainActivity extends BaseActivity implements
 
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
 	private static final int DEFAULT_HEIGHT_DP = 200;
+	public static final String DELETE_BRODCAST_ACTION = "delete_broadcast_action";
 
 	private int mDefaultHeightPx;
 	private DrawerLayout mDrawerLayout;
@@ -281,6 +286,8 @@ public class MainActivity extends BaseActivity implements
 	private MyLocation myLocation;
 	private final WebSocketConnection mConnection = new WebSocketConnection();
 
+	private long chatFromNotification = -1;
+
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -319,6 +326,11 @@ public class MainActivity extends BaseActivity implements
 		}
 		myLocation = new MyLocation();
 		myLocation.getLocation(this, locationResult);
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			chatFromNotification = bundle.getLong("chat_id");
+		}
 	}
 
 	private void initImageFetcher() {
@@ -594,6 +606,7 @@ public class MainActivity extends BaseActivity implements
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
 		mViewPager.setCurrentItem(fullChatIndex);
+		currentChatId = c.chatId;
 		// zoomImageFromThumb(v, 0);
 		// Animation animator = AnimationUtils.loadAnimation(this,
 		// R.anim.zoom_in);
@@ -642,6 +655,7 @@ public class MainActivity extends BaseActivity implements
 		// MenuItemCompat.collapseActionView(mSearchMenuItem);
 		// }
 		getActionBar().hide();
+		currentChatId = c.chatId;
 		if (mPagerAdapter != null)
 			mPagerAdapter = null;
 		mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
@@ -999,52 +1013,71 @@ public class MainActivity extends BaseActivity implements
 				}
 				break;
 			case REQUEST_ACTIVITY_MORE:
-				RestAsyncHelper.getInstance().registerToken("", new RestListener() {
+				int typeData = data.getIntExtra("type", 0);
+				if (typeData == 1) {
+					RestAsyncHelper.getInstance().registerToken("", new RestListener() {
 
-					@Override
-					public void onResponse(BaseResponse response) {
-						RestAsyncHelper.getInstance().accountLogout(new RestListener() {
-							@Override
-							public void onResponse(BaseResponse response) {
-								logoutHandler();
-							}
+						@Override
+						public void onResponse(BaseResponse response) {
+							RestAsyncHelper.getInstance().accountLogout(new RestListener() {
+								@Override
+								public void onResponse(BaseResponse response) {
+									logoutHandler();
+								}
 
-							@Override
-							public void onServiceError(RestError error) {
-								showMessage(RestErrorType.getMessage(getContext(),
-										error.getErrorType())
-										+ error.getServerMsg());
-							}
+								@Override
+								public void onServiceError(RestError error) {
+									showMessage(RestErrorType.getMessage(getContext(),
+											error.getErrorType())
+											+ error.getServerMsg());
+								}
 
-							@Override
-							public void onNetworkError(VolleyError error) {
-								super.onNetworkError(error);
-								showMessage(error.getMessage());
-							}
-						});
-					}
+								@Override
+								public void onNetworkError(VolleyError error) {
+									super.onNetworkError(error);
+									showMessage(error.getMessage());
+								}
+							});
+						}
 
-					@Override
-					public void onServiceError(RestError error) {
-						showMessage(RestErrorType.getMessage(getContext(), error.getErrorType())
-								+ error.getServerMsg());
-					}
+						@Override
+						public void onServiceError(RestError error) {
+							showMessage(RestErrorType.getMessage(getContext(), error.getErrorType())
+									+ error.getServerMsg());
+						}
 
-					@Override
-					public void onNetworkError(VolleyError error) {
-						super.onNetworkError(error);
-						showMessage("No internet connection!");
-					}
+						@Override
+						public void onNetworkError(VolleyError error) {
+							super.onNetworkError(error);
+							showMessage("No internet connection!");
+						}
 
-					private void logoutHandler() {
-						clearActivityCache();
-						QodemePreferences.getInstance().setLogged(false);
-						QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
-						startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-						finish();
+						private void logoutHandler() {
+							clearActivityCache();
+							QodemePreferences.getInstance().setLogged(false);
+							QodemePreferences.getInstance().setGcmTokenSycnWithRest(false);
+							startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+							finish();
 
-					}
-				});
+						}
+					});
+				} else if (typeData == 2) {
+					Intent i = new Intent(getContext(), QrCodeCaptureActivity.class);
+					i.putExtra(IntentKey.CHAT_TYPE, QrCodeCaptureActivity.QODEME_CONTACT);
+					startActivityForResult(i, REQUEST_ACTIVITY_SCAN_QR_CODE);
+				} else if (typeData == 3) {
+					Intent i = new Intent(this, QrCodeShowActivity.class);
+					i.putExtra(IntentKey.QR_CODE, QodemePreferences.getInstance().getQrcode());
+					startActivityForResult(i, REQUEST_ACTIVITY_SHOW_QR_CODE);
+				}
+				break;
+			case REQUEST_ACTIVITY_SHOW_QR_CODE:
+				int typeData1 = data.getIntExtra("type", 0);
+				if (typeData1 == 2) {
+					Intent i = new Intent(getContext(), QrCodeCaptureActivity.class);
+					i.putExtra(IntentKey.CHAT_TYPE, QrCodeCaptureActivity.QODEME_CONTACT);
+					startActivityForResult(i, REQUEST_ACTIVITY_SCAN_QR_CODE);
+				}
 				break;
 			}
 		else {
@@ -1525,6 +1558,7 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Contacts.isArchiveValues(0),
 								DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(ce._id));
 						mDrawerLayout.closeDrawer(mContactListView);
+						showOne2OneChatFragment(ce, true, mViewPager);
 					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED) {
 						mDrawerLayout.closeDrawer(mContactListView);
 						showOne2OneChatFragment(ce, true, mViewPager);
@@ -1905,6 +1939,8 @@ public class MainActivity extends BaseActivity implements
 		mImageFetcher.closeCache();
 		QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
 		QodemePreferences.getInstance().setNewPrivateGroupChatId(-1l);
+
+		// unregisterReceiver(broadcastReceiverForDeleteChat);
 		super.onDestroy();
 	}
 
@@ -2109,7 +2145,22 @@ public class MainActivity extends BaseActivity implements
 		// mContactListAddChatAdapter.addAll(contactListItemsApp);
 
 		refreshOne2OneList();
-		mHandler.sendEmptyMessage(2);
+//
+//		Contact contact = null;
+//		if (chatFromNotification != -1) {
+//			for (Contact c : mApprovedContacts) {
+//				if (c.chatId == chatFromNotification) {
+//					contact = c;
+//					break;
+//				}
+//			}
+//
+//		}
+//		if (contact == null)
+			mHandler.sendEmptyMessage(2);
+//		else
+//			showOne2OneChatFragment(contact, true, mViewPager);
+
 	}
 
 	private final ContentObserver mContactListObserver = new ContentObserver(new Handler()) {
@@ -2759,6 +2810,7 @@ public class MainActivity extends BaseActivity implements
 		getContentResolver().registerContentObserver(QodemeContract.Chats.CONTENT_URI, true,
 				mChatListObserver);
 		start();
+		registerReceiver(broadcastReceiverForDeleteChat, new IntentFilter(DELETE_BRODCAST_ACTION));
 	}
 
 	@Override
@@ -2775,6 +2827,7 @@ public class MainActivity extends BaseActivity implements
 		getContentResolver().unregisterContentObserver(mMessageListObjerver);
 		Helper.hideKeyboard(this);
 		stop();
+		unregisterReceiver(broadcastReceiverForDeleteChat);
 	}
 
 	public boolean isActive() {
@@ -3779,4 +3832,19 @@ public class MainActivity extends BaseActivity implements
 		// }
 		// }
 	}
+
+	BroadcastReceiver broadcastReceiverForDeleteChat = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (!mActionBar.isShowing()) {
+				try {
+					long chat_id = intent.getLongExtra("chat_id", -1);
+					if (chat_id != -1 && chat_id == currentChatId)
+						onBackPressed();
+				} catch (Exception e) {
+				}
+			}
+		}
+	};
 }

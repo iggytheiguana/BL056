@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/img_qr"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/profile_qr_size"
+                android:layout_height="@dimen/profile_qr_size"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ic_qr_small_dark"

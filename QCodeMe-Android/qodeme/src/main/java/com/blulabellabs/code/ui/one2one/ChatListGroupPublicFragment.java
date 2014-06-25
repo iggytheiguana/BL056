@@ -339,55 +339,55 @@ public class ChatListGroupPublicFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				String data = mEditTextSearch.getText().toString();
-				if (!data.trim().equals("")) {
+				// if (!data.trim().equals("")) {
 
-					// if (isLocationFilter) {
-					// isLocationFilter = false;
-					// Bitmap bm = BitmapFactory.decodeResource(getResources(),
-					// R.drawable.ic_location_gray);
-					// mImgBtnLocationFilter.setImageBitmap(bm);
-					// }
-					// if (isFavoriteFilter) {
-					// isFavoriteFilter = false;
-					// Bitmap bm = BitmapFactory.decodeResource(getResources(),
-					// R.drawable.ic_chat_favorite_h);
-					// mImgBtnFavoriteFilter.setImageBitmap(bm);
-					// }
+				// if (isLocationFilter) {
+				// isLocationFilter = false;
+				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
+				// R.drawable.ic_location_gray);
+				// mImgBtnLocationFilter.setImageBitmap(bm);
+				// }
+				// if (isFavoriteFilter) {
+				// isFavoriteFilter = false;
+				// Bitmap bm = BitmapFactory.decodeResource(getResources(),
+				// R.drawable.ic_chat_favorite_h);
+				// mImgBtnFavoriteFilter.setImageBitmap(bm);
+				// }
 
-					searchString = data;
-					MainActivity activity = (MainActivity) callback;
-					activity.setPublicSearch(true);
-					activity.setPublicSearchString(data);
-					activity.searchChats(data, 2, pageNo, chatListener);
-					mEditTextSearch.setEnabled(false);
-					isMoreData = true;
-					// RestAsyncHelper.getInstance().lookup(data, new
-					// RestListener<LookupResponse>() {
-					//
-					// @Override
-					// public void onResponse(LookupResponse response) {
-					// if (response.getChatList() != null)
-					// for (LookupChatEntity entity : response.getChatList()) {
-					// Log.d("lookup", entity.getTitle() + " " +
-					// entity.getTags()
-					// + " " + entity.getId());
-					// }
-					// else {
-					// Log.d("lookup", "null response");
-					// }
-					// }
-					//
-					// @Override
-					// public void onServiceError(RestError error) {
-					// Toast.makeText(getActivity(), error.getMessage(),
-					// Toast.LENGTH_SHORT)
-					// .show();
-					// }
-					// });
-					isThreadRunning = true;
-					mImgBtnClear.setVisibility(View.VISIBLE);
-					mImgBtnSearch.setVisibility(View.GONE);
-				}
+				searchString = data;
+				MainActivity activity = (MainActivity) callback;
+				activity.setPublicSearch(true);
+				activity.setPublicSearchString(data);
+				activity.searchChats(data, 2, pageNo, chatListener);
+				mEditTextSearch.setEnabled(false);
+				isMoreData = true;
+				// RestAsyncHelper.getInstance().lookup(data, new
+				// RestListener<LookupResponse>() {
+				//
+				// @Override
+				// public void onResponse(LookupResponse response) {
+				// if (response.getChatList() != null)
+				// for (LookupChatEntity entity : response.getChatList()) {
+				// Log.d("lookup", entity.getTitle() + " " +
+				// entity.getTags()
+				// + " " + entity.getId());
+				// }
+				// else {
+				// Log.d("lookup", "null response");
+				// }
+				// }
+				//
+				// @Override
+				// public void onServiceError(RestError error) {
+				// Toast.makeText(getActivity(), error.getMessage(),
+				// Toast.LENGTH_SHORT)
+				// .show();
+				// }
+				// });
+				isThreadRunning = true;
+				mImgBtnClear.setVisibility(View.VISIBLE);
+				mImgBtnSearch.setVisibility(View.GONE);
+				// }
 			}
 		});
 
@@ -397,9 +397,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH
 						|| actionId == EditorInfo.IME_ACTION_GO
-						|| actionId == EditorInfo.IME_ACTION_DONE
-						|| event.getAction() == KeyEvent.ACTION_DOWN
-						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+						|| actionId == EditorInfo.IME_ACTION_DONE) {
 
 					String data = v.getText().toString();
 					searchString = data;
@@ -778,35 +776,36 @@ public class ChatListGroupPublicFragment extends Fragment {
 									.setListener(null);
 						}
 
-						for (int i = 0; i < firstVisibleItem; i++) {
-							final int j = i;
-							new Handler().post(new Runnable() {
-
-								@Override
-								public void run() {
-									try {
-										callback.messageRead(mListAdapter.getItem(j).chatId);
-									} catch (Exception e) {
-									}
-								}
-							});
-						}
+						// for (int i = 0; i < firstVisibleItem; i++) {
+						// final int j = i;
+						// new Handler().post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// try {
+						// callback.messageRead(mListAdapter.getItem(j).chatId);
+						// } catch (Exception e) {
+						// }
+						// }
+						// });
+						// }
 
 					} else {
-						for (int i = mListView.getLastVisiblePosition(); i < mListView
-								.getLastVisiblePosition() + 1; i++) {
-							final int j = i;
-							new Handler().post(new Runnable() {
-
-								@Override
-								public void run() {
-									try {
-										callback.messageRead(mListAdapter.getItem(j).chatId);
-									} catch (Exception e) {
-									}
-								}
-							});
-						}
+						// for (int i = mListView.getLastVisiblePosition(); i <
+						// mListView
+						// .getLastVisiblePosition() + 1; i++) {
+						// final int j = i;
+						// new Handler().post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// try {
+						// callback.messageRead(mListAdapter.getItem(j).chatId);
+						// } catch (Exception e) {
+						// }
+						// }
+						// });
+						// }
 						if (mLinearLayoutSearch.getVisibility() == View.VISIBLE) {
 							mLinearLayoutSearch.animate().alpha(0f).setDuration(500)
 									.setListener(new AnimatorListenerAdapter() {
@@ -830,13 +829,13 @@ public class ChatListGroupPublicFragment extends Fragment {
 					// if ((dataArray.size() - 1) > visibleChildCount) {
 					if (!isThreadRunning && isMoreData) {
 						// String data = mEditTextSearch.getText().toString();
-						if (!searchString.trim().equals("")) {
-							mFooterLayout.setVisibility(View.VISIBLE);
-							isThreadRunning = true;
-							MainActivity activity = (MainActivity) callback;
-							activity.setPublicSearch(true);
-							activity.searchChats(searchString, 2, pageNo, chatListener);
-						}
+						// if (!searchString.trim().equals("")) {
+						mFooterLayout.setVisibility(View.VISIBLE);
+						isThreadRunning = true;
+						MainActivity activity = (MainActivity) callback;
+						activity.setPublicSearch(true);
+						activity.searchChats(searchString, 2, pageNo, chatListener);
+						// }
 					}
 					// }
 				}

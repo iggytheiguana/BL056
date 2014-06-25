@@ -65,9 +65,10 @@ public class QrCodeShowActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(getContext(), QrCodeCaptureActivity.class);
-				i.putExtra(IntentKey.CHAT_TYPE, QrCodeCaptureActivity.QODEME_CONTACT);
-				startActivityForResult(i, REQUEST_ACTIVITY_SCAN_QR_CODE);
+				Intent intent1 = new Intent();
+				intent1.putExtra("type", 2);
+				setResult(RESULT_OK, intent1);
+				finish();
 			}
 		});
 

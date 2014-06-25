@@ -40,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:singleLine="true"
-                android:imeOptions="actionSend|actionDone"
+                android:imeOptions="actionDone|actionSend"
+                android:inputType="text"
                 android:layout_weight="1" />
 
             <ImageButton

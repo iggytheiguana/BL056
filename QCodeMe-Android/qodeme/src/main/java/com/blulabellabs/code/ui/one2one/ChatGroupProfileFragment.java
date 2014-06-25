@@ -666,6 +666,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					}
 				}
 				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
+					
 					if (chatload.type == 2) {
 						mImgBtnSearch.setVisibility(View.VISIBLE);
 						mImgBtnShare.setVisibility(View.VISIBLE);
@@ -706,6 +707,15 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mImgBtnLocked.setVisibility(View.VISIBLE);
 
 				} else {
+					mTextViewStatus.setHint(R.string.no_status_hint);
+					mTextViewGroupDesc.setHint(R.string.no_description);
+					mTextViewGroupTitle.setHint(R.string.no_title);
+					mTextViewTags.setHint(R.string.no_hashtags);
+					mEditTextDesc.setHint(R.string.no_description);
+					mEditTextStatus.setHint(R.string.no_status_hint);
+					mEditTextTitle.setHint(R.string.no_title);
+					mEditTextTags.setHint(R.string.no_hashtags);
+					
 					mBtnDelete.setVisibility(View.GONE);
 					mBtnEditDesc.setVisibility(View.GONE);
 					mBtnEditStatus.setVisibility(View.GONE);

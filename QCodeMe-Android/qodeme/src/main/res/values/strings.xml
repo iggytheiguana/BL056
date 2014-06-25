@@ -100,7 +100,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="log_in">Log In</string>
     <string name="enter_password">Enter password</string>
-    <string name="welcome">Welcome to Code!</string>
+    <string name="welcome">Welcome to Thred.</string>
     <string name="welcome_desc">To get started,you\'ll need to create a password to receive your unique code.</string>
     <string name="album_name">CameraSample</string>
     <string name="login_text">Enter your password and scan your QR Code to log in.</string>
@@ -125,5 +125,11 @@
     <string name="logout">Logout</string>
     <string name="add_screen_name">Add Screen Name</string>
     <string name="user_name_display_hint">Your screen name shows in Private Chats and when adding a contact. </string>
+    
+     <string name="location_not_set">No Location</string>
+    <string name="no_status_hint">No Status Message</string>
+     <string name="no_title">No Title</string>
+    <string name="no_description">No Description</string>
+     <string name="no_hashtags">No HashTags</string>
     
 </resources>

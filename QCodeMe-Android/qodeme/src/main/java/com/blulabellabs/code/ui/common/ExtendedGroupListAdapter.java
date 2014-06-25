@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import com.blulabellabs.code.core.provider.QodemeContract.Messages;
 import com.blulabellabs.code.ui.one2one.ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback;
+import com.google.common.collect.Lists;
 
 /**
  * Created by Alex on 10/24/13.
@@ -16,6 +18,7 @@ public class ExtendedGroupListAdapter<T extends ExtendedGroupAdapterBasedView<E,
 
     private final C callback;
     private final One2OneChatListInsideFragmentCallback callback2;
+    private List<E> listMessages = Lists.newArrayList();
 
     public ExtendedGroupListAdapter(Context context, int layoutResId, List<E> list, C callback, One2OneChatListInsideFragmentCallback callback2) {
         super(context, layoutResId, list);
@@ -23,6 +26,17 @@ public class ExtendedGroupListAdapter<T extends ExtendedGroupAdapterBasedView<E,
         this.callback2 = callback2;
     }
 
+    
+//    @Override
+//    public E getItem(int position) {
+//    	return getListMessages().get(position);
+//    }
+//    
+//    @Override
+//    public int getCount() {
+//    	return getListMessages().size();
+//    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -44,6 +58,16 @@ public class ExtendedGroupListAdapter<T extends ExtendedGroupAdapterBasedView<E,
 
         return convertView;
     }
+
+
+	public void setListMessages(List<E> listMessages) {
+		this.listMessages = listMessages;
+	}
+
+
+	public List<E> getListMessages() {
+		return listMessages;
+	}
 
 
 }

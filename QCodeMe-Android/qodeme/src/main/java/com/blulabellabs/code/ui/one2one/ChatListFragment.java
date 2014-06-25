@@ -698,42 +698,43 @@ public class ChatListFragment extends Fragment {
 									.setListener(null);
 						}
 
-						for (int i = 0; i < firstVisibleItem; i++) {
-							final int j = i;
-							new Handler().post(new Runnable() {
-
-								@Override
-								public void run() {
-									try {
-										if (!mListAdapter.getItem(j).isRead) {
-											mListAdapter.getItem(j).isRead = true;
-											callback.messageRead(mListAdapter.getItem(j).chatId);
-										}
-									} catch (Exception e) {
-									}
-								}
-							});
-						}
+						// for (int i = 0; i < firstVisibleItem; i++) {
+						// final int j = i;
+						// new Handler().post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// try {
+						// if (!mListAdapter.getItem(j).isRead) {
+						// mListAdapter.getItem(j).isRead = true;
+						// callback.messageRead(mListAdapter.getItem(j).chatId);
+						// }
+						// } catch (Exception e) {
+						// }
+						// }
+						// });
+						// }
 
 					} else {
 
-						for (int i = mListView.getLastVisiblePosition(); i < mListView
-								.getLastVisiblePosition() + 1; i++) {
-							final int j = i;
-							new Handler().post(new Runnable() {
-
-								@Override
-								public void run() {
-									try {
-										if (!mListAdapter.getItem(j).isRead) {
-											mListAdapter.getItem(j).isRead = true;
-											callback.messageRead(mListAdapter.getItem(j).chatId);
-										}
-									} catch (Exception e) {
-									}
-								}
-							});
-						}
+						// for (int i = mListView.getLastVisiblePosition(); i <
+						// mListView
+						// .getLastVisiblePosition() + 1; i++) {
+						// final int j = i;
+						// new Handler().post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// try {
+						// if (!mListAdapter.getItem(j).isRead) {
+						// mListAdapter.getItem(j).isRead = true;
+						// callback.messageRead(mListAdapter.getItem(j).chatId);
+						// }
+						// } catch (Exception e) {
+						// }
+						// }
+						// });
+						// }
 
 						if (mLinearLayoutSearch.getVisibility() == View.VISIBLE) {
 							mLinearLayoutSearch.animate().alpha(0f).setDuration(500)

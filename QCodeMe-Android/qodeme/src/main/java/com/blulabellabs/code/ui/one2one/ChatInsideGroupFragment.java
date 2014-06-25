@@ -10,14 +10,19 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -34,6 +39,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -69,6 +76,7 @@ import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -115,6 +123,8 @@ public class ChatInsideGroupFragment extends Fragment {
 	private View footerView, footerView1;
 	private boolean isUsertyping = false;
 	private ChatLoad chatLoad;
+	private int lstItem = 0;
+	List<Long> idList = Lists.newArrayList();
 
 	public static ChatInsideGroupFragment newInstance(ChatLoad c, boolean firstUpdate) {
 		ChatInsideGroupFragment f = new ChatInsideGroupFragment();
@@ -458,6 +468,7 @@ public class ChatInsideGroupFragment extends Fragment {
 			}
 		};
 	};
+	protected int lastFirstvisibleItem = 0;
 
 	private void sendRegisterForChatEvents() {
 		// this method sends a message over the websocket registering for
@@ -685,15 +696,15 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		imgUserTyping = (ImageView) getView().findViewById(R.id.img_typing);
 
-		Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setColor(oponentColor);
-
-		Canvas c = new Canvas(bmp);
-		c.drawCircle(20, 20, 20, paint);
-		imgUserTyping.setImageBitmap(bmp);
-		imgUserTyping.setVisibility(View.GONE);
+		// Bitmap bmp = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
+		// Paint paint = new Paint();
+		// paint.setAntiAlias(true);
+		// paint.setColor(oponentColor);
+		//
+		// Canvas c = new Canvas(bmp);
+		// c.drawCircle(20, 20, 20, paint);
+		// imgUserTyping.setImageBitmap(bmp);
+		// imgUserTyping.setVisibility(View.GONE);
 
 		// footerView =
 		// getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing,
@@ -768,6 +779,116 @@ public class ChatInsideGroupFragment extends Fragment {
 			}
 		});
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+		mListView.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				if (scrollState == SCROLL_STATE_IDLE)
+					handler.sendEmptyMessage(0);
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+					int totalItemCount) {
+
+				if (lastFirstvisibleItem != firstVisibleItem) {
+					if (lastFirstvisibleItem > firstVisibleItem) {
+						try {
+							for (int i = mListView.getLastVisiblePosition(); i < totalItemCount - 1; i++) {
+								if (mListAdapter.getItem(i).state == QodemeContract.Messages.State.NOT_READ) {
+									mListAdapter.getItem(i).state = QodemeContract.Messages.State.READ_LOCAL;
+									idList.add(mListAdapter.getItem(i)._id);
+								}
+							}
+						} catch (Exception e) {
+						}
+					} else {
+						try {
+							for (int i = mListView.getLastVisiblePosition(); i < totalItemCount - 1; i++) {
+								if (mListAdapter.getItem(i).state == QodemeContract.Messages.State.NOT_READ) {
+									mListAdapter.getItem(i).state = QodemeContract.Messages.State.READ_LOCAL;
+									idList.add(mListAdapter.getItem(i)._id);
+								}
+							}
+						} catch (Exception e) {
+						}
+					}
+					lstItem = firstVisibleItem + visibleItemCount;
+				}
+				lastFirstvisibleItem = firstVisibleItem;
+			}
+		});
+	}
+
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(android.os.Message msg) {
+
+			new ReadMessage().execute("");
+
+		};
+	};
+
+	class ReadMessage extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// int js = mListView.getLastVisiblePosition();
+			// for (int i = js; i < js + 1; i++) {
+			// final int j = i;
+			//
+			// try {
+			// if (mListAdapter.getItem(j).state ==
+			// QodemeContract.Messages.State.NOT_READ) {
+			// mListAdapter.getItem(j).state =
+			// QodemeContract.Messages.State.READ_LOCAL;
+			// // idList.add(mListAdapter.getItem(j)._id);
+			// ContentValues selectionArgs = new ContentValues();
+			// selectionArgs.put(QodemeContract.SyncColumns.UPDATED,
+			// QodemeContract.Sync.UPDATED);
+			// selectionArgs.put(QodemeContract.Messages.MESSAGE_STATE,
+			// QodemeContract.Messages.State.READ_LOCAL);
+			// getActivity().getContentResolver().update(
+			// QodemeContract.Messages.CONTENT_URI,
+			// selectionArgs,
+			// QodemeContract.Messages.MESSAGE_ID + "="
+			// + mListAdapter.getItem(j).messageId, null);
+			// }
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+			// }
+			// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+			// long[] ids = Longs.toArray(idList);
+			//
+			// if (ids.length > 0) {
+			// ContentProviderOperation.Builder builder =
+			// ContentProviderOperation
+			// .newUpdate(QodemeContract.Messages.CONTENT_URI);
+			// builder.withValue(QodemeContract.SyncColumns.UPDATED,
+			// QodemeContract.Sync.UPDATED);
+			// builder.withValue(QodemeContract.Messages.MESSAGE_STATE,
+			// QodemeContract.Messages.State.READ_LOCAL);
+			// builder.withSelection(DbUtils.getWhereClauseForIds(ids),
+			// DbUtils.getWhereArgsForIds(ids));
+			// batch.add(builder.build());
+			// QodemeContract.applyBatch(getActivity(), batch);
+			// SyncHelper.requestManualSync();
+			// }
+			// idList.clear();
+			for (long id : idList) {
+				ContentValues selectionArgs = new ContentValues();
+				selectionArgs.put(QodemeContract.SyncColumns.UPDATED, QodemeContract.Sync.UPDATED);
+				selectionArgs.put(QodemeContract.Messages.MESSAGE_STATE,
+						QodemeContract.Messages.State.READ_LOCAL);
+				getActivity().getContentResolver().update(QodemeContract.Messages.CONTENT_URI,
+						selectionArgs, QodemeContract.Messages._ID + "=" + id, null);
+			}
+			idList.clear();
+			return null;
+		}
+
 	}
 
 	public long getChatId() {
@@ -864,7 +985,11 @@ public class ChatInsideGroupFragment extends Fragment {
 
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
 			if (mListAdapter.getCount() > 0)
-				mListView.setSelection(mListAdapter.getCount() - 1);
+				if (lstItem == 0)
+					mListView.setSelection(mListAdapter.getCount() - 1);
+				else
+					mListView.setSelection(lstItem);
+
 			mName.setText(chatLoad.title);
 			mStatus.setText(chatLoad.status);
 			// mName.setTextColor(getChatColor());
@@ -972,15 +1097,21 @@ public class ChatInsideGroupFragment extends Fragment {
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
-			Helper.hideKeyboard(getActivity(), mMessageField);
+			try {
+				Helper.hideKeyboard(getActivity(), mMessageField);
+			} catch (Exception ex) {
+			}
 			return true;
 		}
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			Helper.hideKeyboard(getActivity(), mMessageField);
-			sendUserStoppedTypingMessage();
-			getActivity().onBackPressed();
+			try {
+				Helper.hideKeyboard(getActivity(), mMessageField);
+				sendUserStoppedTypingMessage();
+				getActivity().onBackPressed();
+			} catch (Exception ex) {
+			}
 			return true;
 		}
 	}
