@@ -380,7 +380,7 @@ public class ChatListItem extends RelativeLayout implements
 		});
 
 		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
-
+		getChatItemChild().setBackgroundResource(0);
 		if (chatLoad != null) {
 			if(chatLoad.color != 0 && chatLoad.color != -1)
 				getChatItemChild().setBackgroundColor(chatLoad.color);

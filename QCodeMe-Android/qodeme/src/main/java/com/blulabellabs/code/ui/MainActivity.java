@@ -663,26 +663,30 @@ public class MainActivity extends BaseActivity implements
 		// if (mIsSearchActive) {
 		// MenuItemCompat.collapseActionView(mSearchMenuItem);
 		// }
-		getActionBar().hide();
-		currentChatId = c.chatId;
-		if (mPagerAdapter != null)
-			mPagerAdapter = null;
-		mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
-		mViewPager.setAdapter(mPagerAdapter);
-		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
-		expandedImageView.setVisibility(View.VISIBLE);
-		// ExpandAnimation animation = new ExpandAnimation(expandedImageView,
-		// 200);
-		// expandedImageView.startAnimation(animation);
+		try {
+			getActionBar().hide();
+			currentChatId = c.chatId;
+			if (mPagerAdapter != null)
+				mPagerAdapter = null;
+			mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
+			mViewPager.setAdapter(mPagerAdapter);
+			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
+			expandedImageView.setVisibility(View.VISIBLE);
+			// ExpandAnimation animation = new
+			// ExpandAnimation(expandedImageView,
+			// 200);
+			// expandedImageView.startAnimation(animation);
 
-		if (fullChatIndex == 0)
-			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-		else
-			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-		mViewPager.setCurrentItem(fullChatIndex);
-		// mViewPager.setVisibility(View.GONE);
-		// zoomImageFromThumb(view, 0);
-		Helper.hideKeyboard(MainActivity.this);
+			if (fullChatIndex == 0)
+				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+			else
+				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+			mViewPager.setCurrentItem(fullChatIndex);
+			// mViewPager.setVisibility(View.GONE);
+			// zoomImageFromThumb(view, 0);
+			Helper.hideKeyboard(MainActivity.this);
+		} catch (Exception e) {
+		}
 	}
 
 	private void initActionBar() {
@@ -2614,109 +2618,115 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
-		// String public_name = QodemePreferences.getInstance().getPublicName();
-		ChatLoad chatLoad = null;// getChatLoad(chatId);
-		if (mChatList != null) {
-			for (ChatLoad chat : mChatList)
-				if (chat.chatId == chatId)
-					// return chatLoad;
-					chatLoad = chat;
-		}
 
-		int is_search = 0;
-		if (chatLoad == null) {
-			if (mChatListSearchPublic != null) {
-				for (ChatLoad chat : mChatListSearchPublic)
+		try {
+			// String public_name =
+			// QodemePreferences.getInstance().getPublicName();
+			ChatLoad chatLoad = null;// getChatLoad(chatId);
+			if (mChatList != null) {
+				for (ChatLoad chat : mChatList)
 					if (chat.chatId == chatId)
 						// return chatLoad;
 						chatLoad = chat;
 			}
-			if (chatLoad != null)
-				chatLoad.is_favorite = 1;
-			is_search = 1;
-			// String date = Converter.getCurrentGtmTimestampString();
-			// RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
-			// new RestListener<SetFavoriteResponse>() {
-			//
-			// @Override
-			// public void onResponse(SetFavoriteResponse response) {
-			//
-			// }
-			//
-			// @Override
-			// public void onServiceError(RestError error) {
-			//
-			// }
-			// });
 
-			// RestAsyncHelper.getInstance().chatAddMember(chatId,
-			// QodemePreferences.getInstance().getQrcode(),
-			// new RestListener<ChatAddMemberResponse>() {
-			//
-			// @Override
-			// public void onResponse(ChatAddMemberResponse response) {
-			// Log.d("Chat add in public ", "Chat add mem "
-			// + response.getChat().getId());
-			// }
-			//
-			// @Override
-			// public void onServiceError(RestError error) {
-			// Log.d("Error", "Chat add member");
-			// }
-			// });
-		} else {
-			is_search = 0;
+			int is_search = 0;
+			if (chatLoad == null) {
+				if (mChatListSearchPublic != null) {
+					for (ChatLoad chat : mChatListSearchPublic)
+						if (chat.chatId == chatId)
+							// return chatLoad;
+							chatLoad = chat;
+				}
+				if (chatLoad != null)
+					chatLoad.is_favorite = 1;
+				is_search = 1;
+				// String date = Converter.getCurrentGtmTimestampString();
+				// RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
+				// new RestListener<SetFavoriteResponse>() {
+				//
+				// @Override
+				// public void onResponse(SetFavoriteResponse response) {
+				//
+				// }
+				//
+				// @Override
+				// public void onServiceError(RestError error) {
+				//
+				// }
+				// });
 
-			if (chatLoad.type == 2) {
+				// RestAsyncHelper.getInstance().chatAddMember(chatId,
+				// QodemePreferences.getInstance().getQrcode(),
+				// new RestListener<ChatAddMemberResponse>() {
+				//
+				// @Override
+				// public void onResponse(ChatAddMemberResponse response) {
+				// Log.d("Chat add in public ", "Chat add mem "
+				// + response.getChat().getId());
+				// }
+				//
+				// @Override
+				// public void onServiceError(RestError error) {
+				// Log.d("Error", "Chat add member");
+				// }
+				// });
+			} else {
+				is_search = 0;
 
-				int num_of_favorite = chatLoad.number_of_likes;
-				int is_favorite = 1;
-				if (chatLoad.is_favorite == 1) {
-					// is_favorite = 2;
-					// num_of_favorite--;
-				} else {
-					is_favorite = 1;
-					if (num_of_favorite <= 0) {
-						num_of_favorite = 1;
-					} else
-						num_of_favorite++;
+				if (chatLoad.type == 2) {
 
-					getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-							QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-							QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
-					String date = Converter.getCurrentGtmTimestampString();
+					int num_of_favorite = chatLoad.number_of_likes;
+					int is_favorite = 1;
+					if (chatLoad.is_favorite == 1) {
+						// is_favorite = 2;
+						// num_of_favorite--;
+					} else {
+						is_favorite = 1;
+						if (num_of_favorite <= 0) {
+							num_of_favorite = 1;
+						} else
+							num_of_favorite++;
+
+						getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
+								QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+						String date = Converter.getCurrentGtmTimestampString();
+					}
 				}
 			}
-		}
-		getContentResolver().insert(
-				QodemeContract.Messages.CONTENT_URI,
-				QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl, hashPhoto,
-						replyTo_Id, latitude, longitude, senderName, localUrl, is_search));
-		SyncHelper.requestManualSync();
+			getContentResolver().insert(
+					QodemeContract.Messages.CONTENT_URI,
+					QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl,
+							hashPhoto, replyTo_Id, latitude, longitude, senderName, localUrl,
+							is_search));
+			SyncHelper.requestManualSync();
 
-		if (is_search == 1) {
-			new Handler().postDelayed(new Runnable() {
+			if (is_search == 1) {
+				new Handler().postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					RestAsyncHelper.getInstance().chatAddMember(chatId,
-							QodemePreferences.getInstance().getQrcode(),
-							new RestListener<ChatAddMemberResponse>() {
+					@Override
+					public void run() {
+						RestAsyncHelper.getInstance().chatAddMember(chatId,
+								QodemePreferences.getInstance().getQrcode(),
+								new RestListener<ChatAddMemberResponse>() {
 
-								@Override
-								public void onResponse(ChatAddMemberResponse response) {
-									Log.d("Chat add in public ", "Chat add mem "
-											+ response.getChat().getId());
-								}
+									@Override
+									public void onResponse(ChatAddMemberResponse response) {
+										Log.d("Chat add in public ", "Chat add mem "
+												+ response.getChat().getId());
+									}
 
-								@Override
-								public void onServiceError(RestError error) {
-									Log.d("Error", "Chat add member");
-								}
-							});
-				}
-			}, 1000);
+									@Override
+									public void onServiceError(RestError error) {
+										Log.d("Error", "Chat add member");
+									}
+								});
+					}
+				}, 1000);
 
+			}
+		} catch (Exception e) {
 		}
 
 	}
