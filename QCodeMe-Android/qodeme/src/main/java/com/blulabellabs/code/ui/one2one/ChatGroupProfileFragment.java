@@ -20,8 +20,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -64,17 +66,19 @@ import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.QrUtils;
-import com.google.android.gms.internal.bt;
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("unused")
 public class ChatGroupProfileFragment extends Fragment implements OnClickListener {
 
 	private static final String CHAT_ID = "chat_id";
 	private static final String CHAT_COLOR = "chat_color";
 	private static final String CHAT_NAME = "chat_name";
 	private static final String QRCODE = "contact_qr";
+
 	private static final String LOCATION = "location";
 	private static final String DATE = "date";
 	private static final String FIRST_UPDATE = "first_update";
@@ -169,6 +173,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mBtnAddLocaton = (Button) getView().findViewById(R.id.btn_addLocation);
 		mBtnRemoveLocation = (Button) getView().findViewById(R.id.btn_removeLocation);
 
+		mEditTextTags.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		mEditTextTitle.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		mEditTextDesc.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
 		mBtnRemoveLocation.setOnClickListener(this);
 		mBtnAddLocaton.setOnClickListener(this);
 		mBtnDelete.setOnClickListener(this);
@@ -198,6 +206,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						|| event.getAction() == KeyEvent.ACTION_DOWN
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
+					Helper.hideKeyboard(getActivity(), mEditTextStatus);
 					mEditTextStatus.setVisibility(View.GONE);
 					mTextViewStatus.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
@@ -236,6 +245,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						|| event.getAction() == KeyEvent.ACTION_DOWN
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
+					Helper.hideKeyboard(getActivity(), mEditTextTitle);
 					mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 					mRelativeLayoutSetDesc.setVisibility(View.GONE);
 					String title = v.getText().toString().trim();
@@ -269,6 +279,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						|| event.getAction() == KeyEvent.ACTION_DOWN
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
+					Helper.hideKeyboard(getActivity(), mEditTextDesc);
 					mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 					mRelativeLayoutSetDesc.setVisibility(View.GONE);
 
@@ -342,6 +353,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 							|| actionId == EditorInfo.IME_ACTION_DONE
 							|| event.getAction() == KeyEvent.ACTION_DOWN
 							&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+						Helper.hideKeyboard(getActivity(), mEditTextTags);
 						isChangeByUser = false;
 						mRelativeLayoutDesc.setVisibility(View.VISIBLE);
 						mRelativeLayoutSetDesc.setVisibility(View.GONE);
@@ -437,7 +450,6 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					super.onPostExecute(s);
 					if (s != null) {
 						latLonCity.setCity(s);
-						@SuppressWarnings("unused")
 						SimpleDateFormat fmtOut = new SimpleDateFormat("MM/dd/yy HH:mm");
 						mTextViewLocation.setText(s + "");
 					}
@@ -666,7 +678,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					}
 				}
 				if (QodemePreferences.getInstance().getQrcode().equals(getChatload().user_qrcode)) {
-					
+
 					if (chatload.type == 2) {
 						mImgBtnSearch.setVisibility(View.VISIBLE);
 						mImgBtnShare.setVisibility(View.VISIBLE);
@@ -706,6 +718,47 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mImgBtnLocked.setVisibility(View.VISIBLE);
 
+					mTextViewGroupDesc.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							mRelativeLayoutDesc.setVisibility(View.GONE);
+							mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+							isChangeByUser = true;
+							try {
+								Helper.showKeyboard(getActivity(), mEditTextDesc);
+							} catch (Exception e) {
+							}
+						}
+					});
+					mTextViewTags.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							mRelativeLayoutDesc.setVisibility(View.GONE);
+							mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+							isChangeByUser = true;
+							try {
+								Helper.showKeyboard(getActivity(), mEditTextTags);
+							} catch (Exception e) {
+							}
+
+						}
+					});
+					mTextViewGroupTitle.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							mRelativeLayoutDesc.setVisibility(View.GONE);
+							mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+							isChangeByUser = true;
+							try {
+								Helper.showKeyboard(getActivity(), mEditTextTitle);
+							} catch (Exception e) {
+							}
+						}
+					});
+
 				} else {
 					mTextViewStatus.setHint(R.string.no_status_hint);
 					mTextViewGroupDesc.setHint(R.string.no_description);
@@ -715,7 +768,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mEditTextStatus.setHint(R.string.no_status_hint);
 					mEditTextTitle.setHint(R.string.no_title);
 					mEditTextTags.setHint(R.string.no_hashtags);
-					
+
 					mBtnDelete.setVisibility(View.GONE);
 					mBtnEditDesc.setVisibility(View.GONE);
 					mBtnEditStatus.setVisibility(View.GONE);
@@ -777,7 +830,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			switch (v.getId()) {
 			case R.id.imgBtn_colorWheelSmall:
 			case R.id.imgBtn_colorWheelBig:
-				// callColorPicker();
+				callColorPicker();
 				break;
 			case R.id.btnEditStatus:
 				mTextViewStatus.setVisibility(View.GONE);
@@ -1036,13 +1089,15 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 					@Override
 					public void onResponse(VoidResponse response) {
-						//Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
+						// Toast.makeText(getActivity(), "Profile updated",
+						// Toast.LENGTH_LONG).show();
 					}
 
 					@Override
 					public void onServiceError(RestError error) {
 						Log.d("Error", error.getMessage() + "");
-						//Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_LONG).show();
+						// Toast.makeText(getActivity(), "Connection error",
+						// Toast.LENGTH_LONG).show();
 					}
 				});
 	}

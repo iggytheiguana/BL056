@@ -78,6 +78,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
@@ -366,6 +368,11 @@ public class MainActivity extends BaseActivity implements
 			@Override
 			public void onPageSelected(int arg0) {
 				fullChatIndex = arg0;
+				if (fullChatIndex == 0)
+					getWindow().setSoftInputMode(
+							WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+				else
+					getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 				Helper.hideKeyboard(MainActivity.this);
 			}
 
@@ -605,6 +612,8 @@ public class MainActivity extends BaseActivity implements
 		// }
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
 		expandedImageView.setVisibility(View.VISIBLE);
+		if (fullChatIndex == 0)
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		mViewPager.setCurrentItem(fullChatIndex);
 		currentChatId = c.chatId;
 		// zoomImageFromThumb(v, 0);
@@ -666,6 +675,10 @@ public class MainActivity extends BaseActivity implements
 		// 200);
 		// expandedImageView.startAnimation(animation);
 
+		if (fullChatIndex == 0)
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		else
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		mViewPager.setCurrentItem(fullChatIndex);
 		// mViewPager.setVisibility(View.GONE);
 		// zoomImageFromThumb(view, 0);
@@ -938,9 +951,10 @@ public class MainActivity extends BaseActivity implements
 						setChatInfo(currentChatId, null, color, chatLoad.tag, chatLoad.description,
 								chatLoad.chat_status, chatLoad.is_locked, chatLoad.title,
 								chatLoad.latitude, chatLoad.longitude);
-					else
-						setChatInfo(currentChatId, null, color, null, null, null, null, null, "0",
-								"0");
+					// else
+					// setChatInfo(currentChatId, null, color, null, null, null,
+					// null, null, "0",
+					// "0");
 				}
 				mViewPager.setCurrentItem(1);
 				break;
@@ -2145,21 +2159,22 @@ public class MainActivity extends BaseActivity implements
 		// mContactListAddChatAdapter.addAll(contactListItemsApp);
 
 		refreshOne2OneList();
-//
-//		Contact contact = null;
-//		if (chatFromNotification != -1) {
-//			for (Contact c : mApprovedContacts) {
-//				if (c.chatId == chatFromNotification) {
-//					contact = c;
-//					break;
-//				}
-//			}
-//
-//		}
-//		if (contact == null)
+
+		Contact contact = null;
+		if (chatFromNotification != -1) {
+			for (Contact c : mApprovedContacts) {
+				if (c.chatId == chatFromNotification) {
+					contact = c;
+					break;
+				}
+			}
+
+		}
+		if (contact == null)
 			mHandler.sendEmptyMessage(2);
-//		else
-//			showOne2OneChatFragment(contact, true, mViewPager);
+		else
+			showOne2OneChatFragment(contact, true, mViewPager);
+		chatFromNotification = -1;
 
 	}
 
@@ -2450,6 +2465,7 @@ public class MainActivity extends BaseActivity implements
 		// // chat view
 		// }
 		if (!getActionBar().isShowing()) {
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 			getActionBar().show();
 			fullChatIndex = 0;
 			// mViewPager.setVisibility(View.INVISIBLE);
@@ -3845,6 +3861,14 @@ public class MainActivity extends BaseActivity implements
 				} catch (Exception e) {
 				}
 			}
+		}
+	};
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		Bundle bundle = intent.getExtras();
+		if (bundle != null) {
+			chatFromNotification = bundle.getLong("chat_id");
 		}
 	};
 }

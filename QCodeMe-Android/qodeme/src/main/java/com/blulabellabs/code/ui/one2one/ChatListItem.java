@@ -88,7 +88,7 @@ public class ChatListItem extends RelativeLayout implements
 	private View cornerBottom;
 	private View cornerLeft;
 	private View cornerRight;
-	public RelativeLayout mChatItem;
+	public RelativeLayout mChatItem,mChatItemChild;
 	public ImageView textViewUserTyping;
 
 	private GestureDetector gestureDetector;
@@ -286,6 +286,7 @@ public class ChatListItem extends RelativeLayout implements
 		else {
 			getChatItem().setBackgroundResource(R.drawable.bg_box);
 		}
+		
 		getList().setAdapter(listAdapter);
 		getList().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		getList().setStackFromBottom(true);
@@ -381,6 +382,12 @@ public class ChatListItem extends RelativeLayout implements
 		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
 
 		if (chatLoad != null) {
+			if(chatLoad.color != 0 && chatLoad.color != -1)
+				getChatItemChild().setBackgroundColor(chatLoad.color);
+			else{
+				getChatItemChild().setBackgroundResource(0);
+			}
+			
 			if (chatLoad.isTyping) {
 				// getUserTyping().setTextColor(Color.RED);
 				getUserTyping().setBackgroundResource(R.drawable.bg_user_typing_h);
@@ -507,7 +514,10 @@ public class ChatListItem extends RelativeLayout implements
 		return mChatItem = mChatItem != null ? mChatItem
 				: (RelativeLayout) findViewById(R.id.relative_chatItem);
 	}
-
+	public RelativeLayout getChatItemChild() {
+		return mChatItemChild = mChatItemChild != null ? mChatItemChild
+				: (RelativeLayout) findViewById(R.id.relative_chatItemChild);
+	}
 	// sendImgMessageBtn
 
 	// public View getCornerTop() {

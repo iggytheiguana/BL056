@@ -78,7 +78,7 @@ public class ChatLoadHandler extends BaseResponseHandler<ChatLoadResponse> {
 				.newInsert(addCallerIsSyncAdapterParameter(Chats.CONTENT_URI));
 		builder.withValue(Chats.CHAT_ID, chatLoad.chatId);
 		builder.withValue(Chats.CHAT_DESCRIPTION, chatLoad.description);
-		builder.withValue(Chats.CHAT_COLOR, chatLoad.color);
+		builder.withValue(Chats.CHAT_COLOR, chatLoad.chat_color);
 		builder.withValue(Chats.CHAT_LATITUDE, chatLoad.latitude);
 		builder.withValue(Chats.CHAT_LONGITUDE, chatLoad.longitude);
 		builder.withValue(Chats.CHAT_QRCODE, chatLoad.qrcode);

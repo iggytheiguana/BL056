@@ -104,7 +104,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private ChatLoad mChatLoad;
 	public ImageButton shareChatBtn, mImgBtnFavorite;
 	private EditText editTextTitle;
-	public RelativeLayout mChatItem;
+	public RelativeLayout mChatItem,mChatItemChild;
 	public boolean isScrolling = false;
 	public ImageView textViewUserTyping;
 	private View mViewTypedMessage ;
@@ -225,6 +225,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public RelativeLayout getChatItem() {
 		return mChatItem = mChatItem != null ? mChatItem
 				: (RelativeLayout) findViewById(R.id.relative_chatItem);
+	}
+	public RelativeLayout getChatItemChild() {
+		return mChatItemChild = mChatItemChild != null ? mChatItemChild
+				: (RelativeLayout) findViewById(R.id.relative_chatItemChild);
 	}
 
 	// sendImgMessageBtn
@@ -669,6 +673,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 				getTitleEditText().setText("");
 			}
 
+			
 			final String oponentQr = mChatLoad.qrcode;
 			final int oponentColor = mChatLoad.color == 0 ? Color.GRAY : mChatLoad.color;
 			final int myColor = context.getResources().getColor(R.color.text_chat_name);
@@ -838,6 +843,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 				getChatItem().setBackgroundResource(R.drawable.bg_shadow);
 			else {
 				getChatItem().setBackgroundResource(R.drawable.bg_box);
+			}
+			if(mChatLoad.color != 0 && mChatLoad.color != -1)
+				getChatItemChild().setBackgroundColor(mChatLoad.color);
+			else{
+				getChatItemChild().setBackgroundResource(0);
 			}
 			if (!isScrolling) {
 				if (listData != null) {

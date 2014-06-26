@@ -117,7 +117,6 @@
     <string name="remove">remove</string>
     <string name="add_location">Add location</string>
     <string name="add_status_hint">Add Status Message</string>
-    
     <string name="share_qr_code">Share QR Code</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="about">About</string>
@@ -125,11 +124,11 @@
     <string name="logout">Logout</string>
     <string name="add_screen_name">Add Screen Name</string>
     <string name="user_name_display_hint">Your screen name shows in Private Chats and when adding a contact. </string>
-    
-     <string name="location_not_set">No Location</string>
+    <string name="location_not_set">No Location</string>
     <string name="no_status_hint">No Status Message</string>
-     <string name="no_title">No Title</string>
+    <string name="no_title">No Title</string>
     <string name="no_description">No Description</string>
-     <string name="no_hashtags">No HashTags</string>
-    
+    <string name="no_hashtags">No HashTags</string>
+    <string name="disconnect_from_user">Disconnect from User</string>
+
 </resources>

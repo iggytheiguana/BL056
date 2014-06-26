@@ -51,6 +51,7 @@ public final class NotificationUtils {
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent i = new Intent(context, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.setAction(ApplicationConstants.ACTION_RECEIVE_GCM_MESSAGE);
         i.putExtra("chat_id", chatId);
         PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode, i, 0);

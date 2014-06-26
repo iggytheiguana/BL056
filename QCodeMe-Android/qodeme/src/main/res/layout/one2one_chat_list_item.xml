@@ -4,21 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="360dp" >
 
-    <RelativeLayout
+    <RelativeLayout  android:id="@+id/relative_chatItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginTop="6dp" >
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_box">
+<!--         android:layout_marginLeft="6dp" -->
+<!--         android:layout_marginRight="6dp" -->
+<!--         android:layout_marginTop="6dp" > -->
 
-        <RelativeLayout
-            android:id="@+id/relative_chatItem"
+        <RelativeLayout 
+            android:id="@+id/relative_chatItemChild"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="6dp"
-            android:background="@drawable/bg_box" >
+             >
 
             <!-- <ImageView -->
             <!-- android:layout_width="match_parent" android:id="@+id/imageView_chatItem" -->

@@ -21,6 +21,7 @@ public class ChatLoad {
     public String status;
     public String chat_status;
     public int color;
+    public int chat_color;
     public String tag;
     public int number_of_flagged;
     public int is_locked;

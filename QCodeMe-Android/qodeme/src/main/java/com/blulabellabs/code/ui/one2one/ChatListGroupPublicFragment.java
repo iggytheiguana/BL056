@@ -214,6 +214,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 				mEditTextSearch.setText("");
 				searchString = "";
 				pageNo = 1;
+				isMoreData = true;
 				Bitmap bm = BitmapFactory.decodeResource(getResources(),
 						R.drawable.ic_location_gray);
 				mImgBtnLocationFilter.setImageBitmap(bm);
@@ -1000,9 +1001,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 					if (!isLocationFilter && !isFavoriteFilter) {
 						mListAdapter.clear();
-
 						mListAdapter.addAll(chatLoads);
-						mListView.setSelection(0);
+						
 					} else {
 						// if (isLocationFilter) {
 						// List<ChatLoad> temp = Lists.newArrayList();
@@ -1047,6 +1047,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 						mListAdapter.clear();
 						mListAdapter.addAll(filterMessages());
 					}
+					mListView.setSelection(0);
 				} else {
 					if (!isLocationFilter && !isFavoriteFilter) {
 						mListAdapter.clear();

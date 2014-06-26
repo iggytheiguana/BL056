@@ -6,36 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.android.volley.VolleyError;
-import com.blulabellabs.code.R;
-import com.blulabellabs.code.core.data.preference.QodemePreferences;
-import com.blulabellabs.code.core.io.RestAsyncHelper;
-import com.blulabellabs.code.core.io.model.ChatLoad;
-import com.blulabellabs.code.core.io.model.Contact;
-import com.blulabellabs.code.core.io.model.Message;
-import com.blulabellabs.code.core.io.responses.AccountLoginResponse;
-import com.blulabellabs.code.core.io.responses.VoidResponse;
-import com.blulabellabs.code.core.io.utils.RestError;
-import com.blulabellabs.code.core.io.utils.RestListener;
-import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.sync.SyncHelper;
-import com.blulabellabs.code.ui.LoginActivity;
-import com.blulabellabs.code.ui.MainActivity;
-import com.blulabellabs.code.ui.common.CustomDotView;
-import com.blulabellabs.code.ui.contacts.ContactDetailsActivity;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
-import com.blulabellabs.code.utils.Converter;
-import com.blulabellabs.code.utils.DbUtils;
-import com.blulabellabs.code.utils.LatLonCity;
-import com.flurry.sdk.ch;
-import com.google.android.gms.internal.ac;
-import com.google.android.gms.internal.co;
-import com.google.android.gms.internal.cu;
-import com.google.common.collect.Lists;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -48,16 +20,36 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
+import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
+import com.blulabellabs.code.core.io.RestAsyncHelper;
+import com.blulabellabs.code.core.io.model.ChatLoad;
+import com.blulabellabs.code.core.io.model.Contact;
+import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.io.responses.VoidResponse;
+import com.blulabellabs.code.core.io.utils.RestError;
+import com.blulabellabs.code.core.io.utils.RestListener;
+import com.blulabellabs.code.core.provider.QodemeContract;
+import com.blulabellabs.code.core.sync.SyncHelper;
+import com.blulabellabs.code.ui.MainActivity;
+import com.blulabellabs.code.ui.common.CustomDotView;
+import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
+import com.blulabellabs.code.utils.Converter;
+import com.blulabellabs.code.utils.DbUtils;
+import com.blulabellabs.code.utils.Helper;
+import com.blulabellabs.code.utils.LatLonCity;
+import com.google.common.collect.Lists;
 
 public class ChatProfileFragment extends Fragment implements OnClickListener {
 
@@ -70,10 +62,10 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 	private static final String FIRST_UPDATE = "first_update";
 
 	private TextView mTextViewProfileName, mTextViewDate, mTextViewDatelocation, mTextViewLocation,
-			mTextViewStatus, mTextViewTotalMessages, mTextViewTotalPhoto;
+			mTextViewStatus, mTextViewTotalMessages, mTextViewTotalPhoto, mTextViewDisconnectUser;
 	private ImageButton mImgBtnColorWheelSmall, mImgBtnColorWheel;
 	private CustomDotView customDotView;
-	private ImageButton mBtnEditStatus, mBtnEditName, mBtnDelete, mBtnArchive, mImgFavorite;
+	private ImageButton mBtnEditStatus, mBtnEditName,  mBtnArchive, mImgFavorite;//mBtnDelete
 	private Button mBtnSetStatus, mBtnSetName;
 	private EditText mEditTextStatus, mEdittextName;
 	private RelativeLayout mRelativeLayoutName, mRelativeLayoutSetName;
@@ -131,12 +123,14 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 		mEdittextName = (EditText) getView().findViewById(R.id.editText_name);
 		mRelativeLayoutName = (RelativeLayout) getView().findViewById(R.id.relative_Name);
 		mRelativeLayoutSetName = (RelativeLayout) getView().findViewById(R.id.relative_editName);
-		mBtnDelete = (ImageButton) getView().findViewById(R.id.btnDelete);
+//		mBtnDelete = (ImageButton) getView().findViewById(R.id.btnDelete);
+		mTextViewDisconnectUser = (TextView) getView().findViewById(R.id.textView_disconnectUser);
 		mBtnArchive = (ImageButton) getView().findViewById(R.id.btnArchive);
 
 		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
 
-		mBtnDelete.setOnClickListener(this);
+//		mBtnDelete.setOnClickListener(this);
+		mTextViewDisconnectUser.setOnClickListener(this);
 		mImgBtnColorWheel.setOnClickListener(this);
 		mImgBtnColorWheelSmall.setOnClickListener(this);
 		mBtnEditName.setOnClickListener(this);
@@ -156,6 +150,8 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 						|| event.getAction() == KeyEvent.ACTION_DOWN
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
+					
+					Helper.hideKeyboard(getActivity(), mEdittextName);
 					String name = mEdittextName.getText().toString();
 
 					mTextViewProfileName.setText(name);
@@ -276,7 +272,8 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 						mImgBtnColorWheel.setVisibility(View.INVISIBLE);
 						mImgBtnColorWheelSmall.setVisibility(View.INVISIBLE);
 						mBtnArchive.setVisibility(View.INVISIBLE);
-						mBtnDelete.setVisibility(View.INVISIBLE);
+//						mBtnDelete.setVisibility(View.INVISIBLE);
+						mTextViewDisconnectUser.setVisibility(View.INVISIBLE);
 						mBtnEditName.setVisibility(View.INVISIBLE);
 						mBtnEditStatus.setVisibility(View.INVISIBLE);
 						mImgFavorite.setClickable(false);
@@ -431,6 +428,9 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		case R.id.btnDelete:
+			deleteContact();
+			break;
+		case R.id.textView_disconnectUser:
 			deleteContact();
 			break;
 		case R.id.btnArchive:

@@ -270,7 +270,7 @@ public class SyncHelper {
 						int is_locked = 0;
 						String status = "";
 						String tags = "";
-						int chat_color = color;
+						int chat_color = -1;
 						String latitude = "0";
 						String longitude = "0";
 						if (cursorChat != null && cursorChat.getCount() > 0) {
@@ -355,7 +355,7 @@ public class SyncHelper {
 						int is_locked = 0;
 						String status = "";
 						String tags = "";
-						int chat_color = 0;
+						int chat_color = -1;
 						String latitude = "0";
 						String longitude = "0";
 						Cursor cursorChat = contentResolver.query(QodemeContract.Chats.CONTENT_URI,

@@ -20,13 +20,14 @@
             <com.blulabellabs.code.ui.common.CustomDotView
                 android:id="@+id/textView_dot"
                 style="@style/TextView.Chat.Name"
-                android:layout_width="30dp"
+                android:layout_width="25dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
+                android:layout_marginTop="7dp"
                 android:gravity="center_vertical"
                 android:text=""
                 tools:padding="5dp"
-                tools:text_size="22sp" />
+                tools:text_size="20sp" />
 
             <TextView
                 android:id="@+id/name"

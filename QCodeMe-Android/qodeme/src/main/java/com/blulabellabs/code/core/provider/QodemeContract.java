@@ -479,7 +479,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_ID, chatId);
 			contentValues.put(Chats.CHAT_QRCODE, qrCode);
 			contentValues.put(Chats.CHAT_TYPE, type);
-			contentValues.put(Chats.CHAT_COLOR, RandomColorGenerator.getInstance().nextColor());
+			contentValues.put(Chats.CHAT_COLOR, -1);
 			contentValues.put(Chats.CHAT_DESCRIPTION, "");
 			contentValues.put(Chats.CHAT_IS_LOCKED, 0);
 
