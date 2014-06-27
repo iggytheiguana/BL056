@@ -93,7 +93,7 @@ public class LookupChatEntity extends ChatEntity {
 			number_of_likes = Integer.parseInt(jsonObject.getString("number_of_likes"));
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			
 		}
 
 		return this;

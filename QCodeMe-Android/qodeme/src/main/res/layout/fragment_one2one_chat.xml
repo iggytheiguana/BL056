@@ -159,7 +159,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/framlay_status"
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@drawable/line_horizontal" />
 
     <com.blulabellabs.code.ui.common.TextViewMedium

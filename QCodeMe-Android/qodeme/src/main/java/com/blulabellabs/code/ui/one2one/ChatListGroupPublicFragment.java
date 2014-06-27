@@ -208,6 +208,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 				MainActivity activity = (MainActivity) callback;
 				activity.setPublicSearch(false);
 				activity.setPublicSearchString("");
+				activity.clearPublicSearch();
 				mImgBtnClear.setVisibility(View.GONE);
 				mImgBtnSearch.setVisibility(View.VISIBLE);
 				mEditTextSearch.setEnabled(true);
@@ -359,6 +360,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 				MainActivity activity = (MainActivity) callback;
 				activity.setPublicSearch(true);
 				activity.setPublicSearchString(data);
+				pageNo = 1;
+				activity.clearPublicSearch();
 				activity.searchChats(data, 2, pageNo, chatListener);
 				mEditTextSearch.setEnabled(false);
 				isMoreData = true;
@@ -405,6 +408,8 @@ public class ChatListGroupPublicFragment extends Fragment {
 					MainActivity activity = (MainActivity) callback;
 					activity.setPublicSearch(true);
 					activity.setPublicSearchString(data);
+					pageNo = 1;
+					activity.clearPublicSearch();
 					activity.searchChats(data, 2, pageNo, chatListener);
 					mEditTextSearch.setEnabled(false);
 					isMoreData = true;
@@ -425,6 +430,27 @@ public class ChatListGroupPublicFragment extends Fragment {
 					return true;
 				}
 				return false;
+			}
+		});
+		mEditTextSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+				if (mEditTextSearch.getText().toString().trim().length() > 0) {
+					mImgBtnClear.setVisibility(View.GONE);
+					mImgBtnSearch.setVisibility(View.VISIBLE);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
 			}
 		});
 	}
@@ -455,7 +481,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 							&& !c.latitude.equals("0.0") && !c.latitude.equals("-1")
 							&& !c.longitude.equals("0") && !c.longitude.equals("0.0")
 							&& !c.longitude.equals("-1")) {
-						Log.d("latLong", c.latitude + " " + c.longitude);
+						// Log.d("latLong", c.latitude + " " + c.longitude);
 						temp1.add(c);
 					}
 				} catch (Exception e) {
@@ -1002,7 +1028,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 					if (!isLocationFilter && !isFavoriteFilter) {
 						mListAdapter.clear();
 						mListAdapter.addAll(chatLoads);
-						
+
 					} else {
 						// if (isLocationFilter) {
 						// List<ChatLoad> temp = Lists.newArrayList();
@@ -1207,9 +1233,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 			mEditTextSearch.setEnabled(true);
 			mFooterLayout.setVisibility(View.GONE);
 			isThreadRunning = false;
-			if (count > 0)
+			if (count > 0) {
 				pageNo++;
-			else
+				mImgBtnClear.setVisibility(View.VISIBLE);
+				mImgBtnSearch.setVisibility(View.GONE);
+			} else
 				isMoreData = false;
 
 		}

@@ -500,15 +500,13 @@ public class ChatListSubItem extends RelativeLayout implements
 					break;
 				case QodemeContract.Messages.State.SENT:
 					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
-					getDate().setDotColor(
-							context.getResources().getColor(R.color.text_message_sent));
+					// getDate().setDotColor(
+					// context.getResources().getColor(R.color.text_message_sent));
 					if (chatType == 0)
-						getDate().setDotColor(
-								context.getResources().getColor(R.color.user_typing));
+						getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
 					else
-						getDate().setDotColor(
-								context.getResources().getColor(R.color.text_message_sent));
-//						getDate().setOutLine(true);
+						getDate().setDotColor(Color.BLACK);
+					// getDate().setOutLine(true);
 					getDate().invalidate();
 					break;
 				case QodemeContract.Messages.State.NOT_READ:

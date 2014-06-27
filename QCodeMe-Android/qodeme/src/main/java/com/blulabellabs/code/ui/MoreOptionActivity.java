@@ -20,6 +20,7 @@ public class MoreOptionActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_more);
 
 		((TextView) findViewById(R.id.textView_share)).setOnClickListener(this);
+		((TextView) findViewById(R.id.textView_scanQR)).setOnClickListener(this);
 		((TextView) findViewById(R.id.textView_logout)).setOnClickListener(this);
 	}
 
@@ -91,7 +92,12 @@ public class MoreOptionActivity extends Activity implements OnClickListener {
 			setResult(RESULT_OK, intent1);
 			finish();
 			break;
-
+		case R.id.textView_scanQR:
+			Intent intent2 = new Intent();
+			intent2.putExtra("type", 2);
+			setResult(RESULT_OK, intent2);
+			finish();
+			break;
 		default:
 			break;
 		}

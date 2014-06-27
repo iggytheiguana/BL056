@@ -592,16 +592,23 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				} else
 					mImgBtnLocked.setImageBitmap(new BitmapFactory().decodeResource(getResources(),
 							R.drawable.ic_lock_open));
-				mTextViewStatus.setText(getChatload().status);
-				mTextViewGroupDesc.setText(getChatload().description);
-				mTextViewGroupTitle.setText(getChatload().title);
-				mTextViewTags.setText(getChatload().tag);
+				mTextViewStatus.setText(getChatload().status != null
+						&& !getChatload().status.trim().equals("null") ? getChatload().status : "");
+				mTextViewGroupDesc
+						.setText(getChatload().description != null
+								&& !getChatload().description.trim().equals("null") ? getChatload().description
+								: "");
+				mTextViewGroupTitle.setText(getChatload().title != null
+						&& !getChatload().title.equals("null") ? getChatload().title : "");
+				mTextViewTags.setText(getChatload().tag != null
+						&& !getChatload().tag.trim().equals("null") ? getChatload().tag : "");
 				mEditTextDesc.setText(getChatload().description);
 				mEditTextStatus.setText(getChatload().status);
 				mEditTextTitle.setText(getChatload().title);
 				mEditTextTags.setText(getChatload().tag);
 
-				mTextViewTotalMember.setText(getChatload().number_of_members + " members");
+				mTextViewTotalMember.setText((getChatload().number_of_members == 0 ? 1
+						: getChatload().number_of_members) + " members");
 
 				if (callback != null) {
 					List<Message> messages = callback.getChatMessages(getChatload().chatId);

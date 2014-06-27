@@ -315,6 +315,12 @@ public class QodemeContract {
 			contentValues.put(CONTACT_COLOR, color);
 			return contentValues;
 		}
+		
+		public static ContentValues updateContact(int updated) {
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(SyncColumns.UPDATED, updated | Sync.UPDATED);
+			return contentValues;
+		}
 
 		public static ContentValues deleteContact() {
 			ContentValues contentValues = new ContentValues();
@@ -513,7 +519,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_ID, chatId);
 			contentValues.put(Chats.CHAT_QRCODE, qrCode);
 			contentValues.put(Chats.CHAT_TYPE, type);
-			contentValues.put(Chats.CHAT_COLOR, RandomColorGenerator.getInstance().nextColor());
+			contentValues.put(Chats.CHAT_COLOR, -1);
 			contentValues.put(Chats.CHAT_DESCRIPTION, desc);
 			contentValues.put(Chats.CHAT_IS_LOCKED, is_locked);
 

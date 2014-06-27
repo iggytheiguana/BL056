@@ -467,6 +467,24 @@ public class MainActivity extends BaseActivity implements
 			if (msg.what == 2) // refresh chat inside
 			{
 				refreshOne2OneInside();
+
+				ChatLoad chatload = null;
+				if (chatFromNotification != -1) {
+					for (ChatLoad c : mChatList) {
+						if (c.chatId == chatFromNotification) {
+							chatload = c;
+							break;
+						}
+					}
+
+				}
+				if (chatload != null) {
+					Helper.hideKeyboard(MainActivity.this);
+					showOne2OneChatFragment(chatload, true, mViewPager);
+
+					mViewPagerMain.setCurrentItem(chatload.type);
+					chatFromNotification = -1;
+				}
 			}
 		}
 	};
@@ -626,7 +644,7 @@ public class MainActivity extends BaseActivity implements
 		// animation.setDuration(500);
 		// expandedImageView.setAnimation(animation);
 		// animation.start();
-		Helper.hideKeyboard(this);
+		// Helper.hideKeyboard(this);
 	}
 
 	@SuppressLint("NewApi")
@@ -684,7 +702,7 @@ public class MainActivity extends BaseActivity implements
 			mViewPager.setCurrentItem(fullChatIndex);
 			// mViewPager.setVisibility(View.GONE);
 			// zoomImageFromThumb(view, 0);
-			Helper.hideKeyboard(MainActivity.this);
+			// Helper.hideKeyboard(MainActivity.this);
 		} catch (Exception e) {
 		}
 	}
@@ -940,6 +958,22 @@ public class MainActivity extends BaseActivity implements
 					getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
 							QodemeContract.Contacts.updateContactInfoValues(null, color, updated),
 							DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
+					SyncHelper.requestManualSync();
+				} else if (type == 2) {
+
+					int updated = data.getIntExtra(QodemeContract.Contacts.UPDATED,
+							QodemeContract.Contacts.Sync.UPDATED);
+					getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
+							QodemeContract.Contacts.updateContact(updated),
+							DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(id));
+
+					getContentResolver().update(
+							QodemeContract.Chats.CONTENT_URI,
+							QodemeContract.Chats.updateChatInfoValues("", color, "", 0, "", "",
+									updated, 1),
+							// updateContactInfoValues(null, color, updated),
+							QodemeContract.Chats.CHAT_ID + " = " + currentChatId, null);
+
 					SyncHelper.requestManualSync();
 				} else {
 					int updated = QodemeContract.Contacts.Sync.DONE;// data.getIntExtra(QodemeContract.Contacts.UPDATED,QodemeContract.Contacts.Sync.DONE);
@@ -1576,9 +1610,13 @@ public class MainActivity extends BaseActivity implements
 								QodemeContract.Contacts.isArchiveValues(0),
 								DbUtils.getWhereClauseForId(), DbUtils.getWhereArgsForId(ce._id));
 						mDrawerLayout.closeDrawer(mContactListView);
+						mViewPagerMain.setCurrentItem(0);
+						Helper.hideKeyboard(MainActivity.this);
 						showOne2OneChatFragment(ce, true, mViewPager);
 					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED) {
 						mDrawerLayout.closeDrawer(mContactListView);
+						mViewPagerMain.setCurrentItem(0);
+						Helper.hideKeyboard(MainActivity.this);
 						showOne2OneChatFragment(ce, true, mViewPager);
 					} else if (ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
 						Intent i = new Intent(getContext(), ContactDetailsActivity.class);
@@ -2176,9 +2214,11 @@ public class MainActivity extends BaseActivity implements
 		}
 		if (contact == null)
 			mHandler.sendEmptyMessage(2);
-		else
+		else {
+			Helper.hideKeyboard(MainActivity.this);
 			showOne2OneChatFragment(contact, true, mViewPager);
-		chatFromNotification = -1;
+			chatFromNotification = -1;
+		}
 
 	}
 
@@ -2525,11 +2565,11 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public List<ChatLoad> getChatList(int chatType) {
-		if (chatType == 2) {
-			if (isPublicSearch()) {
-				return mChatListSearchPublic;
-			}
-		}
+		// if (chatType == 2) {
+		// if (isPublicSearch()) {
+		// return mChatListSearchPublic;
+		// }
+		// }
 		// else if (chatType == 1) {
 		// if (isPrivateSearch()) {
 		// return mChatListSearchPrivate;
@@ -2548,6 +2588,34 @@ public class MainActivity extends BaseActivity implements
 					tempList.add(chatLoad);
 				}
 			}
+		}
+
+		if (chatType == 2 && mChatListSearchPublic != null) {
+			// if (isPublicSearch()) {
+			// return mChatListSearchPublic;
+			// }
+			if (getPublicSearchString().trim().length() > 0) {
+
+				List<ChatLoad> temp = Lists.newArrayList();
+				List<ChatLoad> removeFromSearch = Lists.newArrayList();
+				for (ChatLoad chatLoad : tempList) {
+					if ((chatLoad.title != null && chatLoad.title.contains(getPublicSearchString()))
+							|| (chatLoad.tag != null && chatLoad.tag
+									.contains(getPublicSearchString()))) {
+						temp.add(chatLoad);
+					}
+					for (ChatLoad c : mChatListSearchPublic) {
+						if (c.chatId == chatLoad.chatId)
+							removeFromSearch.add(c);
+
+					}
+				}
+				mChatListSearchPublic.removeAll(removeFromSearch);
+				temp.addAll(mChatListSearchPublic);
+				return temp;
+			}
+
+			tempList.addAll(mChatListSearchPublic);
 		}
 		return tempList;
 	}
@@ -2619,42 +2687,49 @@ public class MainActivity extends BaseActivity implements
 	public void sendMessage(final long chatId, String message, String photoUrl, int hashPhoto,
 			long replyTo_Id, double latitude, double longitude, String senderName, String localUrl) {
 
+		ChatLoad chatLoad = null;// getChatLoad(chatId);
 		try {
 			// String public_name =
 			// QodemePreferences.getInstance().getPublicName();
-			ChatLoad chatLoad = null;// getChatLoad(chatId);
-			if (mChatList != null) {
-				for (ChatLoad chat : mChatList)
-					if (chat.chatId == chatId)
-						// return chatLoad;
-						chatLoad = chat;
-			}
-
-			int is_search = 0;
-			if (chatLoad == null) {
-				if (mChatListSearchPublic != null) {
-					for (ChatLoad chat : mChatListSearchPublic)
+			try {
+				if (mChatList != null) {
+					for (ChatLoad chat : mChatList)
 						if (chat.chatId == chatId)
 							// return chatLoad;
 							chatLoad = chat;
 				}
-				if (chatLoad != null)
-					chatLoad.is_favorite = 1;
+
+			} catch (Exception e) {
+			}
+
+			int is_search = 0;
+			if (chatLoad == null) {
 				is_search = 1;
-				// String date = Converter.getCurrentGtmTimestampString();
-				// RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
-				// new RestListener<SetFavoriteResponse>() {
-				//
-				// @Override
-				// public void onResponse(SetFavoriteResponse response) {
-				//
-				// }
-				//
-				// @Override
-				// public void onServiceError(RestError error) {
-				//
-				// }
-				// });
+				try {
+					if (mChatListSearchPublic != null) {
+						for (ChatLoad chat : mChatListSearchPublic)
+							if (chat.chatId == chatId)
+								// return chatLoad;
+								chatLoad = chat;
+					}
+					if (chatLoad != null)
+						chatLoad.is_favorite = 1;
+				} catch (Exception e) {
+				}
+				String date = Converter.getCurrentGtmTimestampString();
+				RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
+						new RestListener<SetFavoriteResponse>() {
+
+							@Override
+							public void onResponse(SetFavoriteResponse response) {
+
+							}
+
+							@Override
+							public void onServiceError(RestError error) {
+
+							}
+						});
 
 				// RestAsyncHelper.getInstance().chatAddMember(chatId,
 				// QodemePreferences.getInstance().getQrcode(),
@@ -2674,25 +2749,30 @@ public class MainActivity extends BaseActivity implements
 			} else {
 				is_search = 0;
 
-				if (chatLoad.type == 2) {
+				try {
+					if (chatLoad.type == 2) {
 
-					int num_of_favorite = chatLoad.number_of_likes;
-					int is_favorite = 1;
-					if (chatLoad.is_favorite == 1) {
-						// is_favorite = 2;
-						// num_of_favorite--;
-					} else {
-						is_favorite = 1;
-						if (num_of_favorite <= 0) {
-							num_of_favorite = 1;
-						} else
-							num_of_favorite++;
+						int num_of_favorite = chatLoad.number_of_likes;
+						int is_favorite = 1;
+						if (chatLoad.is_favorite == 1) {
+							// is_favorite = 2;
+							// num_of_favorite--;
+						} else {
+							is_favorite = 1;
+							if (num_of_favorite <= 0) {
+								num_of_favorite = 1;
+							} else
+								num_of_favorite++;
 
-						getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-								QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-								QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
-						String date = Converter.getCurrentGtmTimestampString();
+							getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateFavorite(is_favorite,
+											num_of_favorite),
+									QodemeContract.Chats.CHAT_ID + " = " + chatId, null);
+							String date = Converter.getCurrentGtmTimestampString();
+						}
 					}
+				} catch (Exception e) {
 				}
 			}
 			getContentResolver().insert(
@@ -2745,12 +2825,14 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void showChat(Contact c, boolean firstUpdate, View view) {
 		mContactInfoUpdated = false;
+		Helper.hideKeyboard(MainActivity.this);
 		showOne2OneChatFragment(c, firstUpdate, view);
 	}
 
 	@Override
 	public void showChat(ChatLoad c, boolean firstUpdate, View view) {
 		mContactInfoUpdated = false;
+		Helper.hideKeyboard(MainActivity.this);
 		showOne2OneChatFragment(c, firstUpdate, view);
 	}
 
@@ -3453,8 +3535,9 @@ public class MainActivity extends BaseActivity implements
 								if (mChatListSearchPublic == null || pageNo == 1)
 									mChatListSearchPublic = Lists.newArrayList();
 								for (LookupChatEntity entity : response.getChatList()) {
-									Log.d("lookup", entity.getTitle() + " " + entity.getTags()
-											+ " " + entity.getId());
+									// Log.d("lookup", entity.getTitle() + " " +
+									// entity.getTags()
+									// + " " + entity.getId());
 									ChatLoad chatLoad = new ChatLoad();
 									chatLoad.title = entity.getTitle();
 									chatLoad.chatId = entity.getId();
@@ -3464,21 +3547,25 @@ public class MainActivity extends BaseActivity implements
 									chatLoad.description = entity.getDescription();
 									chatLoad.number_of_likes = entity.getNumber_of_likes();
 									chatLoad.number_of_members = entity.getNumber_of_member();
+									chatLoad.number_of_members = entity.getNumber_of_member();
 									chatLoad.latitude = entity.getLatitude();
 									chatLoad.longitude = entity.getLongitude();
 									chatLoad.is_favorite = entity.getIs_favorite();
 									chatLoad.type = 2;
 									chatLoad.created = entity.getCreated();
 									chatLoad.isSearchResult = true;
+
+									ChatLoad chatLoad2 = null;
 									for (ChatLoad c : mChatList) {
 										if (c.chatId == entity.getId()) {
 											chatLoad.isSearchResult = false;
-											chatLoad = c;
+											chatLoad2 = c;
 											break;
 										}
 									}
 
-									mChatListSearchPublic.add(chatLoad);
+									if (chatLoad2 == null)
+										mChatListSearchPublic.add(chatLoad);
 								}
 								chatListener.onSearchResult(response.getChatList().size(), 1);
 								refreshOne2OneList();
@@ -3607,6 +3694,10 @@ public class MainActivity extends BaseActivity implements
 		this.publicSearchString = publicSearchString;
 	}
 
+	public void clearPublicSearch() {
+		this.mChatListSearchPublic.clear();
+	}
+
 	public String getPublicSearchString() {
 		return publicSearchString;
 	}
@@ -3657,7 +3748,8 @@ public class MainActivity extends BaseActivity implements
 						// sendRegisterForChatEvents();
 						if (mChatList != null)
 							for (ChatLoad chatLoad : mChatList) {
-								sendRegisterForChatEvents(chatLoad.chatId);
+								if (chatLoad.type != 2)
+									sendRegisterForChatEvents(chatLoad.chatId);
 							}
 					}
 
@@ -3879,6 +3971,9 @@ public class MainActivity extends BaseActivity implements
 		Bundle bundle = intent.getExtras();
 		if (bundle != null) {
 			chatFromNotification = bundle.getLong("chat_id");
+
+			if (mChatList != null)
+				mHandler.sendEmptyMessage(2);
 		}
 	};
 }

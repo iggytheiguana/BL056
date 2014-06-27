@@ -106,10 +106,10 @@ public class MessageInChatPushHandler extends BasePushHandler {
 				}
 			}
 
-			if (type == 0)
+//			if (type == 0)
 				sendNotificationForOneToOne(msg,mMessage.chatId, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
-			else
-				sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
+//			else
+//				sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_MESSAGE);
 		}
 		Cursor cursor = getContext().getContentResolver().query(
 				QodemeContract.Messages.CONTENT_URI, QodemeContract.Messages.Query.PROJECTION,

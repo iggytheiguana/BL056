@@ -383,7 +383,7 @@ public class ChatProfileFragment extends Fragment implements OnClickListener {
 			callColorPicker(0);
 			break;
 		case R.id.imgBtn_colorWheelBig:
-			callColorPicker(1);
+			callColorPicker(2);
 			break;
 		case R.id.btnEditStatus:
 			mTextViewStatus.setVisibility(View.GONE);
