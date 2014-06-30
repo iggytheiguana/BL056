@@ -61,6 +61,7 @@ import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInside
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
+import com.blulabellabs.code.utils.RandomColorGenerator;
 
 /**
  * Created by Alex on 10/23/13.
@@ -521,7 +522,21 @@ public class ChatListSubItem extends RelativeLayout implements
 				}
 			} else {
 				// getDate().setTextColor(color);
-				getDate().setDotColor(color);
+//				getDate().setDotColor(color);
+				if (chatType == 2) {
+					MainActivity activity = (MainActivity) getContext();
+					Integer integerColor = activity.messageColorMap.get(me.messageId);
+					if(integerColor == null){
+						
+						int randomColor = RandomColorGenerator.getInstance().nextColor();
+						getDate().setDotColor(randomColor);
+						activity.messageColorMap.put(me.messageId, randomColor);
+					}else{
+						getDate().setDotColor(integerColor);
+					}
+				} else
+					getDate().setDotColor(color);
+				
 				if (QodemeContract.Messages.State.NOT_READ == me.state) {
 					getDate().setOutLine(true);
 					getMessage().setTypeface(Application.typefaceBold);

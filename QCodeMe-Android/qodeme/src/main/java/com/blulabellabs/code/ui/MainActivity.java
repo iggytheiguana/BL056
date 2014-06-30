@@ -60,7 +60,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -78,13 +77,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -119,8 +113,8 @@ import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestErrorType;
 import com.blulabellabs.code.core.io.utils.RestListener;
 import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.provider.QodemeContract.SyncColumns;
 import com.blulabellabs.code.core.provider.QodemeContract.Contacts.Sync;
+import com.blulabellabs.code.core.provider.QodemeContract.SyncColumns;
 import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageCache;
 import com.blulabellabs.code.images.utils.ImageFetcher;
@@ -147,7 +141,6 @@ import com.blulabellabs.code.ui.qr.QrCodeShowActivity;
 import com.blulabellabs.code.utils.AnalyticsHelper;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
-import com.blulabellabs.code.utils.ExpandAnimation;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
@@ -189,6 +182,7 @@ public class MainActivity extends BaseActivity implements
 	private static final String CHAT_INSIDE_FRAGMENT = "chat_inside_fragment";
 	private static final int DEFAULT_HEIGHT_DP = 200;
 	public static final String DELETE_BRODCAST_ACTION = "delete_broadcast_action";
+	public static final String CHAT_ADDED_BRODCAST_ACTION = "chat_added_broadcast_action";
 
 	private int mDefaultHeightPx;
 	private DrawerLayout mDrawerLayout;
@@ -247,6 +241,7 @@ public class MainActivity extends BaseActivity implements
 	private ChatListFragment one2OneChatListFragment;
 	private ChatListGroupFragment privateChatListFragment;
 	private ChatListGroupPublicFragment publicChatListFragment;
+	public HashMap<Long, Integer> messageColorMap = new HashMap<Long, Integer>();
 
 	/*
 	 * Animator for Zoom chat view
@@ -289,6 +284,7 @@ public class MainActivity extends BaseActivity implements
 	private final WebSocketConnection mConnection = new WebSocketConnection();
 
 	private long chatFromNotification = -1;
+	public ArrayList<Long> refressedChatId = Lists.newArrayList();
 
 	/**
 	 * Called when the activity is first created.
@@ -529,6 +525,9 @@ public class MainActivity extends BaseActivity implements
 				// Toast.makeText(getActivity(), "" + arg0,
 				// Toast.LENGTH_SHORT).show();
 				chatType = arg0;
+				if(arg0 != 2){
+					messageColorMap.clear();
+				}
 				Bitmap oneToone;
 				Bitmap priateGroup;
 				Bitmap publicGroup;
@@ -706,6 +705,8 @@ public class MainActivity extends BaseActivity implements
 		} catch (Exception e) {
 		}
 	}
+
+
 
 	private void initActionBar() {
 		mActionBar = getSupportActionBar();
@@ -891,6 +892,27 @@ public class MainActivity extends BaseActivity implements
 							mContactListAdapter.notifyDataSetChanged();
 							mDrawerLayout.openDrawer(mContactListView);
 						}
+
+						try {
+							one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+							privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+							publicChatListFragment = (ChatListGroupPublicFragment) adapter
+									.getItem(2);
+
+							if (chatType == 0) {
+								one2OneChatListFragment.setLocationFilter(false);
+								one2OneChatListFragment.setFavoriteFilter(false);
+							} else if (chatType == 1) {
+								privateChatListFragment.setLocationFilter(false);
+								privateChatListFragment.setFavoriteFilter(false);
+							} else if (chatType == 2) {
+								publicChatListFragment.setLocationFilter(false);
+								publicChatListFragment.setFavoriteFilter(false);
+							}
+
+						} catch (Exception e) {
+						}
+
 						// Intent i = new Intent(getContext(),
 						// QrCodeShowActivity.class);
 						// i.putExtra(IntentKey.QR_CODE,
@@ -2509,6 +2531,7 @@ public class MainActivity extends BaseActivity implements
 		// // chat view
 		// }
 		if (!getActionBar().isShowing()) {
+			//messageColorMap.clear();
 			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 			getActionBar().show();
 			fullChatIndex = 0;
@@ -2613,6 +2636,18 @@ public class MainActivity extends BaseActivity implements
 				mChatListSearchPublic.removeAll(removeFromSearch);
 				temp.addAll(mChatListSearchPublic);
 				return temp;
+			} else {
+				List<ChatLoad> removeFromSearch = Lists.newArrayList();
+				for (ChatLoad chatLoad : tempList) {
+
+					for (ChatLoad c : mChatListSearchPublic) {
+						if (c.chatId == chatLoad.chatId)
+							removeFromSearch.add(c);
+
+					}
+				}
+
+				mChatListSearchPublic.removeAll(removeFromSearch);
 			}
 
 			tempList.addAll(mChatListSearchPublic);
@@ -2716,20 +2751,20 @@ public class MainActivity extends BaseActivity implements
 						chatLoad.is_favorite = 1;
 				} catch (Exception e) {
 				}
-				String date = Converter.getCurrentGtmTimestampString();
-				RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
-						new RestListener<SetFavoriteResponse>() {
-
-							@Override
-							public void onResponse(SetFavoriteResponse response) {
-
-							}
-
-							@Override
-							public void onServiceError(RestError error) {
-
-							}
-						});
+				// String date = Converter.getCurrentGtmTimestampString();
+				// RestAsyncHelper.getInstance().setFavorite(date, 1, chatId,
+				// new RestListener<SetFavoriteResponse>() {
+				//
+				// @Override
+				// public void onResponse(SetFavoriteResponse response) {
+				//
+				// }
+				//
+				// @Override
+				// public void onServiceError(RestError error) {
+				//
+				// }
+				// });
 
 				// RestAsyncHelper.getInstance().chatAddMember(chatId,
 				// QodemePreferences.getInstance().getQrcode(),
@@ -2918,7 +2953,12 @@ public class MainActivity extends BaseActivity implements
 		getContentResolver().registerContentObserver(QodemeContract.Chats.CONTENT_URI, true,
 				mChatListObserver);
 		start();
-		registerReceiver(broadcastReceiverForDeleteChat, new IntentFilter(DELETE_BRODCAST_ACTION));
+
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(DELETE_BRODCAST_ACTION);
+		intentFilter.addAction(CHAT_ADDED_BRODCAST_ACTION);
+
+		registerReceiver(broadcastReceiverForDeleteChat, intentFilter);
 	}
 
 	@Override
@@ -3553,6 +3593,7 @@ public class MainActivity extends BaseActivity implements
 									chatLoad.is_favorite = entity.getIs_favorite();
 									chatLoad.type = 2;
 									chatLoad.created = entity.getCreated();
+									chatLoad.messages = entity.getMessages();
 									chatLoad.isSearchResult = true;
 
 									ChatLoad chatLoad2 = null;
@@ -3624,9 +3665,9 @@ public class MainActivity extends BaseActivity implements
 						} else {
 							chatListener.onSearchResult(0, 2);
 							Log.d("lookup", "null response");
-							Toast.makeText(MainActivity.this,
-									getString(R.string.no_network_connection_toast),
-									Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this,
+							// getString(R.string.no_network_connection_toast),
+							// Toast.LENGTH_SHORT).show();
 						}
 					}
 
@@ -3955,13 +3996,37 @@ public class MainActivity extends BaseActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (!mActionBar.isShowing()) {
-				try {
-					long chat_id = intent.getLongExtra("chat_id", -1);
-					if (chat_id != -1 && chat_id == currentChatId)
-						onBackPressed();
-				} catch (Exception e) {
+
+			if (intent.getAction().equals(DELETE_BRODCAST_ACTION)) {
+				if (!mActionBar.isShowing()) {
+					try {
+						long chat_id = intent.getLongExtra("chat_id", -1);
+						if (chat_id != -1 && chat_id == currentChatId)
+							onBackPressed();
+					} catch (Exception e) {
+					}
 				}
+			} else if (intent.getAction().equals(CHAT_ADDED_BRODCAST_ACTION)) {
+				// try {
+				// long chat_id = intent.getLongExtra("chat_id", -1);
+				// if (chat_id != -1) {
+				// String date = Converter.getCurrentGtmTimestampString();
+				// RestAsyncHelper.getInstance().setFavorite(date, 1, chat_id,
+				// new RestListener<SetFavoriteResponse>() {
+				//
+				// @Override
+				// public void onResponse(SetFavoriteResponse response) {
+				//
+				// }
+				//
+				// @Override
+				// public void onServiceError(RestError error) {
+				//
+				// }
+				// });
+				// }
+				// } catch (Exception e) {
+				// }
 			}
 		}
 	};

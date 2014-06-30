@@ -373,7 +373,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
 
-		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -983,7 +983,17 @@ public class ChatInsideGroupFragment extends Fragment {
 
 			mListAdapter.clear();
 
-			mListAdapter.addAll(callback.getChatMessages(getChatId()));
+			if (getChatLoad().isSearchResult) {
+				if (getChatLoad().messages != null) {
+					List<Message> listData = Lists.newArrayList();
+					for (int i = 0; i < getChatLoad().messages.length; i++) {
+						listData.add(getChatLoad().messages[i]);
+					}
+					mListAdapter.addAll(listData);
+				}
+			} else
+				mListAdapter.addAll(callback.getChatMessages(getChatId()));
+
 			if (mListAdapter.getCount() > 0)
 				if (lstItem == 0)
 					mListView.setSelection(mListAdapter.getCount() - 1);

@@ -82,6 +82,23 @@ public class ChatListFragment extends Fragment {
 	private static final String TAG = "ChatListFragment";
 	private final WebSocketConnection mConnection = new WebSocketConnection();
 	protected boolean isLocationFilter = false;
+
+	public boolean isLocationFilter() {
+		return isLocationFilter;
+	}
+
+	public void setLocationFilter(boolean isLocationFilter) {
+		this.isLocationFilter = isLocationFilter;
+	}
+
+	public boolean isFavoriteFilter() {
+		return isFavoriteFilter;
+	}
+
+	public void setFavoriteFilter(boolean isFavoriteFilter) {
+		this.isFavoriteFilter = isFavoriteFilter;
+	}
+
 	protected boolean isFavoriteFilter = false;
 
 	public interface One2OneChatListFragmentCallback {

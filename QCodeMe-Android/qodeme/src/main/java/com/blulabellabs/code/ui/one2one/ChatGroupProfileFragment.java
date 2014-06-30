@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,6 +53,7 @@ import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
+import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.DeleteChatResponse;
 import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.SetSearchableResponse;
@@ -69,6 +71,7 @@ import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.QrUtils;
+import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("unused")
@@ -250,14 +253,35 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mRelativeLayoutSetDesc.setVisibility(View.GONE);
 					String title = v.getText().toString().trim();
 
+					int updated = getChatload().updated;
+					
+					try {
+						String tags = findTagFromTitle(title);
+						if (tags.endsWith(",")) {
+							tags = tags.substring(0, tags.length() - 1);
+						}
+
+						getChatload().tag = getChatload().tag != null ? getChatload().tag + ","
+								+ tags : tags;
+						tags = getChatload().tag;
+						
+						getActivity().getContentResolver().update(
+								QodemeContract.Chats.CONTENT_URI,
+								QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "", tags,
+										updated, 5), QodemeContract.Chats.CHAT_ID + "=?",
+								DbUtils.getWhereArgsForId(getChatload().chatId));
+					} catch (Exception e) {
+					}
+
 					mTextViewGroupTitle.setText(title);
 
-					int updated = getChatload().updated;
+					
 					getActivity().getContentResolver().update(
 							QodemeContract.Chats.CONTENT_URI,
 							QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "", "",
 									updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
 							DbUtils.getWhereArgsForId(getChatload().chatId));
+					
 					// setChatInfo(chatload.chatId, title, null, null, null,
 					// null, null);
 					getChatload().title = title;
@@ -391,6 +415,89 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 			});
 		}
 		setData();
+
+		if (!isRefress() && !getChatload().isSearchResult)
+			loadChat();
+	}
+
+	private boolean isRefress() {
+
+		try {
+			boolean isRefress = false;
+			MainActivity activity = (MainActivity) getActivity();
+			for (long id : activity.refressedChatId) {
+				if (id == getChatload().chatId) {
+					isRefress = true;
+					break;
+				}
+			}
+			return isRefress;
+
+		} catch (Exception e) {
+		}
+		return true;
+	}
+
+	private void loadChat() {
+
+		RestAsyncHelper.getInstance().chatLoad(getChatload().chatId, 1, 1,
+				new RestListener<ChatLoadResponse>() {
+
+					@Override
+					public void onResponse(ChatLoadResponse response) {
+						// Log.d("Member",
+						// response.getChatLoad().title+" "+response.getChatLoad().number_of_members);
+						try {
+							ChatLoad chatLoad = response.getChatLoad();
+							MainActivity activity = (MainActivity) getActivity();
+							activity.refressedChatId.add(chatLoad.chatId);
+
+							String[] members = chatLoad.members;
+							String memberQR = "";
+							if (members != null && members.length > 0) {
+								for (String qr : members) {
+									if (!QodemePreferences.getInstance().getQrcode()
+											.equals(qr.trim())) {
+										if (memberQR.equals(""))
+											memberQR = qr;
+										else
+											memberQR += "," + qr;
+									}
+								}
+							}
+
+							ContentValues contentValues = new ContentValues();
+							//
+							contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES, memberQR);
+							contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_FAVORITE,
+									chatLoad.number_of_likes);
+							contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
+									chatLoad.number_of_members);
+
+							getActivity().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI, contentValues,
+									QodemeContract.Chats.CHAT_ID + " = " + chatLoad.chatId, null);
+
+							// getActivity().getContentResolver().update(
+							// QodemeContract.Chats.CONTENT_URI,
+							// QodemeContract.Chats.updateChatInfoValuesAll(chatLoad.title,
+							// chatLoad.color, chatLoad.description,
+							// chatLoad.is_locked, chatLoad.status,
+							// chatLoad.tag,
+							// chatLoad.number_of_flagged,
+							// chatLoad.number_of_members,
+							// chatLoad.latitude, chatLoad.longitude),
+							// QodemeContract.Chats.CHAT_ID + " = " +
+							// chatLoad.chatId, null);
+						} catch (Exception e) {
+						}
+					}
+
+					@Override
+					public void onServiceError(RestError error) {
+
+					}
+				});
 	}
 
 	private void getLocation() {
@@ -489,22 +596,51 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		}
 	}
 
-	public void setChips() {
-		// if (mEditTextTags.getText().toString().contains(",")) // check comman
-		// in
-		// // string
-		// {
+	private String findTagFromTitle(String c) {
 
-		// SpannableStringBuilder ssb = new
-		// SpannableStringBuilder(mEditTextTags.getText()
-		// .toString());
+		StringBuilder stringBuilder = new StringBuilder();
+		BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
+		//
+		// Set the text string to be scanned.
+		//
+		bi.setText(c);
+		//
+		// Iterates the boundary / breaks
+		//
+		// System.out.println("Iterates each word: ");
+		// int count = 0;
+		int lastIndex = bi.first();
+		while (lastIndex != BreakIterator.DONE) {
+			int firstIndex = lastIndex;
+			lastIndex = bi.next();
+
+			if (lastIndex != BreakIterator.DONE && Character.isLetterOrDigit(c.charAt(firstIndex))) {
+				String word = c.substring(firstIndex, lastIndex);
+				String preWord = "";
+				if (firstIndex > 0)
+					preWord = c.substring(firstIndex - 1, firstIndex);
+				else
+					preWord = c.substring(firstIndex, firstIndex + 1);
+				// word = "#" + word + ",";
+				if (preWord.startsWith("#")) {
+					word = "#" + word + ",";
+					stringBuilder.append(word);
+				}
+				// System.out.println("'" + word + "' found at (" + firstIndex +
+				// ", " + lastIndex
+				// + ")");
+
+			}
+		}
+		return stringBuilder.toString();
+		// System.out.println("final " + stringBuilder.toString());
+	}
+
+	public void setChips() {
+
 		StringBuilder stringBuilder = new StringBuilder();
 		// split string wich comma
 		String chips[] = mEditTextTags.getText().toString().trim().split(",");
-		// int x = 0;
-		// loop will generate ImageSpan for every country name separated by
-		// comma
-		// int i = 0;
 		for (String c : chips) {
 
 			BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
@@ -886,6 +1022,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				mRelativeLayoutSetDesc.setVisibility(View.GONE);
 				break;
 			case R.id.btnDelete:
+				QodemePreferences.getInstance().setNewPublicGroupChatId(-1);
 				deleteContact();
 				break;
 			case R.id.btnShare:

@@ -149,7 +149,7 @@
                     android:layout_toLeftOf="@id/button_message"
                     android:hint="@string/message"
                     android:imeOptions="actionDone|actionSend"
-                    android:inputType="textNoSuggestions"
+                    android:inputType="textNoSuggestions|textCapSentences"
                     android:singleLine="true"
                     android:visibility="gone" />
             </RelativeLayout>

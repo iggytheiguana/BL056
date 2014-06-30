@@ -237,7 +237,8 @@ public class ChatInsideFragment extends Fragment {
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
-		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+				| InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -566,11 +567,13 @@ public class ChatInsideFragment extends Fragment {
 		imgUserTyping.setImageBitmap(bmp);
 		imgUserTyping.setVisibility(View.GONE);
 
-//		footerView = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
-		View view  = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
+		// footerView =
+		// getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing,
+		// null);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.footer_user_typing, null);
 		footerView = view.findViewById(R.id.linearFooter_userTyping);
 		footerView.setVisibility(View.GONE);
-		
+
 		footerView1 = view.findViewById(R.id.linearTyping);
 		footerView1.setVisibility(View.GONE);
 		CustomDotView dotView = (CustomDotView) view.findViewById(R.id.dotView_userTyping1);
@@ -676,9 +679,8 @@ public class ChatInsideFragment extends Fragment {
 
 			MainActivity activity = (MainActivity) callback;
 			ChatLoad chatLoad = activity.getChatLoad(getChatId());
-			if (chatLoad != null){
-				
-				
+			if (chatLoad != null) {
+
 				mStatus.setText(chatLoad.status);
 				if (chatLoad.is_favorite == 1) {
 					Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -693,9 +695,8 @@ public class ChatInsideFragment extends Fragment {
 				// mTextViewNumFavorite.setText(chatLoad.number_of_likes + "");
 				// mTextViewNumFavorite.setVisibility(View.VISIBLE);
 				// }
-				
-				
-				if(chatLoad.is_deleted == 1){
+
+				if (chatLoad.is_deleted == 1) {
 					mTextViewDeleteBaner.setVisibility(View.VISIBLE);
 					mImgFavorite.setClickable(false);
 					mSendButton.setVisibility(View.INVISIBLE);

@@ -3,6 +3,7 @@ package com.blulabellabs.code.core.io.gcm.push;
 import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_CONTACT;
 import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatAdd;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.core.sync.SyncHelper;
+import com.blulabellabs.code.ui.MainActivity;
 
 /**
  * Created by Alex on 12/10/13.
@@ -101,6 +103,9 @@ public class ChatAddMemberPushHandler extends BasePushHandler {
 //		getContext().getContentResolver().delete(QodemeContract.Messages.CONTENT_URI,
 //				QodemeContract.Messages.MESSAGE_CHAT_ID + "=" + mChatLoad.chatId, null);
 		QodemePreferences.getInstance().set("AddMemberId", id);
+//		Intent intent = new Intent(MainActivity.CHAT_ADDED_BRODCAST_ACTION);
+//		intent.putExtra("chat_id", mChatLoad.chatId);
+//		getContext().sendBroadcast(intent);
 		// try {
 		// ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
 		// RestSyncHelper rest = RestSyncHelper.getInstance(getContext());

@@ -104,10 +104,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private ChatLoad mChatLoad;
 	public ImageButton shareChatBtn, mImgBtnFavorite;
 	private EditText editTextTitle;
-	public RelativeLayout mChatItem,mChatItemChild;
+	public RelativeLayout mChatItem, mChatItemChild;
 	public boolean isScrolling = false;
 	public ImageView textViewUserTyping;
-	private View mViewTypedMessage ;
+	private View mViewTypedMessage;
 	CustomDotView mTypedMessageDot;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
@@ -187,12 +187,15 @@ public class ChatListGroupItem extends RelativeLayout implements
 	}
 
 	public View getMessageTypedView() {
-		return mViewTypedMessage = mViewTypedMessage != null ? mViewTypedMessage : (View) findViewById(R.id.linearTyping);
+		return mViewTypedMessage = mViewTypedMessage != null ? mViewTypedMessage
+				: (View) findViewById(R.id.linearTyping);
 	}
+
 	public CustomDotView getMessageTypedDot() {
-		return mTypedMessageDot = mTypedMessageDot != null ? mTypedMessageDot : (CustomDotView) findViewById(R.id.dotView_userTyping1);
+		return mTypedMessageDot = mTypedMessageDot != null ? mTypedMessageDot
+				: (CustomDotView) findViewById(R.id.dotView_userTyping1);
 	}
-	
+
 	public CustomEdit getMessageEdit() {
 		return edit = edit != null ? edit : (CustomEdit) findViewById(R.id.edit_message);
 	}
@@ -226,6 +229,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		return mChatItem = mChatItem != null ? mChatItem
 				: (RelativeLayout) findViewById(R.id.relative_chatItem);
 	}
+
 	public RelativeLayout getChatItemChild() {
 		return mChatItemChild = mChatItemChild != null ? mChatItemChild
 				: (RelativeLayout) findViewById(R.id.relative_chatItemChild);
@@ -280,7 +284,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 					showMessage();
 
 				mCallback.onSingleTap(getView(), mPosition, mChatLoad);
-				//messageRead();
+				// messageRead();
 			} catch (Exception ex) {
 			}
 			Log.i("GestureListener", "onSingleTap");
@@ -291,7 +295,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		public boolean onDoubleTap(MotionEvent e) {
 			// Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mChatLoad);
-//			messageRead();
+			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
 		}
@@ -299,7 +303,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 	public void showMessage() {
 		getSendMessage().setVisibility(View.VISIBLE);
-		getMessageEdit().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		getMessageEdit().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -611,69 +615,66 @@ public class ChatListGroupItem extends RelativeLayout implements
 				getName().setVisibility(GONE);
 				getSendMessage().setVisibility(View.VISIBLE);
 				getMessageEdit().setVisibility(VISIBLE);
-//				if (mChatLoad.title.trim().length() > 0) {
-//				} else {
-					// getTitleEditText().setFocusable(true);
-					// getTitleEditText().requestFocus();
-					// InputMethodManager
-					// inputMethodManager=(InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-					// inputMethodManager.toggleSoftInputFromWindow(getTitleEditText().getWindowToken(),
-					// InputMethodManager.SHOW_FORCED, 0);
+				// if (mChatLoad.title.trim().length() > 0) {
+				// } else {
+				// getTitleEditText().setFocusable(true);
+				// getTitleEditText().requestFocus();
+				// InputMethodManager
+				// inputMethodManager=(InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				// inputMethodManager.toggleSoftInputFromWindow(getTitleEditText().getWindowToken(),
+				// InputMethodManager.SHOW_FORCED, 0);
 
-					// getTitleEditText().post(new Runnable() {
-					// @Override
-					// public void run() {
-					// getTitleEditText().requestFocus();
-					// Helper.showKeyboard(getContext(), getTitleEditText());
-					// }
-					// });
-					 getTitleEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+				// getTitleEditText().post(new Runnable() {
+				// @Override
+				// public void run() {
+				// getTitleEditText().requestFocus();
+				// Helper.showKeyboard(getContext(), getTitleEditText());
+				// }
+				// });
+				getTitleEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-					getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
+				getTitleEditText().setOnEditorActionListener(new OnEditorActionListener() {
 
-						@Override
-						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-							if (actionId == EditorInfo.IME_ACTION_SEARCH
-									|| actionId == EditorInfo.IME_ACTION_GO
-									|| actionId == EditorInfo.IME_ACTION_SEND
-									|| actionId == EditorInfo.IME_ACTION_DONE
-									&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+					@Override
+					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+						if (actionId == EditorInfo.IME_ACTION_SEARCH
+								|| actionId == EditorInfo.IME_ACTION_GO
+								|| actionId == EditorInfo.IME_ACTION_SEND
+								|| actionId == EditorInfo.IME_ACTION_DONE
+								&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-								String title = v.getText().toString().trim();
+							String title = v.getText().toString().trim();
 
-								int updated = mChatLoad.updated;
-								getContext().getContentResolver().update(
-										QodemeContract.Chats.CONTENT_URI,
-										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
-												"", "", updated, 0),
-										QodemeContract.Chats.CHAT_ID + "=?",
-										DbUtils.getWhereArgsForId(mChatLoad.chatId));
-								// setChatInfo(chatload.chatId, title, null,
-								// null,
-								// null,
-								// null, null);
-								mChatLoad.title = title;
-								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
-										mChatLoad.description, mChatLoad.status,
-										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
-										mChatLoad.longitude);
+							int updated = mChatLoad.updated;
+							getContext().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "",
+											"", updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
+									DbUtils.getWhereArgsForId(mChatLoad.chatId));
+							// setChatInfo(chatload.chatId, title, null,
+							// null,
+							// null,
+							// null, null);
+							mChatLoad.title = title;
+							setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
+									mChatLoad.description, mChatLoad.status, mChatLoad.is_locked,
+									mChatLoad.title, mChatLoad.latitude, mChatLoad.longitude);
 
-								Helper.hideKeyboard(getContext(), getTitleEditText());
-								// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
-								return true;
-							}
-							return false;
+							Helper.hideKeyboard(getContext(), getTitleEditText());
+							// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
+							return true;
 						}
-					});
+						return false;
+					}
+				});
 
-//				}
+				// }
 			} else {
 				getTitleEditText().setVisibility(GONE);
 				getName().setVisibility(VISIBLE);
 				getTitleEditText().setText("");
 			}
 
-			
 			final String oponentQr = mChatLoad.qrcode;
 			final int oponentColor = mChatLoad.color == 0 ? Color.GRAY : mChatLoad.color;
 			final int myColor = context.getResources().getColor(R.color.text_chat_name);
@@ -700,7 +701,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 			getMessageTypedDot().setOutLine(true);
 			getMessageTypedDot().setSecondVerticalLine(true);
 			getMessageTypedDot().invalidate();
-			
+
 			// List preparation
 			List<Message> listForAdapter = Lists.newArrayList();
 			List<Message> listData = Lists.newArrayList();
@@ -708,8 +709,19 @@ public class ChatListGroupItem extends RelativeLayout implements
 			// for(Message msg:mChatLoad.messages)
 			// listData.add(msg);
 			// }else{
-			listData = mCallback.getMessages(mChatLoad.chatId);
+			// listData = mCallback.getMessages(mChatLoad.chatId);
 			// }
+			if (mChatLoad.isSearchResult) {
+				// listData = mChatLoad.messages;
+				if (mChatLoad.messages != null) {
+					listData = Lists.newArrayList();
+					for (int i = 0; i < mChatLoad.messages.length; i++) {
+						listData.add(mChatLoad.messages[i]);
+					}
+				}
+			} else
+				listData = mCallback.getMessages(mChatLoad.chatId);
+//			listData = mCallback.getMessages(mChatLoad.chatId);
 			boolean isContainUnread = false;
 			temp.clear();
 			listData = sortMessages(listData);
@@ -844,9 +856,9 @@ public class ChatListGroupItem extends RelativeLayout implements
 			else {
 				getChatItem().setBackgroundResource(R.drawable.bg_box);
 			}
-			if(mChatLoad.color != 0 && mChatLoad.color != -1)
+			if (mChatLoad.color != 0 && mChatLoad.color != -1)
 				getChatItemChild().setBackgroundColor(mChatLoad.color);
-			else{
+			else {
 				getChatItemChild().setBackgroundResource(0);
 			}
 			if (!isScrolling) {

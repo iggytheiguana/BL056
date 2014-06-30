@@ -114,6 +114,22 @@ public class ChatListGroupFragment extends Fragment {
 	// void messageRead(long chatId);
 	// }
 
+	public boolean isLocationFilter() {
+		return isLocationFilter;
+	}
+
+	public void setLocationFilter(boolean isLocationFilter) {
+		this.isLocationFilter = isLocationFilter;
+	}
+
+	public boolean isFavoriteFilter() {
+		return isFavoriteFilter;
+	}
+
+	public void setFavoriteFilter(boolean isFavoriteFilter) {
+		this.isFavoriteFilter = isFavoriteFilter;
+	}
+	
 	public static ChatListGroupFragment getInstance() {
 		ChatListGroupFragment fragment = new ChatListGroupFragment();
 		Bundle args = new Bundle();

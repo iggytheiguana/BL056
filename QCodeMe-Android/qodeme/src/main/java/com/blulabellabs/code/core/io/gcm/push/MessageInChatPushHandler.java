@@ -1,18 +1,14 @@
 package com.blulabellabs.code.core.io.gcm.push;
 
-import com.blulabellabs.code.Application;
-import com.blulabellabs.code.core.io.model.Message;
-import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.utils.DbUtils;
-
-import android.R.menu;
+import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_MESSAGE;
+import static com.blulabellabs.code.utils.NotificationUtils.sendNotificationForOneToOne;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 
-import static com.blulabellabs.code.utils.NotificationUtils.NOTIFICATION_REQUEST_NEW_MESSAGE;
-import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
-import static com.blulabellabs.code.utils.NotificationUtils.sendNotificationForOneToOne;;
+import com.blulabellabs.code.Application;
+import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.core.provider.QodemeContract;
 
 /**
  * Created by Alex on 12/10/13.

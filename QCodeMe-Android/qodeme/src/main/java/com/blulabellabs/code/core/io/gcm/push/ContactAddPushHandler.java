@@ -20,6 +20,7 @@ import static com.blulabellabs.code.utils.NotificationUtils.sendNotification;
 public class ContactAddPushHandler extends BasePushHandler {
 
 	private Contact mContact;
+	private String public_name;
 
 	public ContactAddPushHandler(Context context) {
 		super(context);
@@ -28,10 +29,13 @@ public class ContactAddPushHandler extends BasePushHandler {
 	@Override
 	public void parse(Bundle bundle) {
 		mContact = new Gson().fromJson(bundle.getString(RestKeyMap.CONTACT_OBJECT), Contact.class);
+		public_name = bundle.getString("public_name");
 	}
 
 	@Override
 	public void handle() {
+		mContact.title = public_name;
+		mContact.publicName = public_name;
 		if (!((Application) getContext().getApplicationContext()).isActive()) {
 			String msg = null;
 			if (mContact.state == QodemeContract.Contacts.State.INVITED) {
@@ -52,6 +56,7 @@ public class ContactAddPushHandler extends BasePushHandler {
 			sendNotification(msg, getContext(), NOTIFICATION_REQUEST_NEW_CONTACT);
 		}
 
+		
 		getContext().getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
 				QodemeContract.Contacts.addNewContactPushValues(mContact));
 		SyncHelper.requestManualSync();

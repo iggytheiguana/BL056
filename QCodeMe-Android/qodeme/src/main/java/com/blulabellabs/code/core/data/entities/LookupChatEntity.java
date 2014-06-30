@@ -1,9 +1,13 @@
 package com.blulabellabs.code.core.data.entities;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.blulabellabs.code.core.io.model.Message;
 import com.blulabellabs.code.core.io.utils.RestKeyMap;
+import com.blulabellabs.code.utils.Converter;
+import com.google.gson.JsonObject;
 
 /**
  * Created by Alex on 8/21/13.
@@ -19,6 +23,7 @@ public class LookupChatEntity extends ChatEntity {
 	private String latitude;
 	private int is_favorite = 0;
 	private String created = "";
+	private Message[] messages;
 
 	public String getStatus() {
 		return status;
@@ -92,8 +97,31 @@ public class LookupChatEntity extends ChatEntity {
 			number_of_member = Integer.parseInt(jsonObject.getString("number_of_members"));
 			number_of_likes = Integer.parseInt(jsonObject.getString("number_of_likes"));
 
+			JSONArray array = jsonObject.getJSONArray("messages");
+			setMessages(new Message[array.length()]);
+			for (int i = 0; i < array.length(); i++) {
+				JSONObject jsonObject2 = array.getJSONObject(i);
+				getMessages()[i] = new Message();
+				getMessages()[i].chatId = getId();
+				getMessages()[i].created = jsonObject2.getString("created");
+				getMessages()[i].hasPhoto = Integer.parseInt(jsonObject2.getString("has_photo"));
+				getMessages()[i].is_flagged = Integer.parseInt(jsonObject2.getString("is_flagged"));
+				getMessages()[i].latitude = jsonObject2.getString("latitude");
+				getMessages()[i].longitude = jsonObject2.getString("longitude");
+				getMessages()[i].message = jsonObject2.getString("message");
+				getMessages()[i].photoUrl = jsonObject2.getString("photourl");
+				getMessages()[i].qrcode = jsonObject2.getString("from_qrcode");
+				getMessages()[i].replyTo_id = Long.parseLong(jsonObject2.getString("replyto_id"));
+				getMessages()[i].senderName = jsonObject2.getString("sendername");
+				getMessages()[i].state = Integer.parseInt(jsonObject2.getString("state"));
+				getMessages()[i].messageId = Long.parseLong(jsonObject2.getString("id"));
+
+				Long createdLong = Converter.getCrurentTimeFromTimestamp(getMessages()[i].created);
+				getMessages()[i].timeStamp = createdLong;
+			}
+
 		} catch (Exception e) {
-			
+
 		}
 
 		return this;
@@ -122,4 +150,14 @@ public class LookupChatEntity extends ChatEntity {
 	public String getCreated() {
 		return created;
 	}
+
+	public void setMessages(Message[] messages) {
+		this.messages = messages;
+	}
+
+	public Message[] getMessages() {
+		return messages;
+	}
+
+	
 }

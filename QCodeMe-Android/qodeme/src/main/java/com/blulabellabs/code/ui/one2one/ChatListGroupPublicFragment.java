@@ -113,6 +113,22 @@ public class ChatListGroupPublicFragment extends Fragment {
 	// void messageRead(long chatId);
 	// }
 
+	public boolean isLocationFilter() {
+		return isLocationFilter;
+	}
+
+	public void setLocationFilter(boolean isLocationFilter) {
+		this.isLocationFilter = isLocationFilter;
+	}
+
+	public boolean isFavoriteFilter() {
+		return isFavoriteFilter;
+	}
+
+	public void setFavoriteFilter(boolean isFavoriteFilter) {
+		this.isFavoriteFilter = isFavoriteFilter;
+	}
+	
 	public ChatListGroupPublicFragment() {
 		super();
 	}
@@ -1008,6 +1024,25 @@ public class ChatListGroupPublicFragment extends Fragment {
 		try {
 			if (isViewCreated && callback != null && callback.getChatList(chatType) != null) {
 
+
+				if (isFavoriteFilter) {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_star_blue);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_chat_favorite_h);
+					mImgBtnFavoriteFilter.setImageBitmap(bm);
+				}
+				if (isLocationFilter) {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_blue_big);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				} else {
+					Bitmap bm = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_location_gray);
+					mImgBtnLocationFilter.setImageBitmap(bm);
+				}
 				chatLoads = callback.getChatList(chatType);
 				if (chatLoads != null
 						&& QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {

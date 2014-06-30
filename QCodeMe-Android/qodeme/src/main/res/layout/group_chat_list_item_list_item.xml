@@ -244,7 +244,7 @@
             android:focusable="true"
             android:hint="@string/message"
             android:imeOptions="actionDone|actionSend"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textCapSentences"
             android:maxHeight="50dp"
             android:singleLine="true"
             android:visibility="visible" >
