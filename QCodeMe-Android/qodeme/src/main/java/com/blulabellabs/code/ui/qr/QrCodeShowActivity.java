@@ -159,7 +159,7 @@ public class QrCodeShowActivity extends Activity {
 				+ public_name
 				+ "</h2><h3>"
 				+ location
-				+ "</h3><a href=\"code:other/parameter\"> Add Contact </a> <br><br><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
+				+ "</h3><a href=\"code:other/parameter\"> Add Contact </a> <br><hr><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
 
 		Uri screenshotUri = Uri.parse(path);
 		final Intent emailIntent = new Intent(Intent.ACTION_SEND);
