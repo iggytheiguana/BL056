@@ -130,5 +130,10 @@
     <string name="no_description">No Description</string>
     <string name="no_hashtags">No HashTags</string>
     <string name="disconnect_from_user">Disconnect from User</string>
-
+    <string name="more_share">More Sharing Options</string>
+    <string name="email_screen_text">You\'re all set. The above code is your unique identity on Code. Make sure to keep it someplace safe and handy for future use.</string>
+    <string name="email_screen_text_title">Your unique QR Code.</string>
+    <string name="recommended_text">We recommended emailing yourself your code.</string>
+<string name="no_thanks_continue">No thanks, continue</string>
+<string name="email_qr_code">Email QR Code</string>
 </resources>

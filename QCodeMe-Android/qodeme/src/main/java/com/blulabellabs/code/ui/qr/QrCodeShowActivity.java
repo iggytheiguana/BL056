@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -142,12 +143,30 @@ public class QrCodeShowActivity extends Activity {
 			showMessage(getString(R.string.alert_no_access_to_external_storage));
 			return;
 		}
+		String public_name = editTextName.getText().toString();
+		if (public_name.trim().equals(""))
+			public_name = "User";
+		String location = "";
+		try {
+			location = QodemePreferences.getInstance().getLastLocation().getCity();
+		} catch (Exception e) {
+		}
+
+		String data = "<html><body><h1>Contact Request</h1><hr><br><p>"
+				+ public_name
+				+ " would like to add you as a contact. Scan the QR code attached to add the contact and get a conversation started.</p><br><br>"
+				+ "<h2>"
+				+ public_name
+				+ "</h2><h3>"
+				+ location
+				+ "</h3><a href=\"code:other/parameter\"> Add Contact </a> <br><br><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
 
 		Uri screenshotUri = Uri.parse(path);
 		final Intent emailIntent = new Intent(Intent.ACTION_SEND);
 		emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
 		emailIntent.setType("image/png");
+		emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(data));
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
 		startActivity(Intent.createChooser(emailIntent, "Send email using"));
 	}

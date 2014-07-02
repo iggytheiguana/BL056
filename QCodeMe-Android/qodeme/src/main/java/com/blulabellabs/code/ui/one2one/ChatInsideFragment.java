@@ -229,7 +229,10 @@ public class ChatInsideFragment extends Fragment {
 		updateUi();
 		// }
 		// }, 500);
-
+		if (MainActivity.isKeyboardHide){
+			MainActivity.isKeyboardHide = false;
+			Helper.hideKeyboard(getActivity(), mMessageField);
+		}
 	}
 
 	private void initSendMessage() {

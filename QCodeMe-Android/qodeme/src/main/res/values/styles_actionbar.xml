@@ -29,7 +29,6 @@
         <item name="actionModeBackground">@drawable/cab_background_top_actionbar</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_actionbar</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Actionbar</item>
-
         
     </style>
 

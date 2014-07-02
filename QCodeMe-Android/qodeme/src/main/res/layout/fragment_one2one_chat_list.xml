@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_solid"
+    android:paddingTop="?attr/actionBarSize"
     android:orientation="vertical" >
 
     <com.blulabellabs.code.ui.common.ScrollDisabledListView

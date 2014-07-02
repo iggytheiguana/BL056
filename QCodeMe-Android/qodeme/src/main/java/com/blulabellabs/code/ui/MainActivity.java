@@ -42,6 +42,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -69,6 +70,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -79,6 +81,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -91,6 +94,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.blulabellabs.code.Application;
+import com.blulabellabs.code.ApplicationConstants;
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.accounts.GenericAccountService;
 import com.blulabellabs.code.core.data.IntentKey;
@@ -107,7 +111,6 @@ import com.blulabellabs.code.core.io.responses.ChatAddMemberResponse;
 import com.blulabellabs.code.core.io.responses.ChatCreateResponse;
 import com.blulabellabs.code.core.io.responses.ChatLoadResponse;
 import com.blulabellabs.code.core.io.responses.LookupResponse;
-import com.blulabellabs.code.core.io.responses.SetFavoriteResponse;
 import com.blulabellabs.code.core.io.responses.VoidResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
 import com.blulabellabs.code.core.io.utils.RestErrorType;
@@ -145,6 +148,7 @@ import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.LatLonCity;
 import com.blulabellabs.code.utils.MyLocation;
+import com.blulabellabs.code.utils.QrUtils;
 import com.blulabellabs.code.utils.MyLocation.LocationResult;
 import com.blulabellabs.code.utils.NullHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -242,6 +246,7 @@ public class MainActivity extends BaseActivity implements
 	private ChatListGroupFragment privateChatListFragment;
 	private ChatListGroupPublicFragment publicChatListFragment;
 	public HashMap<Long, Integer> messageColorMap = new HashMap<Long, Integer>();
+	Button buttonshare, buttonMore;
 
 	/*
 	 * Animator for Zoom chat view
@@ -285,6 +290,7 @@ public class MainActivity extends BaseActivity implements
 
 	private long chatFromNotification = -1;
 	public ArrayList<Long> refressedChatId = Lists.newArrayList();
+	public static boolean isKeyboardHide = false;
 
 	/**
 	 * Called when the activity is first created.
@@ -446,6 +452,8 @@ public class MainActivity extends BaseActivity implements
 
 			@Override
 			public void onDrawerClosed(View arg0) {
+				buttonshare.setVisibility(View.GONE);
+				buttonMore.setVisibility(View.VISIBLE);
 				refreshContactList();
 				isAddContact = false;
 				isAddMemberOnExistingChat = false;
@@ -476,7 +484,7 @@ public class MainActivity extends BaseActivity implements
 				}
 				if (chatload != null) {
 					Helper.hideKeyboard(MainActivity.this);
-					showOne2OneChatFragment(chatload, true, mViewPager);
+					showOne2OneChatFragment(chatload, true, mViewPager, false);
 
 					mViewPagerMain.setCurrentItem(chatload.type);
 					chatFromNotification = -1;
@@ -525,7 +533,7 @@ public class MainActivity extends BaseActivity implements
 				// Toast.makeText(getActivity(), "" + arg0,
 				// Toast.LENGTH_SHORT).show();
 				chatType = arg0;
-				if(arg0 != 2){
+				if (arg0 != 2) {
 					messageColorMap.clear();
 				}
 				Bitmap oneToone;
@@ -588,7 +596,7 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	@SuppressLint("NewApi")
-	public void showOne2OneChatFragment(Contact c, boolean firstUpdate, View v) {
+	public void showOne2OneChatFragment(Contact c, boolean firstUpdate, View v, boolean isAnim) {
 		// // ChatInsideFragment chatInsideFragment = (ChatInsideFragment)
 		// // getSupportFragmentManager()
 		// // .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
@@ -628,11 +636,17 @@ public class MainActivity extends BaseActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		// }
 		final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
-		expandedImageView.setVisibility(View.VISIBLE);
+		// expandedImageView.setVisibility(View.VISIBLE);
 		if (fullChatIndex == 0)
 			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		mViewPager.setCurrentItem(fullChatIndex);
 		currentChatId = c.chatId;
+
+		if (isAnim)
+			zoomImageFromThumb(v, 0);
+		else
+			expandedImageView.setVisibility(View.VISIBLE);
+
 		// zoomImageFromThumb(v, 0);
 		// Animation animator = AnimationUtils.loadAnimation(this,
 		// R.anim.zoom_in);
@@ -647,7 +661,7 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	@SuppressLint("NewApi")
-	public void showOne2OneChatFragment(ChatLoad c, boolean firstUpdate, View view) {
+	public void showOne2OneChatFragment(ChatLoad c, boolean firstUpdate, View view, boolean isAnim) {
 		// // ChatInsideFragment chatInsideFragment = (ChatInsideFragment)
 		// // getSupportFragmentManager()
 		// // .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
@@ -688,7 +702,7 @@ public class MainActivity extends BaseActivity implements
 			mPagerAdapter = new FullChatListAdapter(getSupportFragmentManager(), c, firstUpdate);
 			mViewPager.setAdapter(mPagerAdapter);
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
-			expandedImageView.setVisibility(View.VISIBLE);
+			// expandedImageView.setVisibility(View.VISIBLE);
 			// ExpandAnimation animation = new
 			// ExpandAnimation(expandedImageView,
 			// 200);
@@ -699,14 +713,17 @@ public class MainActivity extends BaseActivity implements
 			else
 				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 			mViewPager.setCurrentItem(fullChatIndex);
+
+			if (isAnim)
+				zoomImageFromThumb(view, 0);
+			else
+				expandedImageView.setVisibility(View.VISIBLE);
 			// mViewPager.setVisibility(View.GONE);
 			// zoomImageFromThumb(view, 0);
 			// Helper.hideKeyboard(MainActivity.this);
 		} catch (Exception e) {
 		}
 	}
-
-
 
 	private void initActionBar() {
 		mActionBar = getSupportActionBar();
@@ -903,9 +920,11 @@ public class MainActivity extends BaseActivity implements
 								one2OneChatListFragment.setLocationFilter(false);
 								one2OneChatListFragment.setFavoriteFilter(false);
 							} else if (chatType == 1) {
+								privateSearchString = "";
 								privateChatListFragment.setLocationFilter(false);
 								privateChatListFragment.setFavoriteFilter(false);
 							} else if (chatType == 2) {
+								publicSearchString = "";
 								publicChatListFragment.setLocationFilter(false);
 								publicChatListFragment.setFavoriteFilter(false);
 							}
@@ -1634,12 +1653,12 @@ public class MainActivity extends BaseActivity implements
 						mDrawerLayout.closeDrawer(mContactListView);
 						mViewPagerMain.setCurrentItem(0);
 						Helper.hideKeyboard(MainActivity.this);
-						showOne2OneChatFragment(ce, true, mViewPager);
+						showOne2OneChatFragment(ce, true, mViewPager, false);
 					} else if (ce.state == QodemeContract.Contacts.State.APPRUVED) {
 						mDrawerLayout.closeDrawer(mContactListView);
 						mViewPagerMain.setCurrentItem(0);
 						Helper.hideKeyboard(MainActivity.this);
-						showOne2OneChatFragment(ce, true, mViewPager);
+						showOne2OneChatFragment(ce, true, mViewPager, false);
 					} else if (ce.state == QodemeContract.Contacts.State.INVITATION_SENT) {
 						Intent i = new Intent(getContext(), ContactDetailsActivity.class);
 						i.putExtra(QodemeContract.Contacts._ID, ce._id);
@@ -1682,14 +1701,24 @@ public class MainActivity extends BaseActivity implements
 		});
 
 		View moreBtnView = getLayoutInflater().inflate(R.layout.more_item_header, null);
-		Button button = (Button) moreBtnView.findViewById(R.id.btn_more);
-		button.setOnClickListener(new View.OnClickListener() {
+		buttonMore = (Button) moreBtnView.findViewById(R.id.btn_more);
+		buttonMore.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, MoreOptionActivity.class);
 				startActivityForResult(intent, REQUEST_ACTIVITY_MORE);
 				mDrawerLayout.closeDrawers();
+			}
+		});
+
+		buttonshare = (Button) moreBtnView.findViewById(R.id.btn_more_share);
+		buttonshare.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mDrawerLayout.closeDrawers();
+				email();
 			}
 		});
 
@@ -1745,6 +1774,7 @@ public class MainActivity extends BaseActivity implements
 						});
 						tvHeader.setText("Contacts");
 						if (isAddContact) {
+
 							addbtn.setVisibility(View.VISIBLE);
 							addbtn.setOnClickListener(new View.OnClickListener() {
 
@@ -2238,7 +2268,7 @@ public class MainActivity extends BaseActivity implements
 			mHandler.sendEmptyMessage(2);
 		else {
 			Helper.hideKeyboard(MainActivity.this);
-			showOne2OneChatFragment(contact, true, mViewPager);
+			showOne2OneChatFragment(contact, true, mViewPager, false);
 			chatFromNotification = -1;
 		}
 
@@ -2402,7 +2432,7 @@ public class MainActivity extends BaseActivity implements
 						// final String fName = chatName;
 
 						mContactInfoUpdated = false;
-						showOne2OneChatFragment(c, false, mViewPager);
+						showOne2OneChatFragment(c, false, mViewPager, false);
 
 					}
 					one2OneChatInsideFragment.updateUi();
@@ -2430,7 +2460,7 @@ public class MainActivity extends BaseActivity implements
 						long chatId = groupChatInsideFragment.getChatId();
 						ChatLoad chatLoad1 = getChatLoad(chatId);
 
-						showOne2OneChatFragment(chatLoad1, false, mViewPager);
+						showOne2OneChatFragment(chatLoad1, false, mViewPager, false);
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
@@ -2531,7 +2561,7 @@ public class MainActivity extends BaseActivity implements
 		// // chat view
 		// }
 		if (!getActionBar().isShowing()) {
-			//messageColorMap.clear();
+			// messageColorMap.clear();
 			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 			getActionBar().show();
 			fullChatIndex = 0;
@@ -2858,17 +2888,31 @@ public class MainActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void showChat(Contact c, boolean firstUpdate, View view) {
+	public void showChat(final Contact c, final boolean firstUpdate, final View view) {
 		mContactInfoUpdated = false;
+		isKeyboardHide = true;
 		Helper.hideKeyboard(MainActivity.this);
-		showOne2OneChatFragment(c, firstUpdate, view);
+		new Handler().post(new Runnable() {
+
+			@Override
+			public void run() {
+				showOne2OneChatFragment(c, firstUpdate, view, true);
+			}
+		});
 	}
 
 	@Override
-	public void showChat(ChatLoad c, boolean firstUpdate, View view) {
+	public void showChat(final ChatLoad c, final boolean firstUpdate, final View view) {
 		mContactInfoUpdated = false;
+		isKeyboardHide = true;
 		Helper.hideKeyboard(MainActivity.this);
-		showOne2OneChatFragment(c, firstUpdate, view);
+		new Handler().post(new Runnable() {
+
+			@Override
+			public void run() {
+				showOne2OneChatFragment(c, firstUpdate, view, true);
+			}
+		});
 	}
 
 	@Override
@@ -3401,6 +3445,8 @@ public class MainActivity extends BaseActivity implements
 		} else {
 			isAddContact = false;
 		}
+		buttonshare.setVisibility(View.VISIBLE);
+		buttonMore.setVisibility(View.GONE);
 		refreshContactList();
 		mContactListAdapter.notifyDataSetChanged();
 		mDrawerLayout.openDrawer(mContactListView);
@@ -4041,4 +4087,55 @@ public class MainActivity extends BaseActivity implements
 				mHandler.sendEmptyMessage(2);
 		}
 	};
+
+	private void email() {
+		ChatLoad chatLoad = getChatLoad(currentChatId);
+		if (chatLoad != null) {
+
+			Bitmap mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(chatLoad.qrcode) ? "Qr Code"
+					: ApplicationConstants.QR_CODE_CONTACT_PREFIX + chatLoad.qrcode), 500, 500,
+					Color.BLACK, Color.WHITE);
+			// Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),
+			// R.drawable.bg_qr_temp);
+			String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap,
+					"title", null);
+			if (path == null) {
+				showMessage(getString(R.string.alert_no_access_to_external_storage));
+				return;
+			}
+
+			List<Message> messages = getChatMessages(chatLoad.chatId);
+			int total = 0;
+			int photo = 0;
+			if (messages != null) {
+				total = messages.size();
+				for (Message me : messages)
+					if (me.hasPhoto == 1)
+						photo++;
+			}
+			int member = chatLoad.number_of_members == 0 ? 1 : chatLoad.number_of_members;
+
+			String data = "<html><body><h1>Join the Conversation</h1><hr><br><p>The conversation "
+					+ chatLoad.title
+					+ " has been shared with you. Scan the attached code to join the conversation.</p><br><br><h2>"
+					+ chatLoad.title
+					+ "</h2><br><p>"
+					+ member
+					+ " members, "
+					+ total
+					+ " messages, "
+					+ photo
+					+ " photos</p>"
+					+ "<a href=\"code:other/parameter\"> View Conversation </a> <br><br><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
+
+			Uri screenshotUri = Uri.parse(path);
+			final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+			emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+			emailIntent.setType("image/png");
+			emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(data));
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
+			startActivity(Intent.createChooser(emailIntent, "Send email using"));
+		}
+	}
 }

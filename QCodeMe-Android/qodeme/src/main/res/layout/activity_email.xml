@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_main" >
+
+    <Button
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cancel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/selector_button_blue"
+        android:enabled="false"
+        android:focusable="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:paddingTop="10dp"
+        android:text="@string/email_qr_code"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@null"
+        android:focusable="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:paddingTop="10dp"
+        android:text="@string/no_thanks_continue"
+        android:textColor="@color/signup_text_selector"
+        android:textSize="18sp" />
+
+    <ImageButton
+        android:id="@+id/qr_code"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linear_clear_qr"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:contentDescription=""
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_dialog_dialer" />
+
+    <!-- <com.blulabellabs.code.ui.common.TextViewRegular -->
+    <!-- android:id="@+id/textView_scanQRlabel" -->
+    <!-- style="@style/TextView.Message.Text" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_above="@+id/layout_password" -->
+    <!-- android:layout_marginBottom="20dp" -->
+    <!-- android:layout_marginLeft="50dp" -->
+    <!-- android:layout_marginRight="50dp" -->
+    <!-- android:layout_marginTop="20dp" -->
+    <!-- android:gravity="center_horizontal" -->
+    <!-- android:paddingBottom="5dp" -->
+    <!-- android:paddingLeft="5dp" -->
+    <!-- android:paddingRight="5dp" -->
+    <!-- android:paddingTop="5dp" -->
+    <!-- android:text="Item" -->
+    <!-- android:textColor="@android:color/black" -->
+    <!-- android:textSize="18sp" -->
+    <!-- android:visibility="invisible" /> -->
+
+    <LinearLayout
+        android:id="@+id/linear_clear_qr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_password"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <com.blulabellabs.code.ui.common.TextViewMedium
+            android:id="@+id/textView_not_you"
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/email_screen_text_title"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            android:id="@+id/textView_clearQR"
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/email_screen_text"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- <com.blulabellabs.code.ui.common.TextViewMedium -->
+    <!-- android:id="@+id/textView_emptyQRText" -->
+    <!-- style="@style/TextView.Message.Text" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_above="@+id/layout_password" -->
+    <!-- android:layout_marginBottom="20dp" -->
+    <!-- android:layout_marginLeft="20dp" -->
+    <!-- android:layout_marginRight="20dp" -->
+    <!-- android:layout_marginTop="10dp" -->
+    <!-- android:gravity="center_horizontal" -->
+    <!-- android:paddingBottom="5dp" -->
+    <!-- android:paddingLeft="5dp" -->
+    <!-- android:paddingRight="5dp" -->
+    <!-- android:paddingTop="5dp" -->
+    <!-- android:visibility="gone" -->
+    <!-- android:text="@string/login_text" -->
+    <!-- android:textColor="@android:color/white" -->
+    <!-- android:textSize="18sp" /> -->
+
+    <LinearLayout
+        android:id="@+id/layout_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/email"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical" >
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/recommended_text"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+        <!-- <EditText -->
+        <!-- android:id="@+id/password" -->
+        <!-- style="@style/EditText.Password.Signin" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:background="@drawable/bg_signin_btn" -->
+        <!-- android:hint="@string/enter_password" -->
+        <!-- android:nextFocusDown="@+id/signin" -->
+        <!-- android:textColor="@android:color/white" /> -->
+
+        <com.blulabellabs.code.ui.common.TextViewItalic
+            android:id="@+id/textView_errorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:paddingLeft="10dp"
+            android:text="@string/password_must_match"
+            android:textColor="@color/red_dark"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</RelativeLayout>

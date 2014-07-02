@@ -1,10 +1,13 @@
 package com.blulabellabs.code.ui.one2one;
 
+import java.lang.reflect.Array;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -109,6 +112,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public ImageView textViewUserTyping;
 	private View mViewTypedMessage;
 	CustomDotView mTypedMessageDot;
+	boolean isCancel = false;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -293,7 +297,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			// Helper.hideKeyboard(getContext(), getMessageEdit());
+			isCancel = true;
+			Helper.hideKeyboard(getContext(), getMessageEdit());
 			mCallback.onDoubleTap(getView(), mPosition, mChatLoad);
 			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
@@ -303,7 +308,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 	public void showMessage() {
 		getSendMessage().setVisibility(View.VISIBLE);
-		getMessageEdit().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+		getMessageEdit().setInputType(
+				InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -380,8 +386,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 		getMessageEdit().post(new Runnable() {
 			@Override
 			public void run() {
-				getMessageEdit().requestFocus();
-				Helper.showKeyboard(getContext(), getMessageEdit());
+				if (!isCancel) {
+					getMessageEdit().requestFocus();
+					Helper.showKeyboard(getContext(), getMessageEdit());
+				}
 			}
 		});
 
@@ -481,6 +489,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		getTitleEditText().setTypeface(Application.typefaceRegular);
 		getShareChatBtn().setEnabled(true);
 		getMessageTypedView().setVisibility(GONE);
+		isCancel = false;
 		try {
 			mChatLoad = t;
 
@@ -645,24 +654,77 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 							String title = v.getText().toString().trim();
 
-							int updated = mChatLoad.updated;
-							getContext().getContentResolver().update(
-									QodemeContract.Chats.CONTENT_URI,
-									QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "",
-											"", updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
-									DbUtils.getWhereArgsForId(mChatLoad.chatId));
-							// setChatInfo(chatload.chatId, title, null,
-							// null,
-							// null,
-							// null, null);
-							mChatLoad.title = title;
-							setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
-									mChatLoad.description, mChatLoad.status, mChatLoad.is_locked,
-									mChatLoad.title, mChatLoad.latitude, mChatLoad.longitude);
+							if (!title.trim().equals("")) {
 
-							Helper.hideKeyboard(getContext(), getTitleEditText());
-							// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
-							return true;
+								int updated = mChatLoad.updated;
+
+								try {
+									ArrayList<String> tagsList = findTagFromTitle(title);
+									
+									if (mChatLoad.tag != null && !mChatLoad.tag.trim().equals("")) {
+										String[] chatTag = mChatLoad.tag.split(",");
+										ArrayList<String> duplicateTag = Lists.newArrayList();
+										for (String t : tagsList) {
+											boolean isAvail = false;
+											for (int i = 0; i < chatTag.length; i++) {
+												if (chatTag[i].equals(t)) {
+													isAvail = true;
+													break;
+												}
+											}
+											if (isAvail)
+												duplicateTag.add(t);
+										}
+										tagsList.removeAll(duplicateTag);
+										for(int i=0; i<chatTag.length; i++){
+											tagsList.add(chatTag[i]);
+										}
+									}
+									String tags = "";
+									for (String tag : tagsList) {
+										tags += tag + ",";
+									}
+
+									if (tags.endsWith(",")) {
+										tags = tags.substring(0, tags.length() - 1);
+									}
+									mChatLoad.tag = tags;
+									// tags = mChatLoad.tag;
+									// if(tags.trim().startsWith(",")){
+									// tags = tags.trim();
+									// tags = tags.substring(1,tags.length());
+									// mChatLoad.tag = tags;
+									// }
+
+									getContext().getContentResolver().update(
+											QodemeContract.Chats.CONTENT_URI,
+											QodemeContract.Chats.updateChatInfoValues(title, -1,
+													"", 0, "", tags, updated, 5),
+											QodemeContract.Chats.CHAT_ID + "=?",
+											DbUtils.getWhereArgsForId(mChatLoad.chatId));
+								} catch (Exception e) {
+								}
+
+								getContext().getContentResolver().update(
+										QodemeContract.Chats.CONTENT_URI,
+										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
+												"", "", updated, 0),
+										QodemeContract.Chats.CHAT_ID + "=?",
+										DbUtils.getWhereArgsForId(mChatLoad.chatId));
+								// setChatInfo(chatload.chatId, title, null,
+								// null,
+								// null,
+								// null, null);
+								mChatLoad.title = title;
+								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
+										mChatLoad.description, mChatLoad.status,
+										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
+										mChatLoad.longitude);
+
+								Helper.hideKeyboard(getContext(), getTitleEditText());
+								// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
+								return true;
+							}
 						}
 						return false;
 					}
@@ -721,7 +783,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 				}
 			} else
 				listData = mCallback.getMessages(mChatLoad.chatId);
-//			listData = mCallback.getMessages(mChatLoad.chatId);
+			// listData = mCallback.getMessages(mChatLoad.chatId);
 			boolean isContainUnread = false;
 			temp.clear();
 			listData = sortMessages(listData);
@@ -1000,6 +1062,51 @@ public class ChatListGroupItem extends RelativeLayout implements
 			});
 		} catch (Exception e) {
 		}
+	}
+
+	private ArrayList<String> findTagFromTitle(String c) {
+
+		StringBuilder stringBuilder = new StringBuilder();
+		BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
+		//
+		// Set the text string to be scanned.
+		//
+		bi.setText(c);
+		//
+		// Iterates the boundary / breaks
+		//
+		// System.out.println("Iterates each word: ");
+		// int count = 0;
+		ArrayList<String> taglist = Lists.newArrayList();
+		int lastIndex = bi.first();
+		while (lastIndex != BreakIterator.DONE) {
+			int firstIndex = lastIndex;
+			lastIndex = bi.next();
+
+			if (lastIndex != BreakIterator.DONE && Character.isLetterOrDigit(c.charAt(firstIndex))) {
+				String word = c.substring(firstIndex, lastIndex);
+				String preWord = "";
+				if (firstIndex > 0)
+					preWord = c.substring(firstIndex - 1, firstIndex);
+				else
+					preWord = c.substring(firstIndex, firstIndex + 1);
+				// word = "#" + word + ",";
+				if (preWord.startsWith("#")) {
+					String dd = "#" + word;
+					word = "#" + word + ",";
+					stringBuilder.append(word);
+
+					taglist.add(dd);
+				}
+				// System.out.println("'" + word + "' found at (" + firstIndex +
+				// ", " + lastIndex
+				// + ")");
+
+			}
+		}
+		// return stringBuilder.toString();
+		return taglist;
+		// System.out.println("final " + stringBuilder.toString());
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,

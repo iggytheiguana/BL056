@@ -52,6 +52,7 @@ import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragmentCallback;
 import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Fonts;
+import com.blulabellabs.code.utils.Helper;
 import com.google.android.gms.internal.ac;
 import com.google.common.collect.Lists;
 
@@ -631,9 +632,10 @@ public class ChatListGroupFragment extends Fragment {
 					}
 
 					public void onDoubleTap(View view, int position, Contact c) {
-						InputMethodManager imm = (InputMethodManager) getActivity()
-								.getSystemService(Activity.INPUT_METHOD_SERVICE);
-						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+//						InputMethodManager imm = (InputMethodManager) getActivity()
+//								.getSystemService(Activity.INPUT_METHOD_SERVICE);
+//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+						Helper.hideKeyboard(view.getContext(), mEditTextSearch);
 						callback.showChat(c, true, view);
 					}
 
@@ -703,9 +705,10 @@ public class ChatListGroupFragment extends Fragment {
 
 					@Override
 					public void onDoubleTap(View view, int position, ChatLoad c) {
-						InputMethodManager imm = (InputMethodManager) getActivity()
-								.getSystemService(Activity.INPUT_METHOD_SERVICE);
-						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+//						InputMethodManager imm = (InputMethodManager) getActivity()
+//								.getSystemService(Activity.INPUT_METHOD_SERVICE);
+//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+						Helper.hideKeyboard(view.getContext(), mEditTextSearch);
 						callback.showChat(c, true, view);
 
 					}

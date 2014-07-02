@@ -254,34 +254,64 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					String title = v.getText().toString().trim();
 
 					int updated = getChatload().updated;
-					
+
 					try {
-						String tags = findTagFromTitle(title);
+						// String tags = findTagFromTitle(title);
+						// if (tags.endsWith(",")) {
+						// tags = tags.substring(0, tags.length() - 1);
+						// }
+						//
+						// getChatload().tag = getChatload().tag != null ?
+						// getChatload().tag + ","
+						// + tags : tags;
+						// tags = getChatload().tag;
+						ArrayList<String> tagsList = findTagFromTitle(title);
+
+						if (getChatload().tag != null && !getChatload().tag.trim().equals("")) {
+							String[] chatTag = getChatload().tag.split(",");
+							ArrayList<String> duplicateTag = Lists.newArrayList();
+							for (String t : tagsList) {
+								boolean isAvail = false;
+								for (int i = 0; i < chatTag.length; i++) {
+									if (chatTag[i].equals(t)) {
+										isAvail = true;
+										break;
+									}
+								}
+								if (isAvail)
+									duplicateTag.add(t);
+							}
+							tagsList.removeAll(duplicateTag);
+							for (int i = 0; i < chatTag.length; i++) {
+								tagsList.add(chatTag[i]);
+							}
+						}
+						String tags = "";
+						for (String tag : tagsList) {
+							tags += tag + ",";
+						}
+
 						if (tags.endsWith(",")) {
 							tags = tags.substring(0, tags.length() - 1);
 						}
+						getChatload().tag = tags;
 
-						getChatload().tag = getChatload().tag != null ? getChatload().tag + ","
-								+ tags : tags;
-						tags = getChatload().tag;
-						
 						getActivity().getContentResolver().update(
 								QodemeContract.Chats.CONTENT_URI,
-								QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "", tags,
-										updated, 5), QodemeContract.Chats.CHAT_ID + "=?",
+								QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "",
+										tags, updated, 5), QodemeContract.Chats.CHAT_ID + "=?",
 								DbUtils.getWhereArgsForId(getChatload().chatId));
 					} catch (Exception e) {
 					}
 
 					mTextViewGroupTitle.setText(title);
 
-					
 					getActivity().getContentResolver().update(
 							QodemeContract.Chats.CONTENT_URI,
 							QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0, "", "",
 									updated, 0), QodemeContract.Chats.CHAT_ID + "=?",
 							DbUtils.getWhereArgsForId(getChatload().chatId));
-					
+
 					// setChatInfo(chatload.chatId, title, null, null, null,
 					// null, null);
 					getChatload().title = title;
@@ -473,6 +503,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 									chatLoad.number_of_likes);
 							contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
 									chatLoad.number_of_members);
+							contentValues.put(QodemeContract.Chats.CHAT_IS_FAVORITE,
+									chatLoad.is_favorite);
 
 							getActivity().getContentResolver().update(
 									QodemeContract.Chats.CONTENT_URI, contentValues,
@@ -596,7 +628,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		}
 	}
 
-	private String findTagFromTitle(String c) {
+	private ArrayList<String> findTagFromTitle(String c) {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
@@ -609,6 +641,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		//
 		// System.out.println("Iterates each word: ");
 		// int count = 0;
+		ArrayList<String> taglist = Lists.newArrayList();
 		int lastIndex = bi.first();
 		while (lastIndex != BreakIterator.DONE) {
 			int firstIndex = lastIndex;
@@ -623,8 +656,11 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					preWord = c.substring(firstIndex, firstIndex + 1);
 				// word = "#" + word + ",";
 				if (preWord.startsWith("#")) {
+					String dd = "#" + word;
 					word = "#" + word + ",";
 					stringBuilder.append(word);
+
+					taglist.add(dd);
 				}
 				// System.out.println("'" + word + "' found at (" + firstIndex +
 				// ", " + lastIndex
@@ -632,7 +668,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 			}
 		}
-		return stringBuilder.toString();
+		// return stringBuilder.toString();
+		return taglist;
 		// System.out.println("final " + stringBuilder.toString());
 	}
 
@@ -1022,7 +1059,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				mRelativeLayoutSetDesc.setVisibility(View.GONE);
 				break;
 			case R.id.btnDelete:
-				QodemePreferences.getInstance().setNewPublicGroupChatId(-1);
+				QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
 				deleteContact();
 				break;
 			case R.id.btnShare:
@@ -1247,6 +1284,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 	}
 
 	private void deleteContact() {
+		getActivity().getContentResolver().delete(QodemeContract.Chats.CONTENT_URI,
+				QodemeContract.Chats.CHAT_ID + "=" + String.valueOf(getChatload().chatId), null);
 		RestAsyncHelper.getInstance().deleteChat(getChatload().chatId,
 				new RestListener<DeleteChatResponse>() {
 

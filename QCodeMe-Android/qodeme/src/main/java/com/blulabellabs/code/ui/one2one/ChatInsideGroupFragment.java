@@ -346,7 +346,10 @@ public class ChatInsideGroupFragment extends Fragment {
 			});
 
 		}
-
+		if (MainActivity.isKeyboardHide){
+			MainActivity.isKeyboardHide = false;
+			Helper.hideKeyboard(getActivity(), mMessageField);
+		}
 	}
 
 	public void setChatInfo(long chatId, String title, Integer color, String tag, String desc,
@@ -373,7 +376,8 @@ public class ChatInsideGroupFragment extends Fragment {
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
 		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
 
-		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+				| InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override

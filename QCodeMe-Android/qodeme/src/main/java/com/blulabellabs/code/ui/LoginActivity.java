@@ -174,6 +174,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 				mQrCodeText = data.getStringExtra(IntentKey.QR_CODE);
 				QodemePreferences.getInstance().setQrcode(mQrCodeText);
 				refreshQrCode();
+				startActivity(new Intent(this, EmailActivity.class));
+				finish();
 			} else if (requestCode == REQUEST_ACTIVITY_SCAN_QR_CODE) {
 				mQrCodeText = data.getStringExtra(IntentKey.QR_CODE);
 				refreshQrCode();

@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.blulabellabs.code.Application;
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.data.IntentKey;
+import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.responses.AccountCreateResponse;
 import com.blulabellabs.code.core.io.utils.RestError;
@@ -97,6 +98,7 @@ public class RegistrationActivity extends Activity {
 						new RestListener<AccountCreateResponse>() {
 							@Override
 							public void onResponse(AccountCreateResponse response) {
+								QodemePreferences.getInstance().setPassword(mPassword1.getText().toString());
 								Intent i = new Intent();
 								i.putExtra(IntentKey.QR_CODE, response.getQrcode());
 								setResult(RESULT_OK, i);
