@@ -459,7 +459,7 @@ public class ChatListSubItem extends RelativeLayout implements
 					public void onClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
 
-						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
+						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1 && nextMessage!= null)
 							initSendMessage();
 					}
 				});
@@ -503,8 +503,10 @@ public class ChatListSubItem extends RelativeLayout implements
 					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
 					// getDate().setDotColor(
 					// context.getResources().getColor(R.color.text_message_sent));
-					if (chatType == 0)
+					if (chatType == 0){
 						getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
+						getMessage().setTextColor(Color.GRAY);
+					}
 					else
 						getDate().setDotColor(Color.BLACK);
 					// getDate().setOutLine(true);
@@ -686,7 +688,7 @@ public class ChatListSubItem extends RelativeLayout implements
 			@Override
 			public void onClick(View v) {
 				getContext().getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
-						QodemeContract.Contacts.addNewContactValues(message.qrcode));
+						QodemeContract.Contacts.addNewContactValues(message.qrcode,message.senderName));
 				SyncHelper.requestManualSync();
 				popupWindow.dismiss();
 			}

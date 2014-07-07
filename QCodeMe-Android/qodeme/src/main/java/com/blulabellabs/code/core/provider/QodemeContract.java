@@ -236,18 +236,18 @@ public class QodemeContract {
 			return uri.getPathSegments().get(1);
 		}
 
-		public static ContentValues addNewContactValues(String qrCode) {
+		public static ContentValues addNewContactValues(String qrCode, String title) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.NEW | Sync.UPDATED);
 			contentValues.put(CONTACT_STATE, State.INVITATION_SENT);
 			contentValues.put(CONTACT_QRCODE, qrCode);
-			contentValues.put(CONTACT_TITLE, DEFAULT_NAME);
+			contentValues.put(CONTACT_TITLE, title);
 			contentValues.put(CONTACT_COLOR, RandomColorGenerator.getInstance().nextColor());
 
-			String publicName = "";
-			if (QodemePreferences.getInstance().isPublicNameChecked())
-				publicName = QodemePreferences.getInstance().getPublicName();
-			contentValues.put(CONTACT_PUBLIC_NAME, publicName);
+//			String publicName = "";
+//			if (QodemePreferences.getInstance().isPublicNameChecked())
+//				publicName = QodemePreferences.getInstance().getPublicName();
+			contentValues.put(CONTACT_PUBLIC_NAME, title);
 
 			String location = "";
 			// if (QodemePreferences.getInstance().isSaveLocationDateChecked()){
@@ -479,7 +479,7 @@ public class QodemeContract {
 		}
 
 		public static ContentValues addNewChatValues(long chatId, int type, String qrCode,
-				String admin, double latitude, double longitude) {
+				String admin, double latitude, double longitude, String title) {
 			ContentValues contentValues = new ContentValues();
 			contentValues.put(SyncColumns.UPDATED, Sync.UPDATED);
 			contentValues.put(Chats.CHAT_ID, chatId);
@@ -493,7 +493,7 @@ public class QodemeContract {
 			contentValues.put(Chats.CHAT_NUMBER_OF_MEMBER, 1);
 			contentValues.put(Chats.CHAT_STATUS, "");
 			contentValues.put(Chats.CHAT_TAGS, "");
-			contentValues.put(Chats.CHAT_TITLE, "");
+			contentValues.put(Chats.CHAT_TITLE, title);
 			contentValues.put(Chats.CHAT_ADMIN_QRCODE, admin);
 			contentValues.put(Chats.CHAT_CREATED_DATE, Converter.getCurrentGtmTimestampString());
 			// String location = "";

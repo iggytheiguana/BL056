@@ -785,6 +785,12 @@ public class ChatListGroupFragment extends Fragment {
 					}
 
 				}
+				if(firstVisibleItem == 0){
+					mLinearLayoutSearch.setAlpha(1f);
+					mLinearLayoutSearch.setVisibility(View.VISIBLE);
+//					mLinearLayoutSearch.animate().alpha(1f).setDuration(0)
+//							.setListener(null);
+				}
 				lastFirstvisibleItem = firstVisibleItem;
 
 				// // what is the bottom iten that is visible
@@ -848,6 +854,11 @@ public class ChatListGroupFragment extends Fragment {
 			} 
 //			else {
 				if (!isLocationFilter && !isFavoriteFilter) {
+					MainActivity activity = (MainActivity) callback;
+					ChatLoad chatLoad = activity.newChatCreated.get(1);
+					if(chatLoad != null){
+						chatLoads.add(0, chatLoad);
+					}
 					mListAdapter.clear();
 					mListAdapter.addAll(searchChats(searchString));
 				} else {
@@ -867,6 +878,11 @@ public class ChatListGroupFragment extends Fragment {
 
 							Collections.sort(temp, new CustomComparator());
 							mListAdapter.clear();
+							MainActivity activity = (MainActivity) callback;
+							ChatLoad chatLoad = activity.newChatCreated.get(1);
+							if(chatLoad != null){
+								chatLoads.add(0, chatLoad);
+							}
 							mListAdapter.addAll(temp);
 						} else if (isFavoriteFilter) {
 							List<ChatLoad> temp = Lists.newArrayList();
@@ -876,7 +892,11 @@ public class ChatListGroupFragment extends Fragment {
 									temp.add(c);
 								}
 							}
-
+							MainActivity activity = (MainActivity) callback;
+							ChatLoad chatLoad = activity.newChatCreated.get(1);
+							if(chatLoad != null){
+								chatLoads.add(0, chatLoad);
+							}
 							// Collections.sort(temp, new CustomComparator());
 							mListAdapter.clear();
 							mListAdapter.addAll(temp);

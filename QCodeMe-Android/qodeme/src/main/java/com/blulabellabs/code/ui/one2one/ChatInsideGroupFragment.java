@@ -10,17 +10,12 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,8 +32,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
@@ -47,8 +43,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.blulabellabs.code.ApplicationConstants;
 import com.blulabellabs.code.R;
@@ -70,13 +66,11 @@ import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.ExtendedGroupListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
-import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Longs;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -422,6 +416,14 @@ public class ChatInsideGroupFragment extends Fragment {
 					Log.d("CHATINSIDE", "user stopped typing");
 					sendUserStoppedTypingMessage();
 				}
+			}
+		});
+		mMessageField.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				Helper.showKeyboard(getActivity(), mMessageField);
+				return false;
 			}
 		});
 
@@ -993,6 +995,7 @@ public class ChatInsideGroupFragment extends Fragment {
 					for (int i = 0; i < getChatLoad().messages.length; i++) {
 						listData.add(getChatLoad().messages[i]);
 					}
+					listData = sortMessages(listData);
 					mListAdapter.addAll(listData);
 				}
 			} else
@@ -1006,6 +1009,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 			mName.setText(chatLoad.title);
 			mStatus.setText(chatLoad.status);
+			
 			// mName.setTextColor(getChatColor());
 
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
@@ -1070,7 +1074,9 @@ public class ChatInsideGroupFragment extends Fragment {
 				mSendButton.setVisibility(View.INVISIBLE);
 				mBtnImageSendBottom.setVisibility(View.INVISIBLE);
 				mMessageField.setVisibility(View.INVISIBLE);
+				
 			} else {
+				
 				mBtnImageSend.setVisibility(View.VISIBLE);
 				mSendButton.setVisibility(View.VISIBLE);
 				mBtnImageSendBottom.setVisibility(View.VISIBLE);
@@ -1086,6 +1092,13 @@ public class ChatInsideGroupFragment extends Fragment {
 				mImgFavorite.setClickable(false);
 			}
 
+			if(chatLoad == null || chatLoad.status== null || chatLoad.status.trim().equals("")){
+				mStatus.setVisibility(View.GONE);
+				getView().findViewById(R.id.img_statusline).setVisibility(View.GONE);
+			}else{
+				mStatus.setVisibility(View.VISIBLE);
+				getView().findViewById(R.id.img_statusline).setVisibility(View.VISIBLE);
+			}
 		}
 	}
 
@@ -1095,6 +1108,10 @@ public class ChatInsideGroupFragment extends Fragment {
 			Collections.sort(messages, new Comparator<Message>() {
 				@Override
 				public int compare(Message u1, Message u2) {
+					Long createdLong = Converter.getCrurentTimeFromTimestamp(u1.created);
+					u1.timeStamp = createdLong;
+					Long createdLong1 = Converter.getCrurentTimeFromTimestamp(u2.created);
+					u2.timeStamp = createdLong1;
 					return u1.timeStamp.compareTo(u2.timeStamp);
 				}
 			});

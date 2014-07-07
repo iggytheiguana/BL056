@@ -1,5 +1,7 @@
 package com.blulabellabs.code.ui;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -204,9 +206,25 @@ public class EmailActivity extends Activity implements OnClickListener {
 //		mPassword.setTypeface(Application.typefaceMediumItalic);
 	}
 	private void email(String qrCode) {
-		Bitmap mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
-				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500,
-				Color.BLACK, Color.WHITE);
+//		Bitmap mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
+//				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500,
+//				Color.BLACK, Color.WHITE);
+		
+		String public_name = "";
+		if (public_name.trim().equals(""))
+			public_name = "User";
+		
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put(IntentKey.QR_CODE, qrCode);
+			jsonObject.put(IntentKey.CHAT_TYPE, 0);
+			jsonObject.put(IntentKey.CONTACT_NAME, public_name);
+			jsonObject.put(IntentKey.CHAT_ID, -1);
+		} catch (Exception e) {
+		}
+		Bitmap mBitmap = QrUtils.encodeQrCode(( ApplicationConstants.QR_CODE_CONTACT_PREFIX + jsonObject), 500, 500, Color.BLACK,
+				Color.WHITE);
+		
 		String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "title",
 				null);
 		if (path == null) {

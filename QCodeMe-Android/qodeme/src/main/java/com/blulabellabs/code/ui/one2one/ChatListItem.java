@@ -9,19 +9,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,14 +38,12 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.ChatLoad;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.io.model.Message;
-import com.blulabellabs.code.core.provider.QodemeContract;
-import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
+import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
 import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExListAdapter.ViewHolder;
-import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
@@ -127,6 +124,7 @@ public class ChatListItem extends RelativeLayout implements
 		final int oponentColor = mContact.color == 0 ? Color.GRAY : mContact.color;
 		final int myColor = context.getResources().getColor(R.color.text_chat_name);
 		getName().setText(mContact.title != null ? mContact.title : "User");
+
 		getName().setTextColor(oponentColor);
 		setCornerColor(mCallback.getNewMessagesCount(mContact.chatId), oponentColor);
 		// getName().setTypeface(mCallback.getFont(Fonts.ROBOTO_BOLD));
@@ -265,6 +263,12 @@ public class ChatListItem extends RelativeLayout implements
 					}
 				}, callbackChatListInsideFragmentCallback);
 
+		if (isContainUnread)
+			getChatItem().setBackgroundResource(R.drawable.bg_shadow_old);
+		else {
+			// getChatItem().setBackgroundResource(R.drawable.bg_box);
+			getChatItem().setBackgroundColor(Color.WHITE);
+		}
 		if (listData != null) {
 			// if (!isScrolling) {
 			if (listData != null) {
@@ -283,11 +287,6 @@ public class ChatListItem extends RelativeLayout implements
 			// }
 			// }
 
-		}
-		if (isContainUnread)
-			getChatItem().setBackgroundResource(R.drawable.bg_shadow);
-		else {
-			getChatItem().setBackgroundResource(R.drawable.bg_box);
 		}
 
 		getList().setAdapter(listAdapter);
@@ -384,11 +383,16 @@ public class ChatListItem extends RelativeLayout implements
 		});
 
 		final ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
-		getChatItemChild().setBackgroundResource(0);
+		if (mContact.chatColor != null) {
+			getChatItemChild().setBackgroundColor(mContact.chatColor);
+		} else {
+			getChatItemChild().setBackgroundResource(0);
+		}
 		if (chatLoad != null) {
-			if (chatLoad.color != 0 && chatLoad.color != -1)
+			if (chatLoad.color != 0 && chatLoad.color != -1) {
 				getChatItemChild().setBackgroundColor(chatLoad.color);
-			else {
+				mContact.chatColor = chatLoad.color;
+			} else {
 				getChatItemChild().setBackgroundResource(0);
 			}
 
@@ -400,15 +404,15 @@ public class ChatListItem extends RelativeLayout implements
 			}
 			if (chatLoad.is_locked == 1
 					&& !QodemePreferences.getInstance().getQrcode().equals(chatLoad.user_qrcode)) {
-				getSendImage().setVisibility(View.INVISIBLE);
+				// getSendImage().setVisibility(View.INVISIBLE);
 				getFavoriteBtn().setClickable(false);
 			} else {
-				getSendImage().setVisibility(View.VISIBLE);
+				// getSendImage().setVisibility(View.VISIBLE);
 				getFavoriteBtn().setClickable(true);
 			}
 
 			if (chatLoad != null && chatLoad.is_deleted == 1) {
-				getSendImage().setVisibility(View.INVISIBLE);
+				// getSendImage().setVisibility(View.INVISIBLE);
 				getFavoriteBtn().setClickable(false);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);
@@ -434,6 +438,13 @@ public class ChatListItem extends RelativeLayout implements
 				activity.takePhoto();
 			}
 		});
+
+		int numLines = getName().getLineCount();
+		if (numLines > 0) {
+			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		} else {
+			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+		}
 
 	}
 

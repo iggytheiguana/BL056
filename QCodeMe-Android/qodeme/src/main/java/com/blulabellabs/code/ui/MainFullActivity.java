@@ -709,7 +709,7 @@ public class MainFullActivity extends BaseActivity implements
 							null);
 					if (!c.moveToFirst()) {
 						getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
-								QodemeContract.Contacts.addNewContactValues(qrCode));
+								QodemeContract.Contacts.addNewContactValues(qrCode,""));
 						SyncHelper.requestManualSync();
 					} else {
 						showMessage("It's already your contact!");
@@ -1654,7 +1654,7 @@ public class MainFullActivity extends BaseActivity implements
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
 										response.getChat().getType(), response.getChat()
 												.getQrcode(), QodemePreferences.getInstance()
-												.getQrcode(), lat, lng));
+												.getQrcode(), lat, lng,""));
 
 						for (Contact contact : contactsList) {
 							final long chatid = response.getChat().getId();

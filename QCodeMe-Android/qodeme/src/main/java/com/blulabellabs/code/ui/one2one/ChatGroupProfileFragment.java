@@ -25,8 +25,12 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -47,6 +51,7 @@ import android.widget.Toast;
 
 import com.blulabellabs.code.ApplicationConstants;
 import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.data.IntentKey;
 import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.RestAsyncHelper;
 import com.blulabellabs.code.core.io.model.ChatLoad;
@@ -66,6 +71,7 @@ import com.blulabellabs.code.ui.FlaggedMessageListActivity;
 import com.blulabellabs.code.ui.GroupMemberListActivity;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
+import com.blulabellabs.code.ui.qr.PublicChatQrCodeShowActivity;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
@@ -199,6 +205,44 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 		mImgQr.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(mQrCodeText) ? "Qr Code"
 				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + mQrCodeText), 500, 500,
 				getResources().getColor(R.color.login_qrcode), Color.TRANSPARENT));
+
+		mImgQr.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), PublicChatQrCodeShowActivity.class);
+				intent.putExtra(IntentKey.CHAT_TYPE, 2);
+				intent.putExtra(IntentKey.QR_CODE, getChatload().qrcode);
+				intent.putExtra(IntentKey.CONTACT_NAME, getChatload().title);
+
+				List<Message> messages = callback.getChatMessages(getChatload().chatId);
+				int total = 0;
+				int photo = 0;
+				if (messages != null) {
+					total = messages.size();
+					for (Message me : messages)
+						if (me.hasPhoto == 1)
+							photo++;
+				} else {
+					if (getChatload().isSearchResult) {
+						Message[] messages2 = getChatload().messages;
+						if (messages2 != null) {
+							total = messages2.length;
+							for (Message me : messages2)
+								if (me.hasPhoto == 1)
+									photo++;
+						}
+					}
+				}
+				int member = getChatload().number_of_members == 0 ? 1
+						: getChatload().number_of_members;
+
+				String text = member + " members, " + total + " messages, " + photo + " photos";
+				intent.putExtra("text", text);
+				startActivityForResult(intent, MainActivity.REQUEST_ACTIVITY_SCAN_QR_CODE_2);
+			}
+		});
+
 		mEditTextStatus.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -419,8 +463,35 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 							if (tags.endsWith(",")) {
 								tags = tags.substring(0, tags.length() - 1);
 							}
-
 							mTextViewTags.setText(tags);
+							try {
+								final String tagArray[] = tags.split(",");
+								SpannableString ss = new SpannableString(tags);
+								int lastPositon = 0;
+								for (int i = 0; i < tagArray.length; i++) {
+									String text = tagArray[i];
+									final int j = i ; 
+									ClickableSpan span1 = new ClickableSpan() {
+										@Override
+										public void onClick(View textView) {
+											String tagText = tagArray[j];
+											MainActivity activity = (MainActivity) getActivity();
+											
+											activity.searchChats(tagText, 2, 1, activity.publicChatListFragment.chatListener);
+											
+											
+										}
+									};
+
+									ss.setSpan(span1, lastPositon, lastPositon+text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+									lastPositon = lastPositon + text.length();
+
+								}
+								mTextViewTags.setText(ss);
+								// textView.setText(ss);
+								mTextViewTags.setMovementMethod(LinkMovementMethod.getInstance());
+							} catch (Exception e) {
+							}
 
 							int updated = getChatload().updated;
 							getActivity().getContentResolver().update(
@@ -897,6 +968,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mBtnEditDesc.setVisibility(View.VISIBLE);
 					mBtnEditStatus.setVisibility(View.VISIBLE);
 					mImgBtnLocked.setVisibility(View.VISIBLE);
+					mImgBtnColorWheel.setVisibility(View.VISIBLE);
 
 					mTextViewGroupDesc.setOnClickListener(new OnClickListener() {
 
@@ -954,6 +1026,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 					mBtnEditStatus.setVisibility(View.GONE);
 					mImgBtnLocked.setVisibility(View.GONE);
 					mImgBtnSearch.setVisibility(View.GONE);
+					mImgBtnColorWheel.setVisibility(View.GONE);
 					if (chatload.type == 2) {
 						mImgBtnShare.setVisibility(View.VISIBLE);
 					} else {

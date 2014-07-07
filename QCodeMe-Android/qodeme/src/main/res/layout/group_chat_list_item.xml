@@ -11,7 +11,7 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_box" >
+        android:background="@android:color/white" >
 
         <!-- android:layout_marginLeft="6dp" -->
         <!-- android:layout_marginRight="6dp" -->
@@ -75,10 +75,9 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/linear_btn"
-                    android:ellipsize="end"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:text="Item"
                     android:textColor="@color/text_message_not_read"
                     android:textStyle="bold"
@@ -122,6 +121,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/selectable_background_actionbar"
                         android:padding="10dp"
+                        android:visibility="gone"
                         android:src="@drawable/ic_camera" />
 
                     <ImageButton
@@ -309,6 +309,7 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
+                        android:layout_marginLeft="1px"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" >
 
@@ -372,7 +373,7 @@
 
         <LinearLayout
             android:id="@+id/drag"
-            android:layout_width="50dp"
+            android:layout_width="100dp"
             android:layout_height="10dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"

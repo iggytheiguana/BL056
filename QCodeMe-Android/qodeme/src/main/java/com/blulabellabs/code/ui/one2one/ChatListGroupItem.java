@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -284,7 +285,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			// ChatLoad chatLoad = mCallback.getChatLoad(mChatLoad.chatId);
 			try {
-				if (mChatLoad.is_locked != 1 && mChatLoad.is_deleted != 1)
+				if (mChatLoad.is_locked != 1 && mChatLoad.is_deleted != 1 && mChatLoad.isCreated)
 					showMessage();
 
 				mCallback.onSingleTap(getView(), mPosition, mChatLoad);
@@ -299,7 +300,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 		public boolean onDoubleTap(MotionEvent e) {
 			isCancel = true;
 			Helper.hideKeyboard(getContext(), getMessageEdit());
-			mCallback.onDoubleTap(getView(), mPosition, mChatLoad);
+			if (mChatLoad.isCreated)
+				mCallback.onDoubleTap(getView(), mPosition, mChatLoad);
 			// messageRead();
 			Log.i("GestureListener", "onDoubleTap");
 			return true;
@@ -483,7 +485,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 	@Override
 	public void fill(ChatLoad t) {
 
-		getSendImage().setVisibility(View.VISIBLE);
+		// getSendImage().setVisibility(View.VISIBLE);
 		getFavoriteBtn().setClickable(true);
 		getTitleEditText().setEnabled(true);
 		getTitleEditText().setTypeface(Application.typefaceRegular);
@@ -513,65 +515,69 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 				@Override
 				public void onClick(View v) {
-					int num_of_favorite = mChatLoad.number_of_likes;
-					int is_favorite = 1;
-					if (mChatLoad.is_favorite == 1) {
-						is_favorite = 2;
-						num_of_favorite--;
-					} else {
-						is_favorite = 1;
-						if (num_of_favorite <= 0) {
-							num_of_favorite = 1;
-						} else
-							num_of_favorite++;
-					}
-					if (mChatLoad.isSearchResult) {
-						mChatLoad.number_of_likes = num_of_favorite;
-						mChatLoad.is_favorite = is_favorite;
-						if (is_favorite == 1) {
-							Bitmap bm = BitmapFactory.decodeResource(getResources(),
-									R.drawable.ic_chat_favorite);
-							getFavoriteBtn().setImageBitmap(bm);
+					if (mChatLoad.isCreated) {
+						int num_of_favorite = mChatLoad.number_of_likes;
+						int is_favorite = 1;
+						if (mChatLoad.is_favorite == 1) {
+							is_favorite = 2;
+							num_of_favorite--;
 						} else {
-							Bitmap bm = BitmapFactory.decodeResource(getResources(),
-									R.drawable.ic_chat_favorite_h);
-							getFavoriteBtn().setImageBitmap(bm);
+							is_favorite = 1;
+							if (num_of_favorite <= 0) {
+								num_of_favorite = 1;
+							} else
+								num_of_favorite++;
 						}
+						if (mChatLoad.isSearchResult) {
+							mChatLoad.number_of_likes = num_of_favorite;
+							mChatLoad.is_favorite = is_favorite;
+							if (is_favorite == 1) {
+								Bitmap bm = BitmapFactory.decodeResource(getResources(),
+										R.drawable.ic_chat_favorite);
+								getFavoriteBtn().setImageBitmap(bm);
+							} else {
+								Bitmap bm = BitmapFactory.decodeResource(getResources(),
+										R.drawable.ic_chat_favorite_h);
+								getFavoriteBtn().setImageBitmap(bm);
+							}
 
-						String date = Converter.getCurrentGtmTimestampString();
-						RestAsyncHelper.getInstance().setFavorite(date, is_favorite,
-								mChatLoad.chatId, new RestListener<SetFavoriteResponse>() {
+							String date = Converter.getCurrentGtmTimestampString();
+							RestAsyncHelper.getInstance().setFavorite(date, is_favorite,
+									mChatLoad.chatId, new RestListener<SetFavoriteResponse>() {
 
-									@Override
-									public void onResponse(SetFavoriteResponse response) {
+										@Override
+										public void onResponse(SetFavoriteResponse response) {
 
-									}
+										}
 
-									@Override
-									public void onServiceError(RestError error) {
+										@Override
+										public void onServiceError(RestError error) {
 
-									}
-								});
-						RestAsyncHelper.getInstance().chatAddMember(mChatLoad.chatId,
-								QodemePreferences.getInstance().getQrcode(),
-								new RestListener<ChatAddMemberResponse>() {
+										}
+									});
+							RestAsyncHelper.getInstance().chatAddMember(mChatLoad.chatId,
+									QodemePreferences.getInstance().getQrcode(),
+									new RestListener<ChatAddMemberResponse>() {
 
-									@Override
-									public void onResponse(ChatAddMemberResponse response) {
-										Log.d("Chat add in public ", "Chat add mem "
-												+ response.getChat().getId());
-									}
+										@Override
+										public void onResponse(ChatAddMemberResponse response) {
+											Log.d("Chat add in public ", "Chat add mem "
+													+ response.getChat().getId());
+										}
 
-									@Override
-									public void onServiceError(RestError error) {
-										Log.d("Error", "Chat add member");
-									}
-								});
-					} else {
-						getContext().getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-								QodemeContract.Chats.updateFavorite(is_favorite, num_of_favorite),
-								QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
-						SyncHelper.requestManualSync();
+										@Override
+										public void onServiceError(RestError error) {
+											Log.d("Error", "Chat add member");
+										}
+									});
+						} else {
+							getContext().getContentResolver().update(
+									QodemeContract.Chats.CONTENT_URI,
+									QodemeContract.Chats.updateFavorite(is_favorite,
+											num_of_favorite),
+									QodemeContract.Chats.CHAT_ID + " = " + mChatLoad.chatId, null);
+							SyncHelper.requestManualSync();
+						}
 					}
 				}
 			});
@@ -617,13 +623,21 @@ public class ChatListGroupItem extends RelativeLayout implements
 				}
 				getMembersTextView().setText(memberNames);
 			}
-			if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId
-					|| QodemePreferences.getInstance().getNewPrivateGroupChatId() == t.chatId) {
-				getTitleEditText().setVisibility(VISIBLE);
+//			if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId
+//					|| QodemePreferences.getInstance().getNewPrivateGroupChatId() == t.chatId) {
+			if(!mChatLoad.isCreated){
+				if (mChatLoad.title != null && mChatLoad.title.trim().length() > 0) {
+					getTitleEditText().setVisibility(GONE);
+					getName().setVisibility(VISIBLE);
+				} else {
+					getTitleEditText().setVisibility(VISIBLE);
+					getName().setVisibility(GONE);
+				}
 				getTitleEditText().setText(mChatLoad.title);
-				getName().setVisibility(GONE);
-				getSendMessage().setVisibility(View.VISIBLE);
-				getMessageEdit().setVisibility(VISIBLE);
+				getName().setText(mChatLoad.title);
+
+				// getSendMessage().setVisibility(View.VISIBLE);
+				// getMessageEdit().setVisibility(VISIBLE);
 				// if (mChatLoad.title.trim().length() > 0) {
 				// } else {
 				// getTitleEditText().setFocusable(true);
@@ -656,72 +670,76 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 							if (!title.trim().equals("")) {
 
-								int updated = mChatLoad.updated;
-
-								try {
-									ArrayList<String> tagsList = findTagFromTitle(title);
-									
-									if (mChatLoad.tag != null && !mChatLoad.tag.trim().equals("")) {
-										String[] chatTag = mChatLoad.tag.split(",");
-										ArrayList<String> duplicateTag = Lists.newArrayList();
-										for (String t : tagsList) {
-											boolean isAvail = false;
-											for (int i = 0; i < chatTag.length; i++) {
-												if (chatTag[i].equals(t)) {
-													isAvail = true;
-													break;
-												}
-											}
-											if (isAvail)
-												duplicateTag.add(t);
-										}
-										tagsList.removeAll(duplicateTag);
-										for(int i=0; i<chatTag.length; i++){
-											tagsList.add(chatTag[i]);
-										}
-									}
-									String tags = "";
-									for (String tag : tagsList) {
-										tags += tag + ",";
-									}
-
-									if (tags.endsWith(",")) {
-										tags = tags.substring(0, tags.length() - 1);
-									}
-									mChatLoad.tag = tags;
-									// tags = mChatLoad.tag;
-									// if(tags.trim().startsWith(",")){
-									// tags = tags.trim();
-									// tags = tags.substring(1,tags.length());
-									// mChatLoad.tag = tags;
-									// }
-
-									getContext().getContentResolver().update(
-											QodemeContract.Chats.CONTENT_URI,
-											QodemeContract.Chats.updateChatInfoValues(title, -1,
-													"", 0, "", tags, updated, 5),
-											QodemeContract.Chats.CHAT_ID + "=?",
-											DbUtils.getWhereArgsForId(mChatLoad.chatId));
-								} catch (Exception e) {
-								}
-
-								getContext().getContentResolver().update(
-										QodemeContract.Chats.CONTENT_URI,
-										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
-												"", "", updated, 0),
-										QodemeContract.Chats.CHAT_ID + "=?",
-										DbUtils.getWhereArgsForId(mChatLoad.chatId));
-								// setChatInfo(chatload.chatId, title, null,
-								// null,
-								// null,
-								// null, null);
-								mChatLoad.title = title;
-								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
-										mChatLoad.description, mChatLoad.status,
-										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
-										mChatLoad.longitude);
-
 								Helper.hideKeyboard(getContext(), getTitleEditText());
+								MainActivity activity = (MainActivity) getContext();
+								mChatLoad.title = title;
+								activity.createChat(title, mChatLoad.type);
+//								int updated = mChatLoad.updated;
+//
+//								try {
+//									ArrayList<String> tagsList = findTagFromTitle(title);
+//
+//									if (mChatLoad.tag != null && !mChatLoad.tag.trim().equals("")) {
+//										String[] chatTag = mChatLoad.tag.split(",");
+//										ArrayList<String> duplicateTag = Lists.newArrayList();
+//										for (String t : tagsList) {
+//											boolean isAvail = false;
+//											for (int i = 0; i < chatTag.length; i++) {
+//												if (chatTag[i].equals(t)) {
+//													isAvail = true;
+//													break;
+//												}
+//											}
+//											if (isAvail)
+//												duplicateTag.add(t);
+//										}
+//										tagsList.removeAll(duplicateTag);
+//										for (int i = 0; i < chatTag.length; i++) {
+//											tagsList.add(chatTag[i]);
+//										}
+//									}
+//									String tags = "";
+//									for (String tag : tagsList) {
+//										tags += tag + ",";
+//									}
+//
+//									if (tags.endsWith(",")) {
+//										tags = tags.substring(0, tags.length() - 1);
+//									}
+//									mChatLoad.tag = tags;
+//									// tags = mChatLoad.tag;
+//									// if(tags.trim().startsWith(",")){
+//									// tags = tags.trim();
+//									// tags = tags.substring(1,tags.length());
+//									// mChatLoad.tag = tags;
+//									// }
+//
+//									getContext().getContentResolver().update(
+//											QodemeContract.Chats.CONTENT_URI,
+//											QodemeContract.Chats.updateChatInfoValues(title, -1,
+//													"", 0, "", tags, updated, 5),
+//											QodemeContract.Chats.CHAT_ID + "=?",
+//											DbUtils.getWhereArgsForId(mChatLoad.chatId));
+//								} catch (Exception e) {
+//								}
+//
+//								getContext().getContentResolver().update(
+//										QodemeContract.Chats.CONTENT_URI,
+//										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
+//												"", "", updated, 0),
+//										QodemeContract.Chats.CHAT_ID + "=?",
+//										DbUtils.getWhereArgsForId(mChatLoad.chatId));
+//								// setChatInfo(chatload.chatId, title, null,
+//								// null,
+//								// null,
+//								// null, null);
+//								mChatLoad.title = title;
+//								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
+//										mChatLoad.description, mChatLoad.status,
+//										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
+//										mChatLoad.longitude);
+//
+//								Helper.hideKeyboard(getContext(), getTitleEditText());
 								// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
 								return true;
 							}
@@ -914,9 +932,10 @@ public class ChatListGroupItem extends RelativeLayout implements
 					}, callbackChatListInsideFragmentCallback);
 
 			if (isContainUnread)
-				getChatItem().setBackgroundResource(R.drawable.bg_shadow);
+				getChatItem().setBackgroundResource(R.drawable.bg_shadow_old);
 			else {
-				getChatItem().setBackgroundResource(R.drawable.bg_box);
+				// getChatItem().setBackgroundResource(R.drawable.bg_box);
+				getChatItem().setBackgroundColor(Color.WHITE);
 			}
 			if (mChatLoad.color != 0 && mChatLoad.color != -1)
 				getChatItemChild().setBackgroundColor(mChatLoad.color);
@@ -1027,7 +1046,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 				getTitleEditText().setEnabled(false);
 
 			} else {
-				getSendImage().setVisibility(View.VISIBLE);
+				// getSendImage().setVisibility(View.VISIBLE);
 				getFavoriteBtn().setClickable(true);
 				getTitleEditText().setEnabled(true);
 
@@ -1045,9 +1064,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 				@Override
 				public void onClick(View v) {
-					MainActivity activity = (MainActivity) v.getContext();
-					activity.setCurrentChatId(mChatLoad.chatId);
-					activity.takePhoto();
+					if (mChatLoad.isCreated) {
+						MainActivity activity = (MainActivity) v.getContext();
+						activity.setCurrentChatId(mChatLoad.chatId);
+						activity.takePhoto();
+					}
 				}
 			});
 
@@ -1055,12 +1076,50 @@ public class ChatListGroupItem extends RelativeLayout implements
 
 				@Override
 				public void onClick(View v) {
-					MainActivity activity = (MainActivity) v.getContext();
-					activity.setCurrentChatId(mChatLoad.chatId);
-					activity.addMemberInExistingChat();
+					if (mChatLoad.isCreated) {
+						MainActivity activity = (MainActivity) v.getContext();
+						activity.setCurrentChatId(mChatLoad.chatId);
+						activity.addMemberInExistingChat();
+					}
 				}
 			});
 		} catch (Exception e) {
+		}
+
+		openKeyboadOnTitle();
+
+		int numLines = getName().getLineCount();
+		if (numLines > 0) {
+			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		} else {
+			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+		}
+	}
+
+	public void openKeyboadOnTitle() {
+		MainActivity activity = (MainActivity) getContext();
+		if (getTitleEditText().getVisibility() == View.VISIBLE
+				&& activity.getSupportActionBar().isShowing()) {
+
+			getTitleEditText().requestFocus();
+			getTitleEditText().post(new Runnable() {
+
+				@Override
+				public void run() {
+					getTitleEditText().requestFocus();
+					Helper.showKeyboard(getContext(), getTitleEditText());
+				}
+			});
+
+			// getMessageEdit().post(new Runnable() {
+			// @Override
+			// public void run() {
+			// if (!isCancel) {
+			// getMessageEdit().requestFocus();
+			// Helper.showKeyboard(getContext(), getMessageEdit());
+			// }
+			// }
+			// });
 		}
 	}
 

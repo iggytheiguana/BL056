@@ -108,6 +108,8 @@ public class ChatLoadAddMemberHandler extends BaseResponseHandler<ChatLoadRespon
 		builder.put(Chats.CHAT_NUMBER_OF_MEMBER, chatLoad.number_of_members);
 		builder.put(Chats.CHAT_MEMBER_QRCODES, memberQR);
 		builder.put(Chats.CHAT_CREATED_DATE, chatLoad.created);
+		builder.put(Chats.CHAT_IS_FAVORITE, chatLoad.is_favorite);
+		builder.put(Chats.CHAT_NUMBER_OF_FAVORITE, chatLoad.number_of_likes);
 
 		builder.put(SyncColumns.UPDATED, Contacts.Sync.DONE);
 		// batch.add(builder.build());

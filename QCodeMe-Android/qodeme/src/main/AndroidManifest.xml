@@ -87,6 +87,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseTheme.NoTitle" >
         </activity>
+        
+         <activity
+            android:name=".ui.qr.PublicChatQrCodeShowActivity"
+            android:label="Share Qr Code"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseTheme.NoTitle" >
+        </activity>
 
         <!-- Main activity -->
         <activity

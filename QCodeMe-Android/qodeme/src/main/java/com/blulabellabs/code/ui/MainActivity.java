@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
@@ -88,6 +89,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -178,6 +180,7 @@ public class MainActivity extends BaseActivity implements
 	private static final int REQUEST_ACTIVITY_CAMERA = 5;
 	private static final int REQUEST_ACTIVITY_MORE = 6;
 	private static final int REQUEST_ACTIVITY_SHOW_QR_CODE = 7;
+	public static final int REQUEST_ACTIVITY_SCAN_QR_CODE_2 = 8;
 
 	private static final String CHAT_LIST_FRAGMENT = "chat_list_fragment";
 	private static final String CHAT_LIST_PRIVATE_FRAGMENT = "chat_list_private_fragment";
@@ -191,7 +194,7 @@ public class MainActivity extends BaseActivity implements
 	private int mDefaultHeightPx;
 	private DrawerLayout mDrawerLayout;
 	private ListView mContactListView;
-	private ActionBar mActionBar;
+	public ActionBar mActionBar;
 	private boolean mActive; // Activity active
 	private SearchView mSearchView;
 	private MenuItem mSearchMenuItem;
@@ -244,9 +247,9 @@ public class MainActivity extends BaseActivity implements
 
 	private ChatListFragment one2OneChatListFragment;
 	private ChatListGroupFragment privateChatListFragment;
-	private ChatListGroupPublicFragment publicChatListFragment;
+	public ChatListGroupPublicFragment publicChatListFragment;
 	public HashMap<Long, Integer> messageColorMap = new HashMap<Long, Integer>();
-	Button buttonshare, buttonMore;
+	Button buttonshare, buttonMore, buttonInvite;
 
 	/*
 	 * Animator for Zoom chat view
@@ -291,6 +294,10 @@ public class MainActivity extends BaseActivity implements
 	private long chatFromNotification = -1;
 	public ArrayList<Long> refressedChatId = Lists.newArrayList();
 	public static boolean isKeyboardHide = false;
+	private ProgressDialog progressDialog;
+	@SuppressLint("UseSparseArrays")
+	public HashMap<Integer, ChatLoad> newChatCreated = new HashMap<Integer, ChatLoad>();
+	private List<Contact> selectedContact = Lists.newArrayList();
 
 	/**
 	 * Called when the activity is first created.
@@ -454,6 +461,7 @@ public class MainActivity extends BaseActivity implements
 			public void onDrawerClosed(View arg0) {
 				buttonshare.setVisibility(View.GONE);
 				buttonMore.setVisibility(View.VISIBLE);
+				buttonInvite.setVisibility(View.VISIBLE);
 				refreshContactList();
 				isAddContact = false;
 				isAddMemberOnExistingChat = false;
@@ -898,7 +906,12 @@ public class MainActivity extends BaseActivity implements
 						// mContactListView.setAdapter(mContactListAddChatAdapter);
 						if (chatType == 2) {
 							List<Contact> contacts = Lists.newArrayList();
-							createChat(contacts);
+							// createChat(contacts);
+							ChatLoad chatLoad = new ChatLoad();
+							chatLoad.type = chatType;
+							chatLoad.isCreated = false;
+							newChatCreated.put(chatType, chatLoad);
+							refreshOne2OneList();
 						} else {
 							if (chatType != 0) {
 								isAddContact = true;
@@ -949,6 +962,9 @@ public class MainActivity extends BaseActivity implements
 			switch (requestCode) {
 			case REQUEST_ACTIVITY_SCAN_QR_CODE: {
 				final String qrCode = data.getStringExtra(IntentKey.QR_CODE);
+				final String title = data.getStringExtra(IntentKey.CONTACT_NAME);
+				final int typeChat = data.getIntExtra("Type", 0);
+				final long chatId = data.getLongExtra(IntentKey.CHAT_ID, -1);
 				if (QodemePreferences.getInstance().getQrcode().equals(qrCode)) {
 					showMessage("You can't add own QR code!");
 					return;
@@ -957,32 +973,53 @@ public class MainActivity extends BaseActivity implements
 				int type = data.getIntExtra(IntentKey.CHAT_TYPE, -1);
 				if ((type & QrCodeCaptureActivity.QODEME_CONTACT) == QrCodeCaptureActivity.QODEME_CONTACT
 						&& !TextUtils.isEmpty(qrCode)) {
-					Cursor c = getContentResolver().query(QodemeContract.Contacts.CONTENT_URI,
-							QodemeContract.Contacts.ContactQuery.PROJECTION,
-							QodemeContract.Contacts.CONTACT_QRCODE + " = '" + qrCode + "'", null,
-							null);
-					if (!c.moveToFirst()) {
-						getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
-								QodemeContract.Contacts.addNewContactValues(qrCode));
-						SyncHelper.requestManualSync();
-					} else {
-						if (c.moveToFirst()) {
-							int state = c
-									.getInt(QodemeContract.Contacts.ContactQuery.CONTACT_STATE);
-							long id = c.getLong(QodemeContract.Contacts.ContactQuery._ID);
-							if (state != QodemeContract.Contacts.State.APPRUVED) {
-								ContentValues contentValues = new ContentValues();
-								contentValues.put(SyncColumns.UPDATED, Sync.NEW | Sync.UPDATED);
-								getContentResolver().update(QodemeContract.Contacts.CONTENT_URI,
-										contentValues, DbUtils.getWhereClauseForId(),
-										DbUtils.getWhereArgsForId(id));
-								SyncHelper.requestManualSync();
-								// contentValues.put(QodemeContract.Contacts.CONTACT_STATE,
-								// value)
+					if (typeChat == 0) {
+						Cursor c = getContentResolver().query(QodemeContract.Contacts.CONTENT_URI,
+								QodemeContract.Contacts.ContactQuery.PROJECTION,
+								QodemeContract.Contacts.CONTACT_QRCODE + " = '" + qrCode + "'",
+								null, null);
+						if (!c.moveToFirst()) {
+							getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
+									QodemeContract.Contacts.addNewContactValues(qrCode, title));
+							SyncHelper.requestManualSync();
+						} else {
+							if (c.moveToFirst()) {
+								int state = c
+										.getInt(QodemeContract.Contacts.ContactQuery.CONTACT_STATE);
+								long id = c.getLong(QodemeContract.Contacts.ContactQuery._ID);
+								if (state != QodemeContract.Contacts.State.APPRUVED) {
+									ContentValues contentValues = new ContentValues();
+									contentValues.put(SyncColumns.UPDATED, Sync.NEW | Sync.UPDATED);
+									getContentResolver().update(
+											QodemeContract.Contacts.CONTENT_URI, contentValues,
+											DbUtils.getWhereClauseForId(),
+											DbUtils.getWhereArgsForId(id));
+									SyncHelper.requestManualSync();
+									// contentValues.put(QodemeContract.Contacts.CONTACT_STATE,
+									// value)
+								} else
+									showMessage("It's already your contact!");
 							} else
 								showMessage("It's already your contact!");
-						} else
-							showMessage("It's already your contact!");
+						}
+					} else if (typeChat == 2) {
+						if (chatId != -1) {
+							RestAsyncHelper.getInstance().chatAddMember(chatId,
+									QodemePreferences.getInstance().getQrcode(),
+									new RestListener<ChatAddMemberResponse>() {
+
+										@Override
+										public void onResponse(ChatAddMemberResponse response) {
+											Log.d("Chat add in public ", "Chat add mem "
+													+ response.getChat().getId());
+										}
+
+										@Override
+										public void onServiceError(RestError error) {
+											Log.d("Error", "Chat add member");
+										}
+									});
+						}
 					}
 				}
 				break;
@@ -1711,6 +1748,17 @@ public class MainActivity extends BaseActivity implements
 				mDrawerLayout.closeDrawers();
 			}
 		});
+		buttonInvite = (Button) moreBtnView.findViewById(R.id.btn_invite);
+		buttonInvite.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mDrawerLayout.closeDrawers();
+				Intent i = new Intent(MainActivity.this, QrCodeShowActivity.class);
+				i.putExtra(IntentKey.QR_CODE, QodemePreferences.getInstance().getQrcode());
+				startActivityForResult(i, REQUEST_ACTIVITY_SHOW_QR_CODE);
+			}
+		});
 
 		buttonshare = (Button) moreBtnView.findViewById(R.id.btn_more_share);
 		buttonshare.setOnClickListener(new View.OnClickListener() {
@@ -1791,8 +1839,15 @@ public class MainActivity extends BaseActivity implements
 									if (selectedContact.size() > 0) {
 										if (isAddMemberOnExistingChat) {
 											addMemberInChat(selectedContact);
-										} else
-											createChat(selectedContact);
+										} else {
+											// createChat(selectedContact);
+											MainActivity.this.selectedContact = selectedContact;
+											ChatLoad chatLoad = new ChatLoad();
+											chatLoad.type = chatType;
+											chatLoad.isCreated = false;
+											newChatCreated.put(chatType, chatLoad);
+											refreshOne2OneList();
+										}
 									}
 									mDrawerLayout.closeDrawer(mContactListView);
 								}
@@ -1938,8 +1993,113 @@ public class MainActivity extends BaseActivity implements
 
 	}
 
-	private void createChat(final List<Contact> contactsList) {
-		// Log.d("contact add", contactsList.get(0).title + "");
+	// private void createChat(final List<Contact> contactsList) {
+	// // Log.d("contact add", contactsList.get(0).title + "");
+	// ChatType mChatType = null;
+	// if (chatType == 1)
+	// mChatType = ChatType.PRIVATE_GROUP;
+	// else if (chatType == 2)
+	// mChatType = ChatType.PUBLIC_GROUP;
+	//
+	// if (mChatType == null) {
+	// mChatType = ChatType.PRIVATE_GROUP;
+	// }
+	// Location location = mLocationClient.getLastLocation();
+	//
+	// double latitude = 0;
+	// double longitude = 0;
+	// if (location != null) {
+	// latitude = location.getLatitude();
+	// longitude = location.getLongitude();
+	// } else if (getCurrentLocation() != null) {
+	// latitude = getCurrentLocation().getLatitude();
+	// longitude = getCurrentLocation().getLongitude();
+	// }
+	// final double lat = latitude;
+	// final double lng = longitude;
+	// RestAsyncHelper.getInstance().chatCreate(mChatType, "", "", 0, "", 0, "",
+	// latitude,
+	// longitude, new RestListener<ChatCreateResponse>() {
+	//
+	// @Override
+	// public void onResponse(ChatCreateResponse response) {
+	// // TODO Auto-generated method stub
+	// Log.d("Chat create", "Chat Created " + response.getChat().getId());
+	//
+	// if (chatType == 2)
+	// QodemePreferences.getInstance().setNewPublicGroupChatId(
+	// response.getChat().getId());
+	// if (chatType == 1)
+	// QodemePreferences.getInstance().setNewPrivateGroupChatId(
+	// response.getChat().getId());
+	// getContentResolver().insert(
+	// QodemeContract.Chats.CONTENT_URI,
+	// QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
+	// response.getChat().getType(), response.getChat()
+	// .getQrcode(), QodemePreferences.getInstance()
+	// .getQrcode(), lat, lng,""));
+	//
+	// for (Contact contact : contactsList) {
+	// final long chatid = response.getChat().getId();
+	// final String qr = contact.qrCode;
+	// Cursor cursor = getContentResolver().query(
+	// QodemeContract.Chats.CONTENT_URI,
+	// QodemeContract.Chats.ChatQuery.PROJECTION,
+	// QodemeContract.Chats.CHAT_ID + "=" + chatid, null, null);
+	// String memberString = "";
+	// int numberOfMember = 1;
+	// if (cursor != null && cursor.moveToFirst()) {
+	// memberString = cursor
+	// .getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+	// numberOfMember = cursor
+	// .getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
+	// }
+	// if (memberString == null || memberString.equals(""))
+	// memberString = qr;
+	// else {
+	// memberString += "," + qr;
+	// }
+	// if (numberOfMember == 0) {
+	// numberOfMember = 2;
+	// } else {
+	// numberOfMember++;
+	// }
+	// ContentValues contentValues = new ContentValues();
+	// contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES,
+	// memberString);
+	// contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
+	// numberOfMember);
+	// getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+	// contentValues, QodemeContract.Chats.CHAT_ID + "=" + chatid,
+	// null);
+	//
+	// RestAsyncHelper.getInstance().chatAddMember(response.getChat().getId(),
+	// contact.qrCode, new RestListener<ChatAddMemberResponse>() {
+	//
+	// @Override
+	// public void onResponse(ChatAddMemberResponse response) {
+	// Log.d("Chat add ", "Chat add mem "
+	// + response.getChat().getId());
+	//
+	// }
+	//
+	// @Override
+	// public void onServiceError(RestError error) {
+	// Log.d("Error", "Chat add member");
+	// }
+	// });
+	// }
+	// }
+	//
+	// @Override
+	// public void onServiceError(RestError error) {
+	// Log.d("Error", "Chat not Created");
+	// }
+	// });
+	// }
+
+	public void createChat(final String title, final int chatType) {
+
 		ChatType mChatType = null;
 		if (chatType == 1)
 			mChatType = ChatType.PRIVATE_GROUP;
@@ -1949,6 +2109,7 @@ public class MainActivity extends BaseActivity implements
 		if (mChatType == null) {
 			mChatType = ChatType.PRIVATE_GROUP;
 		}
+
 		Location location = mLocationClient.getLastLocation();
 
 		double latitude = 0;
@@ -1962,7 +2123,7 @@ public class MainActivity extends BaseActivity implements
 		}
 		final double lat = latitude;
 		final double lng = longitude;
-		RestAsyncHelper.getInstance().chatCreate(mChatType, "", "", 0, "", 0, "", latitude,
+		RestAsyncHelper.getInstance().chatCreate(mChatType, title, "", 0, "", 0, "", latitude,
 				longitude, new RestListener<ChatCreateResponse>() {
 
 					@Override
@@ -1970,68 +2131,73 @@ public class MainActivity extends BaseActivity implements
 						// TODO Auto-generated method stub
 						Log.d("Chat create", "Chat Created " + response.getChat().getId());
 
-						if (chatType == 2)
-							QodemePreferences.getInstance().setNewPublicGroupChatId(
-									response.getChat().getId());
-						if (chatType == 1)
-							QodemePreferences.getInstance().setNewPrivateGroupChatId(
-									response.getChat().getId());
+//						if (chatType == 2)
+//							QodemePreferences.getInstance().setNewPublicGroupChatId(
+//									response.getChat().getId());
+//						if (chatType == 1)
+//							QodemePreferences.getInstance().setNewPrivateGroupChatId(
+//									response.getChat().getId());
+						newChatCreated.remove(chatType);
 						getContentResolver().insert(
 								QodemeContract.Chats.CONTENT_URI,
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
 										response.getChat().getType(), response.getChat()
 												.getQrcode(), QodemePreferences.getInstance()
-												.getQrcode(), lat, lng));
+												.getQrcode(), lat, lng, title));
 
-						for (Contact contact : contactsList) {
-							final long chatid = response.getChat().getId();
-							final String qr = contact.qrCode;
-							Cursor cursor = getContentResolver().query(
-									QodemeContract.Chats.CONTENT_URI,
-									QodemeContract.Chats.ChatQuery.PROJECTION,
-									QodemeContract.Chats.CHAT_ID + "=" + chatid, null, null);
-							String memberString = "";
-							int numberOfMember = 1;
-							if (cursor != null && cursor.moveToFirst()) {
-								memberString = cursor
-										.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
-								numberOfMember = cursor
-										.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
+						if (chatType == 1) {
+							for (Contact contact : selectedContact) {
+								final long chatid = response.getChat().getId();
+								final String qr = contact.qrCode;
+								Cursor cursor = getContentResolver().query(
+										QodemeContract.Chats.CONTENT_URI,
+										QodemeContract.Chats.ChatQuery.PROJECTION,
+										QodemeContract.Chats.CHAT_ID + "=" + chatid, null, null);
+								String memberString = "";
+								int numberOfMember = 1;
+								if (cursor != null && cursor.moveToFirst()) {
+									memberString = cursor
+											.getString(QodemeContract.Chats.ChatQuery.CHAT_MEMBER_QRCODES);
+									numberOfMember = cursor
+											.getInt(QodemeContract.Chats.ChatQuery.CHAT_NUMBER_OF_MEMBER);
+								}
+								if (memberString == null || memberString.equals(""))
+									memberString = qr;
+								else {
+									memberString += "," + qr;
+								}
+								if (numberOfMember == 0) {
+									numberOfMember = 2;
+								} else {
+									numberOfMember++;
+								}
+								ContentValues contentValues = new ContentValues();
+								contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES,
+										memberString);
+								contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
+										numberOfMember);
+								getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
+										contentValues, QodemeContract.Chats.CHAT_ID + "=" + chatid,
+										null);
+
+								RestAsyncHelper.getInstance().chatAddMember(
+										response.getChat().getId(), contact.qrCode,
+										new RestListener<ChatAddMemberResponse>() {
+
+											@Override
+											public void onResponse(ChatAddMemberResponse response) {
+												Log.d("Chat add ", "Chat add mem "
+														+ response.getChat().getId());
+
+											}
+
+											@Override
+											public void onServiceError(RestError error) {
+												Log.d("Error", "Chat add member");
+											}
+										});
 							}
-							if (memberString == null || memberString.equals(""))
-								memberString = qr;
-							else {
-								memberString += "," + qr;
-							}
-							if (numberOfMember == 0) {
-								numberOfMember = 2;
-							} else {
-								numberOfMember++;
-							}
-							ContentValues contentValues = new ContentValues();
-							contentValues.put(QodemeContract.Chats.CHAT_MEMBER_QRCODES,
-									memberString);
-							contentValues.put(QodemeContract.Chats.CHAT_NUMBER_OF_MEMBER,
-									numberOfMember);
-							getContentResolver().update(QodemeContract.Chats.CONTENT_URI,
-									contentValues, QodemeContract.Chats.CHAT_ID + "=" + chatid,
-									null);
-
-							RestAsyncHelper.getInstance().chatAddMember(response.getChat().getId(),
-									contact.qrCode, new RestListener<ChatAddMemberResponse>() {
-
-										@Override
-										public void onResponse(ChatAddMemberResponse response) {
-											Log.d("Chat add ", "Chat add mem "
-													+ response.getChat().getId());
-
-										}
-
-										@Override
-										public void onServiceError(RestError error) {
-											Log.d("Error", "Chat add member");
-										}
-									});
+							selectedContact.clear();
 						}
 					}
 
@@ -2567,7 +2733,8 @@ public class MainActivity extends BaseActivity implements
 			fullChatIndex = 0;
 			// mViewPager.setVisibility(View.INVISIBLE);
 			final FrameLayout expandedImageView = (FrameLayout) findViewById(R.id.expanded_chatView);
-			expandedImageView.setVisibility(View.INVISIBLE);
+			// expandedImageView.setVisibility(View.INVISIBLE);
+			zoomOut(expandedImageView);
 			if (mPagerAdapter != null) {
 				Long chatId = null;
 				if (mPagerAdapter.getItem(0) instanceof ChatInsideFragment) {
@@ -2601,6 +2768,36 @@ public class MainActivity extends BaseActivity implements
 		}
 
 		super.onBackPressed();
+	}
+
+	@SuppressLint("NewApi")
+	private void zoomOut(final View expandedImageView) {
+		AnimatorSet set = new AnimatorSet();
+		set.play(
+				ObjectAnimator.ofFloat(expandedImageView, View.X,
+						(startBounds.right - startBounds.left) / 2))
+				.with(ObjectAnimator.ofFloat(expandedImageView, View.Y, startBounds.top + 50))
+				.with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_X, startScaleFinal))
+				.with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_Y, startScaleFinal));
+		set.setDuration(mShortAnimationDuration);
+		set.setInterpolator(new DecelerateInterpolator());
+		set.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				// thumbView.setAlpha(1f);
+				expandedImageView.setVisibility(View.GONE);
+				mCurrentAnimator = null;
+			}
+
+			@Override
+			public void onAnimationCancel(Animator animation) {
+				// thumbView.setAlpha(1f);
+				expandedImageView.setVisibility(View.GONE);
+				mCurrentAnimator = null;
+			}
+		});
+		set.start();
+		mCurrentAnimator = set;
 	}
 
 	@Override
@@ -2891,6 +3088,7 @@ public class MainActivity extends BaseActivity implements
 	public void showChat(final Contact c, final boolean firstUpdate, final View view) {
 		mContactInfoUpdated = false;
 		isKeyboardHide = true;
+
 		Helper.hideKeyboard(MainActivity.this);
 		new Handler().post(new Runnable() {
 
@@ -3093,155 +3291,11 @@ public class MainActivity extends BaseActivity implements
 		mApprovedContacts = Lists.newArrayList();
 	}
 
+	Rect startBounds = new Rect();
+	float startScaleFinal;
+
 	@SuppressLint("NewApi")
 	private void zoomImageFromThumb(final View thumbView, int imageResId) {
-		// // If there's an animation in progress, cancel it immediately and
-		// // proceed with this one.
-		// if (mCurrentAnimator != null) {
-		// mCurrentAnimator.cancel();
-		// }
-		//
-		// // Load the high-resolution "zoomed-in" image.
-		// final FrameLayout expandedImageView = (FrameLayout)
-		// findViewById(R.id.expanded_chatView);
-		// // expandedImageView.setImageResource(imageResId);
-		//
-		// // Calculate the starting and ending bounds for the zoomed-in image.
-		// // This step
-		// // involves lots of math. Yay, math.
-		// final Rect startBounds = new Rect();
-		// final Rect finalBounds = new Rect();
-		// final Point globalOffset = new Point();
-		//
-		// // The start bounds are the global visible rectangle of the
-		// thumbnail,
-		// // and the
-		// // final bounds are the global visible rectangle of the container
-		// view.
-		// // Also
-		// // set the container view's offset as the origin for the bounds,
-		// since
-		// // that's
-		// // the origin for the positioning animation properties (X, Y).
-		// thumbView.getGlobalVisibleRect(startBounds);
-		// findViewById(R.id.content_frame).getGlobalVisibleRect(finalBounds,
-		// globalOffset);
-		// startBounds.offset(-globalOffset.x, -globalOffset.y);
-		// finalBounds.offset(-globalOffset.x, -globalOffset.y);
-		//
-		// // Adjust the start bounds to be the same aspect ratio as the final
-		// // bounds using the
-		// // "center crop" technique. This prevents undesirable stretching
-		// during
-		// // the animation.
-		// // Also calculate the start scaling factor (the end scaling factor is
-		// // always 1.0).
-		// float startScale;
-		// if ((float) finalBounds.width() / finalBounds.height() > (float)
-		// startBounds.width()
-		// / startBounds.height()) {
-		// // Extend start bounds horizontally
-		// startScale = (float) startBounds.height() / finalBounds.height();
-		// float startWidth = startScale * finalBounds.width();
-		// float deltaWidth = (startWidth - startBounds.width()) / 2;
-		// startBounds.left -= deltaWidth;
-		// startBounds.right += deltaWidth;
-		// } else {
-		// // Extend start bounds vertically
-		// startScale = (float) startBounds.width() / finalBounds.width();
-		// float startHeight = startScale * finalBounds.height();
-		// float deltaHeight = (startHeight - startBounds.height()) / 2;
-		// startBounds.top -= deltaHeight;
-		// startBounds.bottom += deltaHeight;
-		// }
-		//
-		// // Hide the thumbnail and show the zoomed-in view. When the animation
-		// // begins,
-		// // it will position the zoomed-in view in the place of the thumbnail.
-		// // thumbView.setAlpha(0f);
-		// expandedImageView.setVisibility(View.VISIBLE);
-		//
-		// // Set the pivot point for SCALE_X and SCALE_Y transformations to the
-		// // top-left corner of
-		// // the zoomed-in view (the default is the center of the view).
-		// expandedImageView.setPivotX(0f);
-		// expandedImageView.setPivotY(0f);
-		//
-		// // Construct and run the parallel animation of the four translation
-		// and
-		// // scale properties
-		// // (X, Y, SCALE_X, and SCALE_Y).
-		// AnimatorSet set = new AnimatorSet();
-		// set.play(
-		// ObjectAnimator.ofFloat(expandedImageView, View.X, startBounds.left,
-		// finalBounds.left))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.Y,
-		// startBounds.top,
-		// finalBounds.top))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_X,
-		// startScale, 1f))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_Y,
-		// startScale, 1f));
-		// set.setDuration(mShortAnimationDuration);
-		// set.setInterpolator(new DecelerateInterpolator());
-		// set.addListener(new AnimatorListenerAdapter() {
-		// @Override
-		// public void onAnimationEnd(Animator animation) {
-		// mCurrentAnimator = null;
-		// }
-		//
-		// @Override
-		// public void onAnimationCancel(Animator animation) {
-		// mCurrentAnimator = null;
-		// }
-		// });
-		// set.start();
-		// mCurrentAnimator = set;
-		//
-		// // Upon clicking the zoomed-in image, it should zoom back down to the
-		// // original bounds
-		// // and show the thumbnail instead of the expanded image.
-		// final float startScaleFinal = startScale;
-		// expandedImageView.setOnClickListener(new View.OnClickListener() {
-		// @Override
-		// public void onClick(View view) {
-		// if (mCurrentAnimator != null) {
-		// mCurrentAnimator.cancel();
-		// }
-		//
-		// // Animate the four positioning/sizing properties in parallel,
-		// // back to their
-		// // original values.
-		// AnimatorSet set = new AnimatorSet();
-		// set.play(ObjectAnimator.ofFloat(expandedImageView, View.X,
-		// startBounds.left))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.Y,
-		// startBounds.top))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_X,
-		// startScaleFinal))
-		// .with(ObjectAnimator.ofFloat(expandedImageView, View.SCALE_Y,
-		// startScaleFinal));
-		// set.setDuration(mShortAnimationDuration);
-		// set.setInterpolator(new DecelerateInterpolator());
-		// set.addListener(new AnimatorListenerAdapter() {
-		// @Override
-		// public void onAnimationEnd(Animator animation) {
-		// // thumbView.setAlpha(1f);
-		// expandedImageView.setVisibility(View.GONE);
-		// mCurrentAnimator = null;
-		// }
-		//
-		// @Override
-		// public void onAnimationCancel(Animator animation) {
-		// // thumbView.setAlpha(1f);
-		// expandedImageView.setVisibility(View.GONE);
-		// mCurrentAnimator = null;
-		// }
-		// });
-		// set.start();
-		// mCurrentAnimator = set;
-		// }
-		// });
 
 		// If there's an animation in progress, cancel it immediately and
 		// proceed with this one.
@@ -3256,7 +3310,7 @@ public class MainActivity extends BaseActivity implements
 		// Calculate the starting and ending bounds for the zoomed-in image.
 		// This step
 		// involves lots of math. Yay, math.
-		final Rect startBounds = new Rect();
+		startBounds = new Rect();
 		final Rect finalBounds = new Rect();
 		final Point globalOffset = new Point();
 
@@ -3338,7 +3392,7 @@ public class MainActivity extends BaseActivity implements
 		// Upon clicking the zoomed-in image, it should zoom back down to the
 		// original bounds
 		// and show the thumbnail instead of the expanded image.
-		final float startScaleFinal = startScale;
+		startScaleFinal = startScale;
 		expandedImageView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -3447,6 +3501,7 @@ public class MainActivity extends BaseActivity implements
 		}
 		buttonshare.setVisibility(View.VISIBLE);
 		buttonMore.setVisibility(View.GONE);
+		buttonInvite.setVisibility(View.GONE);
 		refreshContactList();
 		mContactListAdapter.notifyDataSetChanged();
 		mDrawerLayout.openDrawer(mContactListView);
@@ -3830,7 +3885,7 @@ public class MainActivity extends BaseActivity implements
 
 					@Override
 					public void onOpen() {
-						Log.d(TAG, "Status: Connected to " + wsuri);
+						// Log.d(TAG, "Status: Connected to " + wsuri);
 						// mConnection.sendTextMessage("Hello, world!");
 						// sendRegisterForChatEvents();
 						if (mChatList != null)
@@ -3842,13 +3897,13 @@ public class MainActivity extends BaseActivity implements
 
 					@Override
 					public void onTextMessage(String payload) {
-						Log.d(TAG, "Got echo: " + payload);
+						// Log.d(TAG, "Got echo: " + payload);
 						receiveWebSocketMessageWith(payload);
 					}
 
 					@Override
 					public void onClose(int code, String reason) {
-						Log.d(TAG, "Connection lost.");
+						// Log.d(TAG, "Connection lost.");
 					}
 				});
 			}
@@ -4089,20 +4144,118 @@ public class MainActivity extends BaseActivity implements
 	};
 
 	private void email() {
+
 		ChatLoad chatLoad = getChatLoad(currentChatId);
 		if (chatLoad != null) {
 
-			Bitmap mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(chatLoad.qrcode) ? "Qr Code"
-					: ApplicationConstants.QR_CODE_CONTACT_PREFIX + chatLoad.qrcode), 500, 500,
+			// Bitmap mBitmap =
+			// QrUtils.encodeQrCode((TextUtils.isEmpty(chatLoad.qrcode) ?
+			// "Qr Code"
+			// : ApplicationConstants.QR_CODE_CONTACT_PREFIX + chatLoad.qrcode),
+			// 500, 500,
+			// Color.BLACK, Color.WHITE);
+			// // Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),
+			// // R.drawable.bg_qr_temp);
+			// String path =
+			// MediaStore.Images.Media.insertImage(getContentResolver(),
+			// mBitmap,
+			// "title", null);
+			// if (path == null) {
+			// showMessage(getString(R.string.alert_no_access_to_external_storage));
+			// return;
+			// }
+			//
+			// List<Message> messages = getChatMessages(chatLoad.chatId);
+			// int total = 0;
+			// int photo = 0;
+			// if (messages != null) {
+			// total = messages.size();
+			// for (Message me : messages)
+			// if (me.hasPhoto == 1)
+			// photo++;
+			// } else {
+			// if (chatLoad.isSearchResult) {
+			// Message[] messages2 = chatLoad.messages;
+			// if (messages2 != null) {
+			// total = messages2.length;
+			// for (Message me : messages2)
+			// if (me.hasPhoto == 1)
+			// photo++;
+			// }
+			// }
+			// }
+			// int member = chatLoad.number_of_members == 0 ? 1 :
+			// chatLoad.number_of_members;
+			//
+			// String data =
+			// "<html><body><h1>Join the Conversation</h1><hr><br><p>The conversation "
+			// + chatLoad.title
+			// +
+			// " has been shared with you. Scan the attached code to join the conversation.</p><br><br><h2>"
+			// + chatLoad.title
+			// + "</h2><br><p>"
+			// + member
+			// + " members, "
+			// + total
+			// + " messages, "
+			// + photo
+			// + " photos</p>"
+			// +
+			// "<a href=\"code:other/parameter\"> View Conversation </a> <br><hr><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
+			//
+			// Uri screenshotUri = Uri.parse(path);
+			// final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+			// emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			// emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+			// emailIntent.setType("image/png");
+			// emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(data));
+			// emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
+			// startActivity(Intent.createChooser(emailIntent,
+			// "Send email using"));
+
+			progressDialog = ProgressDialog.show(this, "", "Sharing...");
+			ShareAsyncTask asyncTask = new ShareAsyncTask(chatLoad);
+			asyncTask.execute("");
+		}
+	}
+
+	class ShareAsyncTask extends AsyncTask<String, String, String> {
+
+		ChatLoad chatLoad = null;
+		String data = "";
+		String path;
+
+		public ShareAsyncTask(ChatLoad chatLoad) {
+			this.chatLoad = chatLoad;
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put(IntentKey.QR_CODE, chatLoad.qrcode);
+				jsonObject.put(IntentKey.CHAT_TYPE, 2);
+				jsonObject.put(IntentKey.CONTACT_NAME, chatLoad.title);
+				jsonObject.put(IntentKey.CHAT_ID, chatLoad.chatId);
+			} catch (Exception e) {
+			}
+			Bitmap mBitmap = QrUtils.encodeQrCode(
+					(ApplicationConstants.QR_CODE_CONTACT_PREFIX + jsonObject), 500, 500,
 					Color.BLACK, Color.WHITE);
+			// Bitmap mBitmap =
+			// QrUtils.encodeQrCode((TextUtils.isEmpty(chatLoad.qrcode) ?
+			// "Qr Code"
+			// : ApplicationConstants.QR_CODE_CONTACT_PREFIX + chatLoad.qrcode),
+			// 500, 500,
+			// Color.BLACK, Color.WHITE);
 			// Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),
 			// R.drawable.bg_qr_temp);
-			String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap,
-					"title", null);
-			if (path == null) {
-				showMessage(getString(R.string.alert_no_access_to_external_storage));
-				return;
-			}
+			path = MediaStore.Images.Media
+					.insertImage(getContentResolver(), mBitmap, "title", null);
+			// if (path == null) {
+			// showMessage(getString(R.string.alert_no_access_to_external_storage));
+			// return;
+			// }
 
 			List<Message> messages = getChatMessages(chatLoad.chatId);
 			int total = 0;
@@ -4112,10 +4265,20 @@ public class MainActivity extends BaseActivity implements
 				for (Message me : messages)
 					if (me.hasPhoto == 1)
 						photo++;
+			} else {
+				if (chatLoad.isSearchResult) {
+					Message[] messages2 = chatLoad.messages;
+					if (messages2 != null) {
+						total = messages2.length;
+						for (Message me : messages2)
+							if (me.hasPhoto == 1)
+								photo++;
+					}
+				}
 			}
 			int member = chatLoad.number_of_members == 0 ? 1 : chatLoad.number_of_members;
 
-			String data = "<html><body><h1>Join the Conversation</h1><hr><br><p>The conversation "
+			data = "<html><body><h1>Join the Conversation</h1><hr><br><p>The conversation "
 					+ chatLoad.title
 					+ " has been shared with you. Scan the attached code to join the conversation.</p><br><br><h2>"
 					+ chatLoad.title
@@ -4127,7 +4290,17 @@ public class MainActivity extends BaseActivity implements
 					+ photo
 					+ " photos</p>"
 					+ "<a href=\"code:other/parameter\"> View Conversation </a> <br><hr><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
+			return null;
+		}
 
+		@Override
+		protected void onPostExecute(String result) {
+			if (progressDialog != null && progressDialog.isShowing())
+				progressDialog.dismiss();
+			if (path == null) {
+				showMessage(getString(R.string.alert_no_access_to_external_storage));
+				return;
+			}
 			Uri screenshotUri = Uri.parse(path);
 			final Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -4137,5 +4310,6 @@ public class MainActivity extends BaseActivity implements
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
 			startActivity(Intent.createChooser(emailIntent, "Send email using"));
 		}
+
 	}
 }

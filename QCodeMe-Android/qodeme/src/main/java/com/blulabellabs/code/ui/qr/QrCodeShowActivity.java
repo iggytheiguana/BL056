@@ -1,5 +1,7 @@
 package com.blulabellabs.code.ui.qr;
 
+import org.json.JSONObject;
+
 import com.blulabellabs.code.ApplicationConstants;
 import com.blulabellabs.code.R;
 import com.blulabellabs.code.core.data.IntentKey;
@@ -42,6 +44,7 @@ public class QrCodeShowActivity extends Activity {
 	private Button mEmailButton, mScanButton;
 	private Bitmap mBitmap;
 	private EditText editTextName;
+	private String qrCode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,7 @@ public class QrCodeShowActivity extends Activity {
 		AnalyticsHelper.onCreateActivity(this);
 		setContentView(R.layout.activity_show_qr);
 		mQrCode = (ImageButton) findViewById(R.id.qr_code);
-		final String qrCode = getIntent().getStringExtra(IntentKey.QR_CODE);
+		 qrCode = getIntent().getStringExtra(IntentKey.QR_CODE);
 		refreshQrCode(qrCode);
 
 		editTextName = (EditText) findViewById(R.id.edit_name);
@@ -124,8 +127,21 @@ public class QrCodeShowActivity extends Activity {
 	}
 
 	private void refreshQrCode(String qrCode) {
-		mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
-				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500, Color.BLACK,
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String name = QodemePreferences.getInstance().getPublicName();
+			if(name == null || name.trim().equals(""))
+				name = "User";
+			jsonObject.put(IntentKey.QR_CODE, qrCode);
+			jsonObject.put(IntentKey.CHAT_TYPE, 0);
+			jsonObject.put(IntentKey.CONTACT_NAME, name);
+			jsonObject.put(IntentKey.CHAT_ID, -1);
+		} catch (Exception e) {
+		}
+//		mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
+//				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500, Color.BLACK,
+//				Color.WHITE);
+		mBitmap = QrUtils.encodeQrCode(( ApplicationConstants.QR_CODE_CONTACT_PREFIX + jsonObject), 500, 500, Color.BLACK,
 				Color.WHITE);
 		mQrCode.setImageBitmap(QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
 				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500, Color.BLACK,
@@ -137,15 +153,30 @@ public class QrCodeShowActivity extends Activity {
 	 */
 
 	private void email() {
+		String public_name = editTextName.getText().toString();
+		if (public_name.trim().equals(""))
+			public_name = "User";
+		
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put(IntentKey.QR_CODE, qrCode);
+			jsonObject.put(IntentKey.CHAT_TYPE, 0);
+			jsonObject.put(IntentKey.CONTACT_NAME, public_name);
+			jsonObject.put(IntentKey.CHAT_ID, -1);
+		} catch (Exception e) {
+		}
+		Bitmap mBitmap = QrUtils.encodeQrCode(( ApplicationConstants.QR_CODE_CONTACT_PREFIX + jsonObject), 500, 500, Color.BLACK,
+				Color.WHITE);
+		
 		String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "title",
 				null);
 		if (path == null) {
 			showMessage(getString(R.string.alert_no_access_to_external_storage));
 			return;
 		}
-		String public_name = editTextName.getText().toString();
-		if (public_name.trim().equals(""))
-			public_name = "User";
+//		String public_name = editTextName.getText().toString();
+//		if (public_name.trim().equals(""))
+//			public_name = "User";
 		String location = "";
 		try {
 			location = QodemePreferences.getInstance().getLastLocation().getCity();
@@ -208,7 +239,7 @@ public class QrCodeShowActivity extends Activity {
 							null);
 					if (!c.moveToFirst()) {
 						getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
-								QodemeContract.Contacts.addNewContactValues(qrCode));
+								QodemeContract.Contacts.addNewContactValues(qrCode,""));
 						SyncHelper.requestManualSync();
 					} else {
 						showMessage("It's already your contact!");

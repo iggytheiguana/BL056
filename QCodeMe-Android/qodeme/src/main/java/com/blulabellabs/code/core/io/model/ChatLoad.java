@@ -37,4 +37,5 @@ public class ChatLoad {
     public int is_deleted;
     public boolean isSearchResult = false;
     public boolean isTyping = false;
+    public boolean isCreated = true;
 }

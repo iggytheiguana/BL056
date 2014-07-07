@@ -708,6 +708,7 @@ public class ChatListFragment extends Fragment {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
 					int totalItemCount) {
+				
 				if (lastFirstvisibleItem != firstVisibleItem) {
 					if (lastFirstvisibleItem > firstVisibleItem) {
 						if (mLinearLayoutSearch.getVisibility() != View.VISIBLE) {
@@ -766,6 +767,12 @@ public class ChatListFragment extends Fragment {
 						}
 					}
 
+				}
+				if(firstVisibleItem == 0){
+					mLinearLayoutSearch.setAlpha(1f);
+					mLinearLayoutSearch.setVisibility(View.VISIBLE);
+//					mLinearLayoutSearch.animate().alpha(1f).setDuration(0)
+//							.setListener(null);
 				}
 				lastFirstvisibleItem = firstVisibleItem;
 
