@@ -4289,7 +4289,7 @@ public class MainActivity extends BaseActivity implements
 					+ " messages, "
 					+ photo
 					+ " photos</p>"
-					+ "<a href=\"code:other/parameter\"> View Conversation </a> <br><hr><h2>What is Code Me?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
+					+ "<a href=\"code:other/parameter\"> View Conversation </a> <br><hr><h2>What is Code!?</h2><br><p>Lorem ipsum dolor sit amet, sldfha consectetur adipisicing elit, sed do eiusmod tempor incididunt ut lab et dolore magna eliqua.</p><br><h2>Available On</h2><br><a href=\"http://play.google.com/store/apps/details?id=com.blulabellabs.code\"> Google Play </a></body></html>";
 			return null;
 		}
 
@@ -4307,7 +4307,7 @@ public class MainActivity extends BaseActivity implements
 			emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
 			emailIntent.setType("image/png");
 			emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(data));
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Code! contact");
 			startActivity(Intent.createChooser(emailIntent, "Send email using"));
 		}
 

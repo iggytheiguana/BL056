@@ -232,7 +232,7 @@ public class EmailActivity extends Activity implements OnClickListener {
 			return;
 		}
 
-		String data = "<html><body><h1>Welcome to Code Me!</h1><hr><br><p>Attached QR Code is your unique QR Code. This is your identity on Thred.You will need this code to sign in to Thread-keep it safe.</p><br><br>"
+		String data = "<html><body><h1>Welcome to Code!</h1><hr><br><p>Attached QR Code is your unique QR Code. This is your identity on Thred.You will need this code to sign in to Thread-keep it safe.</p><br><br>"
 				+ "<a href=\"code:other/parameter\"> Log In </a> </body></html>";
 		Uri screenshotUri = Uri.parse(path);
 		final Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -240,7 +240,7 @@ public class EmailActivity extends Activity implements OnClickListener {
 		emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
 		emailIntent.setType("image/png");
 		emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(data));
-		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "QODEME contact");
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Code! contact");
 		startActivity(Intent.createChooser(emailIntent, "Send email using"));
 	}
 	@Override

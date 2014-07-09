@@ -35,6 +35,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -56,6 +57,10 @@ import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragment
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -70,7 +75,9 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 	private One2OneChatListFragmentCallback callback;
 	private boolean isViewCreated = false;
-	private ScrollDisabledListView mListView;
+	// private ScrollDisabledListView mListView;
+	private PullToRefreshListView mListView;
+	PullToRefreshBase<?> mRefreshedView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
 	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter,
@@ -167,7 +174,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		return inflater.inflate(R.layout.fragment_one2one_chat_list, null);
+		return inflater.inflate(R.layout.fragment_one2one_chat_list_public, null);
 	}
 
 	@Override
@@ -634,15 +641,15 @@ public class ChatListGroupPublicFragment extends Fragment {
 	}
 
 	private void initListView() {
-		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		mListView = (PullToRefreshListView) getView().findViewById(R.id.listview);
 		View headerSearchView = getLayoutInflater(getArguments()).inflate(
 				R.layout.linear_search_header, null);
 
 		View footerView = getLayoutInflater(getArguments()).inflate(R.layout.list_footer_load_more,
 				null);
 		mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
-		mListView.addHeaderView(headerSearchView);
-		mListView.addFooterView(footerView);
+		// mListView.addHeaderView(headerSearchView);
+		// mListView.addFooterView(footerView);
 
 		List<ChatLoad> listForAdapter = Lists.newArrayList();
 		// mListView.setEmptyView(getView().findViewById(R.id.empty_view));
@@ -767,7 +774,33 @@ public class ChatListGroupPublicFragment extends Fragment {
 					}
 				});
 		mListView.setAdapter(mListAdapter);
+		mListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
+			@Override
+			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+				mRefreshedView = refreshView;
+				String data = mEditTextSearch.getText().toString();
+
+				searchString = data;
+				MainActivity activity = (MainActivity) callback;
+				activity.setPublicSearch(true);
+				activity.setPublicSearchString(data);
+				pageNo = 1;
+				activity.clearPublicSearch();
+				activity.searchChats(data, 2, pageNo, chatListener);
+				mEditTextSearch.setEnabled(false);
+				isMoreData = true;
+
+				isThreadRunning = true;
+				if (mEditTextSearch.getText().toString().trim().length() > 0) {
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					mImgBtnSearch.setVisibility(View.GONE);
+				} else {
+					mImgBtnClear.setVisibility(View.GONE);
+					mImgBtnSearch.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		// mListView.setOnScrollUpAndDownListener(new
 		// ScrollDisabledListView.OnScrollListener() {
 		//
@@ -815,22 +848,28 @@ public class ChatListGroupPublicFragment extends Fragment {
 					mListAdapter.isScroll = false;
 					// mListAdapter.notifyDataSetChanged();
 				}
+				if (scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_FLING) {
+					if (mListView.mIndicatorIvTop != null) {
+						mListView.mIndicatorIvTop.hide();
+						mListView.mHeaderLoadingView.setVisibility(View.GONE);
 
+					}
+					mListView.setState(State.RESET);
+				}
 			}
 
 			@SuppressLint("NewApi")
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
 					int totalItemCount) {
-				
-				
+
 				if (lastFirstvisibleItem != firstVisibleItem) {
 					if (lastFirstvisibleItem > firstVisibleItem) {
 						if (mLinearLayoutSearch.getVisibility() != View.VISIBLE) {
-							mLinearLayoutSearch.setAlpha(0f);
-							mLinearLayoutSearch.setVisibility(View.VISIBLE);
-							mLinearLayoutSearch.animate().alpha(1f).setDuration(200)
-									.setListener(null);
+							// mLinearLayoutSearch.setAlpha(0f);
+							// mLinearLayoutSearch.setVisibility(View.VISIBLE);
+							// mLinearLayoutSearch.animate().alpha(1f).setDuration(200)
+							// .setListener(null);
 						}
 
 						// for (int i = 0; i < firstVisibleItem; i++) {
@@ -864,13 +903,13 @@ public class ChatListGroupPublicFragment extends Fragment {
 						// });
 						// }
 						if (mLinearLayoutSearch.getVisibility() == View.VISIBLE) {
-							mLinearLayoutSearch.animate().alpha(0f).setDuration(500)
-									.setListener(new AnimatorListenerAdapter() {
-										@Override
-										public void onAnimationEnd(Animator animation) {
-											mLinearLayoutSearch.setVisibility(View.INVISIBLE);
-										}
-									});
+							// mLinearLayoutSearch.animate().alpha(0f).setDuration(500)
+							// .setListener(new AnimatorListenerAdapter() {
+							// @Override
+							// public void onAnimationEnd(Animator animation) {
+							// mLinearLayoutSearch.setVisibility(View.INVISIBLE);
+							// }
+							// });
 						}
 					}
 				}
@@ -1089,24 +1128,22 @@ public class ChatListGroupPublicFragment extends Fragment {
 						mListAdapter.clear();
 						mListAdapter.addAll(filterMessages());
 					}
-					mListView.setSelection(0);
+					// mListView.setSelection(0);
 				} else {
-					
-					
-					
+
 					if (!isLocationFilter && !isFavoriteFilter) {
 						mListAdapter.clear();
 						sortByMember();
 						MainActivity activity = (MainActivity) callback;
 						ChatLoad chatLoad = activity.newChatCreated.get(2);
-						if(chatLoad != null){
+						if (chatLoad != null) {
 							chatLoads.add(0, chatLoad);
 						}
 						mListAdapter.addAll(chatLoads);
 					} else {
 						MainActivity activity = (MainActivity) callback;
 						ChatLoad chatLoad = activity.newChatCreated.get(2);
-						if(chatLoad != null){
+						if (chatLoad != null) {
 							chatLoads.add(0, chatLoad);
 						}
 						mListAdapter.clear();
@@ -1114,27 +1151,30 @@ public class ChatListGroupPublicFragment extends Fragment {
 					}
 				}
 
-				if (chatLoad != null) {
-
-					if (chatLoad.title != null && chatLoad.title.trim().length() > 0) {
-					} else {
-						ChatListGroupItem chatListGroupItem = null;
-						for (int i = mListView.getFirstVisiblePosition(); i < mListView
-								.getLastVisiblePosition(); i++) {
-							ChatLoad chatLoad2 = mListAdapter.getItem(i);
-							Log.d("chatid", chatLoad2.chatId + "");
-							if (chatLoad2.chatId == chatLoad.chatId) {
-								chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i
-										- mListView.getFirstVisiblePosition() + 1);
-								break;
-							}
-						}
-						if (chatListGroupItem != null) {
-							chatListGroupItem.openKeyboadOnTitle();
-						}
-
-					}
-				}
+				// if (chatLoad != null) {
+				//
+				// if (chatLoad.title != null && chatLoad.title.trim().length()
+				// > 0) {
+				// } else {
+				// ChatListGroupItem chatListGroupItem = null;
+				// for (int i = mListView.getFirstVisiblePosition(); i <
+				// mListView
+				// .getLastVisiblePosition(); i++) {
+				// ChatLoad chatLoad2 = mListAdapter.getItem(i);
+				// Log.d("chatid", chatLoad2.chatId + "");
+				// if (chatLoad2.chatId == chatLoad.chatId) {
+				// chatListGroupItem = (ChatListGroupItem)
+				// mListView.getChildAt(i
+				// - mListView.getFirstVisiblePosition() + 1);
+				// break;
+				// }
+				// }
+				// if (chatListGroupItem != null) {
+				// chatListGroupItem.openKeyboadOnTitle();
+				// }
+				//
+				// }
+				// }
 				// long focusedChat = ChatFocusSaver.getFocusedChatId();
 				// selectChat(focusedChat);
 
@@ -1146,23 +1186,24 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 	public void notifyUi(long chatId, ChatLoad chatLoad) {
 		// mListAdapter.notifyDataSetChanged();
-		ChatListGroupItem chatListGroupItem = null;
-		for (int i = mListView.getFirstVisiblePosition(); i < mListView.getLastVisiblePosition(); i++) {
-			ChatLoad chatLoad2 = mListAdapter.getItem(i);
-			Log.d("chatid", chatLoad2.chatId + "");
-			if (chatLoad2.chatId == chatId) {
-				chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i
-						- mListView.getFirstVisiblePosition() + 1);
-				break;
-			}
-		}
-		if (chatListGroupItem != null) {
-			if (chatLoad.isTyping)
-				chatListGroupItem.getUserTyping()
-						.setBackgroundResource(R.drawable.bg_user_typing_h);
-			else
-				chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
-		}
+		// ChatListGroupItem chatListGroupItem = null;
+		// for (int i = mListView.getFirstVisiblePosition(); i <
+		// mListView.getLastVisiblePosition(); i++) {
+		// ChatLoad chatLoad2 = mListAdapter.getItem(i);
+		// Log.d("chatid", chatLoad2.chatId + "");
+		// if (chatLoad2.chatId == chatId) {
+		// chatListGroupItem = (ChatListGroupItem) mListView.getChildAt(i
+		// - mListView.getFirstVisiblePosition() + 1);
+		// break;
+		// }
+		// }
+		// if (chatListGroupItem != null) {
+		// if (chatLoad.isTyping)
+		// chatListGroupItem.getUserTyping()
+		// .setBackgroundResource(R.drawable.bg_user_typing_h);
+		// else
+		// chatListGroupItem.getUserTyping().setBackgroundResource(R.drawable.bg_user_typing);
+		// }
 
 	}
 
@@ -1194,54 +1235,56 @@ public class ChatListGroupPublicFragment extends Fragment {
 	}
 
 	private void showItemInListView(int position) {
-		if (mListView.getFirstVisiblePosition() > position
-				|| mListView.getLastVisiblePosition() < position) {
-			mListView.setSelection(position);
-		}
+		// if (mListView.getFirstVisiblePosition() > position
+		// || mListView.getLastVisiblePosition() < position) {
+		// mListView.setSelection(position);
+		// }
 	}
 
-	public void openChat(String name) {
-		for (int i = 0; i < callback.getContactList().size(); i++) {
-			Contact contact = callback.getContactList().get(i);
-			if (contact.title.equalsIgnoreCase(name)) {
-				mListView.setSelection(i);
-
-				final int position = i;
-				mListView.post(new Runnable() {
-					public void run() {
-
-						int firstPosition = mListView.getFirstVisiblePosition()
-								- mListView.getHeaderViewsCount(); // This is
-																	// the same
-																	// as child
-																	// #0
-						int wantedChild = position - firstPosition;
-						// Say, first visible position is 8, you want position
-						// 10, wantedChild will now be 2
-						// So that means your view is child #2 in the ViewGroup:
-						if (wantedChild < 0 || wantedChild >= mListView.getChildCount()) {
-							return;
-						}
-						// Could also check if wantedPosition is between
-						// listView.getFirstVisiblePosition() and
-						// listView.getLastVisiblePosition() instead.
-						ChatListItem chatListItem1 = (ChatListItem) mListView
-								.getChildAt(wantedChild);
-						if (chatListItem1 != null) {
-							chatListItem1.showMessage();
-						}
-					}
-				});
-				break;
-			}
-		}
-
-	}
+	// public void openChat(String name) {
+	// for (int i = 0; i < callback.getContactList().size(); i++) {
+	// Contact contact = callback.getContactList().get(i);
+	// if (contact.title.equalsIgnoreCase(name)) {
+	// mListView.setSelection(i);
+	//
+	// final int position = i;
+	// mListView.post(new Runnable() {
+	// public void run() {
+	//
+	// int firstPosition = mListView.getFirstVisiblePosition()
+	// - mListView.getHeaderViewsCount(); // This is
+	// // the same
+	// // as child
+	// // #0
+	// int wantedChild = position - firstPosition;
+	// // Say, first visible position is 8, you want position
+	// // 10, wantedChild will now be 2
+	// // So that means your view is child #2 in the ViewGroup:
+	// if (wantedChild < 0 || wantedChild >= mListView.getChildCount()) {
+	// return;
+	// }
+	// // Could also check if wantedPosition is between
+	// // listView.getFirstVisiblePosition() and
+	// // listView.getLastVisiblePosition() instead.
+	// ChatListItem chatListItem1 = (ChatListItem) mListView
+	// .getChildAt(wantedChild);
+	// if (chatListItem1 != null) {
+	// chatListItem1.showMessage();
+	// }
+	// }
+	// });
+	// break;
+	// }
+	// }
+	//
+	// }
 
 	public LoadMoreChatListener chatListener = new LoadMoreChatListener() {
 
 		@Override
 		public void onSearchResult(int count, int responseCode) {
+			if (mRefreshedView != null)
+				mRefreshedView.onRefreshComplete();
 			mEditTextSearch.setEnabled(true);
 			mFooterLayout.setVisibility(View.GONE);
 			isThreadRunning = false;
