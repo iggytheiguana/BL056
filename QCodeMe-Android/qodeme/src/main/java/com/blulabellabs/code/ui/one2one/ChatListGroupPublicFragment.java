@@ -34,6 +34,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -80,11 +81,12 @@ public class ChatListGroupPublicFragment extends Fragment {
 	PullToRefreshBase<?> mRefreshedView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter,
+	private ImageButton mMessageButton, mImgBtnClear, mImgBtnLocationFilter, mImgBtnSearch,
 			mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
 	private int chatType;
 	private EditText mEditTextSearch;
+	private ImageView mImgViewSearchHint;
 	private LinearLayout mLinearLayoutSearch;
 	int lastFirstvisibleItem = 0;
 	int pageNo = 1;
@@ -202,6 +204,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 		mImgBtnFavoriteFilter = (ImageButton) getView().findViewById(R.id.imgBtn_favoriteFilter);
 
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
+		mImgViewSearchHint = (ImageView) getView().findViewById(R.id.searchHintIcon);
 
 		initListView();
 		isViewCreated = true;
@@ -235,7 +238,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 				activity.setPublicSearchString("");
 				activity.clearPublicSearch();
 				mImgBtnClear.setVisibility(View.GONE);
-				mImgBtnSearch.setVisibility(View.VISIBLE);
+				// mImgBtnSearch.setVisibility(View.VISIBLE);
 				mEditTextSearch.setEnabled(true);
 				mEditTextSearch.setText("");
 				searchString = "";
@@ -357,11 +360,11 @@ public class ChatListGroupPublicFragment extends Fragment {
 			mEditTextSearch.setText(searchString);
 			if (activity.getPublicSearchString().trim().length() > 0) {
 				mImgBtnClear.setVisibility(View.VISIBLE);
-				mImgBtnSearch.setVisibility(View.GONE);
+				// mImgBtnSearch.setVisibility(View.GONE);
 			}
 		} else {
 			mImgBtnClear.setVisibility(View.GONE);
-			mImgBtnSearch.setVisibility(View.VISIBLE);
+			// mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
 		mImgBtnSearch.setOnClickListener(new OnClickListener() {
 
@@ -417,7 +420,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 				// });
 				isThreadRunning = true;
 				mImgBtnClear.setVisibility(View.VISIBLE);
-				mImgBtnSearch.setVisibility(View.GONE);
+				// mImgBtnSearch.setVisibility(View.GONE);
 				// }
 			}
 		});
@@ -455,7 +458,7 @@ public class ChatListGroupPublicFragment extends Fragment {
 
 					isThreadRunning = true;
 					mImgBtnClear.setVisibility(View.VISIBLE);
-					mImgBtnSearch.setVisibility(View.GONE);
+					// mImgBtnSearch.setVisibility(View.GONE);
 					return true;
 				}
 				return false;
@@ -467,8 +470,12 @@ public class ChatListGroupPublicFragment extends Fragment {
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 				if (mEditTextSearch.getText().toString().trim().length() > 0) {
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					// mImgBtnSearch.setVisibility(View.VISIBLE);
+					mImgViewSearchHint.setVisibility(View.INVISIBLE);
+				} else {
+					mImgViewSearchHint.setVisibility(View.VISIBLE);
 					mImgBtnClear.setVisibility(View.GONE);
-					mImgBtnSearch.setVisibility(View.VISIBLE);
 				}
 			}
 
@@ -794,10 +801,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 				isThreadRunning = true;
 				if (mEditTextSearch.getText().toString().trim().length() > 0) {
 					mImgBtnClear.setVisibility(View.VISIBLE);
-					mImgBtnSearch.setVisibility(View.GONE);
+					// mImgBtnSearch.setVisibility(View.GONE);
 				} else {
 					mImgBtnClear.setVisibility(View.GONE);
-					mImgBtnSearch.setVisibility(View.VISIBLE);
+					// mImgBtnSearch.setVisibility(View.VISIBLE);
 				}
 			}
 		});

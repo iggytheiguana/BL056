@@ -27,6 +27,7 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -57,6 +58,7 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
+import com.blulabellabs.code.ui.common.CustomLineView;
 import com.blulabellabs.code.ui.common.ExGroupAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ListAdapter;
@@ -110,10 +112,12 @@ public class ChatListGroupItem extends RelativeLayout implements
 	private EditText editTextTitle;
 	public RelativeLayout mChatItem, mChatItemChild;
 	public boolean isScrolling = false;
-	public ImageView textViewUserTyping;
+	public ImageView textViewUserTyping, imgReplyBottom;
 	private View mViewTypedMessage;
 	CustomDotView mTypedMessageDot;
 	boolean isCancel = false;
+	private CustomLineView customLineView;
+	private Message lastMessage;
 
 	public ChatListGroupItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -183,6 +187,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 				: (ImageView) findViewById(R.id.member_line);
 	}
 
+	public ImageView getReplyImg() {
+		return imgReplyBottom = imgReplyBottom != null ? imgReplyBottom
+				: (ImageView) findViewById(R.id.reply_image);
+	}
+
 	public LinearLayout getDragView() {
 		return dragView = dragView != null ? dragView : (LinearLayout) findViewById(R.id.drag);
 	}
@@ -238,6 +247,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 	public RelativeLayout getChatItemChild() {
 		return mChatItemChild = mChatItemChild != null ? mChatItemChild
 				: (RelativeLayout) findViewById(R.id.relative_chatItemChild);
+	}
+
+	public CustomLineView getVerticleLine() {
+		return customLineView = customLineView != null ? customLineView
+				: (CustomLineView) findViewById(R.id.verticle_line1);
 	}
 
 	// sendImgMessageBtn
@@ -309,7 +323,14 @@ public class ChatListGroupItem extends RelativeLayout implements
 	}
 
 	public void showMessage() {
+		if (lastMessage != null) {
+			lastMessage.isVerticleLineHide = false;
+			// getList().getAdapter().notify();
+		}
+		getReplyImg().setVisibility(GONE);
+		getMessageTypedView().setVisibility(VISIBLE);
 		getSendMessage().setVisibility(View.VISIBLE);
+		getList().setSelection(getList().getAdapter().getCount() - 1);
 		getMessageEdit().setInputType(
 				InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
@@ -325,7 +346,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 					// sendUserTypingMessage();// send user typing message
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mChatLoad.chatId);
-					getMessageTypedView().setVisibility(VISIBLE);
+					// getMessageTypedView().setVisibility(VISIBLE);
 				}
 			}
 
@@ -343,13 +364,13 @@ public class ChatListGroupItem extends RelativeLayout implements
 					// sendUserTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mChatLoad.chatId);
-					getMessageTypedView().setVisibility(VISIBLE);
+					// getMessageTypedView().setVisibility(VISIBLE);
 				} else {
 					// mSendButton.setVisibility(View.GONE);
 					// sendUserStoppedTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserStoppedTypingMessage(mChatLoad.chatId);
-					getMessageTypedView().setVisibility(GONE);
+					// getMessageTypedView().setVisibility(GONE);
 				}
 
 			}
@@ -358,8 +379,14 @@ public class ChatListGroupItem extends RelativeLayout implements
 		getMessageEdit().setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
 			@Override
 			public void onImeBack(CustomEdit ctrl) {
+				if (lastMessage != null) {
+					lastMessage.isVerticleLineHide = true;
+					// getList().getAdapter().notify();
+				}
 				ChatFocusSaver.setFocusedChatId(0);
 				getSendMessage().setVisibility(View.GONE);
+				getReplyImg().setVisibility(VISIBLE);
+				getMessageTypedView().setVisibility(GONE);
 				getMessageEdit().setVisibility(View.GONE);
 				MainActivity activity = (MainActivity) getContext();
 				activity.sendUserStoppedTypingMessage(mChatLoad.chatId);
@@ -623,9 +650,11 @@ public class ChatListGroupItem extends RelativeLayout implements
 				}
 				getMembersTextView().setText(memberNames);
 			}
-//			if (QodemePreferences.getInstance().getNewPublicGroupChatId() == t.chatId
-//					|| QodemePreferences.getInstance().getNewPrivateGroupChatId() == t.chatId) {
-			if(!mChatLoad.isCreated){
+			// if (QodemePreferences.getInstance().getNewPublicGroupChatId() ==
+			// t.chatId
+			// || QodemePreferences.getInstance().getNewPrivateGroupChatId() ==
+			// t.chatId) {
+			if (!mChatLoad.isCreated) {
 				if (mChatLoad.title != null && mChatLoad.title.trim().length() > 0) {
 					getTitleEditText().setVisibility(GONE);
 					getName().setVisibility(VISIBLE);
@@ -674,72 +703,80 @@ public class ChatListGroupItem extends RelativeLayout implements
 								MainActivity activity = (MainActivity) getContext();
 								mChatLoad.title = title;
 								activity.createChat(title, mChatLoad.type);
-//								int updated = mChatLoad.updated;
-//
-//								try {
-//									ArrayList<String> tagsList = findTagFromTitle(title);
-//
-//									if (mChatLoad.tag != null && !mChatLoad.tag.trim().equals("")) {
-//										String[] chatTag = mChatLoad.tag.split(",");
-//										ArrayList<String> duplicateTag = Lists.newArrayList();
-//										for (String t : tagsList) {
-//											boolean isAvail = false;
-//											for (int i = 0; i < chatTag.length; i++) {
-//												if (chatTag[i].equals(t)) {
-//													isAvail = true;
-//													break;
-//												}
-//											}
-//											if (isAvail)
-//												duplicateTag.add(t);
-//										}
-//										tagsList.removeAll(duplicateTag);
-//										for (int i = 0; i < chatTag.length; i++) {
-//											tagsList.add(chatTag[i]);
-//										}
-//									}
-//									String tags = "";
-//									for (String tag : tagsList) {
-//										tags += tag + ",";
-//									}
-//
-//									if (tags.endsWith(",")) {
-//										tags = tags.substring(0, tags.length() - 1);
-//									}
-//									mChatLoad.tag = tags;
-//									// tags = mChatLoad.tag;
-//									// if(tags.trim().startsWith(",")){
-//									// tags = tags.trim();
-//									// tags = tags.substring(1,tags.length());
-//									// mChatLoad.tag = tags;
-//									// }
-//
-//									getContext().getContentResolver().update(
-//											QodemeContract.Chats.CONTENT_URI,
-//											QodemeContract.Chats.updateChatInfoValues(title, -1,
-//													"", 0, "", tags, updated, 5),
-//											QodemeContract.Chats.CHAT_ID + "=?",
-//											DbUtils.getWhereArgsForId(mChatLoad.chatId));
-//								} catch (Exception e) {
-//								}
-//
-//								getContext().getContentResolver().update(
-//										QodemeContract.Chats.CONTENT_URI,
-//										QodemeContract.Chats.updateChatInfoValues(title, -1, "", 0,
-//												"", "", updated, 0),
-//										QodemeContract.Chats.CHAT_ID + "=?",
-//										DbUtils.getWhereArgsForId(mChatLoad.chatId));
-//								// setChatInfo(chatload.chatId, title, null,
-//								// null,
-//								// null,
-//								// null, null);
-//								mChatLoad.title = title;
-//								setChatInfo(mChatLoad.chatId, null, mChatLoad.color, mChatLoad.tag,
-//										mChatLoad.description, mChatLoad.status,
-//										mChatLoad.is_locked, mChatLoad.title, mChatLoad.latitude,
-//										mChatLoad.longitude);
-//
-//								Helper.hideKeyboard(getContext(), getTitleEditText());
+								// int updated = mChatLoad.updated;
+								//
+								// try {
+								// ArrayList<String> tagsList =
+								// findTagFromTitle(title);
+								//
+								// if (mChatLoad.tag != null &&
+								// !mChatLoad.tag.trim().equals("")) {
+								// String[] chatTag = mChatLoad.tag.split(",");
+								// ArrayList<String> duplicateTag =
+								// Lists.newArrayList();
+								// for (String t : tagsList) {
+								// boolean isAvail = false;
+								// for (int i = 0; i < chatTag.length; i++) {
+								// if (chatTag[i].equals(t)) {
+								// isAvail = true;
+								// break;
+								// }
+								// }
+								// if (isAvail)
+								// duplicateTag.add(t);
+								// }
+								// tagsList.removeAll(duplicateTag);
+								// for (int i = 0; i < chatTag.length; i++) {
+								// tagsList.add(chatTag[i]);
+								// }
+								// }
+								// String tags = "";
+								// for (String tag : tagsList) {
+								// tags += tag + ",";
+								// }
+								//
+								// if (tags.endsWith(",")) {
+								// tags = tags.substring(0, tags.length() - 1);
+								// }
+								// mChatLoad.tag = tags;
+								// // tags = mChatLoad.tag;
+								// // if(tags.trim().startsWith(",")){
+								// // tags = tags.trim();
+								// // tags = tags.substring(1,tags.length());
+								// // mChatLoad.tag = tags;
+								// // }
+								//
+								// getContext().getContentResolver().update(
+								// QodemeContract.Chats.CONTENT_URI,
+								// QodemeContract.Chats.updateChatInfoValues(title,
+								// -1,
+								// "", 0, "", tags, updated, 5),
+								// QodemeContract.Chats.CHAT_ID + "=?",
+								// DbUtils.getWhereArgsForId(mChatLoad.chatId));
+								// } catch (Exception e) {
+								// }
+								//
+								// getContext().getContentResolver().update(
+								// QodemeContract.Chats.CONTENT_URI,
+								// QodemeContract.Chats.updateChatInfoValues(title,
+								// -1, "", 0,
+								// "", "", updated, 0),
+								// QodemeContract.Chats.CHAT_ID + "=?",
+								// DbUtils.getWhereArgsForId(mChatLoad.chatId));
+								// // setChatInfo(chatload.chatId, title, null,
+								// // null,
+								// // null,
+								// // null, null);
+								// mChatLoad.title = title;
+								// setChatInfo(mChatLoad.chatId, null,
+								// mChatLoad.color, mChatLoad.tag,
+								// mChatLoad.description, mChatLoad.status,
+								// mChatLoad.is_locked, mChatLoad.title,
+								// mChatLoad.latitude,
+								// mChatLoad.longitude);
+								//
+								// Helper.hideKeyboard(getContext(),
+								// getTitleEditText());
 								// QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
 								return true;
 							}
@@ -793,11 +830,15 @@ public class ChatListGroupItem extends RelativeLayout implements
 			// }
 			if (mChatLoad.isSearchResult) {
 				// listData = mChatLoad.messages;
-				if (mChatLoad.messages != null) {
-					listData = Lists.newArrayList();
-					for (int i = 0; i < mChatLoad.messages.length; i++) {
-						listData.add(mChatLoad.messages[i]);
+				try {
+					if (mChatLoad.messages != null) {
+						listData = Lists.newArrayList();
+						for (int i = 0; i < mChatLoad.messages.length; i++) {
+							listData.add(mChatLoad.messages[i]);
+						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			} else
 				listData = mCallback.getMessages(mChatLoad.chatId);
@@ -944,10 +985,18 @@ public class ChatListGroupItem extends RelativeLayout implements
 			}
 			if (!isScrolling) {
 				if (listData != null) {
+					if (listData.size() > 0) {
+						lastMessage = temp.get(temp.size() - 1);
+						lastMessage.chatColor = mChatLoad.color;
+					}
 					listAdapter.addAll(temp);
 				}
 			} else {
 				if (listData != null) {
+					if (listData.size() > 0) {
+						lastMessage = temp.get(temp.size() - 1);
+						lastMessage.chatColor = mChatLoad.color;
+					}
 					new Handler().postDelayed(new Runnable() {
 
 						@Override
@@ -973,6 +1022,18 @@ public class ChatListGroupItem extends RelativeLayout implements
 				}
 			});
 
+			// if(listAdapter.getCount()>0){
+			// listAdapter.getView(listAdapter.getCount()-1);
+			// View view = getList().getChildAt(listAdapter.getCount()-1);
+			// int top = view.findViewById(R.id.date).getLayoutParams().height;
+
+			// RelativeLayout.LayoutParams param = new
+			// RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,getVerticleLine().getMeasuredHeight()-top);
+			// RelativeLayout.LayoutParams param = (LayoutParams)
+			// getVerticleLine().getLayoutParams();
+			// param.setMargins(0, top, 0, 0);
+
+			// }
 			height = mCallback.getChatHeight(mChatLoad.chatId);
 			ListView.LayoutParams lParams = new ListView.LayoutParams(
 					ListView.LayoutParams.MATCH_PARENT, height);
@@ -1056,6 +1117,8 @@ public class ChatListGroupItem extends RelativeLayout implements
 				getFavoriteBtn().setClickable(false);
 				getTitleEditText().setEnabled(false);
 				getSendMessage().setVisibility(View.GONE);
+				getReplyImg().setVisibility(GONE);
+				getMessageTypedView().setVisibility(GONE);
 				getMessageEdit().setVisibility(View.GONE);
 				getShareChatBtn().setEnabled(false);
 			}
@@ -1084,6 +1147,7 @@ public class ChatListGroupItem extends RelativeLayout implements
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		openKeyboadOnTitle();
@@ -1094,6 +1158,20 @@ public class ChatListGroupItem extends RelativeLayout implements
 		} else {
 			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 		}
+		getReplyImg().setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				try {
+					if (mChatLoad.is_locked != 1 && mChatLoad.is_deleted != 1 && mChatLoad.isCreated)
+						showMessage();
+
+					mCallback.onSingleTap(getView(), mPosition, mChatLoad);
+					// messageRead();
+				} catch (Exception ex) {
+				}
+			}
+		});
 	}
 
 	public void openKeyboadOnTitle() {

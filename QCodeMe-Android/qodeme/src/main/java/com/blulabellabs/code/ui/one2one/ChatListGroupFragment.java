@@ -33,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -72,9 +73,10 @@ public class ChatListGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter,
+	private ImageButton mMessageButton,  mImgBtnClear, mImgBtnLocationFilter,mImgBtnSearch,
 			mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
+	private ImageView mImgViewSearchHint;
 	private int chatType;
 	int lastFirstvisibleItem = 0;
 	private EditText mEditTextSearch;
@@ -188,6 +190,7 @@ public class ChatListGroupFragment extends Fragment {
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 		mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
 		mImgBtnFavoriteFilter = (ImageButton) getView().findViewById(R.id.imgBtn_favoriteFilter);
+		mImgViewSearchHint = (ImageView) getView().findViewById(R.id.searchHintIcon);
 
 		initListView();
 		isViewCreated = true;
@@ -218,7 +221,7 @@ public class ChatListGroupFragment extends Fragment {
 				activity.setPrivateSearch(false);
 				activity.setPrivateSearchString("");
 				mImgBtnClear.setVisibility(View.GONE);
-				mImgBtnSearch.setVisibility(View.VISIBLE);
+//				mImgBtnSearch.setVisibility(View.VISIBLE);
 				mEditTextSearch.setEnabled(true);
 				mEditTextSearch.setText("");
 				pageNo = 1;
@@ -329,7 +332,7 @@ public class ChatListGroupFragment extends Fragment {
 			mImgBtnSearch.setVisibility(View.GONE);
 		} else {
 			mImgBtnClear.setVisibility(View.GONE);
-			mImgBtnSearch.setVisibility(View.VISIBLE);
+//			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
 
 		updateUi();
@@ -491,6 +494,31 @@ public class ChatListGroupFragment extends Fragment {
 					return true;
 				}
 				return false;
+			}
+		});
+		mEditTextSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+				if (mEditTextSearch.getText().toString().trim().length() > 0) {
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					// mImgBtnSearch.setVisibility(View.VISIBLE);
+					mImgViewSearchHint.setVisibility(View.INVISIBLE);
+				} else {
+					mImgViewSearchHint.setVisibility(View.VISIBLE);
+					mImgBtnClear.setVisibility(View.GONE);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
 			}
 		});
 	}

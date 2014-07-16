@@ -31,6 +31,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -65,9 +66,10 @@ public class ChatListFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton, mImgBtnSearch, mImgBtnClear, mImgBtnLocationFilter,
+	private ImageButton mMessageButton,  mImgBtnClear, mImgBtnLocationFilter,mImgBtnSearch, 
 			mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
+	private ImageView mImgViewSearchHint;
 	int lastVisibleItem = 0;
 	boolean isScrollingDown = false;
 	private EditText mEditTextSearch;
@@ -185,6 +187,7 @@ public class ChatListFragment extends Fragment {
 
 		mEditTextSearch = (EditText) getView().findViewById(R.id.editText_Search);
 		mImgBtnFavoriteFilter = (ImageButton) getView().findViewById(R.id.imgBtn_favoriteFilter);
+		mImgViewSearchHint = (ImageView) getView().findViewById(R.id.searchHintIcon);
 
 		initListView();
 		isViewCreated = true;
@@ -216,7 +219,7 @@ public class ChatListFragment extends Fragment {
 				activity.setOneToOneSearchString("");
 				mEditTextSearch.setText("");
 				mImgBtnClear.setVisibility(View.GONE);
-				mImgBtnSearch.setVisibility(View.VISIBLE);
+//				mImgBtnSearch.setVisibility(View.VISIBLE);
 				mEditTextSearch.setEnabled(true);
 				mEditTextSearch.setText("");
 				pageNo = 1;
@@ -241,7 +244,7 @@ public class ChatListFragment extends Fragment {
 			mImgBtnSearch.setVisibility(View.GONE);
 		} else {
 			mImgBtnClear.setVisibility(View.GONE);
-			mImgBtnSearch.setVisibility(View.VISIBLE);
+//			mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
 
 		mImgBtnLocationFilter.setOnClickListener(new OnClickListener() {
@@ -474,6 +477,32 @@ public class ChatListFragment extends Fragment {
 					return true;
 				}
 				return false;
+			}
+		});
+		
+		mEditTextSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+				if (mEditTextSearch.getText().toString().trim().length() > 0) {
+					mImgBtnClear.setVisibility(View.VISIBLE);
+					// mImgBtnSearch.setVisibility(View.VISIBLE);
+					mImgViewSearchHint.setVisibility(View.INVISIBLE);
+				} else {
+					mImgViewSearchHint.setVisibility(View.VISIBLE);
+					mImgBtnClear.setVisibility(View.GONE);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
 			}
 		});
 	}

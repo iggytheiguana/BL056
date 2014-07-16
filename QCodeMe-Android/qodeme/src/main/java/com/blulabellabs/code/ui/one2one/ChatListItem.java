@@ -86,7 +86,7 @@ public class ChatListItem extends RelativeLayout implements
 	private View cornerLeft;
 	private View cornerRight;
 	public RelativeLayout mChatItem, mChatItemChild;
-	public ImageView textViewUserTyping;
+	public ImageView textViewUserTyping, imgReplyBottom;
 
 	private GestureDetector gestureDetector;
 	private ChatListAdapterCallback mCallback;
@@ -97,6 +97,7 @@ public class ChatListItem extends RelativeLayout implements
 	private View mViewTypedMessage;
 	CustomDotView mTypedMessageDot;
 	boolean isCancel = false;
+	private Message lastMessage;
 
 	public ChatListItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -272,6 +273,9 @@ public class ChatListItem extends RelativeLayout implements
 		if (listData != null) {
 			// if (!isScrolling) {
 			if (listData != null) {
+				if (listData.size() > 0) {
+					lastMessage = temp.get(temp.size() - 1);
+				}
 				listAdapter.addAll(temp);
 			}
 			// } else {
@@ -392,6 +396,8 @@ public class ChatListItem extends RelativeLayout implements
 			if (chatLoad.color != 0 && chatLoad.color != -1) {
 				getChatItemChild().setBackgroundColor(chatLoad.color);
 				mContact.chatColor = chatLoad.color;
+				if (lastMessage != null)
+					lastMessage.chatColor = chatLoad.color;
 			} else {
 				getChatItemChild().setBackgroundResource(0);
 			}
@@ -446,6 +452,20 @@ public class ChatListItem extends RelativeLayout implements
 			getName().setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 		}
 
+		getReplyImg().setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				try {
+					ChatLoad chatLoad = mCallback.getChatLoad(mContact.chatId);
+
+					if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1)
+						showMessage();
+				} catch (Exception e) {
+				}
+			}
+		});
+
 	}
 
 	private List<Message> sortMessages(List<Message> messages) {
@@ -463,6 +483,11 @@ public class ChatListItem extends RelativeLayout implements
 
 	private void messageRead() {
 		mCallback.messageRead(mContact.chatId);
+	}
+
+	public ImageView getReplyImg() {
+		return imgReplyBottom = imgReplyBottom != null ? imgReplyBottom
+				: (ImageView) findViewById(R.id.reply_image);
 	}
 
 	public TextView getName() {
@@ -615,7 +640,12 @@ public class ChatListItem extends RelativeLayout implements
 	}
 
 	public void showMessage() {
+		if (lastMessage != null) {
+			lastMessage.isVerticleLineHide = false;
+			// getList().getAdapter().notify();
+		}
 		getSendMessage().setVisibility(View.VISIBLE);
+		getMessageTypedView().setVisibility(VISIBLE);
 		getMessageEdit().setInputType(
 				InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		getMessageEdit().addTextChangedListener(new TextWatcher() {
@@ -631,7 +661,7 @@ public class ChatListItem extends RelativeLayout implements
 					// sendUserTypingMessage();// send user typing message
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mContact.chatId);
-					getMessageTypedView().setVisibility(VISIBLE);
+					// getMessageTypedView().setVisibility(VISIBLE);
 				}
 			}
 
@@ -644,13 +674,13 @@ public class ChatListItem extends RelativeLayout implements
 					// sendUserTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserTypingMessage(mContact.chatId);
-					getMessageTypedView().setVisibility(VISIBLE);
+					// getMessageTypedView().setVisibility(VISIBLE);
 				} else {
 					// mSendButton.setVisibility(View.GONE);
 					// sendUserStoppedTypingMessage();
 					MainActivity activity = (MainActivity) getContext();
 					activity.sendUserStoppedTypingMessage(mContact.chatId);
-					getMessageTypedView().setVisibility(GONE);
+					// getMessageTypedView().setVisibility(GONE);
 				}
 
 			}
@@ -659,6 +689,10 @@ public class ChatListItem extends RelativeLayout implements
 		getMessageEdit().setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
 			@Override
 			public void onImeBack(CustomEdit ctrl) {
+				if (lastMessage != null) {
+					lastMessage.isVerticleLineHide = true;
+					// getList().getAdapter().notify();
+				}
 				ChatFocusSaver.setFocusedChatId(0);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);

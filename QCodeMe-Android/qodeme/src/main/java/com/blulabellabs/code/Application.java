@@ -34,6 +34,7 @@ public class Application extends android.app.Application {
 	public static Typeface typefaceItalicBold;
 	public static Typeface typefaceMedium;
 	public static Typeface typefaceMediumItalic;
+	public static Typeface typefaceThin;
 
 	@Override
 	public void onCreate() {
@@ -47,7 +48,9 @@ public class Application extends android.app.Application {
 		FontUtils.setDefaultFontFormAssets(getAssets(), ROBOTO_REGULAR.toString(),
 				ROBOTO_BOLD.toString(), ROBOTO_ITALIC.toString(), ROBOTO_BOLD_ITALIC.toString());
 
-		typefaceRegular = Typeface.createFromAsset(getAssets(), "fonts/RobotoRegular.ttf");
+//		typefaceRegular = Typeface.createFromAsset(getAssets(), "fonts/RobotoRegular.ttf");
+		typefaceRegular = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
+		typefaceThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
 		typefaceBold = Typeface.createFromAsset(getAssets(), "fonts/RobotoBold.ttf");
 		typefaceItalic = Typeface.createFromAsset(getAssets(), "fonts/RobotoItalic.ttf");
 		typefaceItalicBold = Typeface.createFromAsset(getAssets(), "fonts/RobotoBoldItalic.ttf");

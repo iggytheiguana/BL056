@@ -38,6 +38,8 @@ public class Message implements Parcelable{
 	public boolean isFirst = false;
 	public boolean isLast = false;
 	public int is_deleted;
+	public boolean isVerticleLineHide = true;
+	public int chatColor = -1;
 	
 	public Message() {
 	}
@@ -60,6 +62,7 @@ public class Message implements Parcelable{
 		this.senderName = parcel.readString();
 		this.is_flagged = parcel.readInt();
 		this.is_deleted = parcel.readInt();
+		
 	}
 
 	@Override

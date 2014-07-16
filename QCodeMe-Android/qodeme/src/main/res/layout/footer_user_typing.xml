@@ -17,13 +17,12 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="9dp"
              >
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="1px"
                 android:orientation="vertical" >
 
                 <com.blulabellabs.code.ui.common.CustomLineView
@@ -50,7 +49,8 @@
                 android:layout_height="match_parent"
                 android:visibility="visible"
                 tools:padding="5dp"
-                tools:text_size="17sp" />
+                android:layout_marginLeft="1px"
+                tools:text_size_int="17" />
             <!-- style="@style/TextView.Message.Date" -->
         </FrameLayout>
 
@@ -82,12 +82,11 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent" 
-            android:layout_marginLeft="10dp">
+            android:layout_marginLeft="9dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="1px"
                 android:orientation="vertical" >
 
                 <com.blulabellabs.code.ui.common.CustomLineView
@@ -113,8 +112,9 @@
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:visibility="invisible"
+                 android:layout_marginLeft="1px"
                 tools:padding="5dp"
-                tools:text_size="17sp" />
+                tools:text_size_int="17" />
             <!-- style="@style/TextView.Message.Date" -->
         </FrameLayout>
 

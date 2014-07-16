@@ -217,6 +217,7 @@ public class SyncHelper {
 			String chatIdList[] = id.split(",");
 			for (String c : chatIdList) {
 				long chatId = Long.parseLong(c);
+				context.getContentResolver().delete(QodemeContract.Messages.CONTENT_URI, QodemeContract.Messages.MESSAGE_CHAT_ID+"="+chatId, null);
 				ChatLoadResponse chatLoadResponse = rest.chatLoad(chatId, 0, 1000);
 				new ChatLoadAddMemberHandler(context).parseAndApply(chatLoadResponse);// ,
 

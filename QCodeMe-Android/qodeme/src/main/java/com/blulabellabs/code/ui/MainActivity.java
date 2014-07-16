@@ -242,6 +242,7 @@ public class MainActivity extends BaseActivity implements
 	private String privateSearchString = "";
 	private String oneToOneSearchString = "";
 	private Location currentLocation;
+	public static boolean isKeyboardVisible = false;
 
 	private ImageButton mImgBtnOneToOne, mImgBtnPrivate, mImgBtnPublic;
 
@@ -898,60 +899,60 @@ public class MainActivity extends BaseActivity implements
 
 			}
 		});
-		customActionView.findViewById(R.id.imgBtn_add).setOnClickListener(
-				new View.OnClickListener() {
+		Button buttonAdd = (Button) customActionView.findViewById(R.id.imgBtn_add);
+		buttonAdd.setTypeface(Application.typefaceThin);
+		buttonAdd.setOnClickListener(new View.OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						// mContactListView.setAdapter(mContactListAddChatAdapter);
-						if (chatType == 2) {
-							List<Contact> contacts = Lists.newArrayList();
-							// createChat(contacts);
-							ChatLoad chatLoad = new ChatLoad();
-							chatLoad.type = chatType;
-							chatLoad.isCreated = false;
-							newChatCreated.put(chatType, chatLoad);
-							refreshOne2OneList();
-						} else {
-							if (chatType != 0) {
-								isAddContact = true;
-							} else {
-								isAddContact = false;
-							}
-							refreshContactList();
-							mContactListAdapter.notifyDataSetChanged();
-							mDrawerLayout.openDrawer(mContactListView);
-						}
-
-						try {
-							one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
-							privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
-							publicChatListFragment = (ChatListGroupPublicFragment) adapter
-									.getItem(2);
-
-							if (chatType == 0) {
-								one2OneChatListFragment.setLocationFilter(false);
-								one2OneChatListFragment.setFavoriteFilter(false);
-							} else if (chatType == 1) {
-								privateSearchString = "";
-								privateChatListFragment.setLocationFilter(false);
-								privateChatListFragment.setFavoriteFilter(false);
-							} else if (chatType == 2) {
-								publicSearchString = "";
-								publicChatListFragment.setLocationFilter(false);
-								publicChatListFragment.setFavoriteFilter(false);
-							}
-
-						} catch (Exception e) {
-						}
-
-						// Intent i = new Intent(getContext(),
-						// QrCodeShowActivity.class);
-						// i.putExtra(IntentKey.QR_CODE,
-						// QodemePreferences.getInstance().getQrcode());
-						// startActivity(i);
+			@Override
+			public void onClick(View v) {
+				// mContactListView.setAdapter(mContactListAddChatAdapter);
+				if (chatType == 2) {
+					List<Contact> contacts = Lists.newArrayList();
+					// createChat(contacts);
+					ChatLoad chatLoad = new ChatLoad();
+					chatLoad.type = chatType;
+					chatLoad.isCreated = false;
+					newChatCreated.put(chatType, chatLoad);
+					refreshOne2OneList();
+				} else {
+					if (chatType != 0) {
+						isAddContact = true;
+					} else {
+						isAddContact = false;
 					}
-				});
+					refreshContactList();
+					mContactListAdapter.notifyDataSetChanged();
+					mDrawerLayout.openDrawer(mContactListView);
+				}
+
+				try {
+					one2OneChatListFragment = (ChatListFragment) adapter.getItem(0);
+					privateChatListFragment = (ChatListGroupFragment) adapter.getItem(1);
+					publicChatListFragment = (ChatListGroupPublicFragment) adapter.getItem(2);
+
+					if (chatType == 0) {
+						one2OneChatListFragment.setLocationFilter(false);
+						one2OneChatListFragment.setFavoriteFilter(false);
+					} else if (chatType == 1) {
+						privateSearchString = "";
+						privateChatListFragment.setLocationFilter(false);
+						privateChatListFragment.setFavoriteFilter(false);
+					} else if (chatType == 2) {
+						publicSearchString = "";
+						publicChatListFragment.setLocationFilter(false);
+						publicChatListFragment.setFavoriteFilter(false);
+					}
+
+				} catch (Exception e) {
+				}
+
+				// Intent i = new Intent(getContext(),
+				// QrCodeShowActivity.class);
+				// i.putExtra(IntentKey.QR_CODE,
+				// QodemePreferences.getInstance().getQrcode());
+				// startActivity(i);
+			}
+		});
 	}
 
 	@SuppressLint("NewApi")
@@ -1665,8 +1666,27 @@ public class MainActivity extends BaseActivity implements
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		Log.d("config", "call");
 		// Pass any configuration change to the drawer toggls
 		// mDrawerToggle.onConfigurationChanged(newConfig);
+		try {
+			if (chatType == 0) {
+				// one2OneChatListFragment = (ChatListFragment)
+				// mPagerAdapter.getItem(0);
+				// privateChatListFragment = (ChatListGroupFragment)
+				// mPagerAdapter.getItem(1);
+				// publicChatListFragment = (ChatListGroupPublicFragment)
+				// mPagerAdapter.getItem(2);
+			} else {
+				ChatInsideGroupFragment chatInsideGroupFragment = (ChatInsideGroupFragment) mPagerAdapter
+						.getItem(0);
+				chatInsideGroupFragment.onConfigurationChanged(newConfig);
+
+			}
+
+			mPagerAdapter.notifyDataSetChanged();
+		} catch (Exception e) {
+		}
 	}
 
 	private void initContactsList() {
@@ -2131,12 +2151,12 @@ public class MainActivity extends BaseActivity implements
 						// TODO Auto-generated method stub
 						Log.d("Chat create", "Chat Created " + response.getChat().getId());
 
-//						if (chatType == 2)
-//							QodemePreferences.getInstance().setNewPublicGroupChatId(
-//									response.getChat().getId());
-//						if (chatType == 1)
-//							QodemePreferences.getInstance().setNewPrivateGroupChatId(
-//									response.getChat().getId());
+						// if (chatType == 2)
+						// QodemePreferences.getInstance().setNewPublicGroupChatId(
+						// response.getChat().getId());
+						// if (chatType == 1)
+						// QodemePreferences.getInstance().setNewPrivateGroupChatId(
+						// response.getChat().getId());
 						newChatCreated.remove(chatType);
 						getContentResolver().insert(
 								QodemeContract.Chats.CONTENT_URI,
@@ -2210,6 +2230,7 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	protected void onDestroy() {
+		MainActivity.isKeyboardVisible = false;
 		mImageFetcher.closeCache();
 		QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
 		QodemePreferences.getInstance().setNewPrivateGroupChatId(-1l);
@@ -2708,6 +2729,7 @@ public class MainActivity extends BaseActivity implements
 	@SuppressLint("NewApi")
 	@Override
 	public void onBackPressed() {
+		MainActivity.isKeyboardVisible = false;
 		// ChatInsideFragment oneToOneChatFragment = (ChatInsideFragment)
 		// getSupportFragmentManager()
 		// .findFragmentByTag(CHAT_INSIDE_FRAGMENT);
@@ -3042,6 +3064,8 @@ public class MainActivity extends BaseActivity implements
 					QodemeContract.Messages.addNewMessageValues(chatId, message, photoUrl,
 							hashPhoto, replyTo_Id, latitude, longitude, senderName, localUrl,
 							is_search));
+
+			// For starting the background sync process
 			SyncHelper.requestManualSync();
 
 			if (is_search == 1) {

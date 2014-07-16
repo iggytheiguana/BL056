@@ -239,7 +239,7 @@
                     android:layout_marginTop="15dp"
                     android:minHeight="10dp"
                     android:text="date"
-                    tools:text_size="18dp"
+                    tools:text_size_int="18"
                     tools:vertical_line="false" />
 
                 <ImageButton

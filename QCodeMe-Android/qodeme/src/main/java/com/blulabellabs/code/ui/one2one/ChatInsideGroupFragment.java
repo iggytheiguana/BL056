@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,6 +43,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -63,13 +65,17 @@ import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
+import com.blulabellabs.code.ui.common.CustomEdit;
+import com.blulabellabs.code.ui.common.CustomLineView;
 import com.blulabellabs.code.ui.common.ExtendedGroupListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatInsideFragmentCallback;
+import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
+import com.blulabellabs.code.utils.RandomColorGenerator;
 import com.google.common.collect.Lists;
 
 import de.tavendo.autobahn.WebSocketConnection;
@@ -98,15 +104,17 @@ public class ChatInsideGroupFragment extends Fragment {
 
 	private One2OneChatInsideFragmentCallback callback;
 	private boolean isViewCreated;
-	private ScrollDisabledListView mListView;
+	private ListView mListView;
 	private ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
 	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom, mImgFavorite;
-	private EditText mMessageField, mStatusField;
+	private EditText mStatusField;
+	private CustomEdit mMessageField;
 	private TextView mName, mStatus, mStatusUpdate;
 	private TextView mDate;
 	private TextView mLocation;
 	private LinearLayout mLinearLayStatusUpdte;
+	private LinearLayout mLinearMessage;
 	private TextView mTextViewMembers, mTextViewMembersLabel, mTextViewNumFavorite,
 			mTextViewDeleteBaner;
 	private ImageView mImgMemberBottomLine;
@@ -118,7 +126,11 @@ public class ChatInsideGroupFragment extends Fragment {
 	private boolean isUsertyping = false;
 	private ChatLoad chatLoad;
 	private int lstItem = 0;
+	CustomDotView customDotView;
 	List<Long> idList = Lists.newArrayList();
+	private ImageView imageViewReply;
+	private Message lastMessage;
+	private CustomLineView customLineView;
 
 	public static ChatInsideGroupFragment newInstance(ChatLoad c, boolean firstUpdate) {
 		ChatInsideGroupFragment f = new ChatInsideGroupFragment();
@@ -137,6 +149,12 @@ public class ChatInsideGroupFragment extends Fragment {
 		f.setArguments(args);
 		f.setChatLoad(c);
 		return f;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.setRetainInstance(true);
 	}
 
 	// public interface One2OneChatInsideFragmentCallback {
@@ -215,6 +233,16 @@ public class ChatInsideGroupFragment extends Fragment {
 		mImgFavorite = (ImageButton) getView().findViewById(R.id.btnFavorite);
 		mTextViewNumFavorite = (TextView) getView().findViewById(R.id.textView_totalFavorite);
 		mTextViewDeleteBaner = (TextView) getView().findViewById(R.id.textView_deleteBanner);
+
+		imageViewReply = (ImageView) getView().findViewById(R.id.reply_image);
+
+		customDotView = (CustomDotView) getView().findViewById(R.id.dotView_reply);
+		customDotView.setDotColor(getResources().getColor(R.color.user_typing));
+		customDotView.setOutLine(true);
+		customDotView.setSecondVerticalLine(true);
+		customDotView.invalidate();
+
+		customLineView = (CustomLineView) getView().findViewById(R.id.backbround_line_view);
 
 		mImgFavorite.setOnClickListener(new OnClickListener() {
 
@@ -340,9 +368,99 @@ public class ChatInsideGroupFragment extends Fragment {
 			});
 
 		}
-		if (MainActivity.isKeyboardHide){
+		mLinearMessage = (LinearLayout) getView().findViewById(R.id.linearTyping);
+		imageViewReply.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (getChatLoad() != null
+						&& getChatLoad().is_locked == 1
+						&& !QodemePreferences.getInstance().getQrcode()
+								.equals(getChatLoad().user_qrcode)) {
+
+				} else if (getChatLoad().is_deleted == 1) {
+				} else {
+
+					if (lastMessage != null) {
+						lastMessage.isVerticleLineHide = false;
+					}
+					mLinearMessage.setVisibility(View.VISIBLE);
+					mMessageField.setVisibility(View.VISIBLE);
+					mSendButton.setVisibility(View.VISIBLE);
+					imageViewReply.setVisibility(View.GONE);
+					customLineView.setVisibility(View.VISIBLE);
+					MainActivity.isKeyboardVisible = true;
+					mMessageField.post(new Runnable() {
+						@Override
+						public void run() {
+							mMessageField.requestFocus();
+							Helper.showKeyboard(getActivity(), mMessageField);
+						}
+					});
+
+					mMessageField.postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							mMessageField.requestFocus();
+							// Helper.showKeyboard(getActivity(),
+							// mMessageField);
+						}
+					}, 1000);
+				}
+			}
+		});
+		mMessageField.setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
+			@Override
+			public void onImeBack(CustomEdit ctrl) {
+				MainActivity.isKeyboardVisible = false;
+				if (lastMessage != null) {
+					lastMessage.isVerticleLineHide = true;
+					// getList().getAdapter().notify();
+				}
+				mLinearMessage.setVisibility(View.INVISIBLE);
+				mMessageField.setVisibility(View.INVISIBLE);
+				mSendButton.setVisibility(View.INVISIBLE);
+				imageViewReply.setVisibility(View.VISIBLE);
+				customLineView.setVisibility(View.INVISIBLE);
+			}
+		});
+		if (MainActivity.isKeyboardHide) {
 			MainActivity.isKeyboardHide = false;
 			Helper.hideKeyboard(getActivity(), mMessageField);
+		} else {
+			if (MainActivity.isKeyboardVisible) {
+				mLinearMessage.setVisibility(View.VISIBLE);
+				mMessageField.setVisibility(View.VISIBLE);
+				mSendButton.setVisibility(View.VISIBLE);
+				imageViewReply.setVisibility(View.GONE);
+				customLineView.setVisibility(View.VISIBLE);
+				mMessageField.post(new Runnable() {
+					@Override
+					public void run() {
+						mMessageField.requestFocus();
+					}
+				});
+			}
+		}
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+			// Toast.makeText(this, "keyboard visible",
+			// Toast.LENGTH_SHORT).show();
+			mMessageField.post(new Runnable() {
+
+				@Override
+				public void run() {
+					mMessageField.requestFocus();
+				}
+			});
+		} else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+			// Toast.makeText(this, "keyboard hidden",
+			// Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -368,7 +486,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
-		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
+		mMessageField = (CustomEdit) getView().findViewById(R.id.edit_message);
 
 		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 				| InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -419,7 +537,7 @@ public class ChatInsideGroupFragment extends Fragment {
 			}
 		});
 		mMessageField.setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Helper.showKeyboard(getActivity(), mMessageField);
@@ -448,11 +566,11 @@ public class ChatInsideGroupFragment extends Fragment {
 			public void afterTextChanged(Editable s) {
 				Log.d("CHATINSIDE", "afterTextChanged called");
 				if (s.length() > 0) {
-					mSendButton.setVisibility(View.VISIBLE);
+					// mSendButton.setVisibility(View.VISIBLE);
 					footerView1.setVisibility(View.VISIBLE);
 					sendUserTypingMessage();
 				} else {
-					mSendButton.setVisibility(View.GONE);
+					// mSendButton.setVisibility(View.GONE);
 					sendUserStoppedTypingMessage();
 					footerView1.setVisibility(View.GONE);
 				}
@@ -734,7 +852,7 @@ public class ChatInsideGroupFragment extends Fragment {
 		customDotViewUserTyping.setSecondVerticalLine(true);
 		customDotViewUserTyping.invalidate();
 
-		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		mListView = (ListView) getView().findViewById(R.id.listview);
 		mDate = (TextView) getView().findViewById(R.id.date);
 		mLocation = (TextView) getView().findViewById(R.id.location);
 		List<Message> listForAdapter = Lists.newArrayList();
@@ -768,7 +886,7 @@ public class ChatInsideGroupFragment extends Fragment {
 
 				}, chatListInsideFragmentCallback);
 
-		mListView.addFooterView(view);
+		// mListView.addFooterView(view);
 		mListView.setAdapter(mListAdapter);
 
 		mListView.setOnTouchListener(new View.OnTouchListener() {
@@ -777,7 +895,7 @@ public class ChatInsideGroupFragment extends Fragment {
 				return false;
 			}
 		});
-		mListView.setStackFromBottom(true);
+		// mListView.setStackFromBottom(true);
 		mListView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent e) {
@@ -916,8 +1034,13 @@ public class ChatInsideGroupFragment extends Fragment {
 	/**
 	 * Refresh data can be called from activity
 	 */
+	@SuppressLint("NewApi")
 	public void updateUi() {
 		if (isViewCreated) {
+			customDotView.setDotColor(getResources().getColor(R.color.user_typing));
+			customDotView.setOutLine(true);
+			// customDotView.setSecondVerticalLine(true);
+			customDotView.invalidate();
 
 			if (chatLoad.is_favorite == 1) {
 				Bitmap bm = BitmapFactory.decodeResource(getResources(),
@@ -997,19 +1120,28 @@ public class ChatInsideGroupFragment extends Fragment {
 					}
 					listData = sortMessages(listData);
 					mListAdapter.addAll(listData);
-				}
-			} else
-				mListAdapter.addAll(callback.getChatMessages(getChatId()));
 
-			if (mListAdapter.getCount() > 0)
-				if (lstItem == 0)
-					mListView.setSelection(mListAdapter.getCount() - 1);
-				else
-					mListView.setSelection(lstItem);
+					if (listData.size() > 0) {
+						lastMessage = listData.get(listData.size() - 1);
+					}
+				}
+			} else {
+				List<Message> listData = callback.getChatMessages(getChatId());
+				mListAdapter.addAll(listData);
+				if (listData != null && listData.size() > 0) {
+					lastMessage = listData.get(listData.size() - 1);
+				}
+			}
+
+			// if (mListAdapter.getCount() > 0)
+			// if (lstItem == 0)
+			// mListView.setSelection(mListAdapter.getCount() - 1);
+			// else
+			// mListView.setSelection(lstItem);
 
 			mName.setText(chatLoad.title);
 			mStatus.setText(chatLoad.status);
-			
+
 			// mName.setTextColor(getChatColor());
 
 			if (QodemePreferences.getInstance().isSaveLocationDateChecked()) {
@@ -1071,34 +1203,45 @@ public class ChatInsideGroupFragment extends Fragment {
 					&& !QodemePreferences.getInstance().getQrcode()
 							.equals(getChatLoad().user_qrcode)) {
 				mBtnImageSend.setVisibility(View.INVISIBLE);
-				mSendButton.setVisibility(View.INVISIBLE);
-				mBtnImageSendBottom.setVisibility(View.INVISIBLE);
-				mMessageField.setVisibility(View.INVISIBLE);
-				
+				// mSendButton.setVisibility(View.INVISIBLE);
+				// mBtnImageSendBottom.setVisibility(View.INVISIBLE);
+				// mMessageField.setVisibility(View.INVISIBLE);
+
 			} else {
-				
+
 				mBtnImageSend.setVisibility(View.VISIBLE);
-				mSendButton.setVisibility(View.VISIBLE);
-				mBtnImageSendBottom.setVisibility(View.VISIBLE);
-				mMessageField.setVisibility(View.VISIBLE);
+				// mSendButton.setVisibility(View.VISIBLE);
+				// mBtnImageSendBottom.setVisibility(View.VISIBLE);
+				// mMessageField.setVisibility(View.VISIBLE);
 			}
 
 			if (chatLoad.is_deleted == 1) {
 				mTextViewDeleteBaner.setVisibility(View.VISIBLE);
 				mBtnImageSend.setVisibility(View.INVISIBLE);
-				mBtnImageSendBottom.setVisibility(View.INVISIBLE);
+				// mBtnImageSendBottom.setVisibility(View.INVISIBLE);
 				mSendButton.setVisibility(View.INVISIBLE);
 				mMessageField.setVisibility(View.INVISIBLE);
 				mImgFavorite.setClickable(false);
 			}
 
-			if(chatLoad == null || chatLoad.status== null || chatLoad.status.trim().equals("")){
+			if (chatLoad == null || chatLoad.status == null || chatLoad.status.trim().equals("")) {
 				mStatus.setVisibility(View.GONE);
 				getView().findViewById(R.id.img_statusline).setVisibility(View.GONE);
-			}else{
+			} else {
 				mStatus.setVisibility(View.VISIBLE);
 				getView().findViewById(R.id.img_statusline).setVisibility(View.VISIBLE);
 			}
+
+			// mListView.setSelectionFromTop(mListAdapter.getCount() - 1,
+			// -100000 - mListView.getPaddingTop());
+			// mListView.scrollTo(0,1000000000);
+			mListView.post(new Runnable() {
+				@Override
+				public void run() {
+					mListView.setSelectionFromTop(mListAdapter.getCount() - 1,
+							-100000 - mListView.getPaddingTop());
+				}
+			});
 		}
 	}
 

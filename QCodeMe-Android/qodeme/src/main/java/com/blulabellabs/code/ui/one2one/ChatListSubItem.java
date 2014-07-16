@@ -93,6 +93,7 @@ public class ChatListSubItem extends RelativeLayout implements
 	private ImageView mImageViewItem;
 	private ProgressBar mProgressBar;
 	private View viewUserSpace, viewUserSpace1;
+	private TextView lastMessageLineHider;
 
 	public ChatListSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -124,6 +125,11 @@ public class ChatListSubItem extends RelativeLayout implements
 	public TextView getDateHeader() {
 		return dateHeader = dateHeader != null ? dateHeader
 				: (TextView) findViewById(R.id.date_header);
+	}
+
+	public TextView getLstMessageLineHider() {
+		return lastMessageLineHider = lastMessageLineHider != null ? lastMessageLineHider
+				: (TextView) findViewById(R.id.lastMessageLineInvisible);
 	}
 
 	public View getUserSpace() {
@@ -215,7 +221,7 @@ public class ChatListSubItem extends RelativeLayout implements
 
 	private void setDefault() {
 		this.setVisibility(VISIBLE);
-		getUserSpace().setVisibility(VISIBLE);
+//		getUserSpace().setVisibility(VISIBLE);
 		getStatusLayout().setVisibility(VISIBLE);
 		getMessageLayout().setVisibility(VISIBLE);
 		getHeaderContainer().setVisibility(VISIBLE);
@@ -241,7 +247,7 @@ public class ChatListSubItem extends RelativeLayout implements
 				getImageMessage().setVisibility(View.GONE);
 				getImageLayout().setVisibility(View.GONE);
 			} else {
-				getUserSpace().setVisibility(VISIBLE);
+//				getUserSpace().setVisibility(VISIBLE);
 				getStatusLayout().setVisibility(VISIBLE);
 				getMessageLayout().setVisibility(GONE);
 				getHeaderContainer().setVisibility(GONE);
@@ -459,7 +465,8 @@ public class ChatListSubItem extends RelativeLayout implements
 					public void onClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
 
-						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1 && nextMessage!= null)
+						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1
+								&& nextMessage != null)
 							initSendMessage();
 					}
 				});
@@ -503,11 +510,10 @@ public class ChatListSubItem extends RelativeLayout implements
 					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
 					// getDate().setDotColor(
 					// context.getResources().getColor(R.color.text_message_sent));
-					if (chatType == 0){
+					if (chatType == 0) {
 						getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
 						getMessage().setTextColor(Color.GRAY);
-					}
-					else
+					} else
 						getDate().setDotColor(Color.BLACK);
 					// getDate().setOutLine(true);
 					getDate().invalidate();
@@ -524,21 +530,21 @@ public class ChatListSubItem extends RelativeLayout implements
 				}
 			} else {
 				// getDate().setTextColor(color);
-//				getDate().setDotColor(color);
+				// getDate().setDotColor(color);
 				if (chatType == 2) {
 					MainActivity activity = (MainActivity) getContext();
 					Integer integerColor = activity.messageColorMap.get(me.messageId);
-					if(integerColor == null){
-						
+					if (integerColor == null) {
+
 						int randomColor = RandomColorGenerator.getInstance().nextColor();
 						getDate().setDotColor(randomColor);
 						activity.messageColorMap.put(me.messageId, randomColor);
-					}else{
+					} else {
 						getDate().setDotColor(integerColor);
 					}
 				} else
 					getDate().setDotColor(color);
-				
+
 				if (QodemeContract.Messages.State.NOT_READ == me.state) {
 					getDate().setOutLine(true);
 					getMessage().setTypeface(Application.typefaceBold);
@@ -555,11 +561,40 @@ public class ChatListSubItem extends RelativeLayout implements
 				if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
 					getUserSpace().setVisibility(GONE);
 				} else {
-					if (me.replyTo_id > 0)
-						getUserSpace1().setVisibility(VISIBLE);
-					else
-						getUserSpace().setVisibility(VISIBLE);
+//					if (me.replyTo_id > 0)
+//						getUserSpace1().setVisibility(VISIBLE);
+//					else
+//						getUserSpace().setVisibility(VISIBLE);
 				}
+				// setBackgroundColor(Color.TRANSPARENT);
+				getLstMessageLineHider().setVisibility(GONE);
+			} else {
+				// setBackgroundColor(Color.WHITE);
+				getLstMessageLineHider().setVisibility(VISIBLE);
+				MainActivity activity = (MainActivity) getContext();
+				if (!me.isVerticleLineHide || !activity.mActionBar.isShowing()) {
+					getLstMessageLineHider().setBackgroundColor(Color.TRANSPARENT);
+				} else {
+//					ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
+//					if (chatLoad != null) {
+//						if (chatLoad.color != 0 && chatLoad.color != -1)
+//							getLstMessageLineHider().setBackgroundColor(chatLoad.color);
+//						else {
+//							getLstMessageLineHider().setBackgroundColor(Color.WHITE);
+//						}
+//					} else{
+//						
+//						getLstMessageLineHider().setBackgroundColor(Color.WHITE);
+//					}
+					if (me.chatColor != 0 && me.chatColor != -1)
+						getLstMessageLineHider().setBackgroundColor(me.chatColor);
+					else {
+						getLstMessageLineHider().setBackgroundColor(Color.WHITE);
+					}
+				}
+
+				getDate().setSecondVerticalLine(true);
+				getDate().invalidate();
 			}
 			/*
 			 * && ! TextUtils . isEmpty ( previousMessage . created )
@@ -583,7 +618,11 @@ public class ChatListSubItem extends RelativeLayout implements
 					if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
 						Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
 						// Converter.getCrurentTimeFromTimestamp(me.created)
-						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						SimpleDateFormat dateFormat = new SimpleDateFormat(
+								"MMM-dd-yyyy", Locale.US);
+//						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						getDateHeader().setText(dateFormat.format(dateTemp));
+//						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
 						getHeaderContainer().setVisibility(View.VISIBLE);
 					} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
 						getOpponentSeparator().setVisibility(View.VISIBLE);
@@ -687,8 +726,10 @@ public class ChatListSubItem extends RelativeLayout implements
 
 			@Override
 			public void onClick(View v) {
-				getContext().getContentResolver().insert(QodemeContract.Contacts.CONTENT_URI,
-						QodemeContract.Contacts.addNewContactValues(message.qrcode,message.senderName));
+				getContext().getContentResolver().insert(
+						QodemeContract.Contacts.CONTENT_URI,
+						QodemeContract.Contacts.addNewContactValues(message.qrcode,
+								message.senderName));
 				SyncHelper.requestManualSync();
 				popupWindow.dismiss();
 			}

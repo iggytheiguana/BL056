@@ -91,7 +91,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private Message nextMessage;
 	private Message currentMessage;
 	private CustomDotView date;
-	private TextView dateHeader, mTextViewStatus;
+	private TextView dateHeader, mTextViewStatus, lastMessageLineHider;
 	private RelativeLayout headerContainer;
 	private LinearLayout mLinearLayout, mLinearLayoutStatus, mLinearLayoutMessage;
 	private View opponentSeparator;
@@ -109,7 +109,10 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	public TextView getMessage() {
 		return message = message != null ? message : (TextView) findViewById(R.id.message);
 	}
-
+	public TextView getLstMessageLineHider() {
+		return lastMessageLineHider = lastMessageLineHider != null ? lastMessageLineHider
+				: (TextView) findViewById(R.id.lastMessageLineInvisible);
+	}
 	public TextView getStatus() {
 		return mTextViewStatus = mTextViewStatus != null ? mTextViewStatus
 				: (TextView) findViewById(R.id.textView_status_update);
@@ -538,10 +541,17 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					getUserSpace().setVisibility(GONE);
 				} else {
 
-					if (me.replyTo_id > 0)
-						getUserSpace1().setVisibility(VISIBLE);
-					else
-						getUserSpace().setVisibility(VISIBLE);
+//					if (me.replyTo_id > 0)
+//						getUserSpace1().setVisibility(VISIBLE);
+//					else
+//						getUserSpace().setVisibility(VISIBLE);
+					getLstMessageLineHider().setVisibility(GONE);				}
+			}else{
+				getLstMessageLineHider().setVisibility(VISIBLE);
+				if (!me.isVerticleLineHide ) {
+					getLstMessageLineHider().setBackgroundColor(Color.TRANSPARENT);
+				} else {
+					getLstMessageLineHider().setBackgroundColor(Color.WHITE);
 				}
 			}
 			/*
@@ -566,7 +576,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
 						Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
 						// Converter.getCrurentTimeFromTimestamp(me.created)
-						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						SimpleDateFormat dateFormat = new SimpleDateFormat(
+								"MMM-dd-yyyy", Locale.US);
+//						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						getDateHeader().setText(dateFormat.format(dateTemp));
+						
 						getHeaderContainer().setVisibility(View.VISIBLE);
 					} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
 						getOpponentSeparator().setVisibility(View.VISIBLE);

@@ -17,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -84,7 +85,8 @@ public class CustomLineView extends TextView {
 		mPaintCircle.setFlags(Paint.ANTI_ALIAS_FLAG);
 		mPaintCircle.setStyle(Paint.Style.FILL);
 		mPaintCircle.setColor(getResources().getColor(R.color.text_message_text));
-		lineWidth = convertDpToPixel(1, getContext());
+//		lineWidth = convertDpToPixel(1, getContext());
+		lineWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
 
 		mPaintLine.setStrokeWidth(lineWidth);
 		// mPaintCircle.setColor(Color.RED);

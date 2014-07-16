@@ -1,7 +1,5 @@
 package com.blulabellabs.code.ui.common;
 
-import com.blulabellabs.code.R;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
@@ -18,8 +15,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.View;
+import android.util.TypedValue;
 import android.widget.TextView;
+
+import com.blulabellabs.code.R;
 
 public class CustomDotView extends TextView {
 
@@ -57,7 +56,10 @@ public class CustomDotView extends TextView {
 			TypedArray typedArray = context.obtainStyledAttributes(attrs,
 					R.styleable.CustomDotView, defStyleAttr, 0);
 
-			textSize = typedArray.getDimensionPixelSize(R.styleable.CustomDotView_text_size, 16);
+//			textSize = typedArray.getDimensionPixelSize(R.styleable.CustomDotView_text_size, 16);
+			float dim = typedArray.getDimension(R.styleable.CustomDotView_text_size, 16);
+			int ddd = typedArray.getInteger(R.styleable.CustomDotView_text_size_int, 17);
+			textSize =  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, ddd, getResources().getDisplayMetrics());
 			isVerticalLine = typedArray.getBoolean(R.styleable.CustomDotView_vertical_line, true);
 			paddingDp = typedArray.getDimensionPixelOffset(R.styleable.CustomDotView_padding, 5);
 
@@ -132,12 +134,19 @@ public class CustomDotView extends TextView {
 						getWidth() - (textSize / 2) - 5, getHeight(), mPaintLine);
 			if (isCircle) {
 				mPaintCircle.setColor(dotColor);
+//				canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2)+circleTopMargine,
+//						(textSize / 2) - 3, mPaintCircle);// RADIUS = 7
+//				if (isOutLine()) {
+//					mPaintCircle.setColor(Color.WHITE);
+//					canvas.drawCircle(getWidth() - (textSize / 2) - 5,
+//							(textSize / 2)+circleTopMargine, ((textSize / 2) - 3) - 1, mPaintCircle);
+//				}
 				canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2)+circleTopMargine,
-						(textSize / 2) - 3, mPaintCircle);// RADIUS = 7
+						(textSize / 2)-2 , mPaintCircle);// RADIUS = 7
 				if (isOutLine()) {
 					mPaintCircle.setColor(Color.WHITE);
 					canvas.drawCircle(getWidth() - (textSize / 2) - 5,
-							(textSize / 2)+circleTopMargine, ((textSize / 2) - 3) - 1, mPaintCircle);
+							(textSize / 2)+circleTopMargine, ((textSize / 2)-2 ) - 1, mPaintCircle);
 				}
 			}
 			// canvas.drawLine(10, padding+2+(textSize/2), getWidth() - 15,
@@ -147,13 +156,21 @@ public class CustomDotView extends TextView {
 		} else {
 			// int textHeight = (int) mPaintCircle.measureText("T");
 			if (isCircle) {
+//				mPaintCircle.setColor(dotColor);
+//				canvas.drawCircle((textSize / 2) + 2,  (textSize / 2),
+//						(textSize / 2) - 3, mPaintCircle);
+//				if (isOutLine()) {
+//					mPaintCircle.setColor(Color.WHITE);
+//					canvas.drawCircle((textSize / 2) + 2, (textSize / 2),
+//							((textSize / 2) - 3) - 1, mPaintCircle);
+//				}
 				mPaintCircle.setColor(dotColor);
 				canvas.drawCircle((textSize / 2) + 2,  (textSize / 2),
-						(textSize / 2) - 3, mPaintCircle);
+						(textSize / 2)-2, mPaintCircle);
 				if (isOutLine()) {
 					mPaintCircle.setColor(Color.WHITE);
 					canvas.drawCircle((textSize / 2) + 2, (textSize / 2),
-							((textSize / 2) - 3) - 1, mPaintCircle);
+							((textSize / 2)-2 ) - 1, mPaintCircle);
 				}
 			}
 			// canvas.drawBitmap(circle, 0,0,new Paint());

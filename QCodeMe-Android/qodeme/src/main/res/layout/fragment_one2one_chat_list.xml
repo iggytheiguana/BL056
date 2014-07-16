@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_solid"
-    android:paddingTop="?attr/actionBarSize"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize" >
 
     <com.blulabellabs.code.ui.common.ScrollDisabledListView
         android:id="@+id/listview"
@@ -33,16 +33,42 @@
             android:background="@drawable/bg_box_search"
             android:orientation="horizontal" >
 
-            <EditText
-                android:id="@+id/editText_Search"
-                style="@style/EditText"
+            <!-- <EditText -->
+            <!-- android:id="@+id/editText_Search" -->
+            <!-- style="@style/EditText" -->
+            <!-- android:layout_width="0dp" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_margin="5dp" -->
+            <!-- android:singleLine="true" -->
+            <!-- android:imeOptions="actionSearch" -->
+            <!-- android:inputType="text" -->
+            <!-- android:layout_weight="1" /> -->
+
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:layout_weight="1" />
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/searchHintIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/ic_search_gray" />
+
+                <EditText
+                    android:id="@+id/editText_Search"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:singleLine="true" />
+            </FrameLayout>
 
             <ImageButton
                 android:id="@+id/imgBtn_search"
@@ -51,6 +77,7 @@
                 android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:visibility="gone"
                 android:src="@drawable/ic_search_gray" />
 
             <ImageButton

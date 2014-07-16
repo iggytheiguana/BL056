@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
                 tools:padding="5dp"
-                tools:text_size="18sp" />
+                tools:text_size_int="18" />
 
             <!-- style="@style/TextView.Message.Date" -->
 
@@ -89,7 +89,7 @@
                 android:layout_height="match_parent"
                 android:visibility="invisible"
                 tools:padding="5dp"
-                tools:text_size="18sp" />
+                tools:text_size_int="18" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
