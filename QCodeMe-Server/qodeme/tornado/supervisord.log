@@ -1,0 +1,153 @@
+2014-03-12 21:04:28,957 INFO daemonizing the supervisord process
+2014-03-12 21:04:28,958 INFO supervisord started with pid 5868
+2014-03-12 21:04:29,966 INFO spawned: 'HELLOWORLD0' with pid 5869
+2014-03-12 21:04:30,324 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-12 21:04:32,327 INFO success: HELLOWORLD0 entered RUNNING state, process has stayed up for > than 2 seconds (startsecs)
+2014-03-12 21:04:38,604 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:38,682 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:04:38,682 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:04:38,683 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:04:47,734 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:47,889 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:47,909 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":634}
+
+2014-03-12 21:04:47,910 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:04:47,910 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 634
+
+2014-03-12 21:04:47,913 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:48,044 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+
+2014-03-12 21:04:48,044 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:04:48,044 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 636
+
+2014-03-12 21:04:48,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:48,226 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+
+2014-03-12 21:04:48,226 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:04:48,227 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 636
+
+2014-03-12 21:04:48,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:04:48,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:04:48,665 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:04:48,665 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:04:48,666 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:04:48,666 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:04:48,666 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:04:48,667 DEBG 'HELLOWORLD0' stderr output:
+ERROR:tornado.application:Uncaught exception in /
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/websocket.py", line 322, in wrapper
+    return callback(*args, **kwargs)
+  File "/var/www/tornado/helloworld.py", line 82, in on_message
+    self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
+  File "/var/www/tornado/helloworld.py", line 113, in sendUserStartedTypingEvent
+    handler.sendMessage(message)
+AttributeError: 'WSHandler' object has no attribute 'sendMessage'
+
+2014-03-12 21:04:48,668 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:04:48,669 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:04:50,294 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:04:50,439 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:04:50,485 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+
+2014-03-12 21:04:50,485 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:04:50,486 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 636
+
+2014-03-12 21:04:53,025 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:04:53,025 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:04:53,026 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:04:53,026 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:04:53,026 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:04:53,027 DEBG 'HELLOWORLD0' stderr output:
+ERROR:tornado.application:Uncaught exception in /
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/websocket.py", line 322, in wrapper
+    return callback(*args, **kwargs)
+  File "/var/www/tornado/helloworld.py", line 82, in on_message
+    self.sendUserStartedTypingEvent(authToken, chatId, clientsForChat)
+  File "/var/www/tornado/helloworld.py", line 113, in sendUserStartedTypingEvent
+    handler.sendMessage(message)
+AttributeError: 'WSHandler' object has no attribute 'sendMessage'
+
+2014-03-12 21:04:53,027 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:04:53,028 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:07:19,137 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-12 21:07:29,716 WARN received SIGTERM indicating exit request
+2014-03-12 21:07:29,716 DEBG killing HELLOWORLD0 (pid 5869) with signal SIGTERM
+2014-03-12 21:07:29,716 INFO waiting for HELLOWORLD0 to die
+2014-03-12 21:07:29,719 DEBG fd 6 closed, stopped monitoring <POutputDispatcher at 40217920 for <Subprocess at 40217776 with name HELLOWORLD0 in state STOPPING> (stdout)>
+2014-03-12 21:07:29,719 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 40218208 for <Subprocess at 40217776 with name HELLOWORLD0 in state STOPPING> (stderr)>
+2014-03-12 21:07:29,719 INFO stopped: HELLOWORLD0 (terminated by SIGTERM)
+2014-03-12 21:07:29,720 DEBG received SIGCLD indicating a child quit

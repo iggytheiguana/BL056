@@ -117,6 +117,8 @@ class Contact extends CActiveRecord
         $contact->contact_id = $params['contact_id'] ;
         $contact->who_init = $params['who_init'];
         $contact->state = $params['state'];
+        $contact->latitude = $params['latitude'];
+        $contact->longitude = $params['longitude'];
         $contact->color = $model->color;
         $contact->title =  $model->title;
         if(!$model->message  and $user_settings){
@@ -129,10 +131,10 @@ class Contact extends CActiveRecord
         } else{
             $contact->public_name =  $params['public_name'];}
 
-        if(!$model->location and $user_settings){
-            $contact->location = $user_settings['location'];
-        } else {
-            $contact->location = $model->location;}
+//        if(!$model->location and $user_settings){
+//            $contact->location = $user_settings['location'];
+//        } else {
+//            $contact->location = $model->location;}
 
         $user_settings = false;
         if(! $contact->save() ){return FALSE;}

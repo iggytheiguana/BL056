@@ -83,6 +83,7 @@ class Settings extends CActiveRecord
             'location' => 'Location',
             'datetime' => 'Date and time',
             'set_timeloc' => 'Set time and location',
+            'status' => 'Status',
         );
     }
 
@@ -114,7 +115,7 @@ class Settings extends CActiveRecord
     }
 
 
-    public static function create ($model,$user_id){
+    public static function create($model,$user_id){
 
         $settings = new Settings();
         $settings->user_id = $user_id;
@@ -123,8 +124,11 @@ class Settings extends CActiveRecord
         $settings->public_name = $model->public_name;
         $settings->with_pubname = $model->with_pubname;
         $settings->auto_accept = $model->auto_accept;
-        $settings->location = $model->location;
+        //$settings->location = $model->location;
+        $settings->latitude = $model->latitude;
+        $settings->longitude = $model->longitude;
         $settings->set_timeloc = $model->set_timeloc;
+        $settings->status = $model->status;
         if(! $settings->save() ){return FALSE;}
         return $settings;
     }
@@ -148,9 +152,11 @@ class Settings extends CActiveRecord
                 'public_name' => $one->public_name,
                 'with_pubname' => $one->with_pubname,
                 'auto_accept' => $one->auto_accept,
-                'location' => $one->location,
+                'latitude' => $one->latitude,
+                'longitude' => $one->longitude,
                 'datetime' => $one->datetime,
                 'set_timeloc' => $one->set_timeloc,
+                'status' => $one->status,
             );
         }
         return $resp_arr;

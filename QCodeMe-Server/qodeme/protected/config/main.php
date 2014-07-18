@@ -58,7 +58,7 @@ return array(
             'connectionString' => 'mysql:host=127.0.0.1;dbname=qrchat',
             'emulatePrepare' => true,
             'username' => 'root', //qrchat
-            'password' => 'root', //aspqwe
+            'password' => 'aspqwe', //aspqwe
             'charset' => 'utf8',
             'enableParamLogging' => true
         ),

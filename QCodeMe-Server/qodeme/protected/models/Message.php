@@ -131,8 +131,8 @@ class Message extends CActiveRecord
         $command = Yii::app()->db->createCommand();
         $res = $command->update('message', array(
             'state'=>2,
-        ), 'id=:message_id',
-            array(':message_id' => $message_id));
+        ), 'id=:id',
+            array(':id' => $message_id));        
         if(!$res) {return FALSE;}
         return TRUE;
     }

@@ -1,0 +1,3585 @@
+2014-03-02 16:25:04,725 INFO daemonizing the supervisord process
+2014-03-02 16:25:04,726 INFO supervisord started with pid 23121
+2014-03-02 16:25:05,735 INFO spawned: 'HELLOWORLD0' with pid 23123
+2014-03-02 16:25:07,738 INFO success: HELLOWORLD0 entered RUNNING state, process has stayed up for > than 2 seconds (startsecs)
+2014-03-02 16:44:00,204 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 34606544 for <Subprocess at 34606112 with name HELLOWORLD0 in state RUNNING> (stderr)>
+2014-03-02 16:44:00,204 DEBG fd 6 closed, stopped monitoring <POutputDispatcher at 34606256 for <Subprocess at 34606112 with name HELLOWORLD0 in state RUNNING> (stdout)>
+2014-03-02 16:44:00,205 INFO exited: HELLOWORLD0 (terminated by SIGTERM; not expected)
+2014-03-02 16:44:00,205 DEBG received SIGCLD indicating a child quit
+2014-03-02 16:44:01,217 INFO spawned: 'HELLOWORLD0' with pid 23208
+2014-03-02 16:44:01,511 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-02 16:44:03,513 INFO success: HELLOWORLD0 entered RUNNING state, process has stayed up for > than 2 seconds (startsecs)
+2014-03-02 16:44:06,933 WARN received SIGTERM indicating exit request
+2014-03-02 16:44:06,933 DEBG killing HELLOWORLD0 (pid 23208) with signal SIGTERM
+2014-03-02 16:44:06,934 INFO waiting for HELLOWORLD0 to die
+2014-03-02 16:44:06,936 DEBG fd 6 closed, stopped monitoring <POutputDispatcher at 34606976 for <Subprocess at 34606112 with name HELLOWORLD0 in state STOPPING> (stdout)>
+2014-03-02 16:44:06,936 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 34664176 for <Subprocess at 34606112 with name HELLOWORLD0 in state STOPPING> (stderr)>
+2014-03-02 16:44:06,937 INFO stopped: HELLOWORLD0 (terminated by SIGTERM)
+2014-03-02 16:44:06,937 DEBG received SIGCLD indicating a child quit
+2014-03-12 20:48:55,123 INFO daemonizing the supervisord process
+2014-03-12 20:48:55,160 INFO supervisord started with pid 5492
+2014-03-12 20:48:56,168 INFO spawned: 'HELLOWORLD0' with pid 5493
+2014-03-12 20:48:56,462 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-12 20:48:58,464 INFO success: HELLOWORLD0 entered RUNNING state, process has stayed up for > than 2 seconds (startsecs)
+2014-03-12 20:49:14,715 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 20:49:16,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 20:49:20,276 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 20:49:20,989 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 20:49:21,044 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 20:49:21,044 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 20:49:21,045 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 20:49:23,534 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 20:49:23,672 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 20:49:23,801 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+
+2014-03-12 20:49:23,802 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 20:49:23,802 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 636
+
+2014-03-12 20:49:23,804 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:23,804 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:23,804 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:23,805 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:23,805 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:24,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:24,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:24,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:24,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:24,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:25,516 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:25,516 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:25,610 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:25,610 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:25,610 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:25,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:25,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:25,804 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:25,805 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:25,805 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:25,805 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:25,806 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:26,386 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:26,386 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:26,386 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:26,387 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:26,387 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:26,542 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:26,542 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:26,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:26,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:26,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:26,698 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:26,699 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:26,699 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:26,699 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:26,699 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:26,855 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:26,855 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:26,856 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:26,856 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:26,856 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:49:32,153 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 20:49:32,154 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 20:49:32,154 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 20:49:32,154 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 20:49:32,155 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 20:54:50,823 WARN received SIGTERM indicating exit request
+2014-03-12 20:54:50,824 DEBG killing HELLOWORLD0 (pid 5493) with signal SIGTERM
+2014-03-12 20:54:50,824 INFO waiting for HELLOWORLD0 to die
+2014-03-12 20:54:50,827 DEBG fd 6 closed, stopped monitoring <POutputDispatcher at 20335936 for <Subprocess at 20335792 with name HELLOWORLD0 in state STOPPING> (stdout)>
+2014-03-12 20:54:50,827 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 20336224 for <Subprocess at 20335792 with name HELLOWORLD0 in state STOPPING> (stderr)>
+2014-03-12 20:54:50,828 INFO stopped: HELLOWORLD0 (terminated by SIGTERM)
+2014-03-12 20:54:50,828 DEBG received SIGCLD indicating a child quit
+2014-03-12 21:07:36,369 INFO daemonizing the supervisord process
+2014-03-12 21:07:36,406 INFO supervisord started with pid 5936
+2014-03-12 21:07:37,413 INFO spawned: 'HELLOWORLD0' with pid 5937
+2014-03-12 21:07:37,772 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-12 21:07:39,774 INFO success: HELLOWORLD0 entered RUNNING state, process has stayed up for > than 2 seconds (startsecs)
+2014-03-12 21:07:42,734 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:07:46,236 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:07:47,330 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:07:48,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:07:48,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:07:48,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:07:56,086 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:07:57,780 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:07:58,035 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:07:58,075 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+
+2014-03-12 21:07:58,075 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:07:58,076 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 3752347c28c0b55bf5f209987150df1982c53fd8 to events for chat 636
+
+2014-03-12 21:08:03,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:03,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:03,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:03,285 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:03,285 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:03,473 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:03,473 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:03,473 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:03,474 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:03,474 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:03,493 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:03,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:03,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:03,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:03,495 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:03,753 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:03,753 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:03,754 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:03,754 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:03,754 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:04,064 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:04,064 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:04,065 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:04,065 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:04,065 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:04,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:04,263 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:04,263 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:04,263 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:04,264 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:04,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:04,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:04,544 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:04,544 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:04,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:04,763 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:04,764 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:04,764 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:04,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:04,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:11,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:11,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:11,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:11,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:11,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:11,715 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:11,716 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:11,716 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:11,716 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:11,717 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:11,893 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:11,893 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:11,893 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:11,894 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:11,894 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:12,034 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:12,035 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:12,035 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:12,035 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:12,036 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:12,222 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:12,223 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:12,223 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:12,223 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:12,224 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:12,382 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:12,382 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:12,383 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:12,383 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:12,383 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,094 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,094 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,094 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,095 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,095 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,250 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,250 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,251 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,251 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,251 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,404 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,404 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,405 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,405 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,405 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,564 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,564 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,565 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,565 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,565 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,716 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,717 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,717 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,717 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,718 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:08:14,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:08:14,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:08:14,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:08:14,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:08:14,875 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:40,882 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:40,882 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:40,882 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:40,883 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:40,883 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:41,222 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:41,222 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:41,222 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:41,223 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:41,223 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:41,682 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:41,682 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:41,683 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:41,683 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:41,684 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:41,951 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:41,951 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:41,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:41,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:41,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:42,662 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:42,662 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:42,663 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:42,663 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:42,664 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:42,830 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:42,831 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:42,831 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:42,831 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:42,832 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:43,132 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:43,132 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:43,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:43,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:43,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:43,342 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:43,342 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:43,343 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:43,343 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:43,343 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:43,521 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:43,521 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:43,522 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:43,522 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:43,523 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:43,933 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:43,933 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:43,933 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:43,934 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:43,934 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:44,141 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:44,141 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:44,142 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:44,142 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:44,142 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:44,285 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:44,286 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:44,286 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:44,286 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:44,287 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:44,973 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:44,974 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:44,974 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:44,974 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:44,975 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:45,114 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:45,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:45,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:45,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:45,116 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:45,367 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:45,368 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:45,368 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:45,368 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:45,369 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:45,524 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:45,524 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:45,525 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:45,525 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:45,525 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:45,841 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:45,842 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:45,842 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:45,842 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:45,843 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,004 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,004 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,179 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,180 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:46,180 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:46,180 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:46,181 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,322 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,322 DEBG 'HELLOWORLD0' stdout output:
+new connection
+new connection
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+new connection
+new connection
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":0,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150
+2014-03-12 21:15:46,322 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:46,323 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:46,323 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:46,324 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,493 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:46,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:46,494 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:46,495 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,768 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:46,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:46,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:46,770 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:46,922 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:46,922 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:46,923 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:46,923 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:46,923 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:47,091 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:47,092 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:47,092 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:47,092 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:47,093 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:47,233 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:47,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:47,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:47,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:47,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:49,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:49,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:49,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:49,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:49,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:49,421 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:49,421 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:49,422 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:49,422 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:49,422 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:49,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:49,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:49,612 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:49,612 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:49,613 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:49,971 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:49,972 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:49,972 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:49,972 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:49,973 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:50,191 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:50,192 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:50,192 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:50,192 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:50,193 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:50,391 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:50,391 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:50,392 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:50,392 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:50,393 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:50,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:50,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:50,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:50,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:50,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:50,809 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:50,809 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:50,809 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:50,810 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:50,810 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:52,271 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:52,272 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:52,272 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:52,272 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:52,273 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:52,461 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:52,462 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:52,462 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:52,463 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:52,463 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:53,152 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:53,152 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:53,153 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:53,153 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:53,153 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:53,290 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:53,290 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:53,291 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:53,291 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:53,291 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:53,501 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:53,502 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:53,502 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:53,503 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:53,503 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:15:59,672 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:15:59,672 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:15:59,673 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:15:59,673 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:15:59,673 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:16:01,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:16:01,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:16:01,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:16:01,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:16:01,263 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:16:01,951 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:16:01,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:16:01,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:16:01,952 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:16:01,953 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:16:02,931 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:16:02,931 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:16:02,932 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:16:02,932 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:16:02,933 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:22:03,017 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:22:03,018 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:22:14,869 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:22:55,938 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:22:56,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:22:57,042 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:22:57,042 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:22:57,043 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:23:04,357 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:04,358 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:04,358 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:04,358 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:04,359 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:04,859 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:04,859 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:04,860 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:04,860 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:04,860 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:04,927 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:04,927 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:04,928 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:04,928 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:04,928 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:05,473 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:05,474 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:05,474 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:05,474 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:05,475 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:06,246 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:06,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:06,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:06,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:06,248 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:06,746 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:06,747 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:06,747 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:06,747 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:06,748 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:07,865 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:23:07,866 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:23:09,074 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:23:19,169 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:23:20,138 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:23:20,199 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:23:20,200 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:23:20,200 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:23:20,370 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,372 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:20,410 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,411 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,411 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,411 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,412 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:20,454 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,454 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,454 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,455 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,455 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:20,688 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,688 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,689 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,689 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,690 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:20,768 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,768 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,769 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:20,866 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:20,866 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:20,867 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:20,867 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:20,867 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,055 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,055 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,055 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,056 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,056 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,170 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,170 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,171 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,171 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,171 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,232 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,233 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,233 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,233 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,295 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,295 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,295 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,296 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,296 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,437 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,437 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,438 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,438 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,438 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,461 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,461 DEBG 'HELLOWORLD0' stdout output:
+df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+new connection
+new connection
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+new connection
+new connection
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"au
+2014-03-12 21:23:21,462 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,462 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,462 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,463 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,584 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,584 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,585 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,585 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,585 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,709 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,709 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,710 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,710 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,710 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,874 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:21,992 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:21,993 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:21,993 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:21,993 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:21,994 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:22,118 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:22,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:22,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:22,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:22,120 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:22,302 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:22,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:22,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:22,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:22,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:22,359 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:22,359 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:22,359 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:22,360 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:22,360 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:26,193 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:23:26,194 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:26,194 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:23:26,194 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:26,195 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:23:29,590 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:23:29,590 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:23:29,591 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:23:29,591 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:23:29,591 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:25:11,204 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:25:11,205 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:25:23,360 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:25:35,987 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:25:37,085 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:25:37,142 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:25:37,143 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:25:37,143 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:25:42,318 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:42,318 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:42,318 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:42,319 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:42,319 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,199 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,200 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,200 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,200 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,201 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,301 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,302 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,302 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,303 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,396 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,396 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,650 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,650 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,651 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,651 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,651 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,817 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,818 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,818 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,819 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,819 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:43,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:43,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:43,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:43,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:43,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,053 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,054 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,054 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,054 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,055 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,241 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,242 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,242 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,243 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,243 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,370 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,370 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,371 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,541 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,541 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,542 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,542 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,542 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,633 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,633 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:44,856 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:44,856 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:44,857 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:44,857 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:44,857 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,051 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,052 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,052 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,053 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,053 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,278 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,278 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,434 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,435 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,435 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,435 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,436 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,543 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,544 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,544 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,687 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,687 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,688 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,688 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,688 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,802 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,803 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,803 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,803 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,804 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:45,929 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:45,930 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:45,930 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:45,931 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:45,931 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,037 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,037 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,038 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,038 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,039 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,181 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,182 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,182 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,182 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,183 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,312 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,312 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,312 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,313 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,313 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,463 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,463 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,464 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,464 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,464 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,556 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,556 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,556 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,556 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,557 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,703 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,704 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,704 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,704 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,705 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,773 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,773 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,773 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,774 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,774 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:46,897 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:46,897 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:46,897 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:46,898 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:46,898 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,014 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,015 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,015 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,015 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,016 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,134 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,134 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,134 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,210 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,211 DEBG 'HELLOWORLD0' stdout output:
+thToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+new connection
+new connection
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message recei
+2014-03-12 21:25:47,211 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,211 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,212 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,212 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,375 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,375 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,447 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,448 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,448 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,448 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,449 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,627 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,628 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,628 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,628 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,629 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,757 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,757 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,758 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,758 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,758 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:47,896 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:47,896 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:47,896 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:47,897 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:47,897 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,114 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,114 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,115 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,307 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,307 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,308 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,308 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,309 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,524 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,524 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,524 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,525 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,525 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,629 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,630 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,630 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,630 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,631 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,815 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,815 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,815 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,816 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,816 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:48,889 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:48,890 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:48,890 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:48,890 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:48,890 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:49,607 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:49,608 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:49,608 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:49,608 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:49,609 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:49,638 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:49,639 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:49,639 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:49,639 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:49,640 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:49,707 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:49,707 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:49,708 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:49,708 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:49,708 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:49,790 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:49,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:49,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:49,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:49,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:49,913 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:49,914 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:49,914 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:49,914 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:49,915 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:50,507 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:50,507 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:50,508 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:50,508 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:50,508 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:50,695 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:50,696 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:50,696 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:50,697 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:50,697 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:50,833 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:50,834 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:50,834 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:50,834 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:50,835 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:50,963 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:50,963 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:50,964 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:50,964 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:50,964 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,048 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,049 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,049 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,049 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,050 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,191 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,191 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,192 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,192 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,193 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,261 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,262 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,424 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,425 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,425 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,425 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,426 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,611 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,612 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,612 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,612 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,702 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,702 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,703 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,703 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,703 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,838 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,838 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,839 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,839 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,839 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:51,956 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:51,957 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:51,957 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:51,957 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:51,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,061 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,163 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,163 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,164 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,164 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,164 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,283 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,283 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,284 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,417 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,417 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,577 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,577 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,577 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,578 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,578 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,662 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,662 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,663 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,663 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,663 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,773 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,773 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,774 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,774 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,774 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:52,891 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:52,891 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:52,892 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:52,892 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:52,892 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,062 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,063 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,063 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,063 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,064 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,234 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,235 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,236 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,374 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,374 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,375 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,375 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,375 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,486 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,486 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,487 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,487 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,488 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,872 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,872 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,873 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:53,935 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:53,935 DEBG 'HELLOWORLD0' stdout output:
+ved {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2
+2014-03-12 21:25:53,936 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:53,936 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:53,936 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:53,937 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,120 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,121 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,121 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,121 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,122 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,314 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,314 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,315 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,315 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,315 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,429 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,429 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,430 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,430 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,430 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,544 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,545 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,546 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,683 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,684 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,684 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,684 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,685 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,791 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:54,981 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:54,981 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:54,981 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:54,982 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:54,982 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:55,159 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:55,160 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:55,160 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:55,160 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:55,161 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:55,300 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:55,300 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:55,301 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:55,301 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:55,301 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:55,406 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:55,406 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:55,407 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:55,407 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:55,407 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:55,643 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:55,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:55,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:55,644 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:55,645 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:55,869 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:55,869 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:55,870 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:55,870 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:55,870 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,028 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,029 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,029 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,029 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,030 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,276 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,276 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,277 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,382 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,382 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,382 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,383 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,383 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,548 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,549 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,549 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,549 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,549 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,766 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,766 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,766 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:56,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:56,958 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:56,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:56,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:56,959 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:57,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:57,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:57,120 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:57,120 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:57,120 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:57,397 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:57,397 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:57,397 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:57,398 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:57,398 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:57,587 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:57,587 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:57,764 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:57,764 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:57,764 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:57,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:57,765 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:25:58,358 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":2,"chatId":636}
+
+2014-03-12 21:25:58,359 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 2
+
+2014-03-12 21:25:58,394 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:25:58,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:25:58,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:25:58,395 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:25:58,396 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 3752347c28c0b55bf5f209987150df1982c53fd8...
+
+2014-03-12 21:26:01,689 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+
+2014-03-12 21:26:01,690 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:26:01,690 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 3752347c28c0b55bf5f209987150df1982c53fd8 in chat 636
+
+2014-03-12 21:26:01,690 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 2 clients susbscribed to chat 636
+
+2014-03-12 21:26:01,690 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Sending {"event": 1, "chatId": 636} to user 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8...
+
+2014-03-12 21:26:03,069 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:26:03,070 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:27:36,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:27:36,133 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Removing client from notifications for chatID 636
+
+2014-03-12 21:27:49,119 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:28:01,287 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:connection closed
+
+2014-03-12 21:28:02,471 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:new connection
+
+2014-03-12 21:28:02,522 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+
+2014-03-12 21:28:02,523 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 0
+
+2014-03-12 21:28:02,523 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Subscribed token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 to events for chat 636
+
+2014-03-12 21:28:14,626 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:14,626 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:14,626 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:14,627 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:15,445 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:15,445 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:15,446 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:15,446 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:15,842 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:15,842 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:15,843 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:15,843 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:16,246 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:16,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:16,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:16,247 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:16,490 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:16,490 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:16,490 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:16,491 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:16,853 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:16,853 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:16,854 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:16,854 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:17,208 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:17,208 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:17,208 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:17,209 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:17,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:17,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:17,634 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:17,635 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:18,095 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:18,095 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:18,096 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:18,096 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:18,446 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:18,446 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:18,447 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:18,447 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:18,735 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:18,735 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:18,735 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:18,736 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:19,056 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:19,056 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:19,057 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:19,057 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:19,792 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:19,793 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:19,793 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:19,793 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:20,221 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:20,221 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:20,221 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:20,222 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:21,109 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:21,110 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:21,110 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:21,110 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:21,325 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+
+2014-03-12 21:28:21,326 DEBG 'HELLOWORLD0' stdout output:
+b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":2,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"3752347c28c0b55bf5f209987150df1982c53fd8","event":1,"chatId":636}
+new connection
+new connection
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":0,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":1,"chatId":636}
+message received {"authToke
+2014-03-12 21:28:21,326 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 1
+
+2014-03-12 21:28:21,326 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Received user started typing event for token 7ea2b4565fc960bcf6109a0436185c8e75d9e1d8 in chat 636
+
+2014-03-12 21:28:21,327 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:Found 1 clients susbscribed to chat 636
+
+2014-03-12 21:28:23,906 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message received {"authToken":"7ea2b4565fc960bcf6109a0436185c8e75d9e1d8","event":2,"chatId":636}
+
+2014-03-12 21:28:23,907 DEBG 'HELLOWORLD0' stderr output:
+DEBUG:__main__:message contained event 2
+
+2014-03-12 21:32:01,083 DEBG 'HELLOWORLD0' stderr output:
+No handlers could be found for logger "__main__"
+
+2014-03-12 21:32:11,362 WARN received SIGTERM indicating exit request
+2014-03-12 21:32:11,363 DEBG killing HELLOWORLD0 (pid 5937) with signal SIGTERM
+2014-03-12 21:32:11,363 INFO waiting for HELLOWORLD0 to die
+2014-03-12 21:32:11,365 DEBG fd 6 closed, stopped monitoring <POutputDispatcher at 32349504 for <Subprocess at 32349360 with name HELLOWORLD0 in state STOPPING> (stdout)>
+2014-03-12 21:32:11,365 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 32349792 for <Subprocess at 32349360 with name HELLOWORLD0 in state STOPPING> (stderr)>
+2014-03-12 21:32:11,366 INFO stopped: HELLOWORLD0 (terminated by SIGTERM)
+2014-03-12 21:32:11,366 DEBG received SIGCLD indicating a child quit
