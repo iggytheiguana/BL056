@@ -910,6 +910,7 @@ public class MainActivity extends BaseActivity implements
 					List<Contact> contacts = Lists.newArrayList();
 					// createChat(contacts);
 					ChatLoad chatLoad = new ChatLoad();
+					chatLoad.chatId = -1;
 					chatLoad.type = chatType;
 					chatLoad.isCreated = false;
 					newChatCreated.put(chatType, chatLoad);
@@ -1864,6 +1865,7 @@ public class MainActivity extends BaseActivity implements
 											MainActivity.this.selectedContact = selectedContact;
 											ChatLoad chatLoad = new ChatLoad();
 											chatLoad.type = chatType;
+											chatLoad.chatId = -1;
 											chatLoad.isCreated = false;
 											newChatCreated.put(chatType, chatLoad);
 											refreshOne2OneList();
@@ -2151,13 +2153,20 @@ public class MainActivity extends BaseActivity implements
 						// TODO Auto-generated method stub
 						Log.d("Chat create", "Chat Created " + response.getChat().getId());
 
-						// if (chatType == 2)
-						// QodemePreferences.getInstance().setNewPublicGroupChatId(
-						// response.getChat().getId());
-						// if (chatType == 1)
-						// QodemePreferences.getInstance().setNewPrivateGroupChatId(
-						// response.getChat().getId());
+						if (chatType == 2) {
+							QodemePreferences.getInstance().setNewPublicGroupChatId(
+									response.getChat().getId());
+							Integer height = Converter.dipToPx(getApplicationContext(), 120);
+							setChatHeight(response.getChat().getId(), height);
+						}
+						if (chatType == 1) {
+							QodemePreferences.getInstance().setNewPrivateGroupChatId(
+									response.getChat().getId());
+							Integer height = Converter.dipToPx(getApplicationContext(), 150);
+							setChatHeight(response.getChat().getId(), height);
+						}
 						newChatCreated.remove(chatType);
+
 						getContentResolver().insert(
 								QodemeContract.Chats.CONTENT_URI,
 								QodemeContract.Chats.addNewChatValues(response.getChat().getId(),
@@ -3099,6 +3108,15 @@ public class MainActivity extends BaseActivity implements
 
 	@Override
 	public int getHeight(long chatId) {
+		if (chatId == -1) {
+			if (chatType == 1) {
+				Integer height = Converter.dipToPx(getApplicationContext(), 150);
+				return height;
+			} else {
+				Integer height = Converter.dipToPx(getApplicationContext(), 120);
+				return height;
+			}
+		}
 		Integer height = mChatHeightMap.get(chatId);
 		return height != null ? height : mDefaultHeightPx;
 	}

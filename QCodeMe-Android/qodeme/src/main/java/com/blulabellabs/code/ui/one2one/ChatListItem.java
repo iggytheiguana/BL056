@@ -644,6 +644,7 @@ public class ChatListItem extends RelativeLayout implements
 			lastMessage.isVerticleLineHide = false;
 			// getList().getAdapter().notify();
 		}
+		getReplyImg().setVisibility(GONE);
 		getSendMessage().setVisibility(View.VISIBLE);
 		getMessageTypedView().setVisibility(VISIBLE);
 		getMessageEdit().setInputType(
@@ -693,6 +694,7 @@ public class ChatListItem extends RelativeLayout implements
 					lastMessage.isVerticleLineHide = true;
 					// getList().getAdapter().notify();
 				}
+				getReplyImg().setVisibility(VISIBLE);
 				ChatFocusSaver.setFocusedChatId(0);
 				getSendMessage().setVisibility(View.GONE);
 				getMessageEdit().setVisibility(View.GONE);

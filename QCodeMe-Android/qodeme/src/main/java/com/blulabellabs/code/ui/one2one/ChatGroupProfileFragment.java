@@ -133,7 +133,11 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_profile_group, null);
+		if (getChatload().type == 2) {
+			return inflater.inflate(R.layout.fragment_profile_group_public, null);
+		} else {
+			return inflater.inflate(R.layout.fragment_profile_group, null);
+		}
 	}
 
 	@Override
@@ -418,8 +422,8 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 				mTextViewPublicThreadLable.setVisibility(View.VISIBLE);
 			}
 
-			mTextViewTags.setVisibility(View.VISIBLE);
-			mEditTextTags.setVisibility(View.VISIBLE);
+//			mTextViewTags.setVisibility(View.VISIBLE);
+//			mEditTextTags.setVisibility(View.VISIBLE);
 			mEditTextTags.addTextChangedListener(new TextWatcher() {
 
 				@Override
@@ -470,20 +474,21 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 								int lastPositon = 0;
 								for (int i = 0; i < tagArray.length; i++) {
 									String text = tagArray[i];
-									final int j = i ; 
+									final int j = i;
 									ClickableSpan span1 = new ClickableSpan() {
 										@Override
 										public void onClick(View textView) {
 											String tagText = tagArray[j];
 											MainActivity activity = (MainActivity) getActivity();
-											
-											activity.searchChats(tagText, 2, 1, activity.publicChatListFragment.chatListener);
-											
-											
+
+											activity.searchChats(tagText, 2, 1,
+													activity.publicChatListFragment.chatListener);
+
 										}
 									};
 
-									ss.setSpan(span1, lastPositon, lastPositon+text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+									ss.setSpan(span1, lastPositon, lastPositon + text.length(),
+											Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 									lastPositon = lastPositon + text.length();
 
 								}
@@ -842,8 +847,91 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 						.setText(getChatload().description != null
 								&& !getChatload().description.trim().equals("null") ? getChatload().description
 								: "");
-				mTextViewGroupTitle.setText(getChatload().title != null
-						&& !getChatload().title.equals("null") ? getChatload().title : "");
+				
+				// for tag clickable in title start
+				final String title = getChatload().title != null
+				&& !getChatload().title.equals("null") ? getChatload().title : "";
+				SpannableString ss = new SpannableString(title);
+				int lastPositon = 0;
+//				for (int i = 0; i < tagArray.length; i++) {
+//					String text = tagArray[i];
+//					final int j = i;
+				
+//				StringBuilder stringBuilder = new StringBuilder();
+				BreakIterator bi = BreakIterator.getWordInstance(Locale.US);
+				//
+				// Set the text string to be scanned.
+				//
+				bi.setText(title);
+				//
+				// Iterates the boundary / breaks
+				//
+				// System.out.println("Iterates each word: ");
+				// int count = 0;
+//				ArrayList<String> taglist = Lists.newArrayList();
+				int lastIndex = bi.first();
+				while (lastIndex != BreakIterator.DONE) {
+					int firstIndex = lastIndex;
+					lastIndex = bi.next();
+
+					if (lastIndex != BreakIterator.DONE && Character.isLetterOrDigit(title.charAt(firstIndex))) {
+						String word = title.substring(firstIndex, lastIndex);
+						String preWord = "";
+						if (firstIndex > 0)
+							preWord = title.substring(firstIndex - 1, firstIndex);
+						else
+							preWord = title.substring(firstIndex, firstIndex + 1);
+						// word = "#" + word + ",";
+						final String searchItem = word; 
+						if (preWord.startsWith("#")) {
+							String dd = "#" + word;
+							word = "#" + word + ",";
+							
+//							stringBuilder.append(word);
+							
+							ClickableSpan span1 = new ClickableSpan() {
+								@Override
+								public void onClick(View textView) {
+//									String tagText = tagArray[j];
+									MainActivity activity = (MainActivity) getActivity();
+									activity.setPublicSearch(true);
+									activity.setPublicSearchString(searchItem);
+									activity.searchChats(searchItem, 2, 1,
+											activity.publicChatListFragment.chatListener);
+									activity.onBackPressed();
+									
+
+								}
+							};
+							
+							ss.setSpan(span1, firstIndex-1, lastIndex,
+									Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+						}
+						// System.out.println("'" + word + "' found at (" + firstIndex +
+						// ", " + lastIndex
+						// + ")");
+
+					}
+					
+				}
+				mTextViewGroupTitle.setText(ss);
+				mTextViewGroupTitle.setMovementMethod(LinkMovementMethod.getInstance());
+				
+//					ClickableSpan span1 = new ClickableSpan() {
+//						@Override
+//						public void onClick(View textView) {
+////							String tagText = tagArray[j];
+//							MainActivity activity = (MainActivity) getActivity();
+//
+//							activity.searchChats(title, 2, 1,
+//									activity.publicChatListFragment.chatListener);
+//
+//						}
+//					};
+					// end
+//				mTextViewGroupTitle.setText(getChatload().title != null
+//						&& !getChatload().title.equals("null") ? getChatload().title : "");
 				mTextViewTags.setText(getChatload().tag != null
 						&& !getChatload().tag.trim().equals("null") ? getChatload().tag : "");
 				mEditTextDesc.setText(getChatload().description);
@@ -956,10 +1044,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 								}
 							}
 						}
-						if (totalFlagged <= 1)
-							mTextViewTotalFlagged.setText(totalFlagged + " Message");
-						else
-							mTextViewTotalFlagged.setText(totalFlagged + " Messages");
+//						if (totalFlagged <= 1)
+//							mTextViewTotalFlagged.setText(totalFlagged + " Message");
+//						else
+//							mTextViewTotalFlagged.setText(totalFlagged + " Messages");
 					} else {
 						mImgBtnSearch.setVisibility(View.GONE);
 						mImgBtnShare.setVisibility(View.GONE);
@@ -1001,8 +1089,10 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
 
 						@Override
 						public void onClick(View v) {
-							mRelativeLayoutDesc.setVisibility(View.GONE);
-							mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+//							mRelativeLayoutDesc.setVisibility(View.GONE);
+//							mRelativeLayoutSetDesc.setVisibility(View.VISIBLE);
+							mTextViewGroupTitle.setVisibility(View.GONE);
+							mEditTextTitle.setVisibility(View.VISIBLE);
 							isChangeByUser = true;
 							try {
 								Helper.showKeyboard(getActivity(), mEditTextTitle);

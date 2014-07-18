@@ -49,6 +49,8 @@ import com.blulabellabs.code.core.sync.SyncHelper;
 import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
+import com.blulabellabs.code.ui.common.CustomEdit;
+import com.blulabellabs.code.ui.common.CustomLineView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.utils.ChatFocusSaver;
@@ -79,11 +81,11 @@ public class ChatInsideFragment extends Fragment {
 
 	private One2OneChatInsideFragmentCallback callback;
 	private boolean isViewCreated;
-	private ScrollDisabledListView mListView;
+	private ListView mListView;
 	private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
 	private GestureDetector mGestureDetector;
 	private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom, mImgFavorite;
-	private EditText mMessageField;
+	private CustomEdit mMessageField;
 	private TextView mName, mStatus, mStatusUpdate;
 	private TextView mDate;
 	private TextView mLocation;
@@ -95,6 +97,11 @@ public class ChatInsideFragment extends Fragment {
 	private CustomDotView customDotViewUserTyping;
 	private View footerView, footerView1;
 	private boolean isUsertyping = false;
+	private Message lastMessage;
+	private CustomLineView customLineView;
+	CustomDotView customDotView;
+	private ImageView imageViewReply;
+	private LinearLayout mLinearMessage;
 
 	public static ChatInsideFragment newInstance(Contact c, boolean firstUpdate) {
 		ChatInsideFragment f = new ChatInsideFragment();
@@ -194,6 +201,17 @@ public class ChatInsideFragment extends Fragment {
 		getView().findViewById(R.id.img_memberline).setVisibility(View.GONE);
 		mLinearLayStatusUpdte = (LinearLayout) getView().findViewById(R.id.linear_status_update);
 		mTextViewDeleteBaner = (TextView) getView().findViewById(R.id.textView_deleteBanner);
+
+		imageViewReply = (ImageView) getView().findViewById(R.id.reply_image);
+
+		customDotView = (CustomDotView) getView().findViewById(R.id.dotView_reply);
+		customDotView.setDotColor(getResources().getColor(R.color.user_typing));
+		customDotView.setOutLine(true);
+		customDotView.setSecondVerticalLine(true);
+		customDotView.invalidate();
+
+		customLineView = (CustomLineView) getView().findViewById(R.id.backbround_line_view);
+
 		mImgFavorite.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -229,9 +247,73 @@ public class ChatInsideFragment extends Fragment {
 		updateUi();
 		// }
 		// }, 500);
-		if (MainActivity.isKeyboardHide){
+
+		mLinearMessage = (LinearLayout) getView().findViewById(R.id.linearTyping);
+		imageViewReply.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				if (lastMessage != null) {
+					lastMessage.isVerticleLineHide = false;
+				}
+				mLinearMessage.setVisibility(View.VISIBLE);
+				mMessageField.setVisibility(View.VISIBLE);
+				mSendButton.setVisibility(View.VISIBLE);
+				imageViewReply.setVisibility(View.GONE);
+				customLineView.setVisibility(View.VISIBLE);
+				MainActivity.isKeyboardVisible = true;
+				mMessageField.post(new Runnable() {
+					@Override
+					public void run() {
+						mMessageField.requestFocus();
+						Helper.showKeyboard(getActivity(), mMessageField);
+					}
+				});
+
+				mMessageField.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						mMessageField.requestFocus();
+						// Helper.showKeyboard(getActivity(),
+						// mMessageField);
+					}
+				}, 1000);
+			}
+		});
+		mMessageField.setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
+			@Override
+			public void onImeBack(CustomEdit ctrl) {
+				MainActivity.isKeyboardVisible = false;
+				if (lastMessage != null) {
+					lastMessage.isVerticleLineHide = true;
+					// getList().getAdapter().notify();
+				}
+				mLinearMessage.setVisibility(View.INVISIBLE);
+				mMessageField.setVisibility(View.INVISIBLE);
+				mSendButton.setVisibility(View.INVISIBLE);
+				imageViewReply.setVisibility(View.VISIBLE);
+				customLineView.setVisibility(View.INVISIBLE);
+			}
+		});
+		if (MainActivity.isKeyboardHide) {
 			MainActivity.isKeyboardHide = false;
 			Helper.hideKeyboard(getActivity(), mMessageField);
+		} else {
+			if (MainActivity.isKeyboardVisible) {
+				mLinearMessage.setVisibility(View.VISIBLE);
+				mMessageField.setVisibility(View.VISIBLE);
+				mSendButton.setVisibility(View.VISIBLE);
+				imageViewReply.setVisibility(View.GONE);
+				customLineView.setVisibility(View.VISIBLE);
+				mMessageField.post(new Runnable() {
+					@Override
+					public void run() {
+						mMessageField.requestFocus();
+					}
+				});
+			}
 		}
 	}
 
@@ -239,7 +321,7 @@ public class ChatInsideFragment extends Fragment {
 		mBtnImageSend = (ImageButton) getView().findViewById(R.id.btn_camera);
 		mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
 		mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
-		mMessageField = (EditText) getView().findViewById(R.id.edit_message);
+		mMessageField = (CustomEdit) getView().findViewById(R.id.edit_message);
 		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 				| InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -591,7 +673,7 @@ public class ChatInsideFragment extends Fragment {
 		customDotViewUserTyping.setSecondVerticalLine(true);
 		customDotViewUserTyping.invalidate();
 
-		mListView = (ScrollDisabledListView) getView().findViewById(R.id.listview);
+		mListView = (ListView) getView().findViewById(R.id.listview);
 		mDate = (TextView) getView().findViewById(R.id.date);
 		mLocation = (TextView) getView().findViewById(R.id.location);
 		List<Message> listForAdapter = Lists.newArrayList();
@@ -624,7 +706,7 @@ public class ChatInsideFragment extends Fragment {
 
 				}, chatListInsideFragmentCallback);
 
-		mListView.addFooterView(view);
+//		mListView.addFooterView(view);
 		mListView.setAdapter(mListAdapter);
 
 		mListView.setOnTouchListener(new View.OnTouchListener() {
@@ -633,7 +715,7 @@ public class ChatInsideFragment extends Fragment {
 				return false;
 			}
 		});
-		mListView.setStackFromBottom(true);
+//		mListView.setStackFromBottom(true);
 		mListView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent e) {
@@ -675,9 +757,14 @@ public class ChatInsideFragment extends Fragment {
 				// QodemePreferences.getInstance().set(
 				// "" + getArguments().getLong(CHAT_ID), "");
 			}
-
+			List<Message> listData= callback.getChatMessages(getChatId());
 			mListAdapter.clear();
 			mListAdapter.addAll(callback.getChatMessages(getChatId()));
+			
+			if (listData != null && listData.size() > 0) {
+				lastMessage = listData.get(listData.size() - 1);
+			}
+			
 			mName.setText(getChatName());
 
 			MainActivity activity = (MainActivity) callback;

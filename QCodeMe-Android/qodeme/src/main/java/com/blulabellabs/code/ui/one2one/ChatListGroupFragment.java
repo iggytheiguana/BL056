@@ -73,7 +73,7 @@ public class ChatListGroupFragment extends Fragment {
 	private ScrollDisabledListView mListView;
 	private ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
 	private View mMessageLayout;
-	private ImageButton mMessageButton,  mImgBtnClear, mImgBtnLocationFilter,mImgBtnSearch,
+	private ImageButton mMessageButton, mImgBtnClear, mImgBtnLocationFilter, mImgBtnSearch,
 			mImgBtnFavoriteFilter;
 	private EditText mMessageEdit;
 	private ImageView mImgViewSearchHint;
@@ -132,7 +132,7 @@ public class ChatListGroupFragment extends Fragment {
 	public void setFavoriteFilter(boolean isFavoriteFilter) {
 		this.isFavoriteFilter = isFavoriteFilter;
 	}
-	
+
 	public static ChatListGroupFragment getInstance() {
 		ChatListGroupFragment fragment = new ChatListGroupFragment();
 		Bundle args = new Bundle();
@@ -221,7 +221,7 @@ public class ChatListGroupFragment extends Fragment {
 				activity.setPrivateSearch(false);
 				activity.setPrivateSearchString("");
 				mImgBtnClear.setVisibility(View.GONE);
-//				mImgBtnSearch.setVisibility(View.VISIBLE);
+				// mImgBtnSearch.setVisibility(View.VISIBLE);
 				mEditTextSearch.setEnabled(true);
 				mEditTextSearch.setText("");
 				pageNo = 1;
@@ -332,7 +332,7 @@ public class ChatListGroupFragment extends Fragment {
 			mImgBtnSearch.setVisibility(View.GONE);
 		} else {
 			mImgBtnClear.setVisibility(View.GONE);
-//			mImgBtnSearch.setVisibility(View.VISIBLE);
+			// mImgBtnSearch.setVisibility(View.VISIBLE);
 		}
 
 		updateUi();
@@ -660,9 +660,11 @@ public class ChatListGroupFragment extends Fragment {
 					}
 
 					public void onDoubleTap(View view, int position, Contact c) {
-//						InputMethodManager imm = (InputMethodManager) getActivity()
-//								.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+						// InputMethodManager imm = (InputMethodManager)
+						// getActivity()
+						// .getSystemService(Activity.INPUT_METHOD_SERVICE);
+						// imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY,
+						// 0);
 						Helper.hideKeyboard(view.getContext(), mEditTextSearch);
 						callback.showChat(c, true, view);
 					}
@@ -733,9 +735,11 @@ public class ChatListGroupFragment extends Fragment {
 
 					@Override
 					public void onDoubleTap(View view, int position, ChatLoad c) {
-//						InputMethodManager imm = (InputMethodManager) getActivity()
-//								.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+						// InputMethodManager imm = (InputMethodManager)
+						// getActivity()
+						// .getSystemService(Activity.INPUT_METHOD_SERVICE);
+						// imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY,
+						// 0);
 						Helper.hideKeyboard(view.getContext(), mEditTextSearch);
 						callback.showChat(c, true, view);
 
@@ -813,11 +817,11 @@ public class ChatListGroupFragment extends Fragment {
 					}
 
 				}
-				if(firstVisibleItem == 0){
+				if (firstVisibleItem == 0) {
 					mLinearLayoutSearch.setAlpha(1f);
 					mLinearLayoutSearch.setVisibility(View.VISIBLE);
-//					mLinearLayoutSearch.animate().alpha(1f).setDuration(0)
-//							.setListener(null);
+					// mLinearLayoutSearch.animate().alpha(1f).setDuration(0)
+					// .setListener(null);
 				}
 				lastFirstvisibleItem = firstVisibleItem;
 
@@ -875,67 +879,69 @@ public class ChatListGroupFragment extends Fragment {
 							break;
 						}
 					}
-					chatLoads.remove(newChatLoad);
-					chatLoads.add(0, newChatLoad);
+					if (newChatLoad != null) {
+						chatLoads.remove(newChatLoad);
+						chatLoads.add(0, newChatLoad);
+					}
 				} catch (Exception e) {
 				}
-			} 
-//			else {
-				if (!isLocationFilter && !isFavoriteFilter) {
-					MainActivity activity = (MainActivity) callback;
-					ChatLoad chatLoad = activity.newChatCreated.get(1);
-					if(chatLoad != null){
-						chatLoads.add(0, chatLoad);
-					}
-					mListAdapter.clear();
-					mListAdapter.addAll(searchChats(searchString));
-				} else {
-					if (chatLoads != null) {
-						if (isLocationFilter) {
-							List<ChatLoad> temp = Lists.newArrayList();
-							for (ChatLoad c : chatLoads) {
-								if (c.latitude != null && c.longitude != null
-										&& !c.latitude.equals("") && !c.longitude.equals("")
-										&& !c.latitude.equals("0") && !c.latitude.equals("0.0")
-										&& !c.latitude.equals("-1") && !c.longitude.equals("0")
-										&& !c.longitude.equals("0.0") && !c.longitude.equals("-1")) {
-									Log.d("latLong", c.latitude + " " + c.longitude);
-									temp.add(c);
-								}
+			}
+			// else {
+			if (!isLocationFilter && !isFavoriteFilter) {
+				MainActivity activity = (MainActivity) callback;
+				ChatLoad chatLoad = activity.newChatCreated.get(1);
+				if (chatLoad != null) {
+					chatLoads.add(0, chatLoad);
+				}
+				mListAdapter.clear();
+				mListAdapter.addAll(searchChats(searchString));
+			} else {
+				if (chatLoads != null) {
+					if (isLocationFilter) {
+						List<ChatLoad> temp = Lists.newArrayList();
+						for (ChatLoad c : chatLoads) {
+							if (c.latitude != null && c.longitude != null && !c.latitude.equals("")
+									&& !c.longitude.equals("") && !c.latitude.equals("0")
+									&& !c.latitude.equals("0.0") && !c.latitude.equals("-1")
+									&& !c.longitude.equals("0") && !c.longitude.equals("0.0")
+									&& !c.longitude.equals("-1")) {
+								Log.d("latLong", c.latitude + " " + c.longitude);
+								temp.add(c);
 							}
-
-							Collections.sort(temp, new CustomComparator());
-							mListAdapter.clear();
-							MainActivity activity = (MainActivity) callback;
-							ChatLoad chatLoad = activity.newChatCreated.get(1);
-							if(chatLoad != null){
-								chatLoads.add(0, chatLoad);
-							}
-							mListAdapter.addAll(temp);
-						} else if (isFavoriteFilter) {
-							List<ChatLoad> temp = Lists.newArrayList();
-							for (ChatLoad c : chatLoads) {
-								if (c.is_favorite == 1) {
-									Log.d("latLong", c.latitude + " " + c.longitude);
-									temp.add(c);
-								}
-							}
-							MainActivity activity = (MainActivity) callback;
-							ChatLoad chatLoad = activity.newChatCreated.get(1);
-							if(chatLoad != null){
-								chatLoads.add(0, chatLoad);
-							}
-							// Collections.sort(temp, new CustomComparator());
-							mListAdapter.clear();
-							mListAdapter.addAll(temp);
 						}
 
+						Collections.sort(temp, new CustomComparator());
+						mListAdapter.clear();
+						MainActivity activity = (MainActivity) callback;
+						ChatLoad chatLoad = activity.newChatCreated.get(1);
+						if (chatLoad != null) {
+							chatLoads.add(0, chatLoad);
+						}
+						mListAdapter.addAll(temp);
+					} else if (isFavoriteFilter) {
+						List<ChatLoad> temp = Lists.newArrayList();
+						for (ChatLoad c : chatLoads) {
+							if (c.is_favorite == 1) {
+								Log.d("latLong", c.latitude + " " + c.longitude);
+								temp.add(c);
+							}
+						}
+						MainActivity activity = (MainActivity) callback;
+						ChatLoad chatLoad = activity.newChatCreated.get(1);
+						if (chatLoad != null) {
+							chatLoads.add(0, chatLoad);
+						}
+						// Collections.sort(temp, new CustomComparator());
+						mListAdapter.clear();
+						mListAdapter.addAll(temp);
 					}
-				}
 
-				long focusedChat = ChatFocusSaver.getFocusedChatId();
-				selectChat(focusedChat);
-//			}
+				}
+			}
+
+			long focusedChat = ChatFocusSaver.getFocusedChatId();
+			selectChat(focusedChat);
+			// }
 		}
 	}
 

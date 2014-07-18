@@ -572,7 +572,7 @@ public class ChatListSubItem extends RelativeLayout implements
 				// setBackgroundColor(Color.WHITE);
 				getLstMessageLineHider().setVisibility(VISIBLE);
 				MainActivity activity = (MainActivity) getContext();
-				if (!me.isVerticleLineHide || !activity.mActionBar.isShowing()) {
+				if (!me.isVerticleLineHide ) {
 					getLstMessageLineHider().setBackgroundColor(Color.TRANSPARENT);
 				} else {
 //					ChatLoad chatLoad = callback.getChatLoad(msg.chatId);

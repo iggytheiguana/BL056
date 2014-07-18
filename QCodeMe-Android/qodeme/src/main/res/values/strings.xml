@@ -137,5 +137,19 @@
     <string name="no_thanks_continue">No thanks, continue</string>
     <string name="email_qr_code">Email QR Code</string>
     <string name="invite">Invite</string>
-
+    
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="disable_comments">Disable comments</string>
+    <string name="disable_comments_dis">Turn this off if you do not want user to reply to your thread. </string>
+    
+    <string name="searchable_thread">Searchable thread</string>
+    <string name="searchable_thread_dis">Turn this off if you do not want user to be able to find your thread through the search. It will only be accessible through the QR code </string>
+    
+    <string name="delete_thread">Delete thread</string>
+    <string name="delete_thread_dis">This will permanently delete the thread. </string>
+    
+    <string name="flagged_comments">Flagged comments</string>
+    <string name="flagged_comments_dis">View flagged comments </string>
+    
 </resources>

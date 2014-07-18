@@ -1122,8 +1122,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 							}
 						}
 						chatLoad = newChatLoad;
-						chatLoads.remove(newChatLoad);
-						chatLoads.add(0, newChatLoad);
+						if (newChatLoad != null) {
+							chatLoads.remove(newChatLoad);
+							chatLoads.add(0, newChatLoad);
+						}
 					} catch (Exception e) {
 					}
 
