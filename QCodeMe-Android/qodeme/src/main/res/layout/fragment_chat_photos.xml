@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="0dp" >
+
+            <LinearLayout
+                android:id="@+id/namebox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:id="@+id/img_typing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone" />
+
+                <com.blulabellabs.code.ui.common.TextViewMedium
+                    android:id="@+id/name"
+                    style="@style/TextView.Chat.Name"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:textColor="@color/text_message_not_read" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/namebox"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:visibility="visible" >
+
+                <ImageButton
+                    android:id="@+id/btnFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
+                    android:src="@drawable/ic_chat_favorite" />
+
+                <com.blulabellabs.code.ui.common.TextViewRegular
+                    android:id="@+id/textView_totalFavorite"
+                    style="@style/TextView.Message.Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:text="0"
+                    android:textColor="#adadad"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_camera" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/namebox"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/TextView.Chat.Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Date of adding" />
+
+                <TextView
+                    android:id="@+id/location"
+                    style="@style/TextView.Chat.Location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Location" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/img_nameline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/line_horizontal" />
+
+        <com.blulabellabs.code.ui.common.TextViewMedium
+            android:id="@+id/textView_status"
+            style="@style/TextView.Chat.Name"
+            android:layout_below="@id/img_nameline"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/text_message_not_read" />
+
+        <ImageView
+            android:id="@+id/img_statusline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView_status"
+            android:background="@drawable/line_horizontal" />
+        <!-- <LinearLayout -->
+        <!-- android:id="@+id/linear_message" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_marginLeft="10dp" -->
+        <!-- android:orientation="horizontal" > -->
+
+
+        <!-- <com.blulabellabs.code.ui.common.CustomLineView -->
+        <!-- style="@style/TextView.Message.Date" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="match_parent" -->
+        <!-- android:layout_above="@+id/layout_message" -->
+        <!-- android:layout_below="@+id/img_statusline" -->
+        <!-- android:layout_marginLeft="10dp" -->
+        <!-- tools:padding="5dp" -->
+        <!-- tools:text_size="18sp" /> -->
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/img_bottomline"
+            android:layout_below="@+id/img_statusline"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:listSelector="@android:color/transparent" />
+
+        <!-- <ImageView -->
+        <!-- android:id="@+id/img_bottomline" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_above="@+id/layout_message" -->
+        <!-- android:background="@drawable/line_horizontal" /> -->
+
+
+        <!-- <RelativeLayout -->
+        <!-- android:id="@+id/layout_message" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_alignParentBottom="true" -->
+        <!-- android:visibility="visible" > -->
+
+
+        <!-- <ImageButton -->
+        <!-- android:id="@+id/button_message" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_alignParentRight="true" -->
+        <!-- android:layout_centerVertical="true" -->
+        <!-- android:background="@null" -->
+        <!-- android:padding="10dp" -->
+        <!-- android:src="@drawable/ic_menu_send" -->
+        <!-- android:visibility="visible" /> -->
+
+
+        <!-- <ImageButton -->
+        <!-- android:id="@+id/imageButton_imgMessage" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_alignParentLeft="true" -->
+        <!-- android:layout_centerVertical="true" -->
+        <!-- android:background="@null" -->
+        <!-- android:padding="10dp" -->
+        <!-- android:src="@drawable/ic_camera" -->
+        <!-- android:visibility="visible" /> -->
+
+
+        <!-- <EditText -->
+        <!-- android:id="@+id/edit_message" -->
+        <!-- style="@style/EditText" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_centerVertical="true" -->
+        <!-- android:layout_toLeftOf="@id/button_message" -->
+        <!-- android:layout_toRightOf="@id/imageButton_imgMessage" -->
+        <!-- android:hint="@string/message" -->
+        <!-- android:inputType="textMultiLine" -->
+        <!-- android:padding="10dp" > -->
+
+
+        <!-- <requestFocus /> -->
+        <!-- </EditText> -->
+        <!-- </RelativeLayout> -->
+    </RelativeLayout>
+
+</RelativeLayout>

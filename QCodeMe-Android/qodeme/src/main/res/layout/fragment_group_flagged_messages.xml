@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <com.blulabellabs.code.ui.common.TextViewMedium
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Flagged Messages"
+        android:textColor="@color/text_message_not_read"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@drawable/line_horizontal" />
+
+    <ListView
+        android:id="@+id/listview_groupMember"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@drawable/line_horizontal"
+        android:dividerHeight="1px"
+        android:paddingTop="0dp" >
+    </ListView>
+
+</LinearLayout>

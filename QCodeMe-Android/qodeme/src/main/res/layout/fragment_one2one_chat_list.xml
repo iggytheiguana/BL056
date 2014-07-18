@@ -1,45 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_solid">
+    android:background="@color/background_solid"
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize" >
 
-    <biz.softtechnics.qodeme.ui.common.ScrollDisabledListView
+    <com.blulabellabs.code.ui.common.ScrollDisabledListView
         android:id="@+id/listview"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/layout_message"
-        android:divider="@null" />
+        android:animationCache="false"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:smoothScrollbar="true"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_solid"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_box_search"
+            android:orientation="horizontal" >
+
+            <!-- <EditText -->
+            <!-- android:id="@+id/editText_Search" -->
+            <!-- style="@style/EditText" -->
+            <!-- android:layout_width="0dp" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_margin="5dp" -->
+            <!-- android:singleLine="true" -->
+            <!-- android:imeOptions="actionSearch" -->
+            <!-- android:inputType="text" -->
+            <!-- android:layout_weight="1" /> -->
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/searchHintIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/ic_search_gray" />
+
+                <EditText
+                    android:id="@+id/editText_Search"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:singleLine="true" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/imgBtn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_search_gray" />
+
+            <ImageButton
+                android:id="@+id/imgBtn_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@drawable/ic_action_close"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/imgBtn_favoriteFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@drawable/ic_chat_favorite_h" />
+
+            <ImageButton
+                android:id="@+id/imgBtn_locationFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_background_actionbar"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:src="@drawable/ic_location_gray" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/listview1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_message"
+        android:animateLayoutChanges="true"
+        android:divider="@null"
+        android:orientation="vertical"
+        android:visibility="gone" />
+    <!-- <com.jake.quiltview.QuiltView -->
+    <!-- android:id="@+id/quilt" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:padding="5dip" -->
+    <!-- > -->
+    <!-- </com.jake.quiltview.QuiltView> -->
+    <!-- <android.support.v7.widget.GridLayout -->
+    <!-- android:id="@+id/listview" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:animateLayoutChanges="true" -->
+    <!-- android:columnCount="2" /> -->
 
     <RelativeLayout
         android:id="@+id/layout_message"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:visibility="gone">
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:visibility="gone" >
 
         <ImageButton
             android:id="@+id/button_message"
-            android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="10dp"
             android:src="@drawable/ic_menu_send" />
 
         <EditText
             android:id="@+id/edit_message"
             style="@style/EditText"
-            android:hint="Type message"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:inputType="textMultiLine"
-            android:layout_toLeftOf="@id/button_message" />
-
+            android:layout_toLeftOf="@id/button_message"
+            android:hint="Type message"
+            android:inputType="textMultiLine|textNoSuggestions" />
     </RelativeLayout>
-
 
 </RelativeLayout>

@@ -1,31 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white" >
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_edit_botom_square"
+        android:hint="@string/add_screen_name"
+        android:imeOptions="actionDone|actionSend"
+        android:padding="10dp"
+        android:singleLine="true" />
+
+    <com.blulabellabs.code.ui.common.TextViewRegular
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_name"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/user_name_display_hint"
+        android:textSize="16sp" />
 
     <ImageButton
         android:id="@+id/qr_code"
-        android:layout_centerInParent="true"
-        android:layout_margin="70dp"
-        android:contentDescription=""
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_margin="70dp"
+        android:background="@null"
+        android:contentDescription=""
         android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_dialog_dialer"
-        android:background="@null"/>
+        android:src="@android:drawable/ic_dialog_dialer" />
 
-    <Button
-        android:id="@+id/email"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Share QR code"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
-        android:textColor="@android:color/black"
-        android:background="@drawable/selector_button"
-        />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="50dp" >
+
+        <Button
+            android:id="@+id/scanQR"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_button"
+            android:text="@string/scan_qr_code"
+            android:layout_marginRight="10dp"
+            android:textColor="@android:color/black" />
+        <Button
+            android:id="@+id/email"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/selector_button"
+            android:text="@string/share_qr_code"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
 
 </RelativeLayout>

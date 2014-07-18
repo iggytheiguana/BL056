@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <style name="AppBaseTheme" parent="@style/Theme.AppCompat" >
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat">
     </style>
-
-
-
 
     <style name="AppBaseTheme.NoTitle">
         <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">
-
-        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingTop">6dp</item>
         <item name="android:paddingLeft">14dp</item>
         <item name="android:paddingRight">14dp</item>
-        <item name="android:paddingBottom">7dp</item>
-        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_message_not_read</item>
         <item name="android:background">@drawable/selector_textfield</item>
     </style>
 
@@ -34,19 +31,17 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-
     <style name="TextView" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_message_not_read</item>
     </style>
-
 
     <style name="TextView.Chat"></style>
 
     <style name="TextView.Chat.Name">
         <item name="android:textColor">@color/text_chat_name</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:singleLine">true</item>
     </style>
 
@@ -60,15 +55,12 @@
         <item name="android:singleLine">true</item>
     </style>
 
-
     <style name="TextView.Message">
         <item name="android:textSize">14sp</item>
-
     </style>
 
     <style name="TextView.Message.Text">
         <item name="android:textColor">@color/text_message_text</item>
-
     </style>
 
     <style name="TextView.Message.Date">
@@ -76,10 +68,10 @@
         <item name="android:singleLine">true</item>
         <item name="android:textSize">10sp</item>
     </style>
-    <!---->
-    <!--<style name="TextView.Message.Date.White">-->
-    <!--<item name="android:textColor">@color/text_message_sent</item>-->
-    <!--</style>-->
+    <!--  -->
+    <!-- <style name="TextView.Message.Date.White"> -->
+    <!-- <item name="android:textColor">@color/text_message_sent</item> -->
+    <!-- </style> -->
 
     <style name="LayoutIntroduction">
         <item name="android:layout_width">fill_parent</item>
@@ -99,6 +91,5 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
-
 
 </resources>

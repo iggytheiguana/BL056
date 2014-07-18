@@ -1,42 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_solid">
+    android:background="@drawable/bg_main" >
 
-
-    <EditText
-        android:id="@+id/password"
-        style="@style/EditText.Password.Signin"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="60dp"
-        android:hint="Enter password"
-        android:nextFocusDown="@+id/signin"/>
-
-    <ImageButton
+    <Button
         android:id="@+id/signin"
-        android:text="Signin"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/sign_up"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/selector_button_blue"
+        android:enabled="false"
+        android:focusable="true"
+        android:paddingBottom="10dp"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
-        android:background="@drawable/selector_button_signin"
-        android:focusable="true"/>
+        android:paddingTop="10dp"
+        android:text="@string/log_in"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:background="@null"
+        android:focusable="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:paddingTop="10dp"
+        android:text="@string/sign_up"
+        android:textColor="@color/signup_text_selector"
+        android:textSize="18sp" />
 
     <ImageButton
         android:id="@+id/qr_code"
-        android:layout_below="@+id/password"
-        android:layout_above="@+id/signin"
-        android:layout_margin="70dp"
-        android:contentDescription=""
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/textView_emptyQRText"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="40dp"
+        android:background="@null"
+        android:contentDescription=""
         android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_dialog_dialer"
-        android:background="@null"/>
+        android:src="@android:drawable/ic_dialog_dialer" />
+
+<!--     <com.blulabellabs.code.ui.common.TextViewRegular -->
+<!--         android:id="@+id/textView_scanQRlabel" -->
+<!--         style="@style/TextView.Message.Text" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_above="@+id/layout_password" -->
+<!--         android:layout_marginBottom="20dp" -->
+<!--         android:layout_marginLeft="50dp" -->
+<!--         android:layout_marginRight="50dp" -->
+<!--         android:layout_marginTop="20dp" -->
+<!--         android:gravity="center_horizontal" -->
+<!--         android:paddingBottom="5dp" -->
+<!--         android:paddingLeft="5dp" -->
+<!--         android:paddingRight="5dp" -->
+<!--         android:paddingTop="5dp" -->
+<!--         android:text="Item" -->
+<!--         android:textColor="@android:color/black" -->
+<!--         android:textSize="18sp" -->
+<!--         android:visibility="invisible" /> -->
+
+    <LinearLayout
+        android:id="@+id/linear_clear_qr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_password"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <com.blulabellabs.code.ui.common.TextViewMedium
+            android:id="@+id/textView_not_you"
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/not_you"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <com.blulabellabs.code.ui.common.TextViewRegular
+            android:id="@+id/textView_clearQR"
+            style="@style/TextView.Message.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/clear_qr_code"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <com.blulabellabs.code.ui.common.TextViewMedium
+        android:id="@+id/textView_emptyQRText"
+        style="@style/TextView.Message.Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_password"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:visibility="invisible"
+        android:text="@string/login_text"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:id="@+id/layout_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/signin"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/EditText.Password.Signin"
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_signin_btn"
+            android:hint="@string/enter_password"
+            android:nextFocusDown="@+id/signin"
+            android:textColor="@android:color/white" />
+
+        <com.blulabellabs.code.ui.common.TextViewItalic
+            android:id="@+id/textView_errorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:paddingLeft="10dp"
+            android:text="@string/password_must_match"
+            android:textColor="@color/red_dark"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </RelativeLayout>

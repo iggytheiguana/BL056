@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/qodeme_logo"
+        android:src="@drawable/logo"
         android:layout_marginBottom="60dp"
         android:background="@null"
         />
@@ -18,11 +18,8 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
-        android:src="@drawable/splash_qr"
+        android:src="@drawable/logo"
         android:scaleType="centerCrop"
         android:padding="0dp"
         android:background="@null"
