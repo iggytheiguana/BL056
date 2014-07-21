@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_solid"
-    android:orientation="vertical"
-    android:paddingTop="?attr/actionBarSize" >
+    android:orientation="vertical">
 
     <com.blulabellabs.code.ui.common.ScrollDisabledListView
         android:id="@+id/listview"
@@ -77,8 +76,8 @@
                 android:background="@drawable/selectable_background_actionbar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:visibility="gone"
-                android:src="@drawable/ic_search_gray" />
+                android:src="@drawable/ic_search_gray"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/imgBtn_clear"
@@ -88,7 +87,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:src="@drawable/ic_action_close"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/imgBtn_favoriteFilter"
@@ -118,7 +117,8 @@
         android:animateLayoutChanges="true"
         android:divider="@null"
         android:orientation="vertical"
-        android:visibility="gone" />
+        android:layout_below="@+id/linearLayout_search"
+        android:visibility="gone"/>
     <!-- <com.jake.quiltview.QuiltView -->
     <!-- android:id="@+id/quilt" -->
     <!-- android:layout_width="match_parent" -->
@@ -140,7 +140,7 @@
         android:layout_alignParentBottom="true"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/button_message"

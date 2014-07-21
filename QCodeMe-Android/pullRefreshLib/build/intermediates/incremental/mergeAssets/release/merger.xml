@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="D:\faisal\git\BL056\QCodeMe-Android\pullRefreshLib\src\main\assets" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="D:\faisal\git\BL056\QCodeMe-Android\pullRefreshLib\src\release\assets" />
+    </dataSet>
+
+</merger>

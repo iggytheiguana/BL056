@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 apply plugin: 'android-library'
@@ -14,20 +14,15 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
     }
-    release {
-        runProguard false
-        proguardFile 'proguard-rules.txt'
-        proguardFile getDefaultProguardFile('proguard-android.txt')
-    }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:+'
     compile files('libs/core-2.1.jar')
+    compile 'com.android.support:appcompat-v7:20.+'
 }

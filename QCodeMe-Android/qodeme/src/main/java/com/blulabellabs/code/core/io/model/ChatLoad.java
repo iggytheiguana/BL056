@@ -2,9 +2,6 @@ package com.blulabellabs.code.core.io.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Alex on 12/12/13.
- */
 public class ChatLoad {
 
     public long _id;

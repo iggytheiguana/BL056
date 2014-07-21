@@ -3,10 +3,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     maven { url 'https://github.com/Goddchen/mvn-repo/raw/master/' }
@@ -16,12 +16,12 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.0'
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 13
         targetSdkVersion 19
-    }
+     }
     buildTypes {
         release {
             runProguard false
@@ -33,21 +33,22 @@ android {
             proguardFile 'proguard-rules.txt'
         }
     }
-
 }
 
 dependencies {
     compile project(':view-pagerind-icator')
     compile project(':zxing-lib-portrait')
+    compile project(':aphidFlipViewLibrary')
+    compile project(':pullRefreshLib')
     compile files('libs/FlurryAnalytics_3.3.2.jar')
-    compile 'com.android.support:support-v4:19.0.0'
-    compile 'com.android.support:appcompat-v7:19.0.0'
-    compile 'com.google.android.gms:play-services:4.0.30'
-    compile 'com.google.guava:guava:15.0'
+    compile 'com.google.android.gms:play-services:5.0.77'
+    compile 'com.google.guava:guava:17.0'
     compile 'com.android:volley:1.0'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.larswerkman:HoloColorPicker:1.1'
     compile 'com.bugsense.trace:bugsense:3.6'
     compile files('libs/libGoogleAnalyticsServices_3.0.1.jar')
     compile files('libs/autobahn-0.5.0.jar')
+    compile 'com.google.android.gms:play-services:5.0.77'
+    compile 'com.android.support:appcompat-v7:20+'
 }

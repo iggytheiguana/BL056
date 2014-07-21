@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.blulabellabs.code.ui.one2one.ChatListSubItem xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
+<com.blulabellabs.code.ui.one2one.ChatListSubItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <com.blulabellabs.code.ui.common.CustomLineView
             style="@style/TextView.Message.Date"
@@ -15,14 +16,14 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="9dp"
             tools:padding="5dp"
-            tools:text_size="18sp" />
+            tools:text_size="18sp"/>
 
         <RelativeLayout
             android:id="@+id/header_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp" >
+            android:layout_marginLeft="10dp">
 
             <com.blulabellabs.code.ui.common.TextViewRegular
                 android:id="@+id/date_header"
@@ -37,7 +38,7 @@
                 android:paddingTop="2dp"
                 android:text="jul 10th 2014"
                 android:textColor="@android:color/white"
-                android:textSize="10sp" />
+                android:textSize="10sp"/>
         </RelativeLayout>
 
         <View
@@ -45,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dip"
             android:layout_below="@id/header_container"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <!-- <TextView -->
         <!-- android:id="@+id/date" -->
@@ -60,7 +61,7 @@
             android:id="@+id/linear_message_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/header_container" >
+            android:layout_below="@id/header_container">
 
             <TextView
                 android:id="@+id/lastMessageLineInvisible"
@@ -69,20 +70,20 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <LinearLayout
                 android:id="@+id/linear_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/linear_dot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <com.blulabellabs.code.ui.common.CustomDotView
                         android:id="@+id/date"
@@ -90,14 +91,14 @@
                         android:layout_height="match_parent"
                         android:layout_marginTop="2dp"
                         tools:padding="5dp"
-                        tools:text_size_int="17" />
+                        tools:text_size_int="17"/>
                     <!-- style="@style/TextView.Message.Date" -->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
-                        android:orientation="vertical" >
+                        android:orientation="vertical">
 
                         <com.blulabellabs.code.ui.common.TextViewRegular
                             android:id="@+id/textView_messagerName"
@@ -115,7 +116,7 @@
                             android:text="Item"
                             android:textColor="@android:color/black"
                             android:textSize="17sp"
-                            android:visibility="visible" />
+                            android:visibility="visible"/>
 
                         <com.blulabellabs.code.ui.common.TextViewRegular
                             android:id="@+id/message"
@@ -132,13 +133,13 @@
                             android:paddingTop="0dp"
                             android:text="Item"
                             android:textColor="@android:color/black"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"/>
 
                         <View
                             android:id="@+id/view_space1"
                             android:layout_width="match_parent"
                             android:layout_height="10dp"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -146,25 +147,25 @@
                     android:id="@+id/linearLayout_img"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <com.blulabellabs.code.ui.common.CustomDotView
                         android:layout_width="20dp"
                         android:layout_height="match_parent"
                         android:visibility="invisible"
                         tools:padding="5dp"
-                        tools:text_size_int="17" />
+                        tools:text_size_int="17"/>
 
                     <FrameLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <ProgressBar
                             android:id="@+id/progressBar_img"
                             style="@style/Widget.AppCompat.ProgressBar"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:layout_gravity="center" />
+                            android:layout_gravity="center"/>
 
                         <ImageView
                             android:id="@+id/imageView_item"
@@ -173,7 +174,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="10dp"
                             android:scaleType="fitStart"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
                     </FrameLayout>
                 </LinearLayout>
 
@@ -183,7 +184,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="21dp"
                     android:orientation="horizontal"
-                    android:visibility="gone" >
+                    android:visibility="gone">
 
                     <com.blulabellabs.code.ui.common.TextViewBold
                         style="@style/TextView.Message.Text"
@@ -193,7 +194,7 @@
                         android:paddingBottom="0dp"
                         android:text="@string/status_update"
                         android:textColor="#ff0000"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <com.blulabellabs.code.ui.common.TextViewMedium
                         android:id="@+id/textView_status_update"
@@ -203,7 +204,7 @@
                         android:layout_marginLeft="5dp"
                         android:paddingBottom="0dp"
                         android:textColor="@color/text_message_not_read"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
                 </LinearLayout>
 
                 <View
@@ -211,7 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
                     android:layout_alignParentTop="true"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
             </LinearLayout>
         </FrameLayout>
 
@@ -222,7 +223,7 @@
             android:layout_below="@id/linear_message_parent"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/button_message"
@@ -232,7 +233,7 @@
                 android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/ic_menu_send"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <ImageButton
                 android:id="@+id/imageButton_imgMessage"
@@ -242,7 +243,7 @@
                 android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/ic_menu_send"
-                android:visibility="invisible" />
+                android:visibility="invisible"/>
 
             <!-- <EditText -->
             <!-- android:id="@+id/edit_message" -->
@@ -275,9 +276,9 @@
                 android:inputType="textNoSuggestions|textCapSentences"
                 android:maxHeight="50dp"
                 android:singleLine="true"
-                android:visibility="visible" >
+                android:visibility="visible">
 
-                <requestFocus />
+                <requestFocus/>
             </com.blulabellabs.code.ui.common.CustomEdit>
         </RelativeLayout>
     </RelativeLayout>

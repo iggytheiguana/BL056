@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppBaseTheme" parent="@style/Theme.AppCompat">
-    </style>
-
     <style name="AppBaseTheme.NoTitle">
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">

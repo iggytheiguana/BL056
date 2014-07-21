@@ -565,8 +565,8 @@ public class MainFullActivity extends BaseActivity implements
 								R.drawable.ic_private_group);
 						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
 								R.drawable.ic_public_group);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
-								.setImageBitmap(priateGroup);
+//						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
+//								.setImageBitmap(priateGroup);
 						((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
 								.setImageBitmap(publicGroup);
 						((ImageButton) v).setImageBitmap(oneToone);
@@ -585,42 +585,42 @@ public class MainFullActivity extends BaseActivity implements
 						transaction.commit();
 					}
 				});
-		customActionView.findViewById(R.id.imgBtn_private).setOnClickListener(
-				new View.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						if (chatType == 1)
-							return;
-						chatType = 1;
-						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
-						// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
-						// v.setBackgroundResource(R.drawable.bg_tab_h);
-
-						Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_one_to_one);
-						Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_private_group_h);
-						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_public_group);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
-								.setImageBitmap(oneToone);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
-								.setImageBitmap(publicGroup);
-						((ImageButton) v).setImageBitmap(priateGroup);
-
-						ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
-								.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
-						if (privateChatListFragment == null) {
-							privateChatListFragment = new ChatListGroupFragment(1);
-						}
-						FragmentTransaction transaction = getSupportFragmentManager()
-								.beginTransaction();
-						transaction.replace(R.id.content_frame, privateChatListFragment,
-								CHAT_LIST_PRIVATE_FRAGMENT);
-						transaction.commit();
-					}
-				});
+//		customActionView.findViewById(R.id.imgBtn_private).setOnClickListener(
+//				new View.OnClickListener() {
+//
+//					@Override
+//					public void onClick(View v) {
+//						if (chatType == 1)
+//							return;
+//						chatType = 1;
+//						// customActionView.findViewById(R.id.imgBtn_one2one).setBackgroundResource(0);
+//						// customActionView.findViewById(R.id.imgBtn_public).setBackgroundResource(0);
+//						// v.setBackgroundResource(R.drawable.bg_tab_h);
+//
+//						Bitmap oneToone = BitmapFactory.decodeResource(getResources(),
+//								R.drawable.ic_one_to_one);
+//						Bitmap priateGroup = BitmapFactory.decodeResource(getResources(),
+//								R.drawable.ic_private_group_h);
+//						Bitmap publicGroup = BitmapFactory.decodeResource(getResources(),
+//								R.drawable.ic_public_group);
+//						((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
+//								.setImageBitmap(oneToone);
+//						((ImageButton) customActionView.findViewById(R.id.imgBtn_public))
+//								.setImageBitmap(publicGroup);
+//						((ImageButton) v).setImageBitmap(priateGroup);
+//
+//						ChatListGroupFragment privateChatListFragment = (ChatListGroupFragment) getSupportFragmentManager()
+//								.findFragmentByTag(CHAT_LIST_PRIVATE_FRAGMENT);
+//						if (privateChatListFragment == null) {
+//							privateChatListFragment = new ChatListGroupFragment(1);
+//						}
+//						FragmentTransaction transaction = getSupportFragmentManager()
+//								.beginTransaction();
+//						transaction.replace(R.id.content_frame, privateChatListFragment,
+//								CHAT_LIST_PRIVATE_FRAGMENT);
+//						transaction.commit();
+//					}
+//				});
 		customActionView.findViewById(R.id.imgBtn_public).setOnClickListener(
 				new View.OnClickListener() {
 
@@ -640,8 +640,8 @@ public class MainFullActivity extends BaseActivity implements
 								R.drawable.ic_public_group_h);
 						((ImageButton) customActionView.findViewById(R.id.imgBtn_one2one))
 								.setImageBitmap(oneToone);
-						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
-								.setImageBitmap(priateGroup);
+//						((ImageButton) customActionView.findViewById(R.id.imgBtn_private))
+//								.setImageBitmap(priateGroup);
 						((ImageButton) v).setImageBitmap(publicGroup);
 
 						ChatListGroupPublicFragment publicChatListFragment = (ChatListGroupPublicFragment) getSupportFragmentManager()

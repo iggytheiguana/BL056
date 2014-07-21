@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:background="@drawable/bg_topbar"
     android:orientation="horizontal" >
 
-    <LinearLayout
-        android:id="@+id/homeLayout"
+    <ImageButton
+        android:id="@+id/drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:background="@drawable/selectable_background_actionbar"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_drawer"
+        android:paddingRight="10dp"/>
 
-        <ImageButton
-            android:id="@+id/drawer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selectable_background_actionbar"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_drawer" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@+id/addLayout"
+        android:layout_toRightOf="@+id/homeLayout"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_weight="1">
 
         <ImageButton
             android:id="@+id/home"
@@ -29,17 +33,16 @@
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:src="@drawable/ic_home_as_up" />
-    </LinearLayout>
+            android:src="@drawable/ic_home_as_up"
+            android:layout_marginLeft="20dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_toLeftOf="@+id/addLayout"
-        android:layout_toRightOf="@+id/homeLayout"
-        android:gravity="center"
-        android:orientation="horizontal" >
+        <ImageButton
+            android:id="@+id/imgBtn_public"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selectable_background_actionbar"
+            android:padding="7dp"
+            android:src="@drawable/ic_public_group" />
 
         <ImageButton
             android:id="@+id/imgBtn_one2one"
@@ -49,34 +52,9 @@
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
             android:src="@drawable/ic_one_to_one_h" />
-
-        <ImageButton
-            android:id="@+id/imgBtn_private"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/selectable_background_actionbar"
-            android:padding="7dp"
-            android:src="@drawable/ic_private_group" />
-
-        <ImageButton
-            android:id="@+id/imgBtn_public"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selectable_background_actionbar"
-            android:padding="7dp"
-            android:src="@drawable/ic_public_group" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/addLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
-
-        <Button
+    <Button
             android:id="@+id/imgBtn_add"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -87,6 +65,5 @@
             android:paddingRight="7dp"
             android:textSize="40sp"
             android:text="+" />
-    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
