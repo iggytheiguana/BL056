@@ -14,6 +14,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/text_message_not_read</item>
         <item name="android:background">@drawable/selector_textfield</item>
+	<item name="android:editTextStyle">@android:style/Widget.Holo.Light.EditText</item>
     </style>
 
     <style name="EditText.Password">
@@ -66,10 +67,6 @@
         <item name="android:singleLine">true</item>
         <item name="android:textSize">10sp</item>
     </style>
-    <!--  -->
-    <!-- <style name="TextView.Message.Date.White"> -->
-    <!-- <item name="android:textColor">@color/text_message_sent</item> -->
-    <!-- </style> -->
 
     <style name="LayoutIntroduction">
         <item name="android:layout_width">fill_parent</item>
@@ -89,5 +86,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
+
+    <style name="vertical_divider">
+        <item name="android:layout_width">1dip</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/line_color</item>
+    </style>
+
 
 </resources>

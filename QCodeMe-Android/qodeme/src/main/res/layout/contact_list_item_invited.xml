@@ -2,7 +2,6 @@
 <com.blulabellabs.code.ui.contacts.ContactListItemInvited xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selectable_background_actionbar"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -13,97 +12,76 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".6"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/name"
-                style="@style/TextView.Chat.Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Text" />
-
-            <TextView
-                android:id="@+id/contact_info"
-                style="@style/TextView.Chat.Date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="TextLocation" />
-
-            <TextView
-                android:id="@+id/invite_message"
-                style="@style/TextView.Chat.Date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="add me" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="10dp"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/regect"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:background="@drawable/bg_btn"
-                android:text="@string/decline"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:layout_marginRight="5dp"
-                android:duplicateParentState="true" />
+            android:orientation="horizontal"
+            android:background="#ff111111">
 
             <Button
                 android:id="@+id/accept"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:text="@string/accept"
-                android:layout_marginLeft="5dp"
-                android:paddingLeft="10dp"
+                android:layout_height="match_parent"
                 android:paddingRight="10dp"
-                android:background="@drawable/bg_btn_h"
-                android:duplicateParentState="true" />
+                android:background="#ff111111"
+                android:duplicateParentState="true"
+                android:drawableLeft="@drawable/checkround"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="15dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#ff111111"
+                android:id="@+id/ll">
+
+                <TextView
+                    android:id="@+id/invite_message"
+                    style="@style/TextView.Chat.Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/new_contact_request"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="1dp"
+                    android:textSize="15dp"/>
+
+                <TextView
+                    android:id="@+id/name"
+                    style="@style/TextView.Chat.Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=""
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="25dp"/>
+
+                <TextView
+                    android:id="@+id/contact_info"
+                    style="@style/TextView.Chat.Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/contact_info"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="1dp"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/regect"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/reject"
-                android:textColor="#666"
-                android:visibility="gone" />
+                android:background="#ff111111"
+                android:drawableRight="@drawable/cross"
+                android:duplicateParentState="false"
+                android:gravity="center|center_horizontal"
+                android:layout_gravity="center"
+                android:paddingRight="15dp"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight=".2"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone" >
-
-            <!-- <Button -->
-            <!-- android:padding="10dip" -->
-            <!-- android:id="@+id/accept" -->
-            <!-- android:layout_height="wrap_content" -->
-            <!-- android:layout_width="wrap_content" -->
-            <!-- android:background="@drawable/bg_btn_h" -->
-            <!-- android:duplicateParentState="true"/> -->
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/accept"
-                android:textColor="#666"
-                android:visibility="gone" />
-        </LinearLayout>
     </LinearLayout>
 
     <View

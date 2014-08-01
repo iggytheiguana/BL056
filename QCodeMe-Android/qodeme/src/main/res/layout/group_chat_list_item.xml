@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.blulabellabs.code.ui.one2one.ChatListGroupItem xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="360dp" >
 
@@ -13,50 +13,10 @@
         android:layout_marginTop="12dp"
         android:background="@android:color/white" >
 
-        <!-- android:layout_marginLeft="6dp" -->
-        <!-- android:layout_marginRight="6dp" -->
-        <!-- android:layout_marginTop="6dp" > -->
-
         <RelativeLayout
             android:id="@+id/relative_chatItemChild"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-
-            <!-- android:background="@color/conversation_card_background" -->
-
-
-            <!-- <View -->
-            <!-- android:id="@+id/corner_top" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="2dp" -->
-            <!-- android:layout_alignParentTop="true" -->
-            <!-- android:background="@android:color/darker_gray" /> -->
-
-
-            <!-- <View -->
-            <!-- android:id="@+id/corner_bottom" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="2dp" -->
-            <!-- android:layout_alignParentBottom="true" -->
-            <!-- android:layout_toLeftOf="@+id/drag_image" -->
-            <!-- android:background="@android:color/darker_gray" /> -->
-
-
-            <!-- <View -->
-            <!-- android:id="@+id/corner_left" -->
-            <!-- android:layout_width="2dp" -->
-            <!-- android:layout_height="match_parent" -->
-            <!-- android:layout_alignParentLeft="true" -->
-            <!-- android:background="@android:color/darker_gray" /> -->
-
-
-            <!-- <View -->
-            <!-- android:id="@+id/corner_right" -->
-            <!-- android:layout_width="2dp" -->
-            <!-- android:layout_height="match_parent" -->
-            <!-- android:layout_above="@+id/drag_image" -->
-            <!-- android:layout_alignParentRight="true" -->
-            <!-- android:background="@android:color/darker_gray" /> -->
 
             <RelativeLayout
                 android:id="@+id/header"
@@ -174,28 +134,6 @@
                 <!-- android:text="...." -->
             </RelativeLayout>
 
-            <!--
-            <LinearLayout
-            android:id="@+id/area"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:orientation="horizontal"/>
-            -->
-
-            <com.blulabellabs.code.ui.common.CustomLineView
-                android:id="@+id/verticle_line"
-                style="@style/TextView.Message.Date"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/drag"
-                android:layout_below="@+id/linear_memberlist"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="9dp"
-                tools:padding="5dp"
-                tools:text_size="18sp" />
-
             <RelativeLayout
                 android:id="@+id/layout_message"
                 android:layout_width="match_parent"
@@ -219,31 +157,6 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp" >
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="1px"
-                            android:orientation="vertical"
-                            android:visibility="gone" >
-
-                            <com.blulabellabs.code.ui.common.CustomLineView
-                                style="@style/TextView.Message.Date"
-                                android:layout_width="20dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:visibility="invisible"
-                                tools:padding="5dp"
-                                tools:text_size="17sp" />
-
-                            <TextView
-                                style="@style/TextView.Message.Date"
-                                android:layout_width="20dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:background="@android:color/white"
-                                android:visibility="visible" />
-                        </LinearLayout>
-
                         <com.blulabellabs.code.ui.common.CustomDotView
                             android:id="@+id/dotView_userTyping1"
                             android:layout_width="20dp"
@@ -252,7 +165,6 @@
                             android:visibility="visible"
                             tools:padding="5dp"
                             tools:text_size_int="17" />
-                        <!-- style="@style/TextView.Message.Date" -->
                     </FrameLayout>
 
                     <com.blulabellabs.code.ui.common.TextViewRegular

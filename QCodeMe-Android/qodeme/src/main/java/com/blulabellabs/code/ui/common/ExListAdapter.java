@@ -14,20 +14,15 @@ import java.util.List;
 import com.blulabellabs.code.ui.one2one.ChatListItem;
 import com.google.android.gms.internal.cn;
 
-/**
- * Created by Alex on 10/24/13.
- */
 public class ExListAdapter<T extends ExAdapterBasedView<E, C>, E, C extends ExAdapterCallback>
 		extends ListAdapter<T, E> {
 
 	private final C callback;
-	private List<E> mItems;
 	public boolean isScroll = false;
 
 	public ExListAdapter(Context context, int layoutResId, List<E> list, C callback) {
 		super(context, layoutResId, list);
 		this.callback = callback;
-		mItems = list;
 	}
 
 	@SuppressWarnings("unchecked")

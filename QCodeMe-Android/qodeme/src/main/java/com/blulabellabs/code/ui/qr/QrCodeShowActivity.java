@@ -34,9 +34,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-/**
- * Created by Alex on 10/8/13.
- */
 public class QrCodeShowActivity extends Activity {
 
 	private static final int REQUEST_ACTIVITY_SCAN_QR_CODE = 2;
@@ -83,6 +80,7 @@ public class QrCodeShowActivity extends Activity {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH
 						|| actionId == EditorInfo.IME_ACTION_GO
 						|| actionId == EditorInfo.IME_ACTION_DONE
+						|| actionId == EditorInfo.IME_ACTION_UNSPECIFIED
 						|| event.getAction() == KeyEvent.ACTION_DOWN
 						|| actionId == EditorInfo.IME_ACTION_SEND
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
@@ -148,9 +146,6 @@ public class QrCodeShowActivity extends Activity {
 				Color.WHITE));
 	}
 
-	/*
-	 * private Context getContext(){ return this; }
-	 */
 
 	private void email() {
 		String public_name = editTextName.getText().toString();
@@ -174,13 +169,11 @@ public class QrCodeShowActivity extends Activity {
 			showMessage(getString(R.string.alert_no_access_to_external_storage));
 			return;
 		}
-//		String public_name = editTextName.getText().toString();
-//		if (public_name.trim().equals(""))
-//			public_name = "User";
 		String location = "";
 		try {
 			location = QodemePreferences.getInstance().getLastLocation().getCity();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		String data = "<html><body><h1>Contact Request</h1><hr><br><p>"

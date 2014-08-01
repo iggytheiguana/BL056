@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/apk/res/com.blulabellabs.code"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white" >
@@ -134,24 +134,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textView_status"
             android:background="@drawable/line_horizontal" />
-        <!-- <LinearLayout -->
-        <!-- android:id="@+id/linear_message" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_marginLeft="10dp" -->
-        <!-- android:orientation="horizontal" > -->
-
-
-        <!-- <com.blulabellabs.code.ui.common.CustomLineView -->
-        <!-- style="@style/TextView.Message.Date" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="match_parent" -->
-        <!-- android:layout_above="@+id/layout_message" -->
-        <!-- android:layout_below="@+id/img_statusline" -->
-        <!-- android:layout_marginLeft="10dp" -->
-        <!-- tools:padding="5dp" -->
-        <!-- tools:text_size="18sp" /> -->
-
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
@@ -161,63 +143,6 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="@null"
             android:listSelector="@android:color/transparent" />
-
-        <!-- <ImageView -->
-        <!-- android:id="@+id/img_bottomline" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_above="@+id/layout_message" -->
-        <!-- android:background="@drawable/line_horizontal" /> -->
-
-
-        <!-- <RelativeLayout -->
-        <!-- android:id="@+id/layout_message" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_alignParentBottom="true" -->
-        <!-- android:visibility="visible" > -->
-
-
-        <!-- <ImageButton -->
-        <!-- android:id="@+id/button_message" -->
-        <!-- android:layout_width="wrap_content" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_alignParentRight="true" -->
-        <!-- android:layout_centerVertical="true" -->
-        <!-- android:background="@null" -->
-        <!-- android:padding="10dp" -->
-        <!-- android:src="@drawable/ic_menu_send" -->
-        <!-- android:visibility="visible" /> -->
-
-
-        <!-- <ImageButton -->
-        <!-- android:id="@+id/imageButton_imgMessage" -->
-        <!-- android:layout_width="wrap_content" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_alignParentLeft="true" -->
-        <!-- android:layout_centerVertical="true" -->
-        <!-- android:background="@null" -->
-        <!-- android:padding="10dp" -->
-        <!-- android:src="@drawable/ic_camera" -->
-        <!-- android:visibility="visible" /> -->
-
-
-        <!-- <EditText -->
-        <!-- android:id="@+id/edit_message" -->
-        <!-- style="@style/EditText" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_centerVertical="true" -->
-        <!-- android:layout_toLeftOf="@id/button_message" -->
-        <!-- android:layout_toRightOf="@id/imageButton_imgMessage" -->
-        <!-- android:hint="@string/message" -->
-        <!-- android:inputType="textMultiLine" -->
-        <!-- android:padding="10dp" > -->
-
-
-        <!-- <requestFocus /> -->
-        <!-- </EditText> -->
-        <!-- </RelativeLayout> -->
     </RelativeLayout>
 
 </RelativeLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="crash_message">Oops… I crashed but you can send report to my developer to help him fix this issue !</string>
     <string name="app_name">Code!</string>
     <string name="activity_login_title">Login</string>
     <string name="activity_registration_title">Registration</string>
@@ -151,5 +151,9 @@
     
     <string name="flagged_comments">Flagged comments</string>
     <string name="flagged_comments_dis">View flagged comments </string>
-    
+    <string name="contacts">Contacts</string>
+    <string name="new_contact_request">New Contact Request</string>
+    <string name="contact_info">TextLocation</string>
+    <string name="notes">Notes</string>
+
 </resources>

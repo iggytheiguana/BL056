@@ -17,9 +17,10 @@
 
 <!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                                        android:id="@+id/drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        style="@style/AppBaseTheme.NoTitle">
 
     <!--
          As the main content view, the view below consumes the entire
@@ -28,49 +29,150 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/pager_main"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:id="@+id/chatZoomImage"
+                    android:visibility="invisible"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="200dp"
+                    android:background="@drawable/bg_expandable_image"/>
+            </RelativeLayout>
+
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/expanded_chatView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible" >
+            android:visibility="invisible"
+            android:background="@drawable/bg_expandable_image">
 
-            <android.support.v4.view.ViewPager
+            <com.aphidmobile.flip.FlipViewController
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
         </FrameLayout>
     </FrameLayout>
 
-    <!--
-         android:layout_gravity="start" tells DrawerLayout to treat
-         this as a sliding drawer on the left side for left-to-right
-         languages and on the right side for right-to-left languages.
-         The drawer is given a fixed width in dp and extends the full height of
-         the container. A solid background is used for contrast
-         with the content view.
-    -->
-
-    <ListView
-        android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+    <LinearLayout
+        android:id="@+id/pager_container"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="start"
-        android:background="@android:color/black"
-        android:choiceMode="singleChoice"
-        android:divider="@drawable/bg_menu_divider"
-        />
+        android:visibility="gone">
+    </LinearLayout>
 
-<!--         android:background="#1a1a1a" -->
+    <LinearLayout
+        android:id="@+id/pager_container2"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pager_container3"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/more_item_header"
+        android:layout_width="500dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:text="@string/contacts"
+            android:id="@+id/contacts"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+            android:background="#ffd4aa00"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/incoming_requests"
+            android:background="@android:color/black"
+            android:choiceMode="singleChoice"
+            android:divider="@drawable/bg_menu_divider"
+            />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@android:color/black"
+            android:choiceMode="singleChoice"
+            android:divider="@drawable/bg_menu_divider"
+            android:id="@+id/existing_contacts"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_more"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="90dp"
+                android:text="@string/activity_settings_title"
+                android:visibility="visible"
+                android:textSize="30dp"
+                android:background="#ffdeaa87"/>
+
+            <Button
+                android:id="@+id/btn_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="90dp"
+                android:text="@string/invite"
+                android:visibility="visible"
+                android:layout_weight="1"
+                android:textSize="30dp"
+                android:background="#ffffdd55"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_more_share"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:background="@null"
+            android:drawableLeft="@drawable/ic_share_h"
+            android:drawablePadding="10dp"
+            android:gravity="left|center_vertical"
+            android:text="@string/more_share"
+            android:textColor="@color/signup_text_selector"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
 </android.support.v4.widget.DrawerLayout>

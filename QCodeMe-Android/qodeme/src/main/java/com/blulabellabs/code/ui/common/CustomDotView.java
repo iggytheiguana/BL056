@@ -37,9 +37,8 @@ public class CustomDotView extends TextView {
 	int paddingDp = 5;
 	float lineWidth = 1;
 	private boolean isOutLine = false;
-	private int circleTopMargine = 0;
 
-	public CustomDotView(Context context) {
+    public CustomDotView(Context context) {
 		this(context, null);
 	}
 
@@ -70,8 +69,7 @@ public class CustomDotView extends TextView {
 	public float convertDpToPixel(float dp, Context context) {
 		Resources resources = context.getResources();
 		DisplayMetrics metrics = resources.getDisplayMetrics();
-		float px = dp * (metrics.densityDpi / 160f);
-		return px;
+        return dp * (metrics.densityDpi / 160f);
 	}
 
 	private void init() {
@@ -101,29 +99,25 @@ public class CustomDotView extends TextView {
 
 	}
 
-	public static Bitmap drawableToBitmap(Drawable drawable) {
-		if (drawable instanceof BitmapDrawable) {
-			return ((BitmapDrawable) drawable).getBitmap();
-		}
-
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-				drawable.getIntrinsicHeight(), Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		drawable.draw(canvas);
-
-		return bitmap;
-	}
+//	public static Bitmap drawableToBitmap(Drawable drawable) {
+//		if (drawable instanceof BitmapDrawable) {
+//			return ((BitmapDrawable) drawable).getBitmap();
+//		}
+//
+//		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+//				drawable.getIntrinsicHeight(), Config.ARGB_8888);
+//		Canvas canvas = new Canvas(bitmap);
+//		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//		drawable.draw(canvas);
+//
+//		return bitmap;
+//	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		// if (isVerticalLine)
-		// canvas.drawLine((textSize / 2)+2, 0, (textSize / 2)+2, getHeight(),
-		// mPaintLine);
-
 		if (isReply()) {
 			if ((!isSecondVerticalLine1 && isSecondVerticalLine2)
-					|| (!isSecondVerticalLine1 && !isSecondVerticalLine2))
+					|| (!isSecondVerticalLine1))
 				canvas.drawLine((textSize / 2) + 2,  (textSize / 2), getWidth()
 						- (textSize / 2) - 5,  (textSize / 2), mPaintLine);
 			if (isSecondVerticalLine1)
@@ -134,36 +128,16 @@ public class CustomDotView extends TextView {
 						getWidth() - (textSize / 2) - 5, getHeight(), mPaintLine);
 			if (isCircle) {
 				mPaintCircle.setColor(dotColor);
-//				canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2)+circleTopMargine,
-//						(textSize / 2) - 3, mPaintCircle);// RADIUS = 7
-//				if (isOutLine()) {
-//					mPaintCircle.setColor(Color.WHITE);
-//					canvas.drawCircle(getWidth() - (textSize / 2) - 5,
-//							(textSize / 2)+circleTopMargine, ((textSize / 2) - 3) - 1, mPaintCircle);
-//				}
-				canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2)+circleTopMargine,
+                canvas.drawCircle(getWidth() - (textSize / 2) - 5,  (textSize / 2),
 						(textSize / 2)-2 , mPaintCircle);// RADIUS = 7
 				if (isOutLine()) {
 					mPaintCircle.setColor(Color.WHITE);
 					canvas.drawCircle(getWidth() - (textSize / 2) - 5,
-							(textSize / 2)+circleTopMargine, ((textSize / 2)-2 ) - 1, mPaintCircle);
+							(textSize / 2), ((textSize / 2)-2 ) - 1, mPaintCircle);
 				}
 			}
-			// canvas.drawLine(10, padding+2+(textSize/2), getWidth() - 15,
-			// padding+2+(textSize/2), mPaintLine);
-
-			// canvas.drawBitmap(circle, 0,0,new Paint());
 		} else {
-			// int textHeight = (int) mPaintCircle.measureText("T");
 			if (isCircle) {
-//				mPaintCircle.setColor(dotColor);
-//				canvas.drawCircle((textSize / 2) + 2,  (textSize / 2),
-//						(textSize / 2) - 3, mPaintCircle);
-//				if (isOutLine()) {
-//					mPaintCircle.setColor(Color.WHITE);
-//					canvas.drawCircle((textSize / 2) + 2, (textSize / 2),
-//							((textSize / 2) - 3) - 1, mPaintCircle);
-//				}
 				mPaintCircle.setColor(dotColor);
 				canvas.drawCircle((textSize / 2) + 2,  (textSize / 2),
 						(textSize / 2)-2, mPaintCircle);
@@ -173,9 +147,6 @@ public class CustomDotView extends TextView {
 							((textSize / 2)-2 ) - 1, mPaintCircle);
 				}
 			}
-			// canvas.drawBitmap(circle, 0,0,new Paint());
-			
-			
 		}
 
 	}
@@ -185,10 +156,10 @@ public class CustomDotView extends TextView {
 		mPaintCircle.setColor(dotColor);
 	}
 
-	public int getDotColor() {
-		return dotColor;
-	}
-
+//	public int getDotColor() {
+//		return dotColor;
+//	}
+//
 	public void setReply(boolean isReply) {
 		this.isReply = isReply;
 	}
@@ -200,26 +171,26 @@ public class CustomDotView extends TextView {
 	public void setSecondVerticalLine(boolean isSecondVerticalLine) {
 		this.isSecondVerticalLine1 = isSecondVerticalLine;
 	}
-
-	public boolean isSecondVerticalLine() {
-		return isSecondVerticalLine1;
-	}
-
+//
+//	public boolean isSecondVerticalLine() {
+//		return isSecondVerticalLine1;
+//	}
+//
 	public void setSecondVerticalLine2(boolean isSecondVerticalLine2) {
 		this.isSecondVerticalLine2 = isSecondVerticalLine2;
 	}
 
-	public boolean isSecondVerticalLine2() {
-		return isSecondVerticalLine2;
-	}
-
+//	public boolean isSecondVerticalLine2() {
+//		return isSecondVerticalLine2;
+//	}
+//
 	public void setCircle(boolean isCircle) {
 		this.isCircle = isCircle;
 	}
 
-	public boolean isCircle() {
-		return isCircle;
-	}
+//	public boolean isCircle() {
+//		return isCircle;
+//	}
 
 	public void setOutLine(boolean isOutLine) {
 		this.isOutLine = isOutLine;
@@ -228,13 +199,13 @@ public class CustomDotView extends TextView {
 	public boolean isOutLine() {
 		return isOutLine;
 	}
-
-	public void setCircleTopMargine(int circleTopMargine) {
-		this.circleTopMargine = circleTopMargine;
-	}
-
-	public int getCircleTopMargine() {
-		return circleTopMargine;
-	}
-
+//
+//	public void setCircleTopMargine(int circleTopMargine) {
+//		this.circleTopMargine = circleTopMargine;
+//	}
+//
+//	public int getCircleTopMargine() {
+//		return circleTopMargine;
+//	}
+//
 }

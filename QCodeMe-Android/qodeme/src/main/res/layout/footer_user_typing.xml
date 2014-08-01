@@ -25,24 +25,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <com.blulabellabs.code.ui.common.CustomLineView
-                    style="@style/TextView.Message.Date"
-                    android:layout_width="20dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    tools:padding="5dp"
-                    tools:text_size="17sp" />
-
-                <com.blulabellabs.code.ui.common.CustomLineView
-                    style="@style/TextView.Message.Date"
-                    android:layout_width="20dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:visibility="visible"
-                    tools:padding="5dp"
-                    tools:text_size="17sp" />
-            </LinearLayout>
-
             <com.blulabellabs.code.ui.common.CustomDotView
                 android:id="@+id/dotView_userTyping1"
                 android:layout_width="20dp"
@@ -51,7 +33,7 @@
                 tools:padding="5dp"
                 android:layout_marginLeft="1px"
                 tools:text_size_int="17" />
-            <!-- style="@style/TextView.Message.Date" -->
+            </LinearLayout>
         </FrameLayout>
 
         <com.blulabellabs.code.ui.common.TextViewRegular
@@ -89,24 +71,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <com.blulabellabs.code.ui.common.CustomLineView
-                    style="@style/TextView.Message.Date"
-                    android:layout_width="20dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    tools:padding="5dp"
-                    tools:text_size="17sp" />
-
-                <com.blulabellabs.code.ui.common.CustomLineView
-                    style="@style/TextView.Message.Date"
-                    android:layout_width="20dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:visibility="invisible"
-                    tools:padding="5dp"
-                    tools:text_size="17sp" />
-            </LinearLayout>
-
             <com.blulabellabs.code.ui.common.CustomDotView
                 android:id="@+id/dotView_userTyping"
                 android:layout_width="20dp"
@@ -115,7 +79,7 @@
                  android:layout_marginLeft="1px"
                 tools:padding="5dp"
                 tools:text_size_int="17" />
-            <!-- style="@style/TextView.Message.Date" -->
+            </LinearLayout>
         </FrameLayout>
 
         <com.blulabellabs.code.ui.common.TextViewRegular

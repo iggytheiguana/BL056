@@ -40,9 +40,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-/**
- * Created by Alex on 10/8/13.
- */
 public class PublicChatQrCodeShowActivity extends Activity {
 
 	private static final int REQUEST_ACTIVITY_SCAN_QR_CODE = 2;
@@ -79,46 +76,6 @@ public class PublicChatQrCodeShowActivity extends Activity {
 				email();
 			}
 		});
-		// mScanButton = (Button) findViewById(R.id.scanQR);
-		// mScanButton.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// Intent intent1 = new Intent();
-		// intent1.putExtra("type", 2);
-		// setResult(RESULT_OK, intent1);
-		// finish();
-		// }
-		// });
-
-		// editTextName.setOnEditorActionListener(new OnEditorActionListener() {
-		//
-		// @Override
-		// public boolean onEditorAction(TextView v, int actionId, KeyEvent
-		// event) {
-		// if (actionId == EditorInfo.IME_ACTION_SEARCH
-		// || actionId == EditorInfo.IME_ACTION_GO
-		// || actionId == EditorInfo.IME_ACTION_DONE
-		// || event.getAction() == KeyEvent.ACTION_DOWN
-		// || actionId == EditorInfo.IME_ACTION_SEND
-		// && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-		//
-		// QodemePreferences.getInstance()
-		// .setPublicName(editTextName.getText().toString());
-		// QodemePreferences.getInstance().setUserSettingsUpToDate(false);
-		// SyncHelper.requestManualSync();
-		// Helper.hideKeyboard(PublicChatQrCodeShowActivity.this, editTextName);
-		//
-		// return true;
-		// }
-		// return false;
-		// }
-		// });
-
-		// String name = QodemePreferences.getInstance().getPublicName();
-		// if (name != null && !name.trim().equals(""))
-		// editTextName.setText(name);
-
 	}
 
 	@Override
@@ -143,9 +100,6 @@ public class PublicChatQrCodeShowActivity extends Activity {
 	}
 
 	private void refreshQrCode(String qrCode) {
-//		mBitmap = QrUtils.encodeQrCode((TextUtils.isEmpty(qrCode) ? "Qr Code"
-//				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500, Color.BLACK,
-//				Color.WHITE);
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put(IntentKey.QR_CODE, qrCode);
@@ -160,10 +114,6 @@ public class PublicChatQrCodeShowActivity extends Activity {
 				: ApplicationConstants.QR_CODE_CONTACT_PREFIX + qrCode), 500, 500, Color.BLACK,
 				Color.WHITE));
 	}
-
-	/*
-	 * private Context getContext(){ return this; }
-	 */
 
 	private void email() {
 		progressDialog = ProgressDialog.show(this, "", "Sharing...");

@@ -49,6 +49,8 @@ dependencies {
     compile 'com.bugsense.trace:bugsense:3.6'
     compile files('libs/libGoogleAnalyticsServices_3.0.1.jar')
     compile files('libs/autobahn-0.5.0.jar')
+    compile files('libs/acra-4.2.3.jar')
     compile 'com.google.android.gms:play-services:5.0.77'
     compile 'com.android.support:appcompat-v7:20+'
+
 }

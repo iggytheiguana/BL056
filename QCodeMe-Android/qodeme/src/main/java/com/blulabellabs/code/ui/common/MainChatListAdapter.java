@@ -1,56 +1,69 @@
 package com.blulabellabs.code.ui.common;
 
-import java.util.ArrayList;
-
-import com.blulabellabs.code.core.io.model.ChatLoad;
-import com.blulabellabs.code.core.io.model.Contact;
-import com.blulabellabs.code.ui.one2one.ChatGroupPhotosFragment;
-import com.blulabellabs.code.ui.one2one.ChatGroupProfileFragment;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment;
-import com.blulabellabs.code.ui.one2one.ChatInsideGroupFragment;
-import com.blulabellabs.code.ui.one2one.ChatListFragment;
-import com.blulabellabs.code.ui.one2one.ChatListGroupFragment;
-import com.blulabellabs.code.ui.one2one.ChatListGroupPublicFragment;
-import com.blulabellabs.code.ui.one2one.ChatPhotosFragment;
-import com.blulabellabs.code.ui.one2one.ChatProfileFragment;
-
+import android.database.DataSetObserver;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.blulabellabs.code.ui.one2one.ChatListFragment;
+import com.blulabellabs.code.ui.one2one.ChatListGroupFragment;
+import com.blulabellabs.code.ui.one2one.ChatListGroupPublicFragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainChatListAdapter extends FragmentStatePagerAdapter {
-	private ArrayList<Fragment> mFragmentsList = new ArrayList<Fragment>();
+    List<Fragment> items = new ArrayList<Fragment>();
 
-	public MainChatListAdapter(FragmentManager fm) {
-		super(fm);
+    public MainChatListAdapter(FragmentManager fm) {
+        super(fm);
+        items.add(ChatListGroupFragment.newInstance());
 
-		// for (int i = 0; i < 3; i++)
-		getFragmentsList().add(ChatListFragment.getInstance());
-		getFragmentsList().add(ChatListGroupFragment.getInstance());
-		getFragmentsList().add(ChatListGroupPublicFragment.getInstance());
+        Fragment f2 = null;
+        if (fm != null && fm.getFragments() != null) {
+            for (Fragment f : fm.getFragments()) {
+                if (f instanceof ChatListGroupPublicFragment) {
+                    f2 = f;
+                    break;
+                }
+            }
+        }
+        if (f2 != null) {
+            items.add(f2);
+        } else {
+            items.add(ChatListGroupPublicFragment.newInstance());
+        }
 
-	}
+        Fragment f3 = null;
+        if (fm != null && fm.getFragments() != null) {
+            for (Fragment f : fm.getFragments()) {
+                if (f instanceof ChatListFragment) {
+                    f3 = f;
+                    break;
+                }
+            }
+        }
+        if (f3 != null) {
+            items.add(f3);
+        } else {
+            items.add(ChatListFragment.newInstance());
+        }
+    }
 
-	public MainChatListAdapter(FragmentManager fm, ChatLoad c, boolean firstUpdate) {
-		super(fm);
-	}
+    @Override
+    public int getCount() {
+        return items.size();
+    }
 
-	@Override
-	public int getCount() {
-		return getFragmentsList().size();
-	}
+    @Override
+    public Fragment getItem(int position) {
+        return items.get(position);
+    }
 
-	@Override
-	public Fragment getItem(int position) {
-		return getFragmentsList().get(position);
-	}
-
-	public void setFragmentsList(ArrayList<Fragment> mFragmentsList) {
-		this.mFragmentsList = mFragmentsList;
-	}
-
-	public ArrayList<Fragment> getFragmentsList() {
-		return mFragmentsList;
-	}
-
+    @Override
+    public void unregisterDataSetObserver(DataSetObserver observer) {
+        if (observer != null) {
+            super.unregisterDataSetObserver(observer);
+        }
+    }
 }

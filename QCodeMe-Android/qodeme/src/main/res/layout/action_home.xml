@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:background="@drawable/bg_topbar"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:theme="@style/AppBaseTheme.NoTitle">
 
     <ImageButton
         android:id="@+id/drawer"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/selectable_background_actionbar"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
+        android:paddingBottom="14dp"
+        android:paddingTop="14dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_drawer"
-        android:paddingRight="10dp"/>
+        android:paddingRight="10dp"
+        android:layout_centerVertical="true"
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_toLeftOf="@+id/addLayout"
-        android:layout_toRightOf="@+id/homeLayout"
         android:gravity="center"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
         <ImageButton
             android:id="@+id/home"
@@ -33,16 +35,17 @@
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:src="@drawable/ic_home_as_up"
+            android:src="@drawable/camera_shutter_gray"
             android:layout_marginLeft="20dp"/>
 
         <ImageButton
             android:id="@+id/imgBtn_public"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selectable_background_actionbar"
+            android:layout_height="wrap_content"
             android:padding="7dp"
-            android:src="@drawable/ic_public_group" />
+            android:background="@drawable/selectable_background_actionbar"
+            android:src="@drawable/ic_public_group_h"
+            android:layout_margin="10dp"/>
 
         <ImageButton
             android:id="@+id/imgBtn_one2one"
@@ -51,19 +54,23 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/selectable_background_actionbar"
             android:padding="7dp"
-            android:src="@drawable/ic_one_to_one_h" />
+            android:src="@drawable/ic_one_to_one" />
     </LinearLayout>
 
     <Button
             android:id="@+id/imgBtn_add"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/selectable_background_actionbar"
             android:textColor="#0593e6"
             android:gravity="center"
             android:paddingLeft="7dp"
             android:paddingRight="7dp"
             android:textSize="40sp"
-            android:text="+" />
+            android:text="+"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
 
-</LinearLayout>
+</RelativeLayout>

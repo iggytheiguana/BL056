@@ -18,10 +18,10 @@ public class ScrollDisabledListView extends ListView {
 	public boolean isDisabled() {
 		return disabled;
 	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+//
+//	public void setDisabled(boolean disabled) {
+//		this.disabled = disabled;
+//	}
 
 	public boolean isDragMode() {
 		return dragMode;
@@ -81,9 +81,9 @@ public class ScrollDisabledListView extends ListView {
 		// return super.dispatchTouchEvent(ev);
 	}
 
-	public void setOnScrollUpAndDownListener(OnScrollListener onScrollListener) {
-		this.onScrollListener = onScrollListener;
-	}
+//	public void setOnScrollUpAndDownListener(OnScrollListener onScrollListener) {
+//		this.onScrollListener = onScrollListener;
+//	}
 
 	@Override
 	protected void onScrollChanged(int x, int y, int oldx, int oldy) {

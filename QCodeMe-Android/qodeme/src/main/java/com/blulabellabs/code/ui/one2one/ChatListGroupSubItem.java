@@ -1,11 +1,36 @@
 package com.blulabellabs.code.ui.one2one;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.text.style.RelativeSizeSpan;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blulabellabs.code.Application;
 import com.blulabellabs.code.R;
@@ -30,63 +55,23 @@ import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
 import com.blulabellabs.code.utils.RandomColorGenerator;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.ImageSpan;
-import android.text.style.RelativeSizeSpan;
-import android.util.AttributeSet;
-import android.util.Base64;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.RelativeLayout.LayoutParams;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Alex on 10/23/13.
- */
 public class ChatListGroupSubItem extends RelativeLayout implements
 		ExtendedGroupAdapterBasedView<Message, ChatListSubAdapterCallback> {
 
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT_HEADER = new SimpleDateFormat(
-			"MMM dd yyyy", Locale.US);
 
 	private final Context context;
 	private TextView message, messagerName;
-	private ListView subList;
 	private ChatListSubAdapterCallback callback;
 
-	private int position;
 	private Message previousMessage;
 	private Message nextMessage;
 	private Message currentMessage;
@@ -99,7 +84,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 	private CustomEdit mMessageField;
 	private ImageView mImageViewItem;
 	private ProgressBar mProgressBar;
-	private View viewUserSpace, viewUserSpace1;
+	private View viewUserSpace;
 
 	public ChatListGroupSubItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -131,18 +116,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		return date = date != null ? date : (CustomDotView) findViewById(R.id.date);
 	}
 
-	// public CustomDotView getLine() {
-	// return line ;//= line != null ? line : (CustomDotView)
-	// findViewById(R.id.custom_line);
-	// }
 	public View getUserSpace() {
 		return viewUserSpace = viewUserSpace != null ? viewUserSpace
-				: (View) findViewById(R.id.view_space);
-	}
-
-	public View getUserSpace1() {
-		return viewUserSpace1 = viewUserSpace1 != null ? viewUserSpace1
-				: (View) findViewById(R.id.view_space1);
+				: findViewById(R.id.view_space);
 	}
 
 	public TextView getDateHeader() {
@@ -182,7 +158,7 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	public View getOpponentSeparator() {
 		return opponentSeparator = opponentSeparator != null ? opponentSeparator
-				: (View) findViewById(R.id.opponent_separator);
+				: findViewById(R.id.opponent_separator);
 	}
 
 	One2OneChatListInsideFragmentCallback callback2;
@@ -192,7 +168,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			Message previousMessage, Message nextMessage,
 			One2OneChatListInsideFragmentCallback callback2) {
 		this.callback = callback;
-		this.position = position;
 		this.previousMessage = previousMessage;
 		this.nextMessage = nextMessage;
 		this.currentMessage = me;
@@ -217,19 +192,15 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getImageMessage().setVisibility(View.GONE);
 				getImageLayout().setVisibility(View.GONE);
 			} else {
-
-				// getUserSpace().setVisibility(VISIBLE);
-				getStatusLayout().setVisibility(VISIBLE);
+    			getStatusLayout().setVisibility(VISIBLE);
 				getMessageLayout().setVisibility(GONE);
 				getHeaderContainer().setVisibility(GONE);
 				getImageMessage().setVisibility(View.GONE);
 				getImageLayout().setVisibility(View.GONE);
-
 				String createdDate = me.created;
-				// Log.d("me.Date", createdDate + "");
-				String dateString = "";
+				String dateString;
 				try {
-					dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
+					dateString = Helper.getLocalTimeFromGTM(me.created);
 					dateString = " " + dateString;
 				} catch (Exception e) {
 					Log.d("timeError", e + "");
@@ -240,26 +211,15 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 				String str = getMessage().getText().toString();
 				String mainString = str + dateString + " ";
-
-				// Create our span sections, and assign a format to each.
 				SpannableString ss1 = new SpannableString(mainString);
-				ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
-																								// size
-				ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(),
-						0); // set
-							// size
+				ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0);
+				ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(),		0);
 				getStatus().setText(ss1);
 			}
 		} else {
 			getStatusLayout().setVisibility(GONE);
 			getMessageLayout().setVisibility(VISIBLE);
-
 			if (me.hasPhoto == 1) {
-				// String sss = me.photoUrl;
-				// byte data[] = Base64.decode(sss, Base64.NO_WRAP);
-				// Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
-				// data.length);
-				// getImageMessage().setImageBitmap(bitmap);
 				if (me.localImgPath != null && !me.localImgPath.trim().equals("")) {
 					int size = 200;
 					ImageFetcher fetcher = callback2.getImageFetcher();
@@ -268,7 +228,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 					Bitmap bitmap = ImageResizer.decodeSampledBitmapFromFile(me.localImgPath, size,
 							size, null);
-					// getImageMessage().setImageURI(Uri.parse(me.localImgPath));
 					getImageMessage().setImageBitmap(bitmap);
 					getImageProgress().setVisibility(View.GONE);
 				} else {
@@ -277,10 +236,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					if (fetcher != null)
 						fetcher.loadImage(me.photoUrl, getImageMessage(), getImageProgress());
 				}
-				// ImageFetcher fetcher = callback2.getImageFetcher();
-				// if (fetcher != null)
-				// fetcher.loadImage(me.photoUrl, getImageMessage(),
-				// getImageProgress());
 				getImageMessage().setVisibility(View.VISIBLE);
 				getImageLayout().setVisibility(View.VISIBLE);
 				getImageMessage().setOnClickListener(new OnClickListener() {
@@ -327,37 +282,14 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					getImageLayout().setVisibility(View.GONE);
 					getSendMessageLayout().setVisibility(GONE);
 					this.setVisibility(GONE);
-
 				}
 			} else {
 				color = Color.GRAY;
 			}
 			getDate().invalidate();
-
-			// Bitmap bmp = Bitmap.createBitmap(getDate().textSize ,
-			// getDate().textSize,
-			// Bitmap.Config.ARGB_8888);
-			// Paint paint = new Paint();
-			// paint.setAntiAlias(true);
-			// paint.setColor(color);
-
-			// Canvas c = new Canvas(bmp);
-			// c.drawCircle((getDate().textSize / 2) -4, (getDate().textSize /
-			// 2) -4, (getDate().textSize / 2)-4,
-			// paint);
-			//
-			// BitmapDrawable bitmapDrawable = new
-			// BitmapDrawable(getResources(), bmp);
-
-			// getMessage().setCompoundDrawablesRelativeWithIntrinsicBounds(bitmapDrawable,
-			// null,
-			// null, null);
-
 			int chatType = callback2.getChatType(me.chatId);
 			if (chatType == 1 && !QodemePreferences.getInstance().getQrcode().equals(msg.qrcode)) {
-
 				getMessagerName().setVisibility(View.VISIBLE);
-
 				if (contact != null) {
 					getMessagerName().setText(contact.title);
 					getMessagerName().setBackgroundColor(color);
@@ -368,17 +300,8 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			} else {
 				getMessagerName().setVisibility(View.GONE);
 			}
-			// getMessage().setTextColor(color);
-			// getMessage().setTypeface(callback.getFont(Fonts.ROBOTO_LIGHT));
-
-			// convert 24 hour date formate to 12 hours format
-			// getDate().setText(Helper.getTime24(Converter.getCrurentTimeFromTimestamp(me.created)));
-			// getDate().setText(Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(me.created)));//new
 			String createdDate = me.created;
-			// Log.d("me.Date", createdDate + "");
-			// String dateString =
-			// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
-			String dateString = "";
+			String dateString;
 			try {
 				dateString = Helper.getLocalTimeFromGTM(me.created);// Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 				dateString = " " + dateString;
@@ -387,10 +310,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
 				dateString = " " + dateString;
 			}
-			// dateString = " " + dateString;
-			// dateString = "<font size=\"30\" color=\"#c5c5c5\">" + dateString
-			// +
-			// "</font>";
 			String str = getMessage().getText().toString();
 			if (me.hasPhoto == 1)
 				str = "I";
@@ -399,16 +318,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			if (me.is_flagged == 1) {
 				mainString = mainString + flag;
 			}
-
-			// Create our span sections, and assign a format to each.
 			SpannableString ss1 = new SpannableString(mainString);
-			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0); // set
-																							// size
-			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0); // set
-																									// size
+			ss1.setSpan(new RelativeSizeSpan(0.6f), str.length(), mainString.length(), 0);
+			ss1.setSpan(new ForegroundColorSpan(Color.GRAY), str.length(), mainString.length(), 0);
 			if (me.hasPhoto == 1)
 				ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, str.length(), 0);
-
 			if (me.is_flagged == 1) {
 				Drawable bm = getResources().getDrawable(R.drawable.ic_flag_small);
 				bm.setBounds(0, 0, bm.getIntrinsicWidth(), bm.getIntrinsicHeight());
@@ -428,14 +342,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				}
 				getDate().setLayoutParams(param);
 				getDate().setReply(true);
-				// if (previousMessage != null && previousMessage.replyTo_id >
-				// 0) {
-				// getDate().setSecondVerticalLine(true);
-				// }
 				getDate().setSecondVerticalLine(me.isFirst);
 				getDate().setSecondVerticalLine2(me.isLast);
 				getDate().invalidate();
-
 				getMessage().setClickable(false);
 				getMessage().setOnLongClickListener(new OnLongClickListener() {
 
@@ -448,13 +357,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					}
 				});
 			} else {
-
 				getMessage().setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
-
 						if (chatLoad != null && chatLoad.is_locked != 1 && chatLoad.is_deleted != 1 && nextMessage!= null)
 							initSendMessage();
 					}
@@ -464,7 +371,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					@Override
 					public boolean onLongClick(View v) {
 						ChatLoad chatLoad = callback.getChatLoad(msg.chatId);
-
 						if (chatLoad != null && chatLoad.is_deleted != 1)
 							showPopupMenu(v, msg);
 						return true;
@@ -479,43 +385,32 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				getDate().setReply(false);
 				getDate().invalidate();
 			}
-			// Log.d("me.Datetime", dateString + " ");
-			// getMessage().setText(Html.fromHtml(getMessage().getText() + " " +
-			// dateString));
-			// changes
 			getMessage().setTypeface(Application.typefaceRegular);
 			getMessage().setTextColor(Color.BLACK);
 			if (isMyMessage(me.qrcode)) {
 				switch (me.state) {
 				case QodemeContract.Messages.State.LOCAL:
-					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_not_send));
 					getDate().setDotColor(context.getResources().getColor(R.color.user_typing));
 					getDate().setOutLine(true);
 					getMessage().setTextColor(getResources().getColor(R.color.user_typing));
 					getDate().invalidate();
 					break;
 				case QodemeContract.Messages.State.SENT:
-					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_sent));
-					// getDate().setDotColor(
-					// context.getResources().getColor(R.color.text_message_sent));
 					getDate().setDotColor(Color.BLACK);
 					break;
 				case QodemeContract.Messages.State.READ:
 				case QodemeContract.Messages.State.NOT_READ:
 				case QodemeContract.Messages.State.READ_LOCAL:
 				case QodemeContract.Messages.State.WAS_READ:
-					// getDate().setTextColor(context.getResources().getColor(R.color.text_message_reed));
 					getDate().setDotColor(
 							context.getResources().getColor(R.color.text_message_not_read));
 					break;
 				}
 			} else {
-				// getDate().setTextColor(color);
 				if (chatType == 2) {
 					MainActivity activity = (MainActivity) getContext();
 					Integer integerColor = activity.messageColorMap.get(me.messageId);
 					if(integerColor == null){
-						
 						int randomColor = RandomColorGenerator.getInstance().nextColor();
 						getDate().setDotColor(randomColor);
 						activity.messageColorMap.put(me.messageId, randomColor);
@@ -527,24 +422,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				if (QodemeContract.Messages.State.NOT_READ == me.state) {
 					getDate().setOutLine(true);
 					getMessage().setTypeface(Application.typefaceBold);
-				} else {
-
 				}
 				getDate().invalidate();
 			}
 			getUserSpace().setVisibility(GONE);
-			getUserSpace1().setVisibility(GONE);
 			getHeaderContainer().setVisibility(View.GONE);
 			getOpponentSeparator().setVisibility(View.GONE);
 			if (nextMessage != null) {
 				if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
 					getUserSpace().setVisibility(GONE);
 				} else {
-
-//					if (me.replyTo_id > 0)
-//						getUserSpace1().setVisibility(VISIBLE);
-//					else
-//						getUserSpace().setVisibility(VISIBLE);
 					getLstMessageLineHider().setVisibility(GONE);				}
 			}else{
 				getLstMessageLineHider().setVisibility(VISIBLE);
@@ -554,9 +441,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					getLstMessageLineHider().setBackgroundColor(Color.WHITE);
 				}
 			}
-			/*
-			 * && !TextUtils.isEmpty(previousMessage. created )
-			 */
 			if (previousMessage != null && previousMessage.hasPhoto != 2) {
 				try {
 					Calendar currentDate = Calendar.getInstance();
@@ -567,32 +451,22 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 					Calendar previousDate = Calendar.getInstance();
 					String preDate = previousMessage.created;
-					// Log.d("preDate", preDate);
 					if (previousMessage.created != null && (!previousMessage.created.contains(".")))
 						preDate = preDate + ".000";
-					// Log.d("preDate", preDate);
 					previousDate.setTime(SIMPLE_DATE_FORMAT_MAIN.parse(preDate));
-
 					if (currentDate.get(Calendar.DATE) != previousDate.get(Calendar.DATE)) {
 						Date dateTemp = new Date(Converter.getCrurentTimeFromTimestamp(date));
-						// Converter.getCrurentTimeFromTimestamp(me.created)
-						SimpleDateFormat dateFormat = new SimpleDateFormat(
-								"MMM-dd-yyyy", Locale.US);
-//						getDateHeader().setText(SIMPLE_DATE_FORMAT_HEADER.format(dateTemp));
+						SimpleDateFormat dateFormat = new SimpleDateFormat(	"MMM-dd-yyyy", Locale.US);
 						getDateHeader().setText(dateFormat.format(dateTemp));
-						
 						getHeaderContainer().setVisibility(View.VISIBLE);
 					} else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
 						getOpponentSeparator().setVisibility(View.VISIBLE);
 					}
-
 					if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)
 							&& currentDate.get(Calendar.MINUTE) == previousDate
 									.get(Calendar.MINUTE)
 							&& currentDate.get(Calendar.HOUR_OF_DAY) == previousDate
 									.get(Calendar.HOUR_OF_DAY)) {
-
-						// getDate().setVisibility(View.INVISIBLE);
 						getDate().setVisibility(View.VISIBLE);
 					} else {
 						getDate().setVisibility(View.VISIBLE);
@@ -601,18 +475,13 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 					 * Grouped Same user message
 					 */
 					if (me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
-
 						long diffInMs = currentDate.getTimeInMillis()
 								- previousDate.getTimeInMillis();
-
 						long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
-						// Log.d("timeDef", diffInSec+"");
 						if (diffInSec < 60) {
 							if (previousMessage.replyTo_id > 0) {
-								// getDate().setVisibility(View.INVISIBLE);
 								if (chatType == 1)
 									getMessagerName().setVisibility(View.GONE);
-
 								if (me.replyTo_id > 0)
 									getDate().setCircle(false);
 								else {
@@ -620,7 +489,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 								}
 							} else if (me.replyTo_id > 0) {
 								getDate().setCircle(true);
-
 							} else {
 								if (chatType == 1)
 									getMessagerName().setVisibility(View.GONE);
@@ -633,10 +501,8 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 						}
 					} else {
 						getDate().setCircle(true);
-						// getUserSpace().setVisibility(VISIBLE);
 						getDate().setVisibility(View.VISIBLE);
 					}
-
 					getDate().invalidate();
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -647,16 +513,13 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	private void setDefault() {
 		this.setVisibility(VISIBLE);
-		// getUserSpace().setVisibility(VISIBLE);
 		getStatusLayout().setVisibility(GONE);
 		getMessageLayout().setVisibility(VISIBLE);
 		getHeaderContainer().setVisibility(VISIBLE);
 		getImageMessage().setVisibility(View.VISIBLE);
 		getImageLayout().setVisibility(View.VISIBLE);
-
 	}
 
-	@SuppressWarnings("deprecation")
 	private void showPopupMenu(View v, final Message message) {
 		boolean isContactAvail = false;
 		if (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
@@ -673,18 +536,11 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				}
 			}
 		}
-		// if (!isContactAvail) {
-		// if
-		// (QodemePreferences.getInstance().getQrcode().equals(message.qrcode))
-		// isContactAvail = true;
-		// }
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.context_menu_layout, null);
-
 		final PopupWindow popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-
 		if (isContactAvail) {
 			view.findViewById(R.id.textView_addContact).setVisibility(GONE);
 			view.findViewById(R.id.view_divider1).setVisibility(GONE);
@@ -728,7 +584,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				popupWindow.dismiss();
 			}
 		});
-
 		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		popupWindow.setContentView(view);
 		popupWindow.setOutsideTouchable(true);
@@ -755,23 +610,17 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 
 	private void initSendMessage() {
 		getSendMessageLayout().setVisibility(VISIBLE);
-		mSendButton = getSendButton();// (ImageButton)
-										// getView().findViewById(R.id.button_message);
-		mMessageField = getMessageEditText();// (EditText)
-												// getView().findViewById(R.id.edit_message);
-
-		mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-
+		mSendButton = getSendButton();
+		mMessageField = getMessageEditText();
+        mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// sendMessage();
 				String message = mMessageField.getText().toString().trim();
 				if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim())) {
 					Toast.makeText(getContext(), "Empty message can't be sent", Toast.LENGTH_SHORT)
 							.show();
-					return;
-				} else {
+                } else {
 					callback2.sendReplyMessage(currentMessage.messageId, mMessageField.getText()
 							.toString(), "", 0, currentMessage.messageId, 0, 0, "");
 					mMessageField.setText("");
@@ -782,32 +631,16 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 		mMessageField.setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
 			@Override
 			public void onImeBack(CustomEdit ctrl) {
-				// getSendImage().setVisibility(View.GONE);
-				// getMessageEdit().setVisibility(View.GONE);
 				getSendMessageLayout().setVisibility(GONE);
 			}
 		});
-		/*
-		 * mMessageField.setOnKeyListener(new View.OnKeyListener() {
-		 * 
-		 * @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
-		 * if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode ==
-		 * event.KEYCODE_ENTER) { if (keyCode == event.KEYCODE_ENTER) {
-		 * sendMessage(); return true; } } return false; } });
-		 */
 		mMessageField.requestFocus();
 		mMessageField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View view, boolean b) {
 				if (!b) {
-					// edit view doesn't have focus anymore
 					Log.d("CHATINSIDE", "user stopped typing");
-					// sendUserStoppedTypingMessage();
 					callback2.stopTypingMessage();
-					// getSendMessageLayout().setVisibility(GONE);
-
-				} else {
-					// getSendMessageLayout().setVisibility(GONE);
 				}
 			}
 		});
@@ -816,7 +649,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 				Log.d("CHATINSIDE", "beforeTextChanged called");
-
 			}
 
 			@Override
@@ -824,7 +656,6 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				Log.d("CHATINSIDE", "onTextChanged called");
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
-					// sendUserTypingMessage();// send user typing message
 					callback2.startTypingMessage();
 				}
 			}
@@ -834,11 +665,9 @@ public class ChatListGroupSubItem extends RelativeLayout implements
 				Log.d("CHATINSIDE", "afterTextChanged called");
 				if (s.length() > 0) {
 					mSendButton.setVisibility(View.VISIBLE);
-					// sendUserTypingMessage();
 					callback2.startTypingMessage();
 				} else {
 					mSendButton.setVisibility(View.GONE);
-					// sendUserStoppedTypingMessage();
 					callback2.stopTypingMessage();
 				}
 			}

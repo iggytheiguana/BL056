@@ -45,8 +45,7 @@ public class QodemePreferences extends CommonPreferences {
 	private static final String PRIVATE_GROUP_CHAT_ID = "private_group_chat_id";
 
 	private static QodemePreferences instance;
-	@SuppressWarnings("unused")
-	private Context context;
+//	private Context context;
 
 	/**
 	 * Run initialization in Application.onCreate
@@ -69,7 +68,6 @@ public class QodemePreferences extends CommonPreferences {
 
 	protected QodemePreferences(Context context) {
 		super(context);
-		this.context = context;
 	}
 
 	private boolean isPrefInit() {

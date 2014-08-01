@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Alex on 12/12/13.
- */
 public class Message implements Parcelable{
 
 	public long _id;
@@ -67,7 +64,6 @@ public class Message implements Parcelable{
 
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

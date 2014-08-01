@@ -21,10 +21,11 @@ import com.blulabellabs.code.utils.AnalyticsHelper;
 import com.blulabellabs.code.utils.FontUtils;
 
 import android.graphics.Typeface;
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
 
-/**
- * Created by Alex on 10/7/13.
- */
+@ReportsCrashes(formKey = "", mailTo = "sas404@tut.by", mode = ReportingInteractionMode.TOAST, resToastText = R.string.crash_message)
 public class Application extends android.app.Application {
 
 	private WeakReference<MainActivity> weekRefMainActivity;
@@ -38,7 +39,8 @@ public class Application extends android.app.Application {
 
 	@Override
 	public void onCreate() {
-		super.onCreate();
+        ACRA.init(this);
+        super.onCreate();
 		AnalyticsHelper.onCreateApplication(this);
 		QodemePreferences.initialize(getApplicationContext());
 		RestAsyncHelper.initialize(getApplicationContext());

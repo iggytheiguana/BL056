@@ -120,18 +120,6 @@
             android:orientation="horizontal"/>
             -->
 
-            <com.blulabellabs.code.ui.common.CustomLineView
-                android:id="@+id/verticle_line"
-                style="@style/TextView.Message.Date"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/drag"
-                android:layout_below="@+id/top_line"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="9dp"
-                tools:padding="5dp"
-                tools:text_size="18sp" />
-
             <RelativeLayout
                 android:id="@+id/layout_message"
                 android:layout_width="match_parent"
@@ -154,31 +142,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp" >
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="1px"
-                            android:orientation="vertical"
-                            android:visibility="gone" >
-
-                            <com.blulabellabs.code.ui.common.CustomLineView
-                                style="@style/TextView.Message.Date"
-                                android:layout_width="20dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:visibility="invisible"
-                                tools:padding="5dp"
-                                tools:text_size="17sp" />
-
-                            <TextView
-                                style="@style/TextView.Message.Date"
-                                android:layout_width="20dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:background="@android:color/white"
-                                android:visibility="invisible" />
-                        </LinearLayout>
 
                         <com.blulabellabs.code.ui.common.CustomDotView
                             android:id="@+id/dotView_userTyping1"
