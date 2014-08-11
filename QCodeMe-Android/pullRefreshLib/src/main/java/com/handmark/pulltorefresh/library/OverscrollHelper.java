@@ -141,10 +141,10 @@ public final class OverscrollHelper {
 						// If we're currently at zero, we're about to start
 						// overscrolling, so change the state
 						if (currentScrollValue == 0) {
-							//view.setState(State.OVERSCROLLING);
+							view.setState(State.OVERSCROLLING);
 						}
 
-						//view.setHeaderScroll((int) (scaleFactor * (currentScrollValue + newScrollValue)));
+						view.setHeaderScroll((int) (scaleFactor * (currentScrollValue + newScrollValue)));
 					}
 				} else if (newScrollValue > (scrollRange + fuzzyThreshold)) {
 					// Check the mode supports the overscroll direction, and
@@ -153,7 +153,7 @@ public final class OverscrollHelper {
 						// If we're currently at zero, we're about to start
 						// overscrolling, so change the state
 						if (currentScrollValue == 0) {
-							//view.setState(State.OVERSCROLLING);
+							view.setState(State.OVERSCROLLING);
 						}
 
 						view.setHeaderScroll((int) (scaleFactor * (currentScrollValue + newScrollValue - scrollRange)));

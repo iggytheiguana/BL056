@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.blulabellabs.code"
-    android:installLocation="auto"
-    android:versionCode="1"
-    android:versionName="1.0.0" >
+          package="com.blulabellabs.code"
+          android:installLocation="auto"
+          android:versionCode="1"
+          android:versionName="1.0.0">
 
     <uses-sdk
         android:maxSdkVersion="19"
-        android:minSdkVersion="8"
-        android:targetSdkVersion="14" />
+        android:minSdkVersion="16"
+        android:targetSdkVersion="14"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
-    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
     <!-- Required to enable our SyncAdapter after it's created. -->
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <!-- Required because we're manually creating a new account. -->
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <!--
         <permission android:name="com.blulabellabs.code.C2D_MESSAGE"
@@ -37,38 +37,38 @@
 
     <permission
         android:name="com.blulabellabs.code.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+        android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.blulabellabs.code.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.blulabellabs.code.permission.C2D_MESSAGE"/>
 
     <application
         android:name="com.blulabellabs.code.Application"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppBaseTheme.NoTitle" >
+        android:theme="@style/AppBaseThemeNoTitle">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
 
         <!-- Splash screen -->
         <activity
             android:name=".ui.SplashScreen"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" >
+            android:theme="@style/AppBaseThemeNoTitle">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <data android:scheme="code" />
+                <data android:scheme="code"/>
 
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
         </activity>
 
@@ -77,7 +77,7 @@
             android:name=".ui.qr.QrCodeCaptureActivity"
             android:label="Scan QR Code"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" >
+            android:theme="@style/AppBaseThemeNoTitle">
         </activity>
 
         <!-- Qr Code Show / Share -->
@@ -85,14 +85,14 @@
             android:name=".ui.qr.QrCodeShowActivity"
             android:label="Share Qr Code"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" >
+            android:theme="@style/AppBaseThemeNoTitle">
         </activity>
-        
-         <activity
+
+        <activity
             android:name=".ui.qr.PublicChatQrCodeShowActivity"
             android:label="Share Qr Code"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" >
+            android:theme="@style/AppBaseThemeNoTitle">
         </activity>
 
         <!-- Main activity -->
@@ -103,7 +103,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Actionbar"
             android:configChanges="keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <!-- Login activity -->
@@ -111,40 +111,40 @@
             android:name=".ui.LoginActivity"
             android:label="@string/activity_login_title"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
+            android:theme="@android:style/Theme.Light.NoTitleBar"/>
 
-         <!-- Email activity -->
+        <!-- Email activity -->
         <activity
             android:name=".ui.EmailActivity"
             android:label="@string/activity_login_title"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
-        
+            android:theme="@android:style/Theme.Light.NoTitleBar"/>
+
         <!-- Registration activity -->
         <activity
             android:name=".ui.RegistrationActivity"
             android:label="@string/activity_registration_title"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
+            android:theme="@android:style/Theme.Light.NoTitleBar"/>
 
         <!-- Login activity -->
         <activity
             android:name=".ui.contacts.ContactDetailsActivity"
             android:label="@string/activity_login_title"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" />
+            android:theme="@style/AppBaseThemeNoTitle"/>
         <activity
             android:name=".ui.MoreOptionActivity"
             android:label="@string/activity_login_title"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" />
+            android:theme="@style/AppBaseThemeNoTitle"/>
 
         <!-- Tutorial activity -->
         <activity
             android:name=".ui.tutorial.TutorialActivity"
             android:label="@string/activity_tutorial_title"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme.NoTitle" />
+            android:theme="@style/AppBaseThemeNoTitle"/>
 
         <!-- Settings activity -->
         <activity
@@ -152,46 +152,46 @@
             android:icon="@drawable/ic_action_camera"
             android:label="@string/activity_settings_title"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Actionbar" />
+            android:theme="@style/Theme.Actionbar"/>
         <activity
             android:name=".ui.ImageDetailActivity"
             android:label="@string/app_name"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.GroupMemberListActivity"
             android:label="@string/app_name"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Actionbar" >
+            android:theme="@style/Theme.Actionbar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.FlaggedMessageListActivity"
             android:label="@string/app_name"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Actionbar" >
+            android:theme="@style/Theme.Actionbar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.MainActivity"/>
         </activity>
 
         <!-- GCM resever -->
         <receiver
             android:name=".core.io.gcm.GcmBroadcastReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
 
-                <category android:name="com.blulabellabs.code" />
+                <category android:name="com.blulabellabs.code"/>
             </intent-filter>
         </receiver>
 
@@ -204,23 +204,23 @@
         -->
         <service
             android:name=".core.sync.SyncService"
-            android:exported="true" >
+            android:exported="true">
 
             <!--
             This intent filter is required. It allows the system to launch our sync service
             as needed.
             -->
             <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
+                <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
             <!-- This points to a required XML file which describes our SyncAdapter. -->
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                android:resource="@xml/syncadapter"/>
         </service>
         <service
             android:name=".core.sync.UploadImageService"
-            android:exported="true" >
+            android:exported="true">
         </service>
 
         <!--
@@ -231,22 +231,22 @@
        It's also possible to attach a SyncAdapter to an existing account provided by another
        package. In that case, this element could be omitted here.
         -->
-        <service android:name=".core.accounts.GenericAccountService" >
+        <service android:name=".core.accounts.GenericAccountService">
 
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
             <!-- This points to an XMLf ile which describes our account service. -->
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                android:resource="@xml/authenticator"/>
         </service>
 
         <provider
             android:name=".core.provider.QodemeProvider"
             android:authorities="@string/app_package"
-            android:exported="false" />
+            android:exported="false"/>
     </application>
 
 </manifest>

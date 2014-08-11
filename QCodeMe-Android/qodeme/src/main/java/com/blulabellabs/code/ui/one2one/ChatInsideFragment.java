@@ -71,7 +71,7 @@ public class ChatInsideFragment extends Fragment {
     private One2OneChatInsideFragmentCallback callback;
     private boolean isViewCreated;
     private ListView mListView;
-    private ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
+    private ExtendedListAdapter mListAdapter;
     private GestureDetector mGestureDetector;
     private ImageButton mSendButton, mBtnImageSend, mBtnImageSendBottom, mImgFavorite;
     private CustomEdit mMessageField;
@@ -118,19 +118,6 @@ public class ChatInsideFragment extends Fragment {
 
         ChatLoad getChatLoad(long chatId);
 
-    }
-
-    public interface One2OneChatListInsideFragmentCallback {
-        void startTypingMessage();
-
-        void stopTypingMessage();
-
-        void sendReplyMessage(long messageReplyId, String message, String photoUrl, int hashPhoto,
-                              long replyTo_Id, double latitude, double longitude, String senderName);
-
-        ImageFetcher getImageFetcher();
-
-        int getChatType(long chatId);
     }
 
     @Override
@@ -297,8 +284,7 @@ public class ChatInsideFragment extends Fragment {
     }
 
     private void initSendMessage() {
-        mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -603,8 +589,7 @@ public class ChatInsideFragment extends Fragment {
         customDotViewUserTyping.invalidate();
 
         List<Message> listForAdapter = Lists.newArrayList();
-        mListAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
-                getActivity(), R.layout.one2one_chat_list_item_list_item, listForAdapter,
+        mListAdapter = new ExtendedListAdapter(getActivity(), R.layout.one2one_chat_list_item_list_item, listForAdapter,
                 new ChatListSubAdapterCallback() {
 
                     @Override
@@ -675,7 +660,7 @@ public class ChatInsideFragment extends Fragment {
                 mStatusUpdate.setText(statusUpdate);
             }
             List<Message> listData = callback.getChatMessages(getChatId());
-            mListAdapter.clear();
+            mListAdapter.clearViews();
             mListAdapter.addAll(callback.getChatMessages(getChatId()));
             if (listData != null && listData.size() > 0) {
                 lastMessage = listData.get(listData.size() - 1);
@@ -755,7 +740,7 @@ public class ChatInsideFragment extends Fragment {
         return getArguments().getString(LOCATION);
     }
 
-    One2OneChatListInsideFragmentCallback chatListInsideFragmentCallback = new One2OneChatListInsideFragmentCallback() {
+    ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback chatListInsideFragmentCallback = new ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback() {
 
         @Override
         public void stopTypingMessage() {

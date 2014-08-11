@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.LongSparseArray;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -32,11 +33,8 @@ import com.blulabellabs.code.images.utils.ImageFetcher;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
-import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.ui.common.ExtendedListAdapter;
-import com.blulabellabs.code.ui.common.ListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
 import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.Helper;
@@ -51,8 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatListItem extends RelativeLayout implements
-        ExAdapterBasedView<Contact, ChatListAdapterCallback> {
+public class ChatListItem extends RelativeLayout {
 
     private static final int MIN_CONTENT_SIZE_DP = 100;
     private static final int MAX_CONTENT_SIZE_DP = 350;
@@ -96,7 +93,6 @@ public class ChatListItem extends RelativeLayout implements
 
     }
 
-    @Override
     public void fill(Contact ce) {
 
         mContact = ce;
@@ -143,7 +139,7 @@ public class ChatListItem extends RelativeLayout implements
                 }
             }
 
-            Map<Long, List<Message>> map = new HashMap<Long, List<Message>>();
+            LongSparseArray<List<Message>> map = new LongSparseArray<List<Message>>();
             List<Long> chatId = new ArrayList<Long>();
             for (Message m : listData) {
                 List<Message> arrayList = new ArrayList<Message>();
@@ -198,7 +194,7 @@ public class ChatListItem extends RelativeLayout implements
             }
         }
 
-        final ListAdapter<ChatListSubItem, Message> listAdapter = new ExtendedListAdapter<ChatListSubItem, Message, ChatListSubAdapterCallback>(
+        final ExtendedListAdapter listAdapter = new ExtendedListAdapter(
                 context, R.layout.one2one_chat_list_item_list_item, listForAdapter,
                 new ChatListSubAdapterCallback() {
                     @Override
@@ -250,6 +246,7 @@ public class ChatListItem extends RelativeLayout implements
         int height = mCallback.getChatHeight(mContact.chatId);
         ListView.LayoutParams lParams = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, height);
         setLayoutParams(lParams);
+        //getDragView().requestDisallowInterceptTouchEvent(true);
         getDragView().setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -275,14 +272,13 @@ public class ChatListItem extends RelativeLayout implements
                     }
                     case MotionEvent.ACTION_CANCEL:
                         cancelMotion();
-                        break;
+                        return true;
                     case MotionEvent.ACTION_UP:
                         cancelMotion();
-                        break;
-
+                        return true;
                     case MotionEvent.ACTION_OUTSIDE:
                         cancelMotion();
-                        break;
+                        return true;
                 }
                 return false;
             }
@@ -481,7 +477,6 @@ public class ChatListItem extends RelativeLayout implements
         return super.onTouchEvent(e) || gestureDetector.onTouchEvent(e);
     }
 
-    @Override
     public void fill(Contact contact, ChatListAdapterCallback one2OneAdapterCallback, int position) {
         this.mContact = contact;
         this.mCallback = one2OneAdapterCallback;
@@ -529,8 +524,7 @@ public class ChatListItem extends RelativeLayout implements
         getReplyImg().setVisibility(GONE);
         getSendMessage().setVisibility(View.VISIBLE);
         getMessageTypedView().setVisibility(VISIBLE);
-        getMessageEdit().setInputType(
-                InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        getMessageEdit().setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         getMessageEdit().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -541,7 +535,7 @@ public class ChatListItem extends RelativeLayout implements
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
                     MainActivity activity = (MainActivity) getContext();
-                    activity.sendUserTypingMessage(mContact.chatId);
+                    activity.getMyApplication().sendUserTypingMessage(mContact.chatId);
                 }
             }
 
@@ -550,10 +544,10 @@ public class ChatListItem extends RelativeLayout implements
                 ChatFocusSaver.setCurrentMessage(mContact.chatId, s.toString());
                 if (s.length() > 0) {
                     MainActivity activity = (MainActivity) getContext();
-                    activity.sendUserTypingMessage(mContact.chatId);
+                    activity.getMyApplication().sendUserTypingMessage(mContact.chatId);
                 } else {
                     MainActivity activity = (MainActivity) getContext();
-                    activity.sendUserStoppedTypingMessage(mContact.chatId);
+                    activity.getMyApplication().sendUserStoppedTypingMessage(mContact.chatId);
                 }
             }
         });
@@ -619,25 +613,25 @@ public class ChatListItem extends RelativeLayout implements
         ChatFocusSaver.setCurrentMessage(mContact.chatId, "");
 
         if (TextUtils.isEmpty(message) || TextUtils.isEmpty(message.trim())) {
-            Toast.makeText(context, "Empty message can't be sent", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Empty message cannot be sent", Toast.LENGTH_SHORT).show();
             return;
         }
         mCallback.sendMessage(mContact, message, "", 0, -1, 0, 0, "", "");
         mCallback.messageRead(mContact.chatId);
     }
 
-    One2OneChatListInsideFragmentCallback callbackChatListInsideFragmentCallback = new One2OneChatListInsideFragmentCallback() {
+    ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback callbackChatListInsideFragmentCallback = new ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback() {
 
         @Override
         public void stopTypingMessage() {
             MainActivity activity = (MainActivity) getContext();
-            activity.sendUserStoppedTypingMessage(mContact.chatId);
+            activity.getMyApplication().sendUserStoppedTypingMessage(mContact.chatId);
         }
 
         @Override
         public void startTypingMessage() {
             MainActivity activity = (MainActivity) getContext();
-            activity.sendUserTypingMessage(mContact.chatId);
+            activity.getMyApplication().sendUserTypingMessage(mContact.chatId);
         }
 
         @Override

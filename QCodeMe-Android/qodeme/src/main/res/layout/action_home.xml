@@ -5,7 +5,7 @@
     android:layout_centerHorizontal="true"
     android:background="@drawable/bg_topbar"
     android:orientation="horizontal"
-    android:theme="@style/AppBaseTheme.NoTitle">
+    android:theme="@style/AppBaseThemeNoTitle">
 
     <ImageButton
         android:id="@+id/drawer"

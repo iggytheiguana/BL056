@@ -5,22 +5,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,30 +41,28 @@ import com.blulabellabs.code.ui.one2one.ChatListFragment.One2OneChatListFragment
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+public class ChatListGroupPublicFragment extends ListFragment {
 
-public class ChatListGroupPublicFragment extends Fragment {
-
+    private static final int CHAT_TYPE = 2;
     private One2OneChatListFragmentCallback callback;
-    private PullToRefreshListView mListView;
-    PullToRefreshBase<?> mRefreshedView;
-    public  ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback> mListAdapter;
+    public ExGroupListAdapter mListAdapter;
     private ImageButton mImgBtnClear;
     private ImageButton mImgBtnLocationFilter;
     private ImageButton mImgBtnFavoriteFilter;
     private EditText mEditTextSearch;
     private ImageView mImgViewSearchHint;
-    private FrameLayout mLinearLayoutSearch;
+    private LinearLayout mLinearLayoutSearch;
     private LinearLayout mFooterLayout;
+    private PullToRefreshListView mListView;
+    PullToRefreshBase<?> mRefreshedView;
 
-    private int chatType;
+
     private boolean isThreadRunning;
     private String searchString = "";
     private boolean isLocationFilter = false;
@@ -77,8 +71,6 @@ public class ChatListGroupPublicFragment extends Fragment {
     List<ChatLoad> chatLoads = Lists.newArrayList();
     ChatLoad chatLoad;
     boolean isMoreData = true;
-
-    int lastFirstVisibleItem = 0;
     int pageNo = 1;
 
     public ChatListGroupPublicFragment() {
@@ -89,7 +81,6 @@ public class ChatListGroupPublicFragment extends Fragment {
         ChatListGroupPublicFragment chatListGroupPublicFragment = new ChatListGroupPublicFragment();
         Bundle args = new Bundle();
         args.putInt("index", 1);
-        chatListGroupPublicFragment.chatType = 2;
         chatListGroupPublicFragment.setArguments(args);
         return chatListGroupPublicFragment;
     }
@@ -114,7 +105,6 @@ public class ChatListGroupPublicFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mLinearLayoutSearch = (FrameLayout) getView().findViewById(R.id.linearLayout_search);
         ImageButton mImgBtnSearch = (ImageButton) getView().findViewById(R.id.imgBtn_search);
         mImgBtnClear = (ImageButton) getView().findViewById(R.id.imgBtn_clear);
         mImgBtnLocationFilter = (ImageButton) getView().findViewById(R.id.imgBtn_locationFilter);
@@ -124,6 +114,7 @@ public class ChatListGroupPublicFragment extends Fragment {
         mImgViewSearchHint = (ImageView) getView().findViewById(R.id.searchHintIcon);
 
         initListView();
+
         isViewCreated = true;
         updateUi();
         mImgBtnClear.setOnClickListener(new OnClickListener() {
@@ -135,8 +126,7 @@ public class ChatListGroupPublicFragment extends Fragment {
                 activity.setPublicSearchString("");
                 activity.clearPublicSearch();
                 mImgBtnClear.setVisibility(View.GONE);
-                mEditTextSearch.setEnabled(true);
-                mEditTextSearch.setText("");
+                mEditTextSearch.getText().clear();
                 searchString = "";
                 pageNo = 1;
                 isMoreData = true;
@@ -179,7 +169,7 @@ public class ChatListGroupPublicFragment extends Fragment {
                     mImgBtnFavoriteFilter.setImageResource(R.drawable.ic_star_blue);
                     isFavoriteFilter = true;
                     if (chatLoads != null) {
-                        mListAdapter.clear();
+                        mListAdapter.clearViews();
                         mListAdapter.addAll(filterMessages());
                     }
                 }
@@ -198,7 +188,7 @@ public class ChatListGroupPublicFragment extends Fragment {
                     mImgBtnLocationFilter.setImageResource(R.drawable.ic_location_blue_big);
                     isLocationFilter = true;
                     if (chatLoads != null) {
-                        mListAdapter.clear();
+                        mListAdapter.clearViews();
                         mListAdapter.addAll(filterMessages());
                     }
                 }
@@ -227,14 +217,13 @@ public class ChatListGroupPublicFragment extends Fragment {
                 pageNo = 1;
                 activity.clearPublicSearch();
                 activity.searchChats(data, 2, pageNo, chatListener);
-                mEditTextSearch.setEnabled(false);
                 isMoreData = true;
                 isThreadRunning = true;
                 mImgBtnClear.setVisibility(View.VISIBLE);
             }
         });
 
-        mEditTextSearch.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//        mEditTextSearch.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mEditTextSearch.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
 
@@ -253,7 +242,6 @@ public class ChatListGroupPublicFragment extends Fragment {
                     pageNo = 1;
                     activity.clearPublicSearch();
                     activity.searchChats(data, 2, pageNo, chatListener);
-                    mEditTextSearch.setEnabled(false);
                     isMoreData = true;
                     isThreadRunning = true;
                     mImgBtnClear.setVisibility(View.VISIBLE);
@@ -372,23 +360,24 @@ public class ChatListGroupPublicFragment extends Fragment {
         }
         return (dist);
     }
+
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
+
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
 
     private void initListView() {
         List<ChatLoad> listForAdapter = Lists.newArrayList();
-        View footerView = getLayoutInflater(getArguments()).inflate(R.layout.list_footer_load_more, null);
-        mFooterLayout = (LinearLayout) footerView.findViewById(R.id.list_footer);
+        mFooterLayout = (LinearLayout) getView().findViewById(R.id.list_footer);
         mListView = (PullToRefreshListView) getView().findViewById(R.id.listview);
-        mListAdapter = new ExGroupListAdapter<ChatListGroupItem, ChatLoad, ChatListAdapterCallback>(
-                getActivity(), R.layout.group_public_chat_list_item, listForAdapter, chatListCallback);
+        mListAdapter = new ExGroupListAdapter(getActivity(), R.layout.group_public_chat_list_item, listForAdapter, chatListCallback);
+        mLinearLayoutSearch = (LinearLayout) getView().findViewById(R.id.linearLayout_search);
+        mListView.mLinearSearchLayout = mLinearLayoutSearch;
+
         mListView.setAdapter(mListAdapter);
-        ((FrameLayout) mLinearLayoutSearch.getParent()).removeView(mLinearLayoutSearch);
-        mListView.setHeaderView(mLinearLayoutSearch);
         if (!isThreadRunning && isMoreData) {
             mFooterLayout.setVisibility(View.VISIBLE);
             isThreadRunning = true;
@@ -397,7 +386,7 @@ public class ChatListGroupPublicFragment extends Fragment {
             activity.searchChats(searchString, 2, pageNo, chatListener);
         }
 
-        mListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+        mListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
 
             @Override
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -423,30 +412,15 @@ public class ChatListGroupPublicFragment extends Fragment {
             }
         });
 
-        mListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-
-        mListView.setOnScrollListener(new OnScrollListener() {
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 mListAdapter.isScroll = scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL;
-                if (scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_FLING) {
-                    if (mListView.mIndicatorIvTop != null) {
-                        mListView.mIndicatorIvTop.hide();
-                        mListView.mHeaderLoadingView.setVisibility(View.GONE);
-                    }
-                    mListView.setState(State.RESET);
-                }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                                  int totalItemCount) {
-                lastFirstVisibleItem = firstVisibleItem;
                 int lastInScreen = firstVisibleItem + visibleItemCount;
                 if ((lastInScreen == totalItemCount)) {
                     if (!isThreadRunning && isMoreData) {
@@ -479,11 +453,10 @@ public class ChatListGroupPublicFragment extends Fragment {
 
     public void updateUi() {
         try {
-            if (isViewCreated && callback != null && callback.getChatList(chatType) != null) {
-
+            if (isViewCreated && callback != null && callback.getChatList(CHAT_TYPE) != null) {
                 mImgBtnFavoriteFilter.setImageResource(!isFavoriteFilter ? R.drawable.ic_chat_favorite_h : R.drawable.ic_star_blue);
                 mImgBtnLocationFilter.setImageResource(isLocationFilter ? R.drawable.ic_location_blue_big : R.drawable.ic_location_gray);
-                chatLoads = callback.getChatList(chatType);
+                chatLoads = callback.getChatList(CHAT_TYPE);
                 if (chatLoads != null && QodemePreferences.getInstance().getNewPublicGroupChatId() != -1) {
                     try {
                         sortByMember();
@@ -498,39 +471,36 @@ public class ChatListGroupPublicFragment extends Fragment {
                         if (newChatLoad != null) {
                             chatLoads.remove(newChatLoad);
                             chatLoads.add(0, newChatLoad);
+                            mListAdapter.notifyDataSetChanged();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    if (!isLocationFilter && !isFavoriteFilter) {
-                        mListAdapter.clear();
-                        mListAdapter.addAll(chatLoads);
-
-                    } else {
-                        mListAdapter.clear();
-                        mListAdapter.addAll(filterMessages());
-                    }
-                } else {
-                    if (!isLocationFilter && !isFavoriteFilter) {
-                        mListAdapter.clear();
-                        sortByMember();
-                        MainActivity activity = (MainActivity) callback;
-                        ChatLoad chatLoad = activity.newChatCreated.get(2);
-                        if (chatLoad != null) {
-                            chatLoads.add(0, chatLoad);
-                        }
-                        mListAdapter.addAll(chatLoads);
-                    } else {
-                        MainActivity activity = (MainActivity) callback;
-                        ChatLoad chatLoad = activity.newChatCreated.get(2);
-                        if (chatLoad != null) {
-                            chatLoads.add(0, chatLoad);
-                        }
-                        mListAdapter.clear();
-                        mListAdapter.addAll(filterMessages());
-                    }
+                    mListAdapter.clearViews();
+                    mListAdapter.addAll(!isLocationFilter && !isFavoriteFilter ? chatLoads : filterMessages());
                 }
+                MainActivity activity = (MainActivity) callback;
+                ChatLoad chatLoad = activity.newChatCreated.get(2);
+
+                mListAdapter.clearViews();
+                if (!isLocationFilter && !isFavoriteFilter) {
+                    sortByMember();
+                    if (chatLoad != null) {
+                        chatLoads.add(0, chatLoad);
+                    }
+                    mListAdapter.addAll(chatLoads);
+                } else {
+                    if (chatLoad != null) {
+                        chatLoads.add(0, chatLoad);
+                    }
+                    mListAdapter.addAll(filterMessages());
+                }
+
+                for (int i = 0; i < mListAdapter.getCount(); i++) {
+                    mListAdapter.getView(i, null, null);
+                }
+                mListAdapter.notifyDataSetChanged();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -562,10 +532,10 @@ public class ChatListGroupPublicFragment extends Fragment {
             return callback.getChatMessages(c.chatId);
         }
 
-        @Override
-        public int getNewMessagesCount(long chatId) {
-            return callback.getNewMessagesCount(chatId);
-        }
+//        @Override
+//        public int getNewMessagesCount(long chatId) {
+//            return callback.getNewMessagesCount(chatId);
+//        }
 
         @Override
         public void messageRead(long chatId) {
@@ -632,14 +602,12 @@ public class ChatListGroupPublicFragment extends Fragment {
         this.isFavoriteFilter = isFavoriteFilter;
     }
 
-
     public LoadMoreChatListener chatListener = new LoadMoreChatListener() {
 
         @Override
         public void onSearchResult(int count, int responseCode) {
             if (mRefreshedView != null)
                 mRefreshedView.onRefreshComplete();
-            mEditTextSearch.setEnabled(true);
             mFooterLayout.setVisibility(View.GONE);
             isThreadRunning = false;
             if (count > 0) {

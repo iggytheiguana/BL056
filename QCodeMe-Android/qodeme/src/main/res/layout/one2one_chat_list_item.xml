@@ -126,9 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/drag"
                 android:minHeight="10dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
-                android:visibility="visible" >
+                android:visibility="gone" >
 
                 <LinearLayout
                     android:id="@+id/linearTyping"
@@ -181,7 +179,7 @@
                     android:background="@drawable/selectable_background_actionbar"
                     android:padding="10dp"
                     android:src="@drawable/ic_menu_send"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <com.blulabellabs.code.ui.common.CustomEdit
                     android:id="@+id/edit_message"
@@ -190,15 +188,17 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
-                    android:layout_toLeftOf="@id/button_message"
-                    android:layout_toRightOf="@+id/linearTyping"
                     android:background="@drawable/inputbox"
                     android:hint="@string/message"
+                    android:inputType="text|textCapSentences"
                     android:imeOptions="actionDone|actionSend"
-                    android:inputType="textNoSuggestions|textCapSentences"
                     android:singleLine="true"
                     android:textSize="18sp"
-                    android:visibility="gone" />
+                    android:visibility="visible"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
             </RelativeLayout>
 
             <ImageView

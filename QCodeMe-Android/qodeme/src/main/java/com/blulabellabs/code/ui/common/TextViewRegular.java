@@ -31,7 +31,6 @@ public class TextViewRegular extends TextView {
 	public void init() {
 		if (!isInEditMode()) {
 			setTypeface(Application.typefaceRegular);
-		} else {
 		}
 	}
 }

@@ -19,7 +19,7 @@ android {
     buildToolsVersion '20.0.0'
 
     defaultConfig {
-        minSdkVersion 13
+        minSdkVersion 16
         targetSdkVersion 19
      }
     buildTypes {
@@ -52,5 +52,4 @@ dependencies {
     compile files('libs/acra-4.2.3.jar')
     compile 'com.google.android.gms:play-services:5.0.77'
     compile 'com.android.support:appcompat-v7:20+'
-
 }

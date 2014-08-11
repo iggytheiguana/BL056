@@ -18,7 +18,6 @@ import com.blulabellabs.code.core.data.preference.QodemePreferences;
 import com.blulabellabs.code.core.io.model.Contact;
 import com.blulabellabs.code.core.provider.QodemeContract;
 import com.blulabellabs.code.core.sync.SyncHelper;
-import com.blulabellabs.code.ui.common.ExAdapterBasedView;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.LatLonCity;
 
@@ -26,8 +25,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ContactListItemInvited extends LinearLayout implements
-        ExAdapterBasedView<ContactListItemEntity, ContactListAdapterCallback> {
+public class ContactListItemInvited extends LinearLayout {
 
     private final Context mContext;
     private TextView mName;
@@ -43,7 +41,6 @@ public class ContactListItemInvited extends LinearLayout implements
 
     }
 
-    @Override
     public void fill(ContactListItemEntity contactListItemEntity) {
         this.mContact = contactListItemEntity.getContact();
         int color = mContact.color == 0 ? Color.GRAY : mContact.color;
@@ -195,11 +192,4 @@ public class ContactListItemInvited extends LinearLayout implements
         return mContact;
     }
 
-    @Override
-    public void fill(ContactListItemEntity contactListItemEntity,
-                     ContactListAdapterCallback callback, int position) {
-//        this.mCallback = callback;
-//        this.mPosition = position;
-        fill(contactListItemEntity);
-    }
 }

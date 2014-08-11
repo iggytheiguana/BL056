@@ -2,50 +2,42 @@ package com.blulabellabs.code.ui.contacts;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.blulabellabs.code.R;
+import com.blulabellabs.code.core.io.model.Contact;
+import com.blulabellabs.code.ui.common.CustomDotView;
+import com.blulabellabs.code.utils.Converter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.blulabellabs.code.R;
-import com.blulabellabs.code.core.io.model.Contact;
-import com.blulabellabs.code.ui.common.CustomDotView;
-import com.blulabellabs.code.ui.common.ExAdapterBasedView;
-import com.blulabellabs.code.utils.Converter;
+public class ContactListItem extends LinearLayout  {
 
-
-/**
- * Created by Alex on 10/20/13.
- */
-public class ContactListItem extends LinearLayout implements ExAdapterBasedView<ContactListItemEntity, ContactListAdapterCallback> {
-
-    private final Context mContext;
-    private ImageView mQrCode;
     private TextView mName;
     private CustomDotView mTextViewDot;
-    private View mDragView;
+//    private final Context mContext;
+//    private ImageView mQrCode;
+//    private View mDragView;
+//    private Object mCallback;
+//    private int mPosition;
     private Contact mContact;
-    private Object mCallback;
-    private int mPosition;
     private CheckBox mCheckBox;
     private TextView mContactInfoTextView;
     private boolean isAddContactToChat = false;
 
     public ContactListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
+//        this.mContext = context;
     }
 
-    @Override
     public void fill(final ContactListItemEntity contactListItemEntity) {
         this.mContact = contactListItemEntity.getContact();
         int color = mContact.color == 0 ? Color.GRAY : mContact.color;
@@ -106,13 +98,6 @@ public class ContactListItem extends LinearLayout implements ExAdapterBasedView<
 
     public Contact getContact() {
         return mContact;
-    }
-
-    @Override
-    public void fill(ContactListItemEntity contactListItemEntity, ContactListAdapterCallback callback, int position) {
-        this.mCallback = callback;
-        this.mPosition = position;
-        fill(contactListItemEntity);
     }
 
 	public void setAddContactToChat(boolean isAddContactToChat) {

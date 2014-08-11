@@ -1,6 +1,5 @@
 package com.blulabellabs.code.ui.one2one;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -19,9 +19,14 @@ import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,8 +51,7 @@ import com.blulabellabs.code.ui.ImageDetailActivity;
 import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.CustomDotView;
 import com.blulabellabs.code.ui.common.CustomEdit;
-import com.blulabellabs.code.ui.common.ExtendedAdapterBasedView;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
+import com.blulabellabs.code.utils.ChatFocusSaver;
 import com.blulabellabs.code.utils.Converter;
 import com.blulabellabs.code.utils.DbUtils;
 import com.blulabellabs.code.utils.Helper;
@@ -60,7 +64,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterBasedView<Message, ChatListSubAdapterCallback> {
+public class ChatListSubItem extends RelativeLayout {
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT_MAIN = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
@@ -72,20 +76,30 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
     private Message previousMessage;
     private Message nextMessage;
     private Message currentMessage;
-    private CustomDotView date;
-    private TextView dateHeader, mTextViewStatus;
-    private RelativeLayout headerContainer;
-    private LinearLayout mLinearLayout, mLinearLayoutStatus, mLinearLayoutMessage;
-    private View opponentSeparator;
-    private ImageButton mSendButton;
-    private CustomEdit mMessageField;
-    private ImageView mImageViewItem;
-    private ProgressBar mProgressBar;
-    private View viewUserSpace;
+
+    public CustomDotView date;
+    public TextView dateHeader, mTextViewStatus;
+    public LinearLayout mLinearLayoutStatus, mLinearLayoutMessage;
+    public FrameLayout mLinearLayout;
+    public View opponentSeparator;
+    public ImageButton mSendButton;
+    public CustomEdit mMessageField;
+    public ImageView mImageViewItem;
+    public ProgressBar mProgressBar;
+    public View viewUserSpace;
+    public LinearLayout mRelativeSendMessage;
+    private CustomDotView mTypedMessageDot;
+    private View mAnimatedLine;
+    boolean haveFocus = false;
 
     public ChatListSubItem(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+    }
+
+    public CustomDotView getMessageTypedDot() {
+        return mTypedMessageDot = mTypedMessageDot != null ? mTypedMessageDot
+                : (CustomDotView) findViewById(R.id.dotView_userTyping1);
     }
 
     public TextView getMessage() {
@@ -126,9 +140,9 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                 : (ProgressBar) findViewById(R.id.progressBar_img);
     }
 
-    public LinearLayout getImageLayout() {
+    public FrameLayout getImageLayout() {
         return mLinearLayout = mLinearLayout != null ? mLinearLayout
-                : (LinearLayout) findViewById(R.id.linearLayout_img);
+                : (FrameLayout) findViewById(R.id.linearLayout_img);
     }
 
     public LinearLayout getStatusLayout() {
@@ -141,22 +155,16 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                 : (LinearLayout) findViewById(R.id.linear_dot);
     }
 
-    public RelativeLayout getHeaderContainer() {
-        return headerContainer = headerContainer != null ? headerContainer
-                : (RelativeLayout) findViewById(R.id.header_container);
-    }
-
     public View getOpponentSeparator() {
         return opponentSeparator = opponentSeparator != null ? opponentSeparator
                 : findViewById(R.id.opponent_separator);
     }
 
-    One2OneChatListInsideFragmentCallback callback2;
+    ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback callback2;
 
-    @Override
     public void fill(Message me, ChatListSubAdapterCallback callback, int position,
                      Message previousMessage, Message nextMessage,
-                     One2OneChatListInsideFragmentCallback callback2) {
+                     ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback callback2) {
         this.callback = callback;
         this.previousMessage = previousMessage;
         this.nextMessage = nextMessage;
@@ -174,12 +182,11 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
         this.setVisibility(VISIBLE);
         getStatusLayout().setVisibility(VISIBLE);
         getMessageLayout().setVisibility(VISIBLE);
-        getHeaderContainer().setVisibility(VISIBLE);
+        getDateHeader().setVisibility(VISIBLE);
         getImageMessage().setVisibility(View.VISIBLE);
         getImageLayout().setVisibility(View.VISIBLE);
     }
 
-    @Override
     public void fill(Message me) {
         final Message msg = me;
 
@@ -187,20 +194,16 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
         getMessage().setText(me.message);
 
         if (me.hasPhoto == 2) {
+            getMessageLayout().setVisibility(GONE);
+            getImageMessage().setVisibility(View.GONE);
+            getImageLayout().setVisibility(View.GONE);
+            getDateHeader().setVisibility(GONE);
             if (QodemePreferences.getInstance().getQrcode().equals(me.qrcode)) {
                 this.setVisibility(GONE);
                 getUserSpace().setVisibility(GONE);
                 getStatusLayout().setVisibility(GONE);
-                getMessageLayout().setVisibility(GONE);
-                getHeaderContainer().setVisibility(GONE);
-                getImageMessage().setVisibility(View.GONE);
-                getImageLayout().setVisibility(View.GONE);
             } else {
                 getStatusLayout().setVisibility(VISIBLE);
-                getMessageLayout().setVisibility(GONE);
-                getHeaderContainer().setVisibility(GONE);
-                getImageMessage().setVisibility(View.GONE);
-                getImageLayout().setVisibility(View.GONE);
 
                 String createdDate = me.created;
                 String dateString;
@@ -209,8 +212,7 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                     dateString = " " + dateString;
                 } catch (Exception e) {
                     Log.d("timeError", e + "");
-                    dateString = Helper.getTimeAMPM(Converter
-                            .getCrurentTimeFromTimestamp(createdDate));
+                    dateString = Helper.getTimeAMPM(Converter.getCrurentTimeFromTimestamp(createdDate));
                     dateString = " " + dateString;
                 }
 
@@ -245,7 +247,6 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                 getImageLayout().setVisibility(View.VISIBLE);
                 getImageMessage().setOnClickListener(new OnClickListener() {
 
-                    @SuppressLint("NewApi")
                     @Override
                     public void onClick(View v) {
                         final Intent i = new Intent(getContext(), ImageDetailActivity.class);
@@ -434,7 +435,7 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                 getDate().invalidate();
             }
             getUserSpace().setVisibility(GONE);
-            getHeaderContainer().setVisibility(View.GONE);
+            getDateHeader().setVisibility(View.GONE);
             getOpponentSeparator().setVisibility(View.GONE);
             if (nextMessage != null) {
                 if (me.qrcode.equalsIgnoreCase(nextMessage.qrcode)) {
@@ -461,7 +462,7 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                         SimpleDateFormat dateFormat = new SimpleDateFormat(
                                 "MMM-dd-yyyy", Locale.US);
                         getDateHeader().setText(dateFormat.format(dateTemp));
-                        getHeaderContainer().setVisibility(View.VISIBLE);
+                        getDateHeader().setVisibility(View.VISIBLE);
                     } else if (!me.qrcode.equalsIgnoreCase(previousMessage.qrcode)) {
                         getOpponentSeparator().setVisibility(View.VISIBLE);
                     }
@@ -597,73 +598,161 @@ public class ChatListSubItem extends RelativeLayout implements  ExtendedAdapterB
                 : (CustomEdit) findViewById(R.id.edit_message);
     }
 
-    private RelativeLayout mRelativeSendMessage;
-
-    private RelativeLayout getSendMessageLayout() {
+    private LinearLayout getSendMessageLayout() {
         return mRelativeSendMessage = mRelativeSendMessage != null ? mRelativeSendMessage
-                : (RelativeLayout) findViewById(R.id.layout_message_send);
-
+                : (LinearLayout) findViewById(R.id.layout_message_send);
     }
 
     private void initSendMessage() {
         getSendMessageLayout().setVisibility(VISIBLE);
-        mSendButton = getSendButton();
+
+        Animation animationLineIn = AnimationUtils.loadAnimation(getContext(),
+                R.anim.line_in);
+        if (mAnimatedLine == null) {
+            mAnimatedLine = findViewById(R.id.horizontal_animated_line);
+        }
+        mAnimatedLine.startAnimation(animationLineIn);
+        animationLineIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mAnimatedLine.setVisibility(View.VISIBLE);
+                showCircleAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private void showCircleAnimation() {
+        Animation animationCircleGrow = AnimationUtils.loadAnimation(getContext(),
+                R.anim.circle_grow);
+        getMessageTypedDot().setVisibility(VISIBLE);
+        getMessageTypedDot().setDotColor(getResources().getColor(R.color.user_typing));
+        getMessageTypedDot().setOutLine(true);
+        getMessageTypedDot().startAnimation(animationCircleGrow);
+        animationCircleGrow.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                showMessageAfterAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+
+    private void showMessageAfterAnimation() {
+        getSendMessageLayout().setVisibility(VISIBLE);
         mMessageField = getMessageEditText();
-        mSendButton.setOnClickListener(new View.OnClickListener() {
+        getMessageTypedDot().setVisibility(VISIBLE);
+        getSendButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callback2.sendReplyMessage(currentMessage.messageId, mMessageField.getText()
                         .toString(), "", 0, currentMessage.messageId, 0, 0, "");
-                mMessageField.setText("");
+                getMessageEditText().getText().clear();
                 getSendMessageLayout().setVisibility(GONE);
-            }
-        });
-        mMessageField.setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
-            @Override
-            public void onImeBack(CustomEdit ctrl) {
-                getSendMessageLayout().setVisibility(GONE);
-            }
-        });
-        mMessageField.requestFocus();
-        mMessageField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    Log.d("CHATINSIDE", "user stopped typing");
-                    callback2.stopTypingMessage();
-                }
+                getMessageTypedDot().setVisibility(View.INVISIBLE);
+                mAnimatedLine.setVisibility(View.GONE);
+                ChatFocusSaver.setFocusedChatId(0);
+                getMessageEditText().setVisibility(INVISIBLE);
             }
         });
 
-        mMessageField.addTextChangedListener(new TextWatcher() {
+
+        getMessageEditText().setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        getMessageEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("CHATINSIDE", "beforeTextChanged called");
 
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("CHATINSIDE", "onTextChanged called");
                 if (s.length() > 0) {
-                    mSendButton.setVisibility(View.VISIBLE);
+                    getSendButton().setVisibility(View.VISIBLE);
                     callback2.startTypingMessage();
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d("CHATINSIDE", "afterTextChanged called");
                 if (s.length() > 0) {
-                    mSendButton.setVisibility(View.VISIBLE);
+                    getSendButton().setVisibility(View.VISIBLE);
                     callback2.startTypingMessage();
                 } else {
-                    mSendButton.setVisibility(View.GONE);
+                    getSendButton().setVisibility(View.GONE);
                     callback2.stopTypingMessage();
                 }
             }
         });
-        Helper.showKeyboard(getContext(), mMessageField);
+
+        getMessageEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || actionId == EditorInfo.IME_ACTION_UNSPECIFIED
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    mSendButton.callOnClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        getMessageEditText().setOnEditTextImeBackListener(new CustomEdit.OnEditTextImeBackListener() {
+            @Override
+            public void onImeBack(CustomEdit ctrl) {
+                getSendMessageLayout().setVisibility(GONE);
+                getMessageEditText().setVisibility(View.INVISIBLE);
+                mAnimatedLine.setVisibility(View.INVISIBLE);
+                getMessageTypedDot().setVisibility(View.INVISIBLE);
+                haveFocus = false;
+            }
+        });
+
+        getMessageEditText().setVisibility(VISIBLE);
+        getMessageEditText().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                haveFocus = true;
+            }
+        }, 1000);
+//        mMessageField.setOnFocusChangeListener(new OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean hasFocus) {
+//                if (haveFocus) {
+//                    if (!hasFocus) {
+//                        getSendMessageLayout().setVisibility(GONE);
+//                        getMessageTypedDot().setVisibility(View.INVISIBLE);
+//                        mAnimatedLine.setVisibility(View.INVISIBLE);
+//                        mMessageField.setVisibility(View.INVISIBLE);
+//                        getMessageTypedDot().setVisibility(View.INVISIBLE);
+//                        callback2.stopTypingMessage();
+//                        haveFocus= false;
+//                    }
+//                }
+//            }
+//        });
+        getMessageEditText().requestFocus();
+        Helper.showKeyboard(getContext(), getMessageEditText());
     }
 
     private boolean isMyMessage(String qr) {

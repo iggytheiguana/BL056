@@ -33,7 +33,7 @@
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
                     android:singleLine="false"
-                    android:text="Item"
+                    android:text="@string/app_name"
                     android:textColor="@color/text_message_not_read"
                     android:textStyle="bold" />
 
@@ -47,12 +47,15 @@
                     android:layout_toLeftOf="@+id/linear_btn"
                     android:hint="@string/add_title_hint"
                     android:imeOptions="actionGo"
-                    android:inputType="textNoSuggestions"
+                    android:inputType="text|textAutoComplete|textAutoCorrect"
                     android:singleLine="true"
-                    android:text=""
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
-                    android:visibility="gone" >
+                    android:visibility="gone"
+                    android:focusable="true"
+                    android:enabled="true"
+                    android:editable="true"
+                    android:focusableInTouchMode="true">
 
                     <requestFocus />
                 </com.blulabellabs.code.ui.common.EditTextPreIme>
@@ -130,7 +133,7 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/layout_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -147,38 +150,40 @@
                     android:layout_height="wrap_content"
                     android:visibility="invisible"
                     tools:text_size_int="17"
-                    android:layout_marginTop="13dp"
+                    android:layout_marginTop="5dp"
                     tools:padding="5dp"
                     android:layout_marginLeft="10dp"/>
-
-                <ImageButton
-                    android:id="@+id/button_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/selectable_background_actionbar"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_menu_send"
-                    android:visibility="gone" />
 
                 <com.blulabellabs.code.ui.common.CustomEdit
                     android:id="@+id/edit_message"
                     style="@style/EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/button_message"
                     android:background="@drawable/inputbox"
                     android:hint="@string/message"
                     android:imeOptions="actionDone|actionSend"
-                    android:inputType="textNoSuggestions|textCapSentences"
+                    android:inputType="text|textCapSentences"
                     android:maxHeight="50dp"
                     android:singleLine="true"
                     android:textSize="18sp"
                     android:visibility="invisible"
-                    android:layout_marginLeft="35dp"/>
+                    android:layout_marginLeft="25dp"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:enabled="true"
+                    android:editable="true"
+                    android:focusableInTouchMode="true"/>
 
-            </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/button_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_background_actionbar"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_menu_send"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/top_line"
@@ -199,7 +204,7 @@
             <View style="@style/vertical_divider"
                   android:id="@+id/animated_line"
                   android:layout_alignLeft="@+id/verticle_line"
-                  android:visibility="invisible"
+                  android:visibility="gone"
                   android:layout_height="25dp"
                   android:layout_marginBottom="5dp"
                   android:layout_marginTop="-5dp"
@@ -215,6 +220,7 @@
                 android:fadingEdge="none"
                 android:listSelector="@color/transparent"
                 android:visibility="visible"
+                android:descendantFocusability="afterDescendants"
                 android:layout_marginBottom="5dp"/>
 
             <ImageView

@@ -86,7 +86,7 @@ public class ChatInsideGroupFragment extends Fragment {
     private One2OneChatInsideFragmentCallback callback;
     private boolean isViewCreated;
     private ListView mListView;
-    private ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback> mListAdapter;
+    private ExtendedGroupListAdapter mListAdapter;
     private GestureDetector mGestureDetector;
     private ImageButton mSendButton, mBtnImageSend, mImgFavorite;
     private EditText mStatusField;
@@ -396,8 +396,7 @@ public class ChatInsideGroupFragment extends Fragment {
         mSendButton = (ImageButton) getView().findViewById(R.id.button_message);
         ImageButton mBtnImageSendBottom = (ImageButton) getView().findViewById(R.id.imageButton_imgMessage);
         mMessageField = (CustomEdit) getView().findViewById(R.id.edit_message);
-        mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        mMessageField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -659,7 +658,7 @@ public class ChatInsideGroupFragment extends Fragment {
             return;
         }
         sendUserStoppedTypingMessage();
-        mMessageField.setText("");
+        mMessageField.getText().clear();
         callback.sendMessage(getChatId(), message, "", 0, -1, 0, 0, "", "");
         mMessageField.post(new Runnable() {
             @Override
@@ -704,8 +703,8 @@ public class ChatInsideGroupFragment extends Fragment {
         customDotViewUserTyping.invalidate();
 
         List<Message> listForAdapter = Lists.newArrayList();
-        mListAdapter = new ExtendedGroupListAdapter<ChatListGroupSubItem, Message, ChatListSubAdapterCallback>(
-                getActivity(), R.layout.group_chat_list_item_list_item, listForAdapter,
+        mListAdapter = new ExtendedGroupListAdapter (getActivity(), R.layout.group_chat_list_item_list_item, listForAdapter,
+
                 new ChatListSubAdapterCallback() {
 
                     @Override
@@ -872,7 +871,7 @@ public class ChatInsideGroupFragment extends Fragment {
                 mLinearLayStatusUpdte.setVisibility(View.VISIBLE);
                 mStatusUpdate.setText(statusUpdate);
             }
-            mListAdapter.clear();
+            mListAdapter.clearViews();
             if (getChatLoad().isSearchResult) {
                 if (getChatLoad().messages != null) {
                     List<Message> listData = Lists.newArrayList();

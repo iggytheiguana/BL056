@@ -171,7 +171,7 @@ public class ChatGroupProfileFragment extends Fragment implements OnClickListene
         mBtnAddLocation = (Button) getView().findViewById(R.id.btn_addLocation);
         mBtnRemoveLocation = (Button) getView().findViewById(R.id.btn_removeLocation);
 
-        mEditTextTags.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//        mEditTextTags.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mEditTextTitle.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mEditTextDesc.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 

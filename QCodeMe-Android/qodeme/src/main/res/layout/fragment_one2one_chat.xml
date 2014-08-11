@@ -147,7 +147,7 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:hint="@string/message"
-            android:inputType="textMultiLine|textNoSuggestions"
+            android:inputType="textMultiLine"
             android:padding="5dp"
             android:visibility="gone" >
 
@@ -353,7 +353,7 @@
                 android:background="@drawable/inputbox"
                 android:hint="@string/message"
                 android:imeOptions="actionDone|actionSend"
-                android:inputType="textNoSuggestions|textCapSentences"
+                android:inputType="text|textCapSentences"
                 android:maxHeight="50dp"
                 android:singleLine="true"
                 android:textSize="18sp"

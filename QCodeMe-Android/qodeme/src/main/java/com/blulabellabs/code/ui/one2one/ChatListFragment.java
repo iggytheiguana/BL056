@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,7 +35,6 @@ import com.blulabellabs.code.ui.MainActivity;
 import com.blulabellabs.code.ui.common.ExListAdapter;
 import com.blulabellabs.code.ui.common.ScrollDisabledListView;
 import com.blulabellabs.code.utils.ChatFocusSaver;
-import com.blulabellabs.code.utils.Fonts;
 import com.blulabellabs.code.utils.Helper;
 import com.google.common.collect.Lists;
 
@@ -50,7 +48,7 @@ public class ChatListFragment extends Fragment {
     private boolean isViewCreated = false;
 
     private ScrollDisabledListView mListView;
-    private ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback> mListAdapter;
+    private ExListAdapter mListAdapter;
     private ImageButton mImgBtnClear, mImgBtnLocationFilter, mImgBtnSearch, mImgBtnFavoriteFilter;
     private ImageView mImgViewSearchHint;
     private EditText mEditTextSearch;
@@ -83,7 +81,7 @@ public class ChatListFragment extends Fragment {
 
         void showChat(ChatLoad c, boolean firstUpdate, View view);
 
-        int getNewMessagesCount(long chatId);
+//        int getNewMessagesCount(long chatId);
 
         void messageRead(long chatId);
 
@@ -199,7 +197,7 @@ public class ChatListFragment extends Fragment {
                         }
                     }
                     Collections.sort(temp, new CustomComparator());
-                    mListAdapter.clear();
+                    mListAdapter.clearViews();
                     mListAdapter.addAll(temp);
                 }
             }
@@ -230,7 +228,7 @@ public class ChatListFragment extends Fragment {
                             temp.add(c);
                         }
                     }
-                    mListAdapter.clear();
+                    mListAdapter.clearViews();
                     mListAdapter.addAll(temp);
                 }
             }
@@ -281,7 +279,7 @@ public class ChatListFragment extends Fragment {
                     temp.addAll(searchList);
                 }
 
-                mListAdapter.clear();
+                mListAdapter.clearViews();
                 mListAdapter.addAll(temp);
 
                 mImgBtnClear.setVisibility(View.VISIBLE);
@@ -339,7 +337,7 @@ public class ChatListFragment extends Fragment {
                         temp.addAll(searchList);
                     }
 
-                    mListAdapter.clear();
+                    mListAdapter.clearViews();
                     mListAdapter.addAll(temp);
 
                     mImgBtnClear.setVisibility(View.VISIBLE);
@@ -446,8 +444,7 @@ public class ChatListFragment extends Fragment {
         mListView.addHeaderView(headerSearchView);
         List<Contact> listForAdapter = Lists.newArrayList();
 
-        mListAdapter = new ExListAdapter<ChatListItem, Contact, ChatListAdapterCallback>(
-                getActivity(), R.layout.one2one_chat_list_item, listForAdapter, chatListCallback);
+        mListAdapter = new ExListAdapter( getActivity(), R.layout.one2one_chat_list_item, listForAdapter, chatListCallback);
         mListView.setAdapter(mListAdapter);
 
         mListView.setOnTouchListener(new View.OnTouchListener() {
@@ -485,7 +482,6 @@ public class ChatListFragment extends Fragment {
                                     });
                         }
                     }
-
                 }
                 if (firstVisibleItem == 0) {
                     mLinearLayoutSearch.setAlpha(1f);
@@ -506,7 +502,7 @@ public class ChatListFragment extends Fragment {
             }
 
             if (!isLocationFilter && !isFavoriteFilter) {
-                mListAdapter.clear();
+                mListAdapter.clearViews();
                 mListAdapter.addAll(searchContact(searchString));
             } else {
                 if (isLocationFilter) {
@@ -514,7 +510,6 @@ public class ChatListFragment extends Fragment {
                     List<Contact> searchList = searchContact(searchString);
                     for (Contact c : searchList) {
                         ChatLoad chatLoad = callback.getChatLoad(c.chatId);
-
                         if (chatLoad != null && chatLoad.latitude != null
                                 && chatLoad.longitude != null && !chatLoad.latitude.equals("")
                                 && !chatLoad.longitude.equals("") && !chatLoad.latitude.equals("0")
@@ -528,9 +523,8 @@ public class ChatListFragment extends Fragment {
                             temp.add(c);
                         }
                     }
-
                     Collections.sort(temp, new CustomComparator());
-                    mListAdapter.clear();
+                    mListAdapter.clearViews();
                     mListAdapter.addAll(temp);
                 } else {
                     List<Contact> temp = Lists.newArrayList();
@@ -542,8 +536,7 @@ public class ChatListFragment extends Fragment {
                             temp.add(c);
                         }
                     }
-
-                    mListAdapter.clear();
+                    mListAdapter.clearViews();
                     mListAdapter.addAll(temp);
                 }
             }
@@ -578,7 +571,6 @@ public class ChatListFragment extends Fragment {
             return contacts;
         }
         List<Contact> temp = Lists.newArrayList();
-
         for (Contact c : contacts) {
             if (c.title != null && c.title.toLowerCase().contains(searchString.toLowerCase())) {
                 temp.add(c);
@@ -591,7 +583,6 @@ public class ChatListFragment extends Fragment {
         for (int i = 0; i < callback.getContactList().size(); i++) {
             Contact contact = callback.getContactList().get(i);
             if (contact.chatId == chatId) {
-
                 final int position = i;
                 mListView.post(new Runnable() {
                     public void run() {
@@ -629,17 +620,17 @@ public class ChatListFragment extends Fragment {
         }
 
         public void setDragModeEnabled(boolean value) {
-            mListView.setDragMode(value);
+//            mListView.setDragMode(value);
         }
 
         public List<Message> getMessages(Contact c) {
             return callback.getChatMessages(c.chatId);
         }
 
-        @Override
-        public int getNewMessagesCount(long chatId) {
-            return callback.getNewMessagesCount(chatId);
-        }
+//        @Override
+//        public int getNewMessagesCount(long chatId) {
+//            return callback.getNewMessagesCount(chatId);
+//        }
 
         @Override
         public void messageRead(long chatId) {
@@ -652,13 +643,22 @@ public class ChatListFragment extends Fragment {
                                 String senderName, String localUrl) {
             callback.sendMessage(c.chatId, message, photoUrl, hashPhoto, replyTo_Id,
                     latitude, longitude, senderName, localUrl);
-
         }
 
         @Override
         public List<Message> getMessages(long chatId) {
             return null;
         }
+
+//        @Override
+//        public Typeface getFont(Fonts font) {
+//            return null;
+//        }
+//
+//        @Override
+//        public void refreshUi() {
+//
+//        }
 
         @Override
         public void sendMessage(long c, String message, String photoUrl, int hashPhoto,
@@ -710,16 +710,10 @@ public class ChatListFragment extends Fragment {
         return (dist);
     }
 
-    /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
-    /* :: This function converts decimal degrees to radians : */
-    /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
 
-    /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
-    /* :: This function converts radians to decimal degrees : */
-    /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }

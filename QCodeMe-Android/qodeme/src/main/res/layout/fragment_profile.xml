@@ -304,7 +304,6 @@
                     android:imeOptions="actionDone|actionSend"
                     android:singleLine="true"
                     android:text=""
-                    android:inputType="textNoSuggestions"
                     android:textColor="@android:color/black"
                     android:visibility="visible" />
 

@@ -1,53 +1,60 @@
 package com.blulabellabs.code.ui.common;
 
 import android.content.Context;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+
+import com.blulabellabs.code.core.io.model.Message;
+import com.blulabellabs.code.ui.one2one.ChatInsideGroupFragment.One2OneChatListInsideFragmentCallback;
+import com.blulabellabs.code.ui.one2one.ChatListSubAdapterCallback;
+import com.blulabellabs.code.ui.one2one.ChatListSubItem;
 
 import java.util.List;
 
-import com.blulabellabs.code.core.provider.QodemeContract.Messages;
-import com.blulabellabs.code.ui.one2one.ChatInsideFragment.One2OneChatListInsideFragmentCallback;
-import com.google.common.collect.Lists;
+public class ExtendedListAdapter extends ArrayAdapter<Message> {
 
-/**
- * Created by Alex on 10/24/13.
- */
-public class ExtendedListAdapter<T extends ExtendedAdapterBasedView<E, C>, E, C extends ExAdapterCallback>
-		extends ListAdapter<T, E> {
+    private final ChatListSubAdapterCallback callback;
+    private final One2OneChatListInsideFragmentCallback callback2;
+    protected LayoutInflater layoutInflater;
+    protected int layoutResId;
+    private SparseArray<ChatListSubItem> views = new SparseArray<ChatListSubItem>();
 
-	private final C callback;
-	private final One2OneChatListInsideFragmentCallback callback2;
-	
+    public ExtendedListAdapter(Context context, int layoutResId, List<Message> list, ChatListSubAdapterCallback callback,
+                               One2OneChatListInsideFragmentCallback callback2) {
+        super(context, layoutResId, list);
+        this.layoutInflater = LayoutInflater.from(context);
+        this.layoutResId = layoutResId;
+        this.callback = callback;
+        this.callback2 = callback2;
+    }
 
-	public ExtendedListAdapter(Context context, int layoutResId, List<E> list, C callback,
-			One2OneChatListInsideFragmentCallback callback2) {
-		super(context, layoutResId, list);
-		this.callback = callback;
-		this.callback2 = callback2;
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
+        if (views.get(position) != null) {
+            convertView = views.get(position);
+        } else {
+            convertView = layoutInflater.inflate(layoutResId, null);
+            ChatListSubItem chatListSubItem = (ChatListSubItem) convertView;
+            Message e = getItem(position);
+            Message previous = position > 0 ? getItem(position - 1) : null;
+            Message next;
+            try {
+                next = getItem(position + 1);
+            } catch (Exception ex) {
+                next = null;
+            }
+            chatListSubItem.fill(e, callback, position, previous, next, callback2);
+            views.put(position, chatListSubItem);
+        }
+        return convertView;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			convertView = layoutInflater.inflate(layoutResId, null);
-		}
-
-		view = (T) convertView;
-		E e = (E) getItem(position);
-		E previous = position > 0 ? (E) getItem(position - 1) : null;
-		E next;
-		try {
-			next = (E) getItem(position + 1);
-		} catch (Exception ex) {
-			next = null;
-		}
-		view.fill(e, callback, position, previous, next, callback2);
-		viewMap.put(position, view);
-
-		return convertView;
-	}
-
+    public void clearViews() {
+        clear();
+        views.clear();
+    }
 }

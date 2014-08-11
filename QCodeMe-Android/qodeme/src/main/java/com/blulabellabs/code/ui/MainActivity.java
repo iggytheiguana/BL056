@@ -1,10 +1,6 @@
 package com.blulabellabs.code.ui;
 
 import android.accounts.Account;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -56,7 +52,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -134,7 +129,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -148,10 +142,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import de.tavendo.autobahn.WebSocketConnection;
-import de.tavendo.autobahn.WebSocketException;
-import de.tavendo.autobahn.WebSocketHandler;
 
 public class MainActivity extends ActionBarActivity implements ChatListFragment.One2OneChatListFragmentCallback, ChatInsideFragment.One2OneChatInsideFragmentCallback,
         GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
@@ -181,26 +171,27 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     private int fullChatIndex = 0;
     private boolean isAddMemberOnExistingChat = false;
     private MenuListAdapter<ContactListItemEntity> mContactListAdapter;
-    private Map<Long, List<Message>> mChatMessagesMap = Maps.newHashMap();
-    private Map<Long, Integer> mChatHeightMap;
     private boolean mContactInfoUpdated;
     private List<Contact> mContacts;
     private List<Contact> mApprovedContacts;
     private List<Contact> mBlockContacts;
     private List<Contact> mBlockedContacts;
-    private List<ChatLoad> mChatList;
     private List<ChatLoad> mChatListSearchPublic = Lists.newArrayList();
     private List<ChatLoad> mChatListSearchPrivate = Lists.newArrayList();
     private List<Contact> mChatListSearchOneToOne = Lists.newArrayList();
-    private Map<Long, Integer> mChatNewMessagesMap;
     private List<Contact> selectedContact = Lists.newArrayList();
+    public List<ChatLoad> mChatList;
     public List<Long> refressedChatId = Lists.newArrayList();
+    private Map<Long, Integer> mChatNewMessagesMap;
+    private Map<Long, List<Message>> mChatMessagesMap = Maps.newHashMap();
+    private Map<Long, Integer> mChatHeightMap;
     public Map<Integer, ChatLoad> newChatCreated = new HashMap<Integer, ChatLoad>();
     public Map<Long, Integer> messageColorMap = new HashMap<Long, Integer>();
 
     private ContactListLoader mContactListLoader;
     private MessageListLoader mMessageListLoader;
     private ChatLoadListLoader mChatLoadListLoader;
+
     private LocationClient mLocationClient;
     private boolean isAddContact = false;
     private boolean isPublicSearch = false;
@@ -210,7 +201,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     private Location currentLocation;
     public static boolean isKeyboardVisible = false;
     public static boolean isKeyboardHide = false;
-    private int mShortAnimationDuration;
+//    private int mShortAnimationDuration;
     private ImageButton mImgCamera, mImgBtnOneToOne, mImgBtnPublic;
     private ChatListFragment one2OneChatListFragment;
     //    private ChatListGroupFragment privateChatListFragment;
@@ -237,8 +228,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     private MyLocation myLocation;
 
     private long chatFromNotification = -1;
-    private final WebSocketConnection mConnection = new WebSocketConnection();
-    float startScaleFinal;
+//    float startScaleFinal;
     Rect startBounds = new Rect();
 
     public interface LoadMoreChatListener {
@@ -611,7 +601,11 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         mImageFetcher.closeCache();
         QodemePreferences.getInstance().setNewPublicGroupChatId(-1l);
         QodemePreferences.getInstance().setNewPrivateGroupChatId(-1l);
-        super.onDestroy();
+        try {
+            super.onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -751,7 +745,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
 
         ChatLoad chatLoad = null;
         int is_search = 1;
-        ;
+
         try {
             if (mChatList != null) {
                 for (ChatLoad chat : mChatList)
@@ -840,7 +834,15 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
                 return height;
             }
         }
+
+        mChatList.size();
+
         Integer height = mChatHeightMap.get(chatId);
+
+        List<Message> l = mChatMessagesMap.get(chatId);
+        if (l!=null && height ==null ) {
+            height = 120+30*l.size();
+        }
         return height != null ? height : mDefaultHeightPx;
     }
 
@@ -878,7 +880,6 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         });
     }
 
-    @Override
     public int getNewMessagesCount(long chatId) {
         return mChatNewMessagesMap != null ? NullHelper.notNull(mChatNewMessagesMap.get(chatId), 0)
                 : 0;
@@ -944,7 +945,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
                 mMessageListObjerver);
         getContentResolver().registerContentObserver(QodemeContract.Chats.CONTENT_URI, true,
                 mChatListObserver);
-        start();
+        ((Application)getApplication()).start();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DELETE_BRODCAST_ACTION);
@@ -961,12 +962,12 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         mActive = false;
         if (mSyncObserverHandle != null) {
             ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
-            mSyncObserverHandle = null;
+//            mSyncObserverHandle = null;
         }
         getContentResolver().unregisterContentObserver(mContactListObserver);
         getContentResolver().unregisterContentObserver(mMessageListObjerver);
         Helper.hideKeyboard(this);
-        stop();
+        ((Application)getApplication()).stop();
         unregisterReceiver(broadcastReceiverForDeleteChat);
     }
 
@@ -1336,7 +1337,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     }
 
     private void initFullChatLayout() {
-        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        //mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         mChatFlipper = (FlipViewController) findViewById(R.id.pager);
         mChatFlipper.setOnViewFlipListener(new FlipViewController.ViewFlipListener() {
@@ -2457,14 +2458,6 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     public boolean isPublicSearch() {
         return isPublicSearch;
     }
-//
-//    public void setPrivateSearch(boolean isPrivateSearch) {
-//        this.isPrivateSearch = isPrivateSearch;
-//    }
-//
-//    public boolean isPrivateSearch() {
-//        return isPrivateSearch;
-//    }
 
     public boolean isActive() {
         return mActive;
@@ -2490,14 +2483,6 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     public String getPublicSearchString() {
         return publicSearchString;
     }
-//
-//    public void setPrivateSearchString(String privateSearchString) {
-//        this.privateSearchString = privateSearchString;
-//    }
-//
-//    public String getPrivateSearchString() {
-//        return privateSearchString;
-//    }
 
     public void setOneToOneSearchString(String oneToOneSearchString) {
         this.oneToOneSearchString = oneToOneSearchString;
@@ -2515,85 +2500,6 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         return currentLocation;
     }
 
-    private void start() {
-        final String wsuri = "ws://54.204.45.228/python";
-        try {
-            if (!mConnection.isConnected()) {
-                mConnection.connect(wsuri, new WebSocketHandler() {
-                    @Override
-                    public void onOpen() {
-                        if (mChatList != null)
-                            for (ChatLoad chatLoad : mChatList) {
-                                if (chatLoad.type != 2)
-                                    sendRegisterForChatEvents(chatLoad.chatId);
-                            }
-                    }
-
-                    @Override
-                    public void onTextMessage(String payload) {
-                        receiveWebSocketMessageWith(payload);
-                    }
-
-                    @Override
-                    public void onClose(int code, String reason) {
-                    }
-                });
-            }
-        } catch (WebSocketException e) {
-            Log.d(TAG, e.toString());
-        }
-    }
-
-    private void stop() {
-        try {
-            if (mConnection.isConnected()) {
-                mConnection.disconnect();
-                Log.d(TAG, "Disconnected web socket");
-            }
-        } catch (Exception e) {
-            Log.d(TAG, e.toString());
-        }
-    }
-
-    public void sendUserStoppedTypingMessage(long chatId) {
-        String activityName = "sendUserStoppedTypingMessage:";
-        if (mConnection.isConnected()) {
-            String restToken = QodemePreferences.getInstance().getRestToken();
-            int event = GetEventForUserStoppedTypingMessage();
-            Log.d(TAG, activityName + "Sending user stopped typing message...");
-            sendWebSocketMessageWith(chatId, restToken, event);
-        }
-    }
-
-    public void sendUserTypingMessage(long chatId) {
-        String activityName = "sendUserTypingMessage:";
-        if (mConnection.isConnected()) {
-            sendRegisterForChatEvents(chatId);
-            String restToken = QodemePreferences.getInstance().getRestToken();
-            int event = GetEventForUserStartedTypingMessage();
-            Log.d(TAG, activityName + "Sending user typing message...");
-            sendWebSocketMessageWith(chatId, restToken, event);
-        }
-    }
-
-    private void sendWebSocketMessageWith(long chatId, String authToken, int event) {
-        String activityName = "sendWebSocketMessageWith:";
-        if (mConnection.isConnected()) {
-            try {
-                JSONObject json = new JSONObject();
-                json.put("chatId", chatId);
-                json.put("authToken", authToken);
-                json.put("event", event);
-                mConnection.sendTextMessage(json.toString());
-                Log.d(TAG, activityName + "Successfully sent payload " + json.toString());
-            } catch (JSONException e) {
-                Log.e(TAG, activityName + "Received JSONException: " + e.toString());
-            } catch (Exception e) {
-                Log.e(TAG, activityName + "Received Exception: " + e.toString());
-            }
-        }
-    }
-
     private int GetEventForChatEvents() {
         return 0;
     }
@@ -2606,34 +2512,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         return 2;
     }
 
-    private void sendRegisterForChatEvents(long chatId) {
-        String activityName = "sendRegisterForChatEvents:";
-        if (mConnection.isConnected()) {
-            String restToken = QodemePreferences.getInstance().getRestToken();
-            int event = GetEventForChatEvents();
-            Log.d(TAG, activityName + "Sending register for chat event message...");
-            sendWebSocketMessageWith(chatId, restToken, event);
-        }
-    }
-
-    private void receiveWebSocketMessageWith(String message) {
-        String activityName = "receiveWebSocketMessageWith:";
-        try {
-            JSONObject messageJson = new JSONObject(message);
-            long chatId = messageJson.getLong("chatId");
-            int event = messageJson.getInt("event");
-            Log.d(TAG, activityName + "Received event: " + event + " in chat: " + chatId);
-            if (event == GetEventForUserStartedTypingMessage()) {
-                receiveOtherUserStartedTypingEvent(chatId);
-            } else if (event == GetEventForUserStoppedTypingMessage()) {
-                receiveOtherUserStoppedTypingEvent(chatId);
-            }
-        } catch (JSONException je) {
-            Log.e(TAG, activityName + je.toString());
-        }
-    }
-
-    private void receiveOtherUserStoppedTypingEvent(long chatId) {
+    public void receiveOtherUserStoppedTypingEvent(long chatId) {
         ChatLoad chatLoad = getChatLoad(chatId);
         if (chatLoad != null) {
             chatLoad.isTyping = false;
@@ -2648,7 +2527,7 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
         }
     }
 
-    private void receiveOtherUserStartedTypingEvent(long chatId) {
+    public void receiveOtherUserStartedTypingEvent(long chatId) {
         ChatLoad chatLoad = getChatLoad(chatId);
         if (chatLoad != null) {
             if (!chatLoad.isTyping)
@@ -2663,6 +2542,8 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
 //                privateChatListFragment.notifyUi(chatId, chatLoad);
         }
     }
+
+
 
     BroadcastReceiver broadcastReceiverForDeleteChat = new BroadcastReceiver() {
 
@@ -2794,6 +2675,11 @@ public class MainActivity extends ActionBarActivity implements ChatListFragment.
     public Context getContext() {
         return this;
     }
+
+    public Application getMyApplication() {
+        return (Application) getApplication();
+    }
+
 
     LocationResult locationResult = new LocationResult() {
 

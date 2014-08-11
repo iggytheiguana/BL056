@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -34,7 +35,6 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.Utils;
@@ -91,13 +91,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private AnimationStyle mLoadingAnimationStyle = AnimationStyle.getDefault();
 
 	private LoadingLayout mHeaderLayout;
-	private LoadingLayout mFooterLayout;
+    private LoadingLayout mFooterLayout;
+    public LinearLayout mLinearSearchLayout;
 
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
 	private OnPullEventListener<T> mOnPullEventListener;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
+    public float searchLastY =0;
+    public int initialMargin = 10;
+    public MotionEvent lastEvent;
 
 	// ===========================================================
 	// Constructors
@@ -222,14 +226,41 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return mScrollingWhileRefreshingEnabled;
 	}
 
-	@Override
-	public final boolean onInterceptTouchEvent(MotionEvent event) {
 
-		if (!isPullToRefreshEnabled()) {
-			return false;
-		}
 
-		final int action = event.getAction();
+
+    public  boolean processSearchLayout(MotionEvent e) {
+
+        if (mLinearSearchLayout == null) {
+            return true;
+        }
+
+        LinearLayout.LayoutParams ll= (LinearLayout.LayoutParams) mLinearSearchLayout.getLayoutParams();
+        float currY = e.getRawY();
+        ll.topMargin = Math.round(currY - searchLastY +initialMargin);
+        if (ll.topMargin < -80) {
+            ll.topMargin = -80;
+            mLinearSearchLayout.setLayoutParams(ll);
+            initialMargin=  -80;
+            return false;
+        } else if (ll.topMargin > 10) {
+            ll.topMargin = 10;
+            mLinearSearchLayout.setLayoutParams(ll);
+            initialMargin=  10;
+            return false;
+        }
+        mLinearSearchLayout.setLayoutParams(ll);
+        return true;
+    }
+
+    @Override
+    public final boolean onInterceptTouchEvent(MotionEvent event) {
+
+        if (!isPullToRefreshEnabled()) {
+            return false;
+        }
+
+        final int action = event.getAction();
 
 		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
 			mIsBeingDragged = false;
@@ -248,10 +279,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				}
 
 				if (isReadyForPull()) {
+                    final float diff;
 					final float y = event.getY(), x = event.getX();
-					final float diff, oppositeDiff, absDiff;
+                    final float oppositeDiff;
+                    final float absDiff;
 
-					// We need to use the correct values, based on scroll
+                    // We need to use the correct values, based on scroll
 					// direction
 					switch (getPullToRefreshScrollDirection()) {
 						case HORIZONTAL:
@@ -299,7 +332,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return mIsBeingDragged;
 	}
 
-	@Override
+    @Override
 	public final void onRefreshComplete() {
 		if (isRefreshing()) {
 			setState(State.RESET);
@@ -309,7 +342,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
 
-		if (!isPullToRefreshEnabled()) {
+        if (!isPullToRefreshEnabled()) {
 			return false;
 		}
 
@@ -536,7 +569,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 */
 	public abstract Orientation getPullToRefreshScrollDirection();
 
-	public final void setState(State state, final boolean... params) {
+	final void setState(State state, final boolean... params) {
 		mState = state;
 		if (DEBUG) {
 			Log.d(LOG_TAG, "State: " + mState.name());
@@ -842,22 +875,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	protected final void onSizeChanged(int w, int h, int oldw, int oldh) {
-		if (DEBUG) {
-			Log.d(LOG_TAG, String.format("onSizeChanged. W: %d, H: %d", w, h));
-		}
-
 		super.onSizeChanged(w, h, oldw, oldh);
-
-		// We need to update the header/footer when our size changes
 		refreshLoadingViewsSize();
-
-		// Update the Refreshable View layout
 		refreshRefreshableViewSize(w, h);
-
-		/**
-		 * As we're currently in a Layout Pass, we need to schedule another one
-		 * to layout any changes we've made here
-		 */
 		post(new Runnable() {
 			@Override
 			public void run() {
@@ -913,7 +933,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		if (DEBUG) {
-			Log.d(LOG_TAG, String.format("Setting Padding. L: %d, T: %d, R: %d, B: %d", pLeft, pTop, pRight, pBottom));
+//			Log.d(LOG_TAG, String.format("Setting Padding. L: %d, T: %d, R: %d, B: %d", pLeft, pTop, pRight, pBottom));
 		}
 		setPadding(pLeft, pTop, pRight, pBottom);
 	}
@@ -946,10 +966,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @param value - New Scroll value
 	 */
 	protected final void setHeaderScroll(int value) {
-		if (DEBUG) {
-			Log.d(LOG_TAG, "setHeaderScroll: " + value);
-		}
-
 		// Clamp value to with pull scroll range
 		final int maximumPullScroll = getMaximumPullScroll();
 		value = Math.min(maximumPullScroll, Math.max(-maximumPullScroll, value));
@@ -1322,13 +1338,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		LoadingLayout createLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
-			switch (this) {
-				case ROTATE:
-				default:
-					return new RotateLoadingLayout(context, mode, scrollDirection, attrs);
-				case FLIP:
-					return new FlipLoadingLayout(context, mode, scrollDirection, attrs);
-			}
+				return new RotateLoadingLayout(context, mode, scrollDirection, attrs);
 		}
 	}
 
@@ -1501,7 +1511,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @author Chris Banes
 	 */
 	public static interface OnRefreshListener2<V extends View> {
-		// TODO These methods need renaming to START/END rather than DOWN/UP
 
 		/**
 		 * onPullDownToRefresh will be called only when the user has Pulled from
